@@ -1,0 +1,13 @@
+# Ignore unnecessary files and folders
+*.log
+*.tmp
+*.bak
+*.swp
+.idea/
+.vscode/
+*.class
+*.jar
+*.pyc
+__pycache__/
+bin/
+obj/
