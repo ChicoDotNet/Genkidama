@@ -1,0 +1,21 @@
+The Postgres is whispering "Connecting to PostgreSQL"
+The Postgres is whispering "Querying PostgreSQL"
+The MySQL is whispering "Connecting to MySQL"
+The MySQL is whispering "Querying MySQL"
+
+Shout "Choose your database: postgres or mysql"
+Listen to your db
+
+If your db is "postgres"
+Put Postgres into the song
+Otherwise
+Put MySQL into the song
+
+Listen to the song
+
+If the song is Postgres
+Shout "Connecting to PostgreSQL"
+Shout "Querying PostgreSQL"
+If the song is MySQL
+Shout "Connecting to MySQL"
+Shout "Querying MySQL"
