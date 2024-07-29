@@ -1,0 +1,25 @@
+The dark button is whispering "Dark Button"
+The light button is whispering "Light Button"
+The dark checkbox is whispering "Dark Checkbox"
+The light checkbox is whispering "Light Checkbox"
+
+Shout "Choose your theme: dark or light"
+Listen to your theme
+
+If your theme is "dark"
+Put dark button into the stage
+Put dark checkbox into the stage
+Otherwise
+Put light button into the stage
+Put light checkbox into the stage
+
+Listen to the stage
+
+If the stage is dark button
+Shout "Dark Button"
+If the stage is dark checkbox
+Shout "Dark Checkbox"
+If the stage is light button
+Shout "Light Button"
+If the stage is light checkbox
+Shout "Light Checkbox"
