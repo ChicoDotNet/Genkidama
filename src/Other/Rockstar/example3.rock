@@ -1,0 +1,17 @@
+The PDFReport is whispering "Generating PDF report"
+The HTMLReport is whispering "Generating HTML report"
+
+Shout "Choose your report: pdf or html"
+Listen to your report
+
+If your report is "pdf"
+Put PDFReport into the song
+Otherwise
+Put HTMLReport into the song
+
+Listen to the song
+
+If the song is PDFReport
+Shout "Generating PDF report"
+If the song is HTMLReport
+Shout "Generating HTML report"
