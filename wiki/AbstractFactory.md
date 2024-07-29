@@ -155,7 +155,7 @@ Por ejemplo, podemos tener una fábrica abstracta `DatabaseFactory` con métodos
 - [JavaScript (JS)](/src/Web/JavaScriptJS/example2.js)
 - [TypeScript (TS)](/src/Web/TypeScriptTS/example2.ts)
 - [Dart](/src/Web/Dart/example2.dart)
-- [SQL](/src/Databases/SQL/example2.sql) *(No disponible)*
+- [SQL](#) *(No disponible)*
 - [Bash/Shell](/src/Shell/BashShell/example2.sh)
 - [PowerShell](/src/Shell/PowerShell/example2.ps1)
 - [VBA](/src/Shell/VBA/example2.bas)
