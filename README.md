@@ -21,16 +21,77 @@ El repositorio está organizado en varias carpetas y archivos para facilitar la 
 
 Este repositorio cubre una amplia gama de patrones de diseño, incluyendo pero no limitado a:
 
-- Patrones Creacionales: Abstract Factory, Builder, Factory Method, Prototype, Singleton
-- Patrones Estructurales: Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy
-- Patrones de Comportamiento: Chain of Responsibility, Command, Interpreter, Iterator, Mediator, Memento, Observer, State, Strategy, Template Method, Visitor
-- Patrones Arquitectónicos: MVC, MVVM, Microkernel, Microservices
-- Patrones de Integración: Adapter (Enterprise Integration), Bridge (Enterprise Integration), Facade (Enterprise Integration), Broker, Message Bus, Service Locator
-- Patrones de Concurrencia: Active Object, Monitor Object, Half-Sync/Half-Async, Leader/Followers
-- Patrones de Distribución: Client-Server, Peer-to-Peer, Publish-Subscribe, Proxy (Distribuido)
-- Patrones de Presentación: Presentation-Abstraction-Control, Model-View-Presenter, Document-View
-- Patrones de Persistencia: Active Record, Data Mapper, Unit of Work
-- Otros Patrones: Dependency Injection, Lazy Initialization, Object Pool, Null Object, Repository
+### Patrones Creacionales
+- [Abstract Factory](/src/wiki/AbstractFactory.md)
+- [Builder](/src/wiki/Builder.md)
+- [Factory Method](/src/wiki/FactoryMethod.md)
+- [Prototype](/src/wiki/Prototype.md)
+- [Singleton](/src/wiki/Singleton.md)
+
+### Patrones Estructurales
+- [Adapter](/src/wiki/Adapter.md)
+- [Bridge](/src/wiki/Bridge.md)
+- [Composite](/src/wiki/Composite.md)
+- [Decorator](/src/wiki/Decorator.md)
+- [Facade](/src/wiki/Facade.md)
+- [Flyweight](/src/wiki/Flyweight.md)
+- [Proxy](/src/wiki/Proxy.md)
+
+### Patrones de Comportamiento
+- [Chain of Responsibility](/src/wiki/ChainOfResponsibility.md)
+- [Command](/src/wiki/Command.md)
+- [Interpreter](/src/wiki/Interpreter.md)
+- [Iterator](/src/wiki/Iterator.md)
+- [Mediator](/src/wiki/Mediator.md)
+- [Memento](/src/wiki/Memento.md)
+- [Observer](/src/wiki/Observer.md)
+- [State](/src/wiki/State.md)
+- [Strategy](/src/wiki/Strategy.md)
+- [Template Method](/src/wiki/TemplateMethod.md)
+- [Visitor](/src/wiki/Visitor.md)
+
+### Patrones Arquitectónicos
+- [MVC](/src/wiki/MVC.md)
+- [MVVM](/src/wiki/MVVM.md)
+- [Microkernel](/src/wiki/Microkernel.md)
+- [Microservices](/src/wiki/Microservices.md)
+
+### Patrones de Integración
+- [Adapter (Enterprise Integration)](/src/wiki/AdapterEnterpriseIntegration.md)
+- [Bridge (Enterprise Integration)](/src/wiki/BridgeEnterpriseIntegration.md)
+- [Facade (Enterprise Integration)](/src/wiki/FacadeEnterpriseIntegration.md)
+- [Broker](/src/wiki/Broker.md)
+- [Message Bus](/src/wiki/MessageBus.md)
+- [Service Locator](/src/wiki/ServiceLocator.md)
+
+### Patrones de Concurrencia
+- [Active Object](/src/wiki/ActiveObject.md)
+- [Monitor Object](/src/wiki/MonitorObject.md)
+- [Half-Sync/Half-Async](/src/wiki/HalfSyncHalfAsync.md)
+- [Leader/Followers](/src/wiki/LeaderFollowers.md)
+
+### Patrones de Distribución
+- [Client-Server](/src/wiki/ClientServer.md)
+- [Peer-to-Peer](/src/wiki/PeerToPeer.md)
+- [Publish-Subscribe](/src/wiki/PublishSubscribe.md)
+- [Proxy (Distribuido)](/src/wiki/ProxyDistribuido.md)
+
+### Patrones de Presentación
+- [Presentation-Abstraction-Control](/src/wiki/PresentationAbstractionControl.md)
+- [Model-View-Presenter](/src/wiki/ModelViewPresenter.md)
+- [Document-View](/src/wiki/DocumentView.md)
+
+### Patrones de Persistencia
+- [Active Record](/src/wiki/ActiveRecord.md)
+- [Data Mapper](/src/wiki/DataMapper.md)
+- [Unit of Work](/src/wiki/UnitOfWork.md)
+
+### Otros Patrones
+- [Dependency Injection](/src/wiki/DependencyInjection.md)
+- [Lazy Initialization](/src/wiki/LazyInitialization.md)
+- [Object Pool](/src/wiki/ObjectPool.md)
+- [Null Object](/src/wiki/NullObject.md)
+- [Repository](/src/wiki/Repository.md)
 
 ## Ejemplos de Código
 
