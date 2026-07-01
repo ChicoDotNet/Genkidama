@@ -1,52 +1,90 @@
-# Contribuyendo al Design Patterns Tutorial
+# Contributing to Genkidama
 
-## Bienvenido
+Thank you for helping improve Genkidama.
 
-Estamos encantados de que estés interesado en contribuir al repositorio de **Design Patterns Tutorial**. Tu participación nos ayuda a promover el uso de patrones de diseño entre la comunidad de desarrolladores y a mejorar continuamente este recurso.
+Genkidama is an open source .NET CLI and application scaffold for modern, contract-first applications. It also includes an educational Design Patterns Example App.
 
-## Cómo Contribuir
+## Branch flow
 
-### 1. Haz un Fork del Repositorio
+Use this flow for project work:
 
-Primero, haz un fork de este repositorio en tu cuenta de GitHub.
-
-### 2. Crea una Nueva Rama
-
-Crea una nueva rama para tu característica o corrección de errores:
-
-```bash
-git checkout -b nombre-de-tu-rama
+```text
+genkidama-cli -> dev -> main
 ```
 
-### 3. Realiza Tus Cambios
-Realiza los cambios necesarios en tu rama. Asegúrate de que tu código sigue las guías de estilo y que incluyes pruebas donde sea apropiado.
+- `genkidama-cli`: active feature work.
+- `dev`: integration branch.
+- `main`: stable public branch.
 
-### 4. Envía un Pull Request
-Envía un pull request describiendo los cambios que has realizado y por qué deberían fusionarse con la rama principal. Nuestro equipo revisará tu pull request lo antes posible.
+## Delivery flow
 
-### Guía de Estilo
-Por favor, sigue estas pautas de estilo para mantener la coherencia del código en todo el repositorio:
+Each meaningful change should map to a GEN delivery when possible.
 
-Usa nombres de variables y funciones descriptivos.
-Escribe comentarios claros y concisos.
-Asegúrate de que el código es legible y fácil de mantener.
-Incluye pruebas unitarias cuando sea aplicable.
+Examples:
 
-### Programas de Discipulado y Mastermind
-Además de contribuir al repositorio, te invitamos a unirte a nuestros programas de desarrollo profesional:
+- `GEN-000`: repository preparation.
+- `GEN-001`: CLI bootstrap.
+- `GEN-003`: StandardResult and StandardQuery.
 
-#### Programa de Discipulado para Programadores
-Un programa dedicado a ayudar a programadores a mejorar sus habilidades técnicas y profesionales. Participa en sesiones regulares de mentoría y recibe orientación personalizada.
+## Definition of Done
 
-#### Programa de Discipulado para Emprendedores
-Diseñado para emprendedores que buscan crecer sus negocios y aprovechar la tecnología para alcanzar sus objetivos. Este programa ofrece asesoramiento estratégico y herramientas prácticas.
+A change is complete when:
 
-#### Mastermind para Empresarios Interesados en Tecnología
-Únete a un grupo exclusivo de empresarios interesados en tecnología. Comparte experiencias, resuelve problemas comunes y aprende de otros líderes del sector en nuestras sesiones mastermind.
+- It builds successfully.
+- MSTest passes.
+- Global coverage stays at or above 44%.
+- XML documentation is updated for public and internal C# APIs.
+- Engineering standards are respected.
+- The roadmap is updated when scope changes.
+- New user-facing text uses localization keys when applicable.
 
-Para unirte a cualquiera de estos programas, por favor envíanos un correo electrónico a tecno@iresolve.mx con el asunto "Solicitud de Inscripción - [Nombre del Programa]".
+## Code style
 
-### Código de Conducta
-Al participar en este proyecto, te pedimos que sigas nuestro código de conducta. Reporta cualquier comportamiento inaceptable a los mantenedores del proyecto.
+Prefer small methods.
 
-¡Gracias por tu interés en contribuir al Design Patterns Tutorial! Tu apoyo y participación son esenciales para el éxito de este proyecto.
+The preferred method length is ten executable lines or fewer.
+
+A method may be longer when that keeps the code clearer and cyclomatic complexity low.
+
+Use descriptive names and keep the generated architecture easy to read.
+
+## Documentation style
+
+All public and internal C# types, members and extension points require XML documentation in English.
+
+Educational documentation may be localized.
+
+Generated source code, namespaces, public members and XML documentation remain in English.
+
+## Testing
+
+MSTest is mandatory.
+
+The minimum global coverage gate is 44%.
+
+The ideal target is greater than 72.8%.
+
+Do not reduce coverage casually.
+
+## Localization
+
+Genkidama uses stable localization keys through contract constants and .resx resources where appropriate.
+
+Supported educational locales are:
+
+- English
+- Spanish
+- French
+- German
+- Italian
+- Portuguese
+- Japanese
+- Simplified Chinese
+
+## Design Patterns education
+
+The Design Patterns Example App should show patterns as practical, living examples.
+
+Do not force a pattern where a simpler solution is clearer.
+
+The architecture comes first. The pattern catalog supports the architecture.
