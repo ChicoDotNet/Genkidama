@@ -83,6 +83,19 @@ The baseline generated backend architecture includes:
 - Security context
 - Typed API clients
 
+## Database provider policy
+
+The core persistence factory supports only the following database providers:
+
+- MariaDB
+- SQLite
+- SQL Server
+- PostgreSQL
+
+Additional providers must be implemented as optional plugins. Examples include DB2, Oracle, MySQL variants, Cosmos DB, or other specialized engines.
+
+Provider plugins must not increase the core dependency surface unless explicitly promoted to the supported provider list.
+
 ## Database schema policy
 
 Generated persistence should support schema separation for operational clarity.
@@ -99,6 +112,45 @@ The default schemas are:
 - Integration
 
 Additional schemas may be added by modules, but templates should not mix unrelated responsibilities in the same schema.
+
+## Startup logging policy
+
+Generated APIs must write an identifiable startup banner when the application starts.
+
+The banner must include:
+
+- A Genkidama ASCII art mark, approximately 22 by 22 characters.
+- The text `Starting Genkidama App`.
+- Application name.
+- Application version.
+- Environment name.
+- Database provider.
+- Process identifier when available.
+- UTC startup timestamp.
+
+The banner exists to make logs easy to segregate across applications, environments, and deployments.
+
+A minimal example is:
+
+```text
+        .-''''-.        
+      .'  ****  '.      
+     /  **    **  \     
+    |  *  ****  *  |    
+    | *  ******  * |    
+    |  *  ****  *  |    
+     \  **    **  /     
+      '.  ****  .'      
+        '-....-'        
+
+Starting Genkidama App
+App: {AppName}
+Version: {Version}
+Environment: {Environment}
+Database: {DatabaseProvider}
+StartedUtc: {StartedUtc}
+ProcessId: {ProcessId}
+```
 
 ## Client policy
 
