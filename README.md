@@ -4,6 +4,14 @@ Genkidama is an open source .NET CLI and application scaffold for building moder
 
 It also preserves its educational origin through a reference Example App: a multi-language Design Patterns catalog that demonstrates classic software design patterns in practical generated applications.
 
+## Available for collaboration
+
+I'm actively looking for opportunities to collaborate on modern .NET, Azure, React, Angular, AI-assisted software development, software architecture, and enterprise modernization projects.
+
+If you believe Genkidama or my engineering experience can help your organization, I'd be glad to talk.
+
+Contact: alfonso.lara.ramos.dev@outlook.com
+
 ## Vision
 
 Genkidama should help creators of solutions start faster without sacrificing architecture.
@@ -194,4 +202,4 @@ All public and internal C# APIs require XML documentation in English.
 
 ## License
 
-Genkidama is intended to be open source. The preferred license is MIT unless a later architectural or legal decision changes it.
+Genkidama is open source under the MIT License.
