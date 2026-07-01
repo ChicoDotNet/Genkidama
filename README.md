@@ -1,182 +1,197 @@
-# Design Patterns Tutorial
+# Genkidama
 
-Bienvenido al repositorio de **Design Patterns Tutorial**. Este repositorio tiene como objetivo proporcionar explicaciones claras y ejemplos prácticos de patrones de diseño en múltiples lenguajes de programación, promoviendo su uso entre la comunidad de desarrolladores.
+Genkidama is an open source .NET CLI and application scaffold for building modern, contract-first applications.
 
-## Estructura del Repositorio
+It also preserves its educational origin through a reference Example App: a multi-language Design Patterns catalog that demonstrates classic software design patterns in practical generated applications.
 
-El repositorio está organizado en varias carpetas y archivos para facilitar la navegación y el acceso a los recursos:
+## Vision
 
-- **docs/**: Documentación, diagramas UML y referencias.
-  - **images/**: Imágenes y diagramas UML.
-  - **references/**: Libros y artículos de referencia.
-- **src/**: Código fuente para cada patrón de diseño, organizado por patrón y lenguaje.
-  - **PatternName/**: Carpeta para cada patrón de diseño.
-    - **Java/**: Implementaciones en Java.
-    - **Python/**: Implementaciones en Python.
-    - **CSharp/**: Implementaciones en C#.
-    - **exampleX/**: Ejemplos específicos del patrón.
-- **wiki/**: Explicaciones detalladas de cada patrón de diseño, accesibles a través del wiki de GitHub.
+Genkidama should help creators of solutions start faster without sacrificing architecture.
 
-## Patrones de Diseño Cubiertos
+The CLI generates production-oriented application foundations.
 
-Este repositorio cubre una amplia gama de patrones de diseño, incluyendo pero no limitado a:
+The Example App teaches the architecture by showing real patterns, real clients, and real backend boundaries.
 
-### Patrones Creacionales
-- [Abstract Factory](/wiki/AbstractFactory.md)
-- [Builder](/wiki/Builder.md)
-- [Factory Method](/wiki/FactoryMethod.md)
-- [Prototype](/wiki/Prototype.md)
-- [Singleton](/wiki/Singleton.md)
+## Repository purpose
 
-### Patrones Estructurales
-- [Adapter](/wiki/Adapter.md)
-- [Bridge](/wiki/Bridge.md)
-- [Composite](/wiki/Composite.md)
-- [Decorator](/wiki/Decorator.md)
-- [Facade](/wiki/Facade.md)
-- [Flyweight](/wiki/Flyweight.md)
-- [Proxy](/wiki/Proxy.md)
+This repository has two complementary purposes:
 
-### Patrones de Comportamiento
-- [Chain of Responsibility](/wiki/ChainOfResponsibility.md)
-- [Command](/wiki/Command.md)
-- [Interpreter](/wiki/Interpreter.md)
-- [Iterator](/wiki/Iterator.md)
-- [Mediator](/wiki/Mediator.md)
-- [Memento](/wiki/Memento.md)
-- [Observer](/wiki/Observer.md)
-- [State](/wiki/State.md)
-- [Strategy](/wiki/Strategy.md)
-- [Template Method](/wiki/TemplateMethod.md)
-- [Visitor](/wiki/Visitor.md)
+1. **Genkidama CLI**: a .NET tool that generates application scaffolds, modules, contracts, clients, and vertical slices.
+2. **Genkidama Example App**: an educational Design Patterns application used to demonstrate the generated architecture across multiple languages and client technologies.
 
-### Patrones Arquitectónicos
-- [MVC](/wiki/MVC.md)
-- [MVVM](/wiki/MVVM.md)
-- [Microkernel](/wiki/Microkernel.md)
-- [Microservices](/wiki/Microservices.md)
+The former makes Genkidama useful in real projects.
 
-### Patrones de Integración
-- [Adapter (Enterprise Integration)](/wiki/AdapterEnterpriseIntegration.md)
-- [Bridge (Enterprise Integration)](/wiki/BridgeEnterpriseIntegration.md)
-- [Facade (Enterprise Integration)](/wiki/FacadeEnterpriseIntegration.md)
-- [Broker](/wiki/Broker.md)
-- [Message Bus](/wiki/MessageBus.md)
-- [Service Locator](/wiki/ServiceLocator.md)
+The latter makes Genkidama understandable, teachable, and extensible.
 
-### Patrones de Concurrencia
-- [Active Object](/wiki/ActiveObject.md)
-- [Monitor Object](/wiki/MonitorObject.md)
-- [Half-Sync/Half-Async](/wiki/HalfSyncHalfAsync.md)
-- [Leader/Followers](/wiki/LeaderFollowers.md)
+## Branch strategy
 
-### Patrones de Distribución
-- [Client-Server](/wiki/ClientServer.md)
-- [Peer-to-Peer](/wiki/PeerToPeer.md)
-- [Publish-Subscribe](/wiki/PublishSubscribe.md)
-- [Proxy (Distribuido)](/wiki/ProxyDistribuido.md)
+- `genkidama-cli`: feature work for the CLI and generated templates.
+- `dev`: integration branch.
+- `main`: stable public branch.
 
-### Patrones de Presentación
-- [Presentation-Abstraction-Control](/wiki/PresentationAbstractionControl.md)
-- [Model-View-Presenter](/wiki/ModelViewPresenter.md)
-- [Document-View](/wiki/DocumentView.md)
+## Core architecture
 
-### Patrones de Persistencia
-- [Active Record](/wiki/ActiveRecord.md)
-- [Data Mapper](/wiki/DataMapper.md)
-- [Unit of Work](/wiki/UnitOfWork.md)
+Generated applications follow a contract-first architecture.
 
-### Otros Patrones
-- [Dependency Injection](/wiki/DependencyInjection.md)
-- [Lazy Initialization](/wiki/LazyInitialization.md)
-- [Object Pool](/wiki/ObjectPool.md)
-- [Null Object](/wiki/NullObject.md)
-- [Repository](/wiki/Repository.md)
+The baseline backend includes:
 
-## Ejemplos de Código
+- API endpoints or controllers
+- Contracts
+- Application services
+- Command and query handlers
+- Repositories
+- Unit of Work
+- DbContext
+- Domain model
+- StandardResult
+- StandardQuery
+- StandardJob
+- StandardEvent
+- Notifications
+- Audit trail
+- Security context
+- Typed API clients
 
-Cada patrón de diseño incluye múltiples ejemplos prácticos implementados en diferentes lenguajes de programación. Esto permite a los desarrolladores ver cómo se pueden aplicar estos patrones en varios contextos y lenguajes. Los lenguajes cubiertos incluyen:
+## Supported database providers
 
-- [Lenguajes Funcionales](src/Functional)
-  - [Erlang](src/Functional/Erlang)
-  - [Elixir](src/Functional/Elixir)
-  - [Clojure](src/Functional/Clojure)
-  - [Scala](src/Functional/Scala)
-  - [F#](src/Functional/FSharp)
-  - [Lisp](src/Functional/Lisp)
-  - [OCaml](src/Functional/OCaml)
-  - [Haskell](src/Functional/Haskell)
-- [Lenguajes de Scripting](src/Scripting)
-  - [Perl](src/Scripting/Perl)
-  - [Python (PY)](src/Scripting/PythonPY)
-  - [Ruby (RB)](src/Scripting/RubyRB)
-  - [Lua](src/Scripting/Lua)
-  - [PHP](src/Scripting/PHP)
-  - [Groovy](src/Scripting/Groovy)
-- [Lenguajes usados en sistemas](src/Systems)
-  - [C](src/Systems/C)
-  - [C++](src/Systems/C++)
-  - [Rust](src/Systems/Rust)
-  - [Zig](src/Systems/Zig)
-  - [Go](src/Systems/Go)
-  - [Swift](src/Systems/Swift)
-  - [Objective-C](src/Systems/Objective-C)
-- [Lenguajes usados en Enterprise Applications](src/Enterprise)
-  - [Java](src/Enterprise/Java)
-  - [C#](src/Enterprise/CSharp)
-  - [Kotlin](src/Enterprise/Kotlin)
-  - [Delphi](src/Enterprise/Delphi)
-  - [Visual Basic](src/Enterprise/VisualBasic)
-- [Lenguajes de DataScience](src/DataScience)
-  - [R](src/DataScience/R)
-  - [Julia](src/DataScience/Julia)
-  - [MATLAB](src/DataScience/MATLAB)
-- [Lenguajes Web](src/Web)
-  - [HTML/CSS](src/Web/HTMLCSS)
-  - [JavaScript (JS)](src/Web/JavaScriptJS)
-  - [TypeScript (TS)](src/Web/TypeScriptTS)
-  - [Dart](src/Web/Dart)
-- [Databases](src/Databases)
-  - [SQL](src/Databases/SQL)
-- [Shell](src/Shell)
-  - [Bash/Shell](src/Shell/BashShell)
-  - [PowerShell](src/Shell/PowerShell)
-  - [VBA](src/Shell/VBA)
-- [Lenguajes Historicos](src/Historical)
-  - [Fortran](src/Historical/Fortran)
-  - [Cobol](src/Historical/Cobol)
-  - [Ada](src/Historical/Ada)
-- [Lenguajes de Nicho](src/Niche)
-  - [Solidity](src/Niche/Solidity)
-  - [Prolog](src/Niche/Prolog)
-  - [Nim](src/Niche/Nim)
-  - [Crystal](src/Niche/Crystal)
-  - [GDScript](src/Niche/GDScript)
-- [Lenguajes LowLevel](src/LowLevel)
-  - [Assembly](src/LowLevel/Assembly)
-- [Otros lenguajes](src/Other)
-  - [MicroPython](src/Other/MicroPython)
-  - [Rockstar](src/Other/Rockstar)
+The core persistence factory supports only:
 
-## Contribuyendo
+- MariaDB
+- SQLite
+- SQL Server
+- PostgreSQL
 
-Estamos abiertos a contribuciones de la comunidad. Para contribuir:
+Additional providers, such as DB2, Oracle, Cosmos DB, or other engines, should be added through plugins.
 
-1. Haz un fork del repositorio.
-2. Crea una nueva rama para tu característica o corrección de errores.
-3. Realiza tus cambios.
-4. Envía un pull request.
+## Example App: Design Patterns Catalog
 
-Por favor, asegúrate de que tu código sigue las guías de estilo y que incluyes pruebas donde sea apropiado. Consulta `CONTRIBUTING.md` para más detalles.
+The original educational material in this repository becomes the first canonical Genkidama Example App.
 
-## Licencia
+The Example App should eventually expose a UI that lets users explore classic design patterns, inspect generated code, and compare implementations across languages.
 
-Este proyecto está licenciado bajo la licencia MIT. Consulta el archivo `LICENSE` para más detalles.
+It should cover patterns commonly associated with the Gang of Four catalog and Head First Design Patterns, without forcing patterns where they do not improve the architecture.
 
-## Contacto
+## Pattern categories
 
-Si tienes alguna pregunta o sugerencia, no dudes en abrir un issue o enviar un pull request. Estamos aquí para ayudarte a aprender y aplicar patrones de diseño en tus proyectos.
+### Creational patterns
 
----
+- Abstract Factory
+- Builder
+- Factory Method
+- Prototype
+- Singleton
 
-¡Gracias por visitar el repositorio de **Design Patterns Tutorial**! Esperamos que encuentres estos recursos útiles y que te ayuden a mejorar tus habilidades de desarrollo de software.
+### Structural patterns
+
+- Adapter
+- Bridge
+- Composite
+- Decorator
+- Facade
+- Flyweight
+- Proxy
+
+### Behavioral patterns
+
+- Chain of Responsibility
+- Command
+- Interpreter
+- Iterator
+- Mediator
+- Memento
+- Observer
+- State
+- Strategy
+- Template Method
+- Visitor
+
+### Architectural patterns
+
+- MVC
+- MVVM
+- Microkernel
+- Microservices
+
+### Integration patterns
+
+- Adapter for enterprise integration
+- Bridge for enterprise integration
+- Facade for enterprise integration
+- Broker
+- Message Bus
+- Service Locator
+
+### Concurrency patterns
+
+- Active Object
+- Monitor Object
+- Half-Sync/Half-Async
+- Leader/Followers
+
+### Distribution patterns
+
+- Client-Server
+- Peer-to-Peer
+- Publish-Subscribe
+- Distributed Proxy
+
+### Presentation patterns
+
+- Presentation-Abstraction-Control
+- Model-View-Presenter
+- Document-View
+
+### Persistence patterns
+
+- Active Record
+- Data Mapper
+- Unit of Work
+- Repository
+
+### Additional patterns
+
+- Dependency Injection
+- Lazy Initialization
+- Object Pool
+- Null Object
+
+## Example language targets
+
+The educational catalog may include examples in:
+
+- Functional languages: Erlang, Elixir, Clojure, Scala, F#, Lisp, OCaml, Haskell.
+- Scripting languages: Perl, Python, Ruby, Lua, PHP, Groovy.
+- Systems languages: C, C++, Rust, Zig, Go, Swift, Objective-C.
+- Enterprise languages: Java, C#, Kotlin, Delphi, Visual Basic.
+- Data science languages: R, Julia, GNU Octave.
+- Web languages: HTML/CSS, JavaScript, TypeScript, Dart.
+- Databases: SQL.
+- Shell languages: Bash, PowerShell, VBA.
+- Historical languages: Fortran, Cobol, Ada.
+- Niche languages: Solidity, Prolog, Nim, Crystal, GDScript.
+- Low-level languages: Assembly.
+- Other languages: MicroPython, Rockstar.
+
+## Documentation
+
+Important project documents live under `docs/`.
+
+- `docs/engineering-standards.md`
+- `docs/roadmap.md`
+- `docs/philosophy/001-patterns-as-living-examples.md`
+
+The legacy wiki placeholders should evolve into real pattern explanations and cross-links to the Example App.
+
+## Quality gates
+
+MSTest is mandatory from the bootstrap delivery.
+
+Minimum global coverage is 44%.
+
+The ideal coverage target is greater than 72.8%.
+
+All public and internal C# APIs require XML documentation in English.
+
+## License
+
+Genkidama is intended to be open source. The preferred license is MIT unless a later architectural or legal decision changes it.
