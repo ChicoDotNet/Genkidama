@@ -1,8 +1,10 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/Genkidama.Cli/Genkidama.Cli.csproj" />
+    <Project Path="src/Genkidama.Contracts/Genkidama.Contracts.csproj" />
   </Folder>
   <Folder Name="/test/">
     <Project Path="tests/Genkidama.Cli.Tests/Genkidama.Cli.Tests.csproj" />
+    <Project Path="tests/Genkidama.Contracts.Tests/Genkidama.Contracts.Tests.csproj" />
   </Folder>
 </Solution>
