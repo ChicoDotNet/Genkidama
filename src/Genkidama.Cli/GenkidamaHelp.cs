@@ -8,5 +8,5 @@ internal static class GenkidamaHelp
     /// <summary>
     /// Gets the default help text.
     /// </summary>
-    internal const string Text = "Genkidama CLI\nUsage: genkidama --version";
+    internal const string Text = "Genkidama CLI\nUsage: genkidama --version\n       genkidama new <AppName>\n       genkidama add entity <EntityName>";
 }
