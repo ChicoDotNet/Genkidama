@@ -16,8 +16,8 @@ public sealed class InMemoryGenkidamaRepositoryTests
     [TestMethod]
     public void Find_AfterAdd_ReturnsEntity()
     {
-        var repository = new InMemoryGenkidamaRepository<TestEntity, Guid>();
-        var entity = new TestEntity(Guid.NewGuid(), "Alpha");
+        var repository = new InMemoryGenkidamaRepository<TestEntity<Guid>, Guid>();
+        var entity = new TestEntity<Guid>(Guid.NewGuid(), "Alpha");
         repository.Add(entity);
         var result = repository.Find(entity.Id);
         Assert.IsTrue(result.Succeeded);
@@ -30,7 +30,7 @@ public sealed class InMemoryGenkidamaRepositoryTests
     [TestMethod]
     public void List_WithSecondPage_ReturnsPagedItems()
     {
-        var repository = new InMemoryGenkidamaRepository<TestEntity, int>();
+        var repository = new InMemoryGenkidamaRepository<TestEntity<int>, int>();
         repository.Add(new(1, "One"));
         repository.Add(new(2, "Two"));
         var result = repository.List(new StandardQuery(2, 1));
