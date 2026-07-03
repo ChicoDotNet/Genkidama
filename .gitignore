@@ -12,3 +12,4 @@ __pycache__/
 bin/
 obj/
 sscripts/
+.vs/

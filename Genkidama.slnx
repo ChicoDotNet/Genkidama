@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Genkidama.Cli/Genkidama.Cli.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="tests/Genkidama.Cli.Tests/Genkidama.Cli.Tests.csproj" />
+  </Folder>
+</Solution>
