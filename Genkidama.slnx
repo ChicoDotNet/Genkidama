@@ -8,6 +8,7 @@
     <Project Path="src/Genkidama.Jobs/Genkidama.Jobs.csproj" />
     <Project Path="src/Genkidama.Events/Genkidama.Events.csproj" />
     <Project Path="src/Genkidama.Access/Genkidama.Access.csproj" />
+    <Project Path="src/Genkidama.Blueprints/Genkidama.Blueprints.csproj" />
   </Folder>
   <Folder Name="/clients/">
     <Project Path="clients/console-reference/Genkidama.ConsoleReference/Genkidama.ConsoleReference.csproj" />
