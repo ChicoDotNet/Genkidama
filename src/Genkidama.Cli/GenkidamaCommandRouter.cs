@@ -28,6 +28,11 @@ internal static class GenkidamaCommandRouter
             return RunAddEnumAsync(args[2], args[3..], writer);
         }
 
+        if (IsAddFeature(args))
+        {
+            return RunAddFeatureAsync(args[2], writer);
+        }
+
         return WriteKnownAsync(args, writer);
     }
 
@@ -39,6 +44,9 @@ internal static class GenkidamaCommandRouter
 
     private static bool IsAddEnum(string[] args)
         => args.Length >= 3 && args[0] == "add" && args[1] == "enum";
+
+    private static bool IsAddFeature(string[] args)
+        => args.Length == 3 && args[0] == "add" && args[1] == "feature";
 
     private static Task<int> RunNewAsync(string appName, TextWriter writer)
         => GenkidamaNewCommand.ExecuteAsync(
@@ -56,6 +64,11 @@ internal static class GenkidamaCommandRouter
         TextWriter writer)
         => GenkidamaAddEnumCommand.ExecuteAsync(
             new AddEnumOptions(CurrentAppName(), enumName, values, Environment.CurrentDirectory),
+            writer);
+
+    private static Task<int> RunAddFeatureAsync(string featureName, TextWriter writer)
+        => GenkidamaAddFeatureCommand.ExecuteAsync(
+            new AddFeatureOptions(CurrentAppName(), featureName, Environment.CurrentDirectory),
             writer);
 
     private static string CurrentAppName()
