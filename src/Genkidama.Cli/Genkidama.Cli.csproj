@@ -5,5 +5,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>genkidama</ToolCommandName>
+    <PackageId>Genkidama.Cli</PackageId>
+    <Version>0.1.0-alpha.22</Version>
+    <Authors>ASBN</Authors>
+    <Description>Genkidama command line tool for generating standard application foundations.</Description>
+    <PackageTags>genkidama;cli;dotnet-tool;generator</PackageTags>
+    <RepositoryUrl>https://github.com/ChicoDotNet/Genkidama</RepositoryUrl>
   </PropertyGroup>
 </Project>
