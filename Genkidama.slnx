@@ -11,6 +11,7 @@
   </Folder>
   <Folder Name="/clients/">
     <Project Path="clients/console-reference/Genkidama.ConsoleReference/Genkidama.ConsoleReference.csproj" />
+    <Project Path="clients/desktop-reference/Genkidama.DesktopReference.Core/Genkidama.DesktopReference.Core.csproj" />
     <Project Path="clients/desktop-reference/Genkidama.DesktopReference/Genkidama.DesktopReference.csproj" />
   </Folder>
   <Folder Name="/test/">
