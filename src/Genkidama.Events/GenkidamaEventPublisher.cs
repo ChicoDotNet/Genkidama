@@ -16,7 +16,11 @@ public sealed class GenkidamaEventPublisher : IGenkidamaEventPublisher
     {
         foreach (var handler in handlers)
         {
-            await handler.HandleAsync(eventItem, cancellationToken);
+            var result = await handler.HandleAsync(eventItem, cancellationToken);
+            if (result.Succeeded is false)
+            {
+                return result;
+            }
         }
 
         return StandardResult.Success();
