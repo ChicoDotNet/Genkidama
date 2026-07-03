@@ -5,36 +5,18 @@ namespace Genkidama.Data;
 /// <summary>
 /// Provides standard operations for entity collections.
 /// </summary>
-/// <typeparam name="TEntity">The entity type.</typeparam>
-/// <typeparam name="TKey">The entity identity type.</typeparam>
-public interface IGenkidamaRepository<TEntity, in TKey>
+public interface IGenkidamaRepository<TEntity, TKey>
     where TEntity : IGenkidamaEntity<TKey>
 {
-    /// <summary>
-    /// Finds one entity by identifier.
-    /// </summary>
-    /// <param name="id">The entity identifier.</param>
-    /// <returns>The entity result.</returns>
+    /// <summary>Finds one entity by identifier.</summary>
     StandardResult<TEntity> Find(TKey id);
 
-    /// <summary>
-    /// Lists entities using a standard query.
-    /// </summary>
-    /// <param name="query">The collection query.</param>
-    /// <returns>The collection result.</returns>
+    /// <summary>Lists entities using a standard query.</summary>
     StandardCollectionResult<TEntity> List(StandardQuery query);
 
-    /// <summary>
-    /// Adds an entity to the collection.
-    /// </summary>
-    /// <param name="entity">The entity to add.</param>
-    /// <returns>The operation result.</returns>
+    /// <summary>Adds an entity to the collection.</summary>
     StandardResult Add(TEntity entity);
 
-    /// <summary>
-    /// Removes an entity from the collection.
-    /// </summary>
-    /// <param name="id">The entity identifier.</param>
-    /// <returns>The operation result.</returns>
+    /// <summary>Removes an entity from the collection.</summary>
     StandardResult Remove(TKey id);
 }
