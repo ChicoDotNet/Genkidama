@@ -2,9 +2,11 @@
   <Folder Name="/src/">
     <Project Path="src/Genkidama.Cli/Genkidama.Cli.csproj" />
     <Project Path="src/Genkidama.Contracts/Genkidama.Contracts.csproj" />
+    <Project Path="src/Genkidama.Http/Genkidama.Http.csproj" />
   </Folder>
   <Folder Name="/test/">
     <Project Path="tests/Genkidama.Cli.Tests/Genkidama.Cli.Tests.csproj" />
     <Project Path="tests/Genkidama.Contracts.Tests/Genkidama.Contracts.Tests.csproj" />
+    <Project Path="tests/Genkidama.Http.Tests/Genkidama.Http.Tests.csproj" />
   </Folder>
 </Solution>
