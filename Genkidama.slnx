@@ -13,6 +13,7 @@
     <Project Path="clients/console-reference/Genkidama.ConsoleReference/Genkidama.ConsoleReference.csproj" />
     <Project Path="clients/desktop-reference/Genkidama.DesktopReference.Core/Genkidama.DesktopReference.Core.csproj" />
     <Project Path="clients/desktop-reference/Genkidama.DesktopReference/Genkidama.DesktopReference.csproj" />
+    <Project Path="clients/maui-reference/Genkidama.MauiReference.Core/Genkidama.MauiReference.Core.csproj" />
   </Folder>
   <Folder Name="/test/">
     <Project Path="tests/Genkidama.Cli.Tests/Genkidama.Cli.Tests.csproj" />
@@ -25,5 +26,6 @@
     <Project Path="tests/Genkidama.Access.Tests/Genkidama.Access.Tests.csproj" />
     <Project Path="tests/Genkidama.ConsoleReference.Tests/Genkidama.ConsoleReference.Tests.csproj" />
     <Project Path="tests/Genkidama.Ui.Tests/Genkidama.Ui.Tests.csproj" />
+    <Project Path="tests/Genkidama.MauiReference.Tests/Genkidama.MauiReference.Tests.csproj" />
   </Folder>
 </Solution>
