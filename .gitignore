@@ -1,15 +1,20 @@
 # Ignore unnecessary files and folders
-*.log
-*.tmp
 *.bak
-*.swp
-.idea/
-.vscode/
 *.class
+*.csproj.user
 *.jar
+*.log
 *.pyc
+*.suo
+*.swp
+*.tmp
+.idea/
+.vs/
+.vscode/
 __pycache__/
 bin/
+bin/
+obj/
 obj/
 sscripts/
-.vs/
+TestResults/
