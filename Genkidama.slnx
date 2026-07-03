@@ -11,6 +11,7 @@
   </Folder>
   <Folder Name="/clients/">
     <Project Path="clients/console-reference/Genkidama.ConsoleReference/Genkidama.ConsoleReference.csproj" />
+    <Project Path="clients/desktop-reference/Genkidama.DesktopReference/Genkidama.DesktopReference.csproj" />
   </Folder>
   <Folder Name="/test/">
     <Project Path="tests/Genkidama.Cli.Tests/Genkidama.Cli.Tests.csproj" />
@@ -22,5 +23,6 @@
     <Project Path="tests/Genkidama.Events.Tests/Genkidama.Events.Tests.csproj" />
     <Project Path="tests/Genkidama.Access.Tests/Genkidama.Access.Tests.csproj" />
     <Project Path="tests/Genkidama.ConsoleReference.Tests/Genkidama.ConsoleReference.Tests.csproj" />
+    <Project Path="tests/Genkidama.Ui.Tests/Genkidama.Ui.Tests.csproj" />
   </Folder>
 </Solution>
