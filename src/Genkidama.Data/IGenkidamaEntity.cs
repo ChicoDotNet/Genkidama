@@ -4,7 +4,7 @@ namespace Genkidama.Data;
 /// Represents an entity with a stable identity.
 /// </summary>
 /// <typeparam name="TKey">The identity type.</typeparam>
-public interface IGenkidamaEntity<out TKey>
+public interface IGenkidamaEntity<TKey>
 {
     /// <summary>
     /// Gets the entity identifier.
