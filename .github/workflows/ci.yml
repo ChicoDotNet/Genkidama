@@ -31,3 +31,6 @@ jobs:
 
       - name: Test
         run: dotnet test Genkidama.slnx --configuration Release --no-build --collect:"XPlat Code Coverage" --logger trx --results-directory TestResults
+
+      - name: Pack CLI Tool
+        run: dotnet pack src/Genkidama.Cli/Genkidama.Cli.csproj --configuration Release --no-build --output artifacts/packages
