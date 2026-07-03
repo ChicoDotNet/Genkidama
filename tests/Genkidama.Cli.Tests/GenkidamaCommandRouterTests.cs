@@ -1,4 +1,5 @@
 using Genkidama.Cli;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Genkidama.Cli.Tests;
 
