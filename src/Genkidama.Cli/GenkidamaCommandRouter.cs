@@ -13,8 +13,25 @@ internal static class GenkidamaCommandRouter
     /// <returns>The process exit code.</returns>
     internal static Task<int> ExecuteAsync(string[] args, TextWriter writer)
     {
-        var text = ResolveText(args);
-        writer.WriteLine(text);
+        if (IsNew(args))
+        {
+            return RunNewAsync(args[1], writer);
+        }
+
+        return WriteKnownAsync(args, writer);
+    }
+
+    private static bool IsNew(string[] args)
+        => args.Length == 2 && args[0] == "new";
+
+    private static Task<int> RunNewAsync(string appName, TextWriter writer)
+        => GenkidamaNewCommand.ExecuteAsync(
+            new NewSolutionOptions(appName, Environment.CurrentDirectory),
+            writer);
+
+    private static Task<int> WriteKnownAsync(string[] args, TextWriter writer)
+    {
+        writer.WriteLine(ResolveText(args));
         return Task.FromResult(0);
     }
 
