@@ -4,17 +4,16 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Genkidama.Cli.Tests;
 
 /// <summary>
-/// Tests the bootstrap command router.
+/// Tests packaged CLI behavior.
 /// </summary>
 [TestClass]
-public sealed class GenkidamaCommandRouterTests
+public sealed class DotNetToolPackageMetadataTests
 {
     /// <summary>
-    /// Verifies that the bootstrap command returns the CLI identifier.
+    /// Verifies that the CLI version matches the packaged version.
     /// </summary>
-    /// <returns>A task representing the asynchronous test.</returns>
     [TestMethod]
-    public async Task ExecuteAsync_WithVersionArgument_WritesIdentifier()
+    public async Task ExecuteAsync_WithVersion_WritesPackagedVersion()
     {
         using var writer = new StringWriter();
         var code = await GenkidamaCommandRouter.ExecuteAsync(["--version"], writer);

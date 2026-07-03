@@ -6,7 +6,7 @@ namespace Genkidama.Cli;
 internal static class GenkidamaInfo
 {
     /// <summary>
-    /// Gets the semantic identifier for the first CLI bootstrap.
+    /// Gets the semantic identifier for the packaged CLI.
     /// </summary>
-    internal const string SemanticIdentifier = "0.1.0-gen001";
+    internal const string SemanticIdentifier = "0.1.0-alpha.22";
 }
