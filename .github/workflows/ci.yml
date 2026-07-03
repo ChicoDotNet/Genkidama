@@ -30,4 +30,4 @@ jobs:
         run: dotnet build Genkidama.slnx --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test Genkidama.slnx --configuration Release --no-build --collect:"XPlat Code Coverage"
+        run: dotnet test Genkidama.slnx --configuration Release --no-build --collect:"XPlat Code Coverage" --logger trx --results-directory TestResults
