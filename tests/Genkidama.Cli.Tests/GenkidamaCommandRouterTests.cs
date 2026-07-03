@@ -19,6 +19,6 @@ public sealed class GenkidamaCommandRouterTests
         using var writer = new StringWriter();
         var code = await GenkidamaCommandRouter.ExecuteAsync(["--version"], writer);
         Assert.AreEqual(0, code);
-        Assert.AreEqual("0.1.0-gen001", writer.ToString().Trim());
+        Assert.AreEqual("0.1.0-alpha.22", writer.ToString().Trim());
     }
 }

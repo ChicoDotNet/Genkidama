@@ -18,16 +18,74 @@ internal static class GenkidamaCommandRouter
             return RunNewAsync(args[1], writer);
         }
 
+        if (IsAddEntity(args))
+        {
+            return RunAddEntityAsync(args[2], writer);
+        }
+
+        if (IsAddEnum(args))
+        {
+            return RunAddEnumAsync(args[2], args[3..], writer);
+        }
+
+        if (IsAddFeature(args))
+        {
+            return RunAddFeatureAsync(args[2], writer);
+        }
+
+        if (IsAddBlock(args))
+        {
+            return RunAddBlockAsync(args[2], writer);
+        }
+
         return WriteKnownAsync(args, writer);
     }
 
     private static bool IsNew(string[] args)
         => args.Length == 2 && args[0] == "new";
 
+    private static bool IsAddEntity(string[] args)
+        => args.Length == 3 && args[0] == "add" && args[1] == "entity";
+
+    private static bool IsAddEnum(string[] args)
+        => args.Length >= 3 && args[0] == "add" && args[1] == "enum";
+
+    private static bool IsAddFeature(string[] args)
+        => args.Length == 3 && args[0] == "add" && args[1] == "feature";
+
+    private static bool IsAddBlock(string[] args)
+        => args.Length == 3 && args[0] == "add" && args[1] == "block";
+
     private static Task<int> RunNewAsync(string appName, TextWriter writer)
         => GenkidamaNewCommand.ExecuteAsync(
             new NewSolutionOptions(appName, Environment.CurrentDirectory),
             writer);
+
+    private static Task<int> RunAddEntityAsync(string entityName, TextWriter writer)
+        => GenkidamaAddEntityCommand.ExecuteAsync(
+            new AddEntityOptions(CurrentAppName(), entityName, Environment.CurrentDirectory),
+            writer);
+
+    private static Task<int> RunAddEnumAsync(
+        string enumName,
+        IReadOnlyList<string> values,
+        TextWriter writer)
+        => GenkidamaAddEnumCommand.ExecuteAsync(
+            new AddEnumOptions(CurrentAppName(), enumName, values, Environment.CurrentDirectory),
+            writer);
+
+    private static Task<int> RunAddFeatureAsync(string featureName, TextWriter writer)
+        => GenkidamaAddFeatureCommand.ExecuteAsync(
+            new AddFeatureOptions(CurrentAppName(), featureName, Environment.CurrentDirectory),
+            writer);
+
+    private static Task<int> RunAddBlockAsync(string blockName, TextWriter writer)
+        => AddBlockRunner.RunAsync(
+            new AddComponentOptions(CurrentAppName(), blockName, Environment.CurrentDirectory),
+            writer);
+
+    private static string CurrentAppName()
+        => new DirectoryInfo(Environment.CurrentDirectory).Name;
 
     private static Task<int> WriteKnownAsync(string[] args, TextWriter writer)
     {

@@ -11,5 +11,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/Genkidama.Cli/Genkidama.Cli.csproj" />
+    <ProjectReference Include="../../src/Genkidama.Blueprints/Genkidama.Blueprints.csproj" />
   </ItemGroup>
 </Project>
