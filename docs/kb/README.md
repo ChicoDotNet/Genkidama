@@ -22,3 +22,4 @@ Generated code should follow the Knowledge Base. The CLI and blueprints should n
 
 - KB-001: Engineering standards consolidation.
 - KB-002: Architecture reference and solution composition.
+- KB-003: Architecture decision log.
