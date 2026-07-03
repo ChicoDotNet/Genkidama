@@ -17,6 +17,7 @@ Each decision should include:
 - ADR-0001: Solution membership.
 - ADR-0002: Documentation order.
 - ADR-0003: Runtime dependencies.
+- ADR-0004: Knowledge-first flow.
 
 ## Rules
 
@@ -24,3 +25,4 @@ Each decision should include:
 - Add a new ADR when the decision changes.
 - Keep decision titles stable so future documentation can link to them.
 - Record naming workarounds when they affect repository structure or public commands.
+- Record local developer experience issues when CI and Visual Studio behavior can diverge.
