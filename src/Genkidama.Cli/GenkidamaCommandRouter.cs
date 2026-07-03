@@ -23,6 +23,11 @@ internal static class GenkidamaCommandRouter
             return RunAddEntityAsync(args[2], writer);
         }
 
+        if (IsAddEnum(args))
+        {
+            return RunAddEnumAsync(args[2], args[3..], writer);
+        }
+
         return WriteKnownAsync(args, writer);
     }
 
@@ -32,6 +37,9 @@ internal static class GenkidamaCommandRouter
     private static bool IsAddEntity(string[] args)
         => args.Length == 3 && args[0] == "add" && args[1] == "entity";
 
+    private static bool IsAddEnum(string[] args)
+        => args.Length >= 3 && args[0] == "add" && args[1] == "enum";
+
     private static Task<int> RunNewAsync(string appName, TextWriter writer)
         => GenkidamaNewCommand.ExecuteAsync(
             new NewSolutionOptions(appName, Environment.CurrentDirectory),
@@ -40,6 +48,14 @@ internal static class GenkidamaCommandRouter
     private static Task<int> RunAddEntityAsync(string entityName, TextWriter writer)
         => GenkidamaAddEntityCommand.ExecuteAsync(
             new AddEntityOptions(CurrentAppName(), entityName, Environment.CurrentDirectory),
+            writer);
+
+    private static Task<int> RunAddEnumAsync(
+        string enumName,
+        IReadOnlyList<string> values,
+        TextWriter writer)
+        => GenkidamaAddEnumCommand.ExecuteAsync(
+            new AddEnumOptions(CurrentAppName(), enumName, values, Environment.CurrentDirectory),
             writer);
 
     private static string CurrentAppName()
