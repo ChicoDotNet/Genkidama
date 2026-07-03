@@ -7,6 +7,7 @@
     <Project Path="src/Genkidama.Application/Genkidama.Application.csproj" />
     <Project Path="src/Genkidama.Jobs/Genkidama.Jobs.csproj" />
     <Project Path="src/Genkidama.Events/Genkidama.Events.csproj" />
+    <Project Path="src/Genkidama.Access/Genkidama.Access.csproj" />
   </Folder>
   <Folder Name="/test/">
     <Project Path="tests/Genkidama.Cli.Tests/Genkidama.Cli.Tests.csproj" />
@@ -16,5 +17,6 @@
     <Project Path="tests/Genkidama.Application.Tests/Genkidama.Application.Tests.csproj" />
     <Project Path="tests/Genkidama.Jobs.Tests/Genkidama.Jobs.Tests.csproj" />
     <Project Path="tests/Genkidama.Events.Tests/Genkidama.Events.Tests.csproj" />
+    <Project Path="tests/Genkidama.Access.Tests/Genkidama.Access.Tests.csproj" />
   </Folder>
 </Solution>
