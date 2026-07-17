@@ -14,6 +14,7 @@ Generated code should follow the Knowledge Base. The CLI and blueprints should n
 
 - `standards/`: consolidated engineering standards and delivery checklists.
 - `architecture/`: reference architecture and architectural decisions.
+- `principles/`: design philosophy and guiding principles.
 - `skills/`: language, platform and client skill standards.
 - `catalog/`: educational examples and design pattern explanations.
 - `release/`: packaging, release and operational playbooks.
@@ -23,3 +24,4 @@ Generated code should follow the Knowledge Base. The CLI and blueprints should n
 - KB-001: Engineering standards consolidation.
 - KB-002: Architecture reference and solution composition.
 - KB-003: Architecture decision records.
+- KB-004: Design principles and philosophy.
