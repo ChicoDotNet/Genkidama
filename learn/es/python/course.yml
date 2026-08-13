@@ -4,8 +4,7 @@ language: Python
 locale: es
 source_locale: es
 title: Curso de Python desde cero — Construye un conciliador de facturas CSV
-authoring_status: pilot
-status: in_progress
+status: complete
 canonical_app:
   name: LedgerMatch
   summary: CLI local para importar facturas y pagos desde CSV, validar datos, conciliar importes, persistir resultados y generar reportes.
