@@ -79,7 +79,7 @@ Diagnosticar es reducir incertidumbre; optimizar es responder a evidencia, no a 
 
 ## Siguiente paso
 
-Continúa con la [Lección 16 — fallos operativos y checkpoint 04](16-hardening-operativo-y-checkpoint-04.md).
+Continúa con la [Lección 16 — operación confiable y checkpoint 04](16-operacion-confiable-y-checkpoint-04.md).
 
 ## Referencias
 
