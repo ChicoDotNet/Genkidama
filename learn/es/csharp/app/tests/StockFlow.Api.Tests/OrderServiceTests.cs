@@ -40,7 +40,7 @@ public sealed class OrderServiceTests
 
         Assert.IsTrue(result.IsSuccess);
         Assert.IsNotNull(result.Order);
-        Assert.HasCount(1, result.Order.Lines);
+        Assert.AreEqual(1, result.Order.Lines.Count);
         Assert.AreEqual(3, result.Order.Lines[0].Quantity);
         Assert.AreEqual(1, catalog.GetBySku("LAP-001")!.Stock);
     }
