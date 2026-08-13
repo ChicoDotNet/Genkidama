@@ -62,10 +62,11 @@ courses:
   haskell: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   cobol:
     status: in_progress
-    lessons_complete: 4
+    lessons_complete: 8
     lessons_total: 17
-    ci: pending
-    pr: 37
+    ci: green
+    last_green_executable_sha: 5eeb477264eb4afb4178e5d61d7a2f2b085270d6
+    pr: 39
     pilot_order: 4
   scala: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   groovy: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
