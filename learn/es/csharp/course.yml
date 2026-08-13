@@ -1,0 +1,38 @@
+schema_version: 1
+slug: csharp
+language: C#
+locale: es
+source_locale: es
+title: Curso de C# desde cero — Construye una API de inventario, pedidos y facturación
+status: in_progress
+canonical_app:
+  name: StockFlow
+  summary: API local para administrar productos, inventario, pedidos y facturación de una pequeña empresa.
+audience: beginner
+prerequisites: []
+lesson_count: 17
+toolchain:
+  verified_on: '2026-08-12'
+  version_tested: 10.0.10
+  language_version: C# 14
+  runtime_or_compiler: .NET SDK 10.0.x
+  package_or_build_tool: dotnet CLI
+  operating_systems_targeted:
+    - windows-11
+    - linux
+  operating_systems_tested:
+    - github-actions-ubuntu-latest
+ci:
+  supported: true
+  workflow: .github/workflows/learn-csharp.yml
+  isolation: path-scoped
+career_context:
+  uses:
+    - APIs y backend empresarial con ASP.NET Core
+    - aplicaciones y servicios de negocio sobre .NET
+    - cloud/backend y tooling en ecosistemas .NET
+  market_note: C# tiene un ecosistema profesional amplio; este curso prepara fundamentos y una API demostrable, no promete empleo ni sustituye experiencia profesional.
+official_references:
+  - https://learn.microsoft.com/dotnet/csharp/
+  - https://learn.microsoft.com/aspnet/core/
+  - https://dotnet.microsoft.com/platform/support/policy

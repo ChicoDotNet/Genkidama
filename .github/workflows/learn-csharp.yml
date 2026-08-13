@@ -1,0 +1,59 @@
+name: Learn C#
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'learn/es/csharp/**'
+      - '.github/workflows/learn-csharp.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'learn/es/csharp/**'
+      - '.github/workflows/learn-csharp.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  csharp:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore API
+        run: dotnet restore learn/es/csharp/app/src/StockFlow.Api/StockFlow.Api.csproj
+
+      - name: Restore tests
+        run: dotnet restore learn/es/csharp/app/tests/StockFlow.Api.Tests/StockFlow.Api.Tests.csproj
+
+      - name: Build API
+        run: dotnet build learn/es/csharp/app/src/StockFlow.Api/StockFlow.Api.csproj --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test learn/es/csharp/app/tests/StockFlow.Api.Tests/StockFlow.Api.Tests.csproj --configuration Release --no-restore
+
+      - name: Smoke test
+        shell: bash
+        run: |
+          dotnet run --project learn/es/csharp/app/src/StockFlow.Api/StockFlow.Api.csproj --configuration Release --no-build --urls http://127.0.0.1:5073 &
+          api_pid=$!
+          trap 'kill $api_pid 2>/dev/null || true' EXIT
+          for attempt in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:5073/health > /tmp/stockflow-health.json; then
+              cat /tmp/stockflow-health.json
+              exit 0
+            fi
+            sleep 1
+          done
+          echo 'StockFlow did not become healthy in time.' >&2
+          exit 1

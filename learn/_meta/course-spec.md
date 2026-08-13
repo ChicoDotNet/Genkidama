@@ -181,7 +181,7 @@ No se convierte el curso en una demostración comercial de IDE o nube.
 
 ## 11. CI
 
-Cuando exista una vía razonable, CI DEBE:
+Cuando exista una vía razonable, cada curso DEBE tener un gate ejecutable propio que:
 
 - instalar runtime/compiler;
 - restaurar dependencias;
@@ -189,6 +189,14 @@ Cuando exista una vía razonable, CI DEBE:
 - ejecutar tests;
 - demostrar que la aplicación principal puede construirse o ejecutarse;
 - usar formatter/linter/static analysis sólo si es estándar y ligero.
+
+El gate de un curso DEBE estar aislado por paths. Un cambio dentro de `learn/es/<slug>/**` NO DEBE disparar builds/tests de otros lenguajes.
+
+La validación común ligera de metadata, estructura y enlaces PUEDE ejecutarse ante cualquier cambio en `learn/**`, pero no sustituye al CI específico de cada curso.
+
+Cambios en `progress.yml`, `roadmap.md`, `decisions.md`, catálogo o documentación común NO DEBEN provocar accidentalmente una matriz de 45 toolchains.
+
+Si aparece infraestructura ejecutable realmente compartida, la revalidación transversal debe ser explícita y justificada.
 
 Una limitación real del runner se documenta; nunca se desactiva una prueba sólo para obtener verde.
 

@@ -1,13 +1,13 @@
 schema_version: 1
 initiative:
-  status: foundation_in_progress
+  status: pilots_in_progress
   source_locale: es
   last_updated: '2026-08-12'
-  active_work: shared_foundation
+  active_work: csharp_pilot
   v1_courses_total: 45
   v1_courses_complete: 0
 foundation:
-  status: in_progress
+  status: complete
   catalog: complete
   pedagogy: complete
   course_spec: complete
@@ -15,13 +15,13 @@ foundation:
   roadmap: complete
   decisions: complete
   validator: complete
-  ci: pending_pr_validation
+  ci: green
 courses:
   csharp:
-    status: planned
-    lessons_complete: 0
-    lessons_total: null
-    ci: not_configured
+    status: in_progress
+    lessons_complete: 4
+    lessons_total: 17
+    ci: configured_pending_validation
     pr: null
     pilot_order: 1
   typescript: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}

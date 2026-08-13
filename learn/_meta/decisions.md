@@ -116,3 +116,23 @@ Preferencia: un PR activo por curso durante su construcción.
 Se usan PRs stacked sólo cuando la dependencia mejora realmente continuidad/revisión.
 
 Nunca merge ni auto-merge por parte de la iniciativa autónoma.
+
+## GL-012 — CI ejecutable aislado por curso/lenguaje
+
+**Fecha:** 2026-08-12  
+**Estado:** aceptada
+
+Cada curso DEBE disponer de un gate de CI ejecutable independiente y acotado por paths del propio curso.
+
+Un cambio localizado en `learn/es/vba/**`, por ejemplo, NO DEBE compilar ni ejecutar las pruebas de los otros 44 lenguajes. Debe ejecutar únicamente:
+
+1. la validación común ligera de Genkidama Learn; y
+2. el build/test/lint/smoke específico de VBA que técnicamente corresponda.
+
+La misma regla aplica a todos los cursos.
+
+La implementación preferida es un workflow por curso, por ejemplo `.github/workflows/learn-csharp.yml`, con filtros `paths` sobre `learn/es/csharp/**` y sobre su propio workflow. Puede sustituirse por un dispatcher/matriz dinámica sólo si preserva exactamente el mismo aislamiento observable.
+
+Cambios puramente operativos en `progress.yml`, `roadmap.md`, `decisions.md`, catálogo o documentación común NO DEBEN provocar por sí mismos una fan-out de builds de los 45 toolchains.
+
+Si en el futuro se introduce infraestructura ejecutable realmente compartida entre cursos, su cambio puede requerir una revalidación más amplia, pero esa expansión debe ser explícita y justificada; nunca accidental.
