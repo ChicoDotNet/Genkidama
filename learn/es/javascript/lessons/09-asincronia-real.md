@@ -43,7 +43,7 @@ Explica event loop frente a ejecución multihilo.
 `async/await` coordina I/O; no debe contaminar lógica pura sin motivo.
 
 ## Siguiente paso
-La Lección 10 llevará esta frontera asíncrona a IndexedDB y documentará la migración del almacenamiento anterior.
+Continúa con [Lección 10 — Persistencia estructurada](10-persistencia-estructurada.md).
 
 ## Referencias
 - [Using promises — MDN](https://developer.mozilla.org/docs/Web/JavaScript/Guide/Using_promises)
