@@ -21,3 +21,5 @@ grep -F "BANDA|HASTA10|EMPLEADOS=2|NETO=14812.10" report.txt
 grep -F "BANDA|HASTA20|EMPLEADOS=0|NETO=0.00" report.txt
 grep -F "BANDA|MAS20|EMPLEADOS=1|NETO=6000.00" report.txt
 printf 'NominaBatch smoke: OK\n'
+
+bash tests/operational.sh
