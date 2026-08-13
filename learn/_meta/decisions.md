@@ -156,3 +156,19 @@ Reglas:
 8. Los warnings de CI forman parte de la señal de calidad. Un gate verde con advertencias de deprecación conocidas no se considera estado ideal si existe una actualización soportada y razonable.
 
 Aplicación inicial de esta decisión: `actions/checkout@v7` y `actions/setup-dotnet@v6` reemplazan generaciones basadas en Node 20 donde correspondía, sin cambiar el objetivo .NET 10 LTS/C# 14 del curso.
+
+## GL-014 — Reporte ASBN SCRUMban por interacción autónoma
+
+**Fecha:** 2026-08-12  
+**Estado:** aceptada localmente
+
+Cada lane autónomo de Genkidama Learn termina su interacción con un reporte breve y comparable basado en ASBN SCRUMban:
+
+1. **¿Cómo estás?** Estado operativo actual del frente: sano, con deuda, con riesgo o esperando una interacción externa.
+2. **¿En qué avanzaste desde la última interacción?** Cambios concretos y dos estimaciones: porcentaje del incremento/curso actualmente construido y porcentaje global estimado de Genkidama Learn v1. Los porcentajes son aproximados y deben explicar su base cuando pueda inducir a error.
+3. **¿En qué planeas avanzar para la próxima interacción?** El siguiente incremento coherente, preferentemente sobre el mismo curso/PR incompleto.
+4. **¿Qué te bloquea?** No significa bloqueo absoluto. Aquí se reporta cualquier obstáculo parcial que una interacción humana pueda desbloquear: información faltante, decisión entre alternativas con consecuencias relevantes, permisos/credenciales, acción del mundo real, revisión requerida o dependencia externa. Si nada requiere interacción humana, responder explícitamente `Nada`.
+
+El reporte no sustituye pruebas, CI, `progress.yml`, roadmap ni decisiones. Es una vista ejecutiva del estado y debe ser factual, concisa y útil para decidir si intervenir.
+
+Esta adopción local permanece aunque el formato se formalice posteriormente dentro de `asbn-senior-tdd-developer` o en un skill ASBN independiente de reporting.
