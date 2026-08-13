@@ -4,8 +4,7 @@ language: JavaScript
 locale: es
 source_locale: es
 title: Curso de JavaScript desde cero — Construye un Kanban offline-first
-authoring_status: pilot
-status: in_progress
+status: complete
 canonical_app:
   name: Kanban Local
   summary: PWA offline-first principalmente nativa para organizar tareas en columnas, persistirlas localmente y operar sin cuenta ni backend.
