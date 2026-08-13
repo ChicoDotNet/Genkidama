@@ -53,7 +53,7 @@ Sólo después de tu intento consulta [`../solutions/checkpoint-01.md`](../solut
 - checkpoint 01 modifica una regla real sin reescribir el programa.
 
 ## Siguiente paso
-El siguiente incremento ampliará NominaBatch con mejores contratos reutilizables, reportes y pruebas antes de introducir conceptos más avanzados.
+Continúa con la [Lección 05 — Copybooks y contratos de datos](05-copybooks.md).
 
 ## Referencias
 - [Manual de GnuCOBOL](https://gnucobol.sourceforge.io/doc/gnucobol.html)
