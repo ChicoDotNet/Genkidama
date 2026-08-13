@@ -24,11 +24,11 @@ bash tools/verify.sh
 
 En Windows el ejecutable generado será `nomina.exe`. La entrada canónica vive en `data/employees.dat` y el resultado en `report.txt`.
 
-El workflow `.github/workflows/learn-cobol.yml` ejecuta `tests/smoke.sh`; ese smoke ahora incluye tanto resultados de negocio como escenarios operativos. `tools/verify.sh` es el wrapper local equivalente.
+El workflow `.github/workflows/learn-cobol.yml` ejecuta `tests/smoke.sh`; ese smoke incluye resultados de negocio y escenarios operativos. `tools/verify.sh` es el wrapper local equivalente.
 
-## Ruta actual
+## Ruta del curso
 
-Estado: **16 de 17 lecciones implementadas**.
+Estado: **17 de 17 lecciones implementadas — curso completo**.
 
 1. [Tu primer batch COBOL](lessons/01-tu-primer-batch-cobol.md)
 2. [Datos `PIC` y registros](lessons/02-datos-pic-y-registros.md)
@@ -46,13 +46,15 @@ Estado: **16 de 17 lecciones implementadas**.
 14. [Tooling y gate profesional](lessons/14-tooling-y-gate-profesional.md)
 15. [Diagnóstico y rendimiento con evidencia](lessons/15-diagnostico-y-rendimiento.md)
 16. [Operación confiable y checkpoint 04](lessons/16-operacion-confiable-y-checkpoint-04.md)
+17. [Evaluación final COBOL sin receta](lessons/17-evaluacion-final.md)
 
-## Checkpoints
+## Checkpoints y evaluación
 
 - [Checkpoint 01 — Regla de horas extra](exercises/checkpoint-01.md) · [solución](solutions/checkpoint-01.md)
 - [Checkpoint 02 — Reconciliación de registros](exercises/checkpoint-02.md) · [solución](solutions/checkpoint-02.md)
 - [Checkpoint 03 — Reconciliar agregados por banda](exercises/checkpoint-03.md) · [solución](solutions/checkpoint-03.md)
 - [Checkpoint 04 — Invariantes operativas](exercises/checkpoint-04.md) · [solución](solutions/checkpoint-04.md)
+- [Evaluación final](exercises/evaluacion-final.md) · [rúbrica](exercises/rubrica-final.md) · [solución de referencia](solutions/evaluacion-final.md)
 
 ## Qué sabrás hacer al terminar
 
@@ -61,6 +63,14 @@ Leer y escribir COBOL sencillo; modelar datos con `PIC` y `OCCURS`; recorrer tab
 ## Cómo hablar de este proyecto en una entrevista
 
 Cuenta el flujo de negocio antes de la sintaxis: entrada batch → validación → cálculo decimal → reporte → controles → pruebas. Explica por qué `FILE STATUS` y los códigos de retorno hacen operable un batch, por qué el copybook es un contrato de datos, cómo `OCCURS` modela agregados fijos y por qué un ID duplicado se rechaza antes de afectar cifras. Menciona que el smoke cubre camino funcional y escenarios operativos reproducibles. Distingue GnuCOBOL local de un entorno mainframe real y no afirmes experiencia que el proyecto no demuestra.
+
+Preguntas probables:
+
+- ¿Por qué un registro inválido no debe modificar acumuladores?
+- ¿Qué aporta `FILE STATUS` a la operación de un batch?
+- ¿Cómo modelas precisión decimal con `PIC`?
+- ¿Cuándo dejaría de ser razonable una búsqueda lineal de IDs?
+- ¿Qué demuestra NominaBatch y qué no demuestra sobre z/OS o CICS?
 
 ## FAQ
 
@@ -101,4 +111,4 @@ Cuenta el flujo de negocio antes de la sintaxis: entrada batch → validación �
 
 ## Siguiente paso
 
-Empieza con la [Lección 1](lessons/01-tu-primer-batch-cobol.md). Si ya completaste el bloque actual, resuelve el checkpoint 04 antes de la evaluación final sin receta.
+Empieza con la [Lección 1](lessons/01-tu-primer-batch-cobol.md). Al terminar las 17 lecciones y cuatro checkpoints, resuelve la [evaluación final](exercises/evaluacion-final.md) sin abrir primero la solución de referencia.
