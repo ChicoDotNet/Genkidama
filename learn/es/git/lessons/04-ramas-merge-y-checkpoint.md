@@ -160,7 +160,7 @@ Explica por qué esa salida es una mejor evidencia para decidir si una branch lo
 
 ## Siguiente paso
 
-El siguiente incremento incorporará remotos, sincronización y colaboración. Antes de eso, el checkpoint debe demostrar que controlas un flujo **completamente local** sin depender de GitHub.
+Continúa con la [Lección 05 — Remotos: clone, fetch, pull y push](05-remotos-clone-fetch-pull-push.md).
 
 ## Referencias
 

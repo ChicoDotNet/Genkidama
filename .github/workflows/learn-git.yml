@@ -25,23 +25,26 @@ jobs:
       - name: Report Git version
         run: git --version
 
-      - name: Verify ReleaseDesk lessons 1-4 flow
+      - name: Verify ReleaseDesk lessons 1-8 flow
         shell: bash
         run: |
           set -euo pipefail
 
-          lab="$(mktemp -d)"
-          trap 'rm -rf "$lab"' EXIT
-          cp -R learn/es/git/app/. "$lab/"
-          cd "$lab"
+          workspace="$(mktemp -d)"
+          trap 'rm -rf "$workspace"' EXIT
+          alpha="$workspace/alpha"
+          beta="$workspace/beta"
+          remote="$workspace/origin.git"
+          mkdir -p "$alpha"
+          cp -R learn/es/git/app/. "$alpha/"
+          cd "$alpha"
 
           git init -b main
-          git config user.name "Genkidama CI"
-          git config user.email "genkidama-ci@example.invalid"
+          git config user.name "Genkidama Alpha"
+          git config user.email "alpha@example.invalid"
 
           git add README.md CHANGELOG.md .gitignore docs/plan.md
           git commit -m "chore: iniciar ReleaseDesk"
-          test "$(git branch --show-current)" = "main"
           test -z "$(git status --porcelain)"
 
           printf '\nCambio accidental\n' >> README.md
@@ -66,13 +69,106 @@ jobs:
           EOF
           git add CHANGELOG.md
           git commit -m "docs: preparar notas de entrega 0.2"
-
           git switch main
           git merge feature/release-notes
           git branch -d feature/release-notes
 
-          test "$(git branch --show-current)" = "main"
+          git init --bare "$remote"
+          git remote add origin "$remote"
+          git push -u origin main
+          git clone "$remote" "$beta"
+          git -C "$beta" config user.name "Genkidama Beta"
+          git -C "$beta" config user.email "beta@example.invalid"
+
+          printf '\n- revisar el diff antes de integrar;\n' >> "$beta/docs/plan.md"
+          git -C "$beta" add docs/plan.md
+          git -C "$beta" commit -m "docs: agregar criterio de revisión"
+          git -C "$beta" push origin main
+
+          git fetch origin
+          test "$(git rev-parse main)" != "$(git rev-parse origin/main)"
+          git merge --ff-only origin/main
+          test "$(git rev-parse main)" = "$(git rev-parse origin/main)"
+
+          cat > CHANGELOG.md <<'EOF'
+          # Changelog
+
+          ## 0.3 — Reconciliación
+
+          - Alpha exige checklist previa a publicar.
+          EOF
+          git add CHANGELOG.md
+          git commit -m "docs: definir criterio alpha"
+
+          cat > "$beta/CHANGELOG.md" <<'EOF'
+          # Changelog
+
+          ## 0.3 — Reconciliación
+
+          - Beta exige responsable explícito de la entrega.
+          EOF
+          git -C "$beta" add CHANGELOG.md
+          git -C "$beta" commit -m "docs: definir criterio beta"
+          git -C "$beta" push origin main
+
+          git fetch origin
+          if git merge origin/main; then
+            echo "Expected a merge conflict but merge succeeded" >&2
+            exit 1
+          fi
+          grep -q '<<<<<<<' CHANGELOG.md
+          cat > CHANGELOG.md <<'EOF'
+          # Changelog
+
+          ## 0.3 — Reconciliación
+
+          - La entrega exige checklist previa a publicar.
+          - La entrega identifica responsable explícito.
+          EOF
+          git add CHANGELOG.md
+          git diff --staged --check
+          git commit -m "merge: reconciliar criterios de entrega"
+          git push origin main
+
+          git switch -c feature/release-summary
+          cat > docs/release-checklist.md <<'EOF'
+          # Checklist de entrega
+
+          - Revisar diff.
+          - Confirmar responsable.
+          - Confirmar alcance.
+          EOF
+          git add docs/release-checklist.md
+          git commit -m "docs: agregar checklist de entrega"
+          git push -u origin feature/release-summary
+          test -n "$(git log --oneline origin/main..HEAD)"
+          git diff --check origin/main...HEAD
+
+          git switch main
+          git switch -c feature/rebase-demo
+          cat > docs/rebase-demo.md <<'EOF'
+          # Rebase demo
+
+          Esta feature permanece privada hasta actualizar su base.
+          EOF
+          git add docs/rebase-demo.md
+          git commit -m "docs: preparar demo de rebase"
+          old_feature_sha="$(git rev-parse HEAD)"
+
+          git -C "$beta" pull --ff-only
+          printf '\nLa bitácora se revisa antes de publicar.\n' >> "$beta/README.md"
+          git -C "$beta" add README.md
+          git -C "$beta" commit -m "docs: aclarar revisión previa"
+          git -C "$beta" push origin main
+
+          git fetch origin
+          git rebase origin/main
+          new_feature_sha="$(git rev-parse HEAD)"
+          test "$old_feature_sha" != "$new_feature_sha"
+          git merge-base --is-ancestor origin/main HEAD
+          test -n "$(git log --oneline origin/main..HEAD)"
+          git diff --check origin/main...HEAD
+          git push -u origin feature/rebase-demo
           test -z "$(git status --porcelain)"
-          test "$(git rev-list --count HEAD)" -ge 3
-          grep -q '0.2 — Preparación' CHANGELOG.md
+
           git log --oneline --decorate --graph --all
