@@ -5,7 +5,7 @@ locale: es
 source_locale: es
 title: Curso de COBOL desde cero — Construye un procesador batch de nómina
 authoring_status: pilot
-status: in_progress
+status: complete
 canonical_app:
   name: NominaBatch
   summary: Procesador batch local que lee empleados desde archivo secuencial, valida registros, calcula percepciones y deducciones y genera un reporte reproducible.
