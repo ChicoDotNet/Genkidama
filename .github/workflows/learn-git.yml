@@ -1,0 +1,78 @@
+name: Learn Git
+
+on:
+  pull_request:
+    paths:
+      - 'learn/es/git/**'
+      - '.github/workflows/learn-git.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'learn/es/git/**'
+      - '.github/workflows/learn-git.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify-git-course:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Report Git version
+        run: git --version
+
+      - name: Verify ReleaseDesk lessons 1-4 flow
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          lab="$(mktemp -d)"
+          trap 'rm -rf "$lab"' EXIT
+          cp -R learn/es/git/app/. "$lab/"
+          cd "$lab"
+
+          git init -b main
+          git config user.name "Genkidama CI"
+          git config user.email "genkidama-ci@example.invalid"
+
+          git add README.md CHANGELOG.md .gitignore docs/plan.md
+          git commit -m "chore: iniciar ReleaseDesk"
+          test "$(git branch --show-current)" = "main"
+          test -z "$(git status --porcelain)"
+
+          printf '\nCambio accidental\n' >> README.md
+          test -n "$(git diff -- README.md)"
+          git restore README.md
+          test -z "$(git diff -- README.md)"
+
+          printf '\n- registrar cada cambio como una unidad revisable;\n' >> docs/plan.md
+          git add docs/plan.md
+          test -n "$(git diff --staged -- docs/plan.md)"
+          git restore --staged docs/plan.md
+          test -n "$(git diff -- docs/plan.md)"
+          git add docs/plan.md
+          git commit -m "docs: aclarar alcance de ReleaseDesk"
+
+          git switch -c feature/release-notes
+          cat >> CHANGELOG.md <<'EOF'
+
+          ## 0.2 — Preparación
+
+          - Se agregó una línea de trabajo independiente para las notas de entrega.
+          EOF
+          git add CHANGELOG.md
+          git commit -m "docs: preparar notas de entrega 0.2"
+
+          git switch main
+          git merge feature/release-notes
+          git branch -d feature/release-notes
+
+          test "$(git branch --show-current)" = "main"
+          test -z "$(git status --porcelain)"
+          test "$(git rev-list --count HEAD)" -ge 3
+          grep -q '0.2 — Preparación' CHANGELOG.md
+          git log --oneline --decorate --graph --all
