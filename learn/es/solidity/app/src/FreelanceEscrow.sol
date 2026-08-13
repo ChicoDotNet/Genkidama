@@ -4,7 +4,12 @@ pragma solidity 0.8.35;
 /// @title FreelanceEscrow
 /// @notice Educational escrow for a single freelance project.
 contract FreelanceEscrow {
-    enum State { Funded, Delivered, Released, Refunded }
+    enum State {
+        Funded,
+        Delivered,
+        Released,
+        Refunded
+    }
 
     address public immutable client;
     address public immutable freelancer;
