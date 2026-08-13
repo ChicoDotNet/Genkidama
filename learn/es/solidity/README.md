@@ -22,7 +22,7 @@ La misma aplicación crece para enseñar tipos, estado, funciones, visibilidad, 
 
 ## Estado del curso
 
-**12/17 lecciones del piloto completadas.** El vertical actual compila y pasa su suite con Foundry en CI sobre Ubuntu 24.04. Además de ABI, eventos e interfaces, la suite ya incluye propiedades fuzz sobre montos y autorización y una prueba de composición con un receptor contractual que rechaza Ether.
+**12/17 lecciones están publicadas.** El último corte ejecutable confirmado permanece en **8/17** mientras el bloque 09–12 corrige un fallo de `forge fmt --check` introducido por las nuevas pruebas fuzz. `Genkidama Learn` valida estructura y enlaces del bloque; `progress.yml` no avanzará hasta que formato, build y tests de `Learn Solidity` vuelvan a verde.
 
 ## Qué necesitas instalar
 
