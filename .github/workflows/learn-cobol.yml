@@ -27,6 +27,7 @@ jobs:
 
       - name: Install GnuCOBOL 3.2
         run: |
+          brew update
           brew install gnucobol
           cobc --version
 
