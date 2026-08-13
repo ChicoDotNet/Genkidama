@@ -1,6 +1,6 @@
 # Curso de C# desde cero — Construye una API de inventario, pedidos y facturación
 
-Este curso enseña C# desde cero construyendo **StockFlow**, una API local para una pequeña empresa. No empieza con seis horas de sintaxis: en la primera lección levantas un servidor, consultas un endpoint y ves datos reales. Después usamos esa aplicación para aprender tipos, colecciones, funciones, validación, diseño orientado a objetos, errores, persistencia, pruebas y arquitectura.
+Este curso enseña C# desde cero construyendo **StockFlow**, una API local para una pequeña empresa. No empieza con horas de sintaxis: en la primera lección levantas un servidor y ves datos reales. Después la misma aplicación introduce tipos, colecciones, LINQ, validación, pedidos, persistencia, asincronía, pruebas y arquitectura.
 
 ## ¿Qué es C# y para qué se utiliza?
 
@@ -12,42 +12,25 @@ Sí. No necesitas haber programado antes. El curso presupone únicamente que pue
 
 ## ¿Qué vas a construir?
 
-**StockFlow** crecerá durante 17 lecciones hasta administrar:
+**StockFlow** crecerá durante 17 lecciones hasta administrar productos, existencias, pedidos y facturación simplificada, con persistencia local, manejo explícito de errores, pruebas y documentación.
 
-- productos y existencias;
-- altas, consultas y filtros con validación;
-- pedidos con líneas y totales;
-- reserva atómica de inventario;
-- persistencia local;
-- facturación simplificada para fines educativos;
-- manejo explícito de errores;
-- pruebas unitarias y de API;
-- documentación de uso.
-
-La aplicación canónica vive en [`app/`](app/). No depende del CLI principal de Genkidama ni de código fuera de esta carpeta de curso.
+La aplicación canónica vive en [`app/`](app/) y no depende del CLI principal de Genkidama.
 
 ## Tooling verificado
 
-La línea elegida es **.NET 10 LTS / C# 14**. La metadata exacta vive en [`course.yml`](course.yml).
+La línea elegida es **.NET 10 LTS / C# 14**. La metadata exacta vive en [`course.yml`](course.yml). Para SQLite se usa `Microsoft.Data.Sqlite 10.0.10`, proveedor ADO.NET ligero, sin ORM en esta etapa.
 
-Objetivo de uso:
-
-- Windows 11 + PowerShell + VS Code;
-- Linux actual + bash + VS Code.
-
-No necesitas Azure, una base de datos comercial ni un IDE de pago.
+Objetivo de uso: Windows 11 + PowerShell + VS Code y Linux actual + bash + VS Code.
 
 ## Instalar
 
-Instala el SDK de .NET 10 desde la documentación oficial y comprueba:
+Instala el SDK de .NET 10 y comprueba:
 
 ```bash
 dotnet --version
 ```
 
 ## Build
-
-Desde esta carpeta:
 
 ```bash
 dotnet build app/src/StockFlow.Api/StockFlow.Api.csproj
@@ -65,44 +48,28 @@ dotnet test app/tests/StockFlow.Api.Tests/StockFlow.Api.Tests.csproj
 dotnet run --project app/src/StockFlow.Api/StockFlow.Api.csproj --urls http://localhost:5073
 ```
 
-Después abre `http://localhost:5073/health` o ejecuta:
-
-```bash
-curl http://localhost:5073/api/products
-```
+Después abre `http://localhost:5073/health` o consulta `http://localhost:5073/api/products`.
 
 ## Qué sabrás hacer al terminar
 
-Al completar el curso deberías poder:
-
-- leer y escribir C# sencillo e idiomático;
-- modelar datos con tipos propios;
-- trabajar con condiciones, funciones, colecciones y LINQ;
-- dividir responsabilidades en clases y servicios pequeños;
-- validar entradas y representar errores de manera explícita;
-- crear y modificar endpoints HTTP sencillos;
-- persistir datos localmente cuando el dominio lo requiera;
-- escribir y ejecutar pruebas con MSTest;
-- depurar errores frecuentes;
-- introducir una mejora nueva sin seguir una receta paso a paso;
-- explicar la arquitectura de StockFlow en una entrevista junior.
+Deberías poder leer y escribir C# sencillo e idiomático; modelar datos; trabajar con colecciones y LINQ; crear endpoints; separar reglas de I/O; manejar errores; persistir datos; usar async/cancelación; escribir pruebas; depurar problemas y extender una base existente sin receta paso a paso.
 
 ## Ruta del curso
 
-Estado actual: **8 de 17 lecciones implementadas**.
+Estado actual: **12 de 17 lecciones implementadas**.
 
 1. [Tu primera API en ejecución](lessons/01-tu-primera-api.md)
 2. [Productos, variables y tipos que representan negocio](lessons/02-productos-y-tipos.md)
 3. [Validación y errores que el usuario puede entender](lessons/03-validacion-y-errores.md)
 4. [Pruebas y primer checkpoint profesional](lessons/04-pruebas-y-checkpoint.md)
-5. [Consultas, colecciones y filtros](lessons/05-consultas-colecciones-y-filtros.md)
-6. [Funciones, LINQ y transformaciones](lessons/06-linq-y-transformaciones.md)
-7. [El primer pedido](lessons/07-el-primer-pedido.md)
-8. [Composición, reglas del dominio y segundo checkpoint](lessons/08-composicion-reglas-y-checkpoint.md)
-9. Errores HTTP y límites de la API
-10. Persistencia local con SQLite
-11. I/O asíncrono y cancelación
-12. Inyección de dependencias sin magia
+5. [Consultas, colecciones y filtros](lessons/05-consultas-colecciones-filtros.md)
+6. [Funciones, LINQ y transformaciones](lessons/06-linq-transformaciones.md)
+7. [El primer pedido](lessons/07-primer-pedido.md)
+8. [Clases, composición y reglas de dominio](lessons/08-composicion-reglas-dominio.md)
+9. [Errores HTTP que forman parte del contrato](lessons/09-contratos-http.md)
+10. [Persistencia local con SQLite](lessons/10-persistencia-sqlite.md)
+11. [I/O asíncrono y cancelación](lessons/11-async-y-cancelacion.md)
+12. [Inyección de dependencias sin magia](lessons/12-inyeccion-dependencias.md)
 13. Pruebas de endpoints y regresiones
 14. Documentación de API y contratos
 15. Debugging, logging y diagnóstico
@@ -111,61 +78,52 @@ Estado actual: **8 de 17 lecciones implementadas**.
 
 ## Checkpoints
 
-- Después de la lección 4: [`checkpoint-01`](exercises/checkpoint-01.md) y su [`solución de referencia`](solutions/checkpoint-01.md).
-- Después de la lección 8: [`checkpoint-02`](exercises/checkpoint-02.md) y su [`solución de referencia`](solutions/checkpoint-02.md).
+- después de la lección 4: [`checkpoint-01`](exercises/checkpoint-01.md);
+- después de la lección 8: [`checkpoint-02`](exercises/checkpoint-02.md);
+- después de la lección 12: [`checkpoint-03`](exercises/checkpoint-03.md).
 
 ## ¿Qué tipo de trabajo utiliza estas habilidades?
 
-Las habilidades del curso aparecen en desarrollo backend/.NET, APIs empresariales, mantenimiento y evolución de aplicaciones de negocio y automatización sobre .NET. El curso busca darte una base demostrable; no garantiza contratación ni reemplaza la práctica en equipos reales.
+Las habilidades del curso aparecen en desarrollo backend/.NET, APIs empresariales, mantenimiento y evolución de aplicaciones de negocio y automatización sobre .NET. El curso busca una base demostrable; no garantiza contratación ni reemplaza práctica en equipos reales.
 
 ## Preguntas frecuentes
 
 ### ¿Necesito Visual Studio?
-
-No. VS Code y la CLI de .NET son suficientes para el curso.
+No. VS Code y la CLI de .NET son suficientes.
 
 ### ¿Por qué ASP.NET Core si el curso es de C#?
+Porque una API pequeña vuelve visibles problemas cercanos al trabajo real sin convertir el material en un curso de frontend.
 
-Porque una API pequeña convierte conceptos del lenguaje en capacidades visibles y cercanas al trabajo real. El framework se mantiene deliberadamente pequeño: la prioridad sigue siendo aprender C#.
+### ¿Por qué SQLite sin Entity Framework?
+Porque primero queremos ver SQL, conexiones, serialización, `async` y una frontera de persistencia. Un ORM puede estudiarse después sobre fundamentos entendidos.
 
-### ¿Por qué no empezamos con Entity Framework?
-
-Porque primero necesitas comprender los tipos, las colecciones, las reglas y los errores que luego persistiremos. La base de datos aparece cuando resuelve un problema real de StockFlow.
+### ¿Persiste ya todo el inventario?
+No. En este incremento persiste el historial de pedidos; el catálogo sigue en memoria. Esa limitación es intencional y sirve para discutir consistencia y próximos pasos, no para fingir que StockFlow ya es producción.
 
 ### ¿Tengo que aprender Git aquí?
-
-No. Sólo necesitas obtener los archivos. Git tendrá su propio curso.
+No. Git tendrá su propio curso.
 
 ## Glosario inicial
 
-- **SDK:** herramientas para compilar, ejecutar y probar aplicaciones .NET.
-- **Runtime:** entorno que ejecuta una aplicación .NET.
-- **Endpoint:** combinación de ruta y operación HTTP que expone una capacidad.
-- **Record:** tipo de C# útil para representar datos con semántica de valor.
-- **Servicio:** objeto que concentra una responsabilidad o conjunto pequeño de reglas.
-- **LINQ:** conjunto de operadores de consulta integrados en .NET para trabajar con secuencias.
-- **Composición:** construir un comportamiento mediante objetos que colaboran en lugar de una jerarquía innecesaria.
-- **Test:** código que comprueba automáticamente un comportamiento esperado.
+- **SDK:** herramientas para compilar, ejecutar y probar .NET.
+- **Endpoint:** ruta y operación HTTP que expone una capacidad.
+- **Record:** tipo C# con semántica de valor útil para datos.
+- **Repositorio:** frontera que guarda y recupera objetos del dominio.
+- **CancellationToken:** señal cooperativa para detener trabajo que dejó de ser útil.
+- **DI:** técnica para recibir dependencias en lugar de construirlas ocultamente.
 
 ## Cómo hablar de este proyecto en una entrevista
 
-Cuando el curso esté completo podrás explicar decisiones como:
-
-- por qué empezaste en memoria antes de agregar persistencia;
-- dónde viven las reglas de inventario y por qué no están mezcladas con HTTP;
-- cómo representas un error de validación;
-- por qué una reserva de varias líneas debe ser todo-o-nada;
-- cómo una dependencia como el reloj se vuelve controlable en pruebas;
-- qué prueba protege una regla importante;
-- qué cambiarías si StockFlow tuviera múltiples instancias o miles de solicitudes concurrentes.
+Prepárate para explicar por qué empezaste en memoria, qué problema justificó SQLite, por qué `OrderService` no conoce SQL, cómo proteges el stock si guardar falla, dónde viaja `CancellationToken`, y qué cambiarías para persistir inventario y pedidos bajo una transacción real.
 
 ## Referencias oficiales
 
 - [Documentación de C#](https://learn.microsoft.com/dotnet/csharp/)
 - [ASP.NET Core](https://learn.microsoft.com/aspnet/core/)
+- [Microsoft.Data.Sqlite](https://learn.microsoft.com/dotnet/standard/data/sqlite/)
 - [Política de soporte de .NET](https://dotnet.microsoft.com/platform/support/policy)
 - [MSTest](https://learn.microsoft.com/dotnet/core/testing/unit-testing-mstest-intro)
 
 ## Siguiente paso
 
-Empieza en la [Lección 1](lessons/01-tu-primera-api.md). La meta no es memorizar sintaxis: es comprender por qué cada incremento existe y poder modificarlo por tu cuenta.
+Empieza en la [Lección 1](lessons/01-tu-primera-api.md). La meta no es memorizar sintaxis: es poder comprender y modificar StockFlow por tu cuenta.

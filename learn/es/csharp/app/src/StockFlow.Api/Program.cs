@@ -3,10 +3,15 @@ using StockFlow.Api.Products;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<ProductCatalog>();
-builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
+builder.Services.AddSingleton<IOrderRepository>(_ =>
+    new SqliteOrderRepository("Data Source=stockflow.db"));
 builder.Services.AddSingleton<OrderService>();
 
 var app = builder.Build();
+
+var orderRepository = app.Services.GetRequiredService<IOrderRepository>();
+await orderRepository.InitializeAsync();
 
 app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 
@@ -16,7 +21,9 @@ app.MapGet("/api/products", (string? search, int? maxStock, ProductCatalog catal
 app.MapGet("/api/products/{sku}", (string sku, ProductCatalog catalog) =>
 {
     var product = catalog.GetBySku(sku);
-    return product is null ? Results.NotFound() : Results.Ok(product);
+    return product is null
+        ? Results.Problem(statusCode: StatusCodes.Status404NotFound, title: "Producto no encontrado")
+        : Results.Ok(product);
 });
 
 app.MapPost("/api/products", (CreateProductRequest request, ProductCatalog catalog) =>
@@ -25,18 +32,28 @@ app.MapPost("/api/products", (CreateProductRequest request, ProductCatalog catal
 
     return result.IsSuccess
         ? Results.Created($"/api/products/{result.Product!.Sku}", result.Product)
-        : Results.BadRequest(new { error = result.Error });
+        : Results.Problem(
+            statusCode: StatusCodes.Status400BadRequest,
+            title: "Producto inválido",
+            detail: result.Error);
 });
 
-app.MapGet("/api/orders", (OrderService orders) => Results.Ok(orders.GetAll()));
+app.MapGet("/api/orders", async (OrderService orders, CancellationToken cancellationToken) =>
+    Results.Ok(await orders.GetAllAsync(cancellationToken)));
 
-app.MapPost("/api/orders", (CreateOrderRequest request, OrderService orders) =>
+app.MapPost("/api/orders", async (
+    CreateOrderRequest request,
+    OrderService orders,
+    CancellationToken cancellationToken) =>
 {
-    var result = orders.TryCreate(request);
+    var result = await orders.TryCreateAsync(request, cancellationToken);
 
     return result.IsSuccess
         ? Results.Created($"/api/orders/{result.Order!.Id}", result.Order)
-        : Results.BadRequest(new { error = result.Error });
+        : Results.Problem(
+            statusCode: StatusCodes.Status400BadRequest,
+            title: "Pedido inválido",
+            detail: result.Error);
 });
 
 app.Run();

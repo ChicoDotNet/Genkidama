@@ -2,22 +2,17 @@ using StockFlow.Api.Products;
 
 namespace StockFlow.Api.Orders;
 
-public sealed class OrderService(ProductCatalog catalog, TimeProvider timeProvider)
+public sealed class OrderService(
+    ProductCatalog catalog,
+    IOrderRepository repository,
+    TimeProvider timeProvider)
 {
-    private readonly object _gate = new();
-    private readonly List<Order> _orders = [];
+    public Task<IReadOnlyList<Order>> GetAllAsync(CancellationToken cancellationToken = default) =>
+        repository.GetAllAsync(cancellationToken);
 
-    public IReadOnlyList<Order> GetAll()
-    {
-        lock (_gate)
-        {
-            return _orders
-                .OrderByDescending(order => order.CreatedAt)
-                .ToArray();
-        }
-    }
-
-    public OrderCreationResult TryCreate(CreateOrderRequest request)
+    public async Task<OrderCreationResult> TryCreateAsync(
+        CreateOrderRequest request,
+        CancellationToken cancellationToken = default)
     {
         if (request.Lines is null || request.Lines.Count == 0)
         {
@@ -49,9 +44,14 @@ public sealed class OrderService(ProductCatalog catalog, TimeProvider timeProvid
             lines,
             lines.Sum(line => line.LineTotal));
 
-        lock (_gate)
+        try
         {
-            _orders.Add(order);
+            await repository.AddAsync(order, cancellationToken);
+        }
+        catch
+        {
+            catalog.Restore(reservation.Items);
+            throw;
         }
 
         return OrderCreationResult.Success(order);

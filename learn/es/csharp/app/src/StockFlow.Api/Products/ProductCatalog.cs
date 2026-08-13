@@ -144,6 +144,24 @@ public sealed class ProductCatalog
         }
     }
 
+    public void Restore(IReadOnlyList<ReservedProduct> reservedProducts)
+    {
+        lock (_gate)
+        {
+            foreach (var reserved in reservedProducts)
+            {
+                var index = _products.FindIndex(product => product.Id == reserved.ProductId);
+                if (index < 0)
+                {
+                    throw new InvalidOperationException($"No se puede restaurar el producto {reserved.Sku}.");
+                }
+
+                var product = _products[index];
+                _products[index] = product with { Stock = product.Stock + reserved.Quantity };
+            }
+        }
+    }
+
     private static string? Validate(CreateProductRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Sku))
