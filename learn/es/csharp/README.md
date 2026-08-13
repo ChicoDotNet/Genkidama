@@ -111,8 +111,8 @@ No. El curso aplica hardening básico, pero no implementa autenticación, autori
 ### ¿La factura de la evaluación es fiscalmente válida?
 No. Es un comprobante educativo simplificado. El curso evita enseñar reglas fiscales ficticias o hacer pasar el ejercicio por un CFDI.
 
-### ¿Tengo que aprender Git aquí?
-No. Git tendrá su propio curso.
+### ¿Dónde aprendo Git?
+En el [curso transversal de Git](../git/). StockFlow no duplica aquí ramas, merges, recuperación o colaboración: esas habilidades se aprenden una sola vez sobre un laboratorio independiente y luego se aplican al código C#.
 
 ## Glosario
 
