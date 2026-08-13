@@ -1,0 +1,334 @@
+schema_version: 1
+source_locale: es
+translation_order:
+- es
+- en
+- zh-Hans
+- ja
+- fr
+- it
+- pt-BR
+- ru
+- de
+counts:
+  v1_current: 45
+  planned_additional: 6
+pilots:
+- csharp
+- python
+- javascript
+- cobol
+- solidity
+courses:
+- slug: csharp
+  name: C#
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: API de inventario, pedidos y facturación para una pequeña empresa
+  pilot_order: 1
+- slug: typescript
+  name: TypeScript
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Gestor full-stack de proyectos, clientes y cotizaciones para freelancers
+- slug: ada
+  name: Ada
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Monitor de seguridad industrial con sensores simulados y alarmas
+- slug: solidity
+  name: Solidity
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: 'FreelanceEscrow: contrato para cobrar un proyecto freelance mediante depósito, entrega, liberación y reembolso'
+  pilot_order: 5
+- slug: fortran
+  name: Fortran
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Simulador térmico 2D con exportación de resultados
+- slug: pascal
+  name: Pascal
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Sistema local de inventario y ventas
+- slug: python
+  name: Python
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: 'Conciliador de facturas: importar CSV, validar, persistir y generar reportes'
+  pilot_order: 2
+- slug: vbnet
+  name: Visual Basic .NET
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Gestor de cotizaciones y facturas WinForms
+- slug: cpp
+  name: C++
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Indexador y buscador multihilo de archivos
+- slug: objective-c
+  name: Objective-C
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Organizador e indexador de archivos para macOS
+- slug: java
+  name: Java
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: API de mesa de ayuda y seguimiento de tickets
+- slug: rust
+  name: Rust
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Herramienta de backup incremental verificable mediante checksums
+- slug: zig
+  name: Zig
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Servidor HTTP estático pequeño con logging
+- slug: go
+  name: Go
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Monitor concurrente de uptime con API y dashboard
+- slug: php
+  name: PHP
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Agenda web de citas para un pequeño negocio
+- slug: nim
+  name: Nim
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Generador de sitios estáticos
+- slug: dart
+  name: Dart
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Gestor móvil de gastos personales
+- slug: kotlin
+  name: Kotlin
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Aplicación Android offline de órdenes de trabajo
+- slug: swift
+  name: Swift
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: App de control de horas, clientes y cotizaciones
+- slug: fsharp
+  name: F#
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Motor de reglas para precios, descuentos y cotizaciones
+- slug: crystal
+  name: Crystal
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Servicio de health checks y página de estado
+- slug: lua
+  name: Lua
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Motor de reglas y plugins para una aplicación o juego
+- slug: haskell
+  name: Haskell
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Validador y linter de archivos de configuración
+- slug: cobol
+  name: COBOL
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Procesador batch de nómina con entradas, validaciones y reportes
+  pilot_order: 4
+- slug: scala
+  name: Scala
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Pipeline de análisis de eventos y métricas
+- slug: groovy
+  name: Groovy
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Orquestador de builds y releases de varios proyectos
+- slug: ruby
+  name: Ruby
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: CRM web sencillo para clientes y prospectos de un freelancer
+- slug: c
+  name: C
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Logger binario de telemetría con herramienta de análisis
+- slug: ocaml
+  name: OCaml
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Analizador de dependencias y detección de ciclos de proyectos
+- slug: julia
+  name: Julia
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Pronóstico de demanda y recomendador de reabasto
+- slug: vba
+  name: VBA
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Libro de Excel para facturación y flujo de caja automatizado
+- slug: gdscript
+  name: GDScript
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Juego 2D pequeño con inventario, estados, UI y guardado
+- slug: javascript
+  name: JavaScript
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Kanban offline-first/PWA construido principalmente con JavaScript nativo
+  pilot_order: 3
+- slug: matlab
+  name: MATLAB
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Analizador de señales de sensores y detección de anomalías
+- slug: perl
+  name: Perl
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Analizador de logs HTTP con reportes
+- slug: r
+  name: R
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Analizador de campañas y experimentos A/B con reporte reproducible
+- slug: powershell
+  name: PowerShell
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Auditor de estaciones de trabajo con reporte de diagnóstico
+- slug: html
+  name: HTML
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Sitio profesional accesible para presentar servicios y captar clientes
+- slug: assembly
+  name: Assembly
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Visor hexadecimal/checksum de archivos en x86-64
+- slug: elixir
+  name: Elixir
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Servidor concurrente de trabajos y notificaciones usando OTP
+- slug: shell
+  name: Shell
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Utilidad de backup, rotación y restauración
+- slug: erlang
+  name: Erlang
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Servidor TCP de chat supervisado
+- slug: clojure
+  name: Clojure
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Pipeline de normalización y conciliación de transacciones
+- slug: common-lisp
+  name: Common Lisp
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Motor de reglas extensible mediante un pequeño DSL
+- slug: prolog
+  name: Prolog
+  v1_required: true
+  linguist_detected: true
+  status: planned
+  canonical_app: Planificador de turnos para un pequeño negocio con restricciones
+- slug: delphi
+  name: Delphi
+  v1_required: false
+  linguist_detected: false
+  status: backlog
+  canonical_app: Aplicación desktop de inventario/POS con persistencia local
+- slug: gnu-octave
+  name: GNU Octave
+  v1_required: false
+  linguist_detected: false
+  status: backlog
+  canonical_app: Herramienta de análisis numérico y procesamiento de señales
+- slug: sql
+  name: SQL
+  v1_required: false
+  linguist_detected: false
+  status: backlog
+  canonical_app: Base de datos completa de ventas/inventario con esquema, consultas, vistas, migraciones y reporting
+- slug: css
+  name: CSS
+  v1_required: false
+  linguist_detected: false
+  status: backlog
+  canonical_app: Dashboard responsive y sistema de diseño reutilizable
+- slug: micropython
+  name: MicroPython
+  v1_required: false
+  linguist_detected: false
+  status: backlog
+  canonical_app: Monitor ambiental sobre ESP32, con modo simulado sin hardware
+- slug: rockstar
+  name: Rockstar
+  v1_required: false
+  linguist_detected: false
+  status: backlog
+  canonical_app: Aplicación CLI educativa suficientemente completa, con valor pedagógico y sin afirmar demanda profesional
+  market_note: Valor pedagógico y transferible; no presentar como ruta con demanda profesional significativa.
