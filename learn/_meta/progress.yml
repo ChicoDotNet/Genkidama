@@ -19,10 +19,10 @@ foundation:
 courses:
   csharp:
     status: in_progress
-    lessons_complete: 8
+    lessons_complete: 12
     lessons_total: 17
     ci: green
-    last_green_executable_sha: 2ecf6030791abd0df0156ed795049537554fb965
+    last_green_executable_sha: 88c62437e0938b6766dc29d64215cb19fa9197e7
     pr: 34
     pilot_order: 1
   typescript: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
