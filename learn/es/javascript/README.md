@@ -64,7 +64,7 @@ Estas habilidades son base directa de frontend web y se transfieren a Node.js y 
 
 **¿`npm run verify` demuestra que la PWA funciona offline?** No. Detecta incoherencias estructurales y regresiones ejecutables. El service worker y la recarga offline se verifican además en un navegador.
 
-**¿Se enseña Git?** No; tendrá su propio curso.
+**¿Dónde aprendo Git?** En el [curso transversal de Git](../git/). JavaScript no duplica aquí ramas, merges, recuperación o colaboración; esa ruta compartida enseña Git sobre un laboratorio independiente.
 
 ## Referencias oficiales
 - [JavaScript — MDN](https://developer.mozilla.org/docs/Web/JavaScript)

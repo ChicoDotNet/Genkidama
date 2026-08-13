@@ -8,7 +8,7 @@ No promete empleo. Su objetivo es dejar evidencia práctica suficiente para que 
 
 Al terminar un curso deberías poder leer y escribir código idiomático sencillo, manejar errores/I/O/persistencia cuando apliquen, usar tooling y pruebas, modificar una base existente, consultar documentación oficial, explicar arquitectura y resolver una evaluación final sin receta.
 
-Git no se enseña aquí como materia principal. Tendrá su propio curso.
+Git no se repite como materia sustancial dentro de cada lenguaje. Cuando necesites control de versiones, ramas, recuperación o colaboración, usa el [curso transversal de Git](es/git/).
 
 ## Cómo se aprende
 
@@ -17,6 +17,14 @@ Todos los cursos siguen:
 > **Problema → concepto → ejemplo mínimo si hace falta → aplicación real → ejercicio → prueba → reflexión → siguiente incremento**
 
 Cada lenguaje tiene una sola aplicación canónica principal que crece durante el curso.
+
+## Curso transversal
+
+[**Git — ReleaseDesk**](es/git/) enseña control de versiones desde cero sobre un laboratorio independiente y sin exigir conocimiento previo de un lenguaje. Está **completo en 17/17 lecciones**, con cuatro checkpoints, evaluación final sin receta, rúbrica y CI reproducible.
+
+Es infraestructura pedagógica compartida: los cursos de C#, Python, JavaScript y los futuros lenguajes lo recomiendan en vez de duplicar una mini-lección de Git dentro de cada ruta.
+
+Git se sigue y valida aparte; **no altera el conteo de 45 lenguajes de Learn v1**.
 
 ## Idioma
 
@@ -58,7 +66,7 @@ La memoria operativa vive en:
 
 Genkidama Learn v1 termina cuando los 45 lenguajes actuales tienen un curso completo en español, aplicación canónica funcional y validación razonable.
 
-Delphi, GNU Octave, SQL, CSS, MicroPython y Rockstar están registrados como expansión posterior. Rockstar se presenta como contenido pedagógico/esotérico, no como una ruta con demanda laboral significativa.
+El curso transversal de Git mejora la preparación compartida pero no aumenta ni reduce ese denominador. Delphi, GNU Octave, SQL, CSS, MicroPython y Rockstar están registrados como expansión posterior. Rockstar se presenta como contenido pedagógico/esotérico, no como una ruta con demanda laboral significativa.
 
 ## Licencia
 

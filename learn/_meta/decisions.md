@@ -64,12 +64,12 @@ No se crean 45 esqueletos antes de demostrar que el formato funciona.
 
 El estado se actualiza por capacidad real, no para aparentar actividad.
 
-## GL-007 — Git no es materia sustancial de los cursos
+## GL-007 — Git no es materia sustancial de los cursos de lenguaje
 
 **Fecha:** 2026-08-12  
-**Estado:** aceptada
+**Estado:** aceptada; concretada por GL-016
 
-Sólo se mencionan comandos inevitables para obtener o ejecutar el proyecto. Git tendrá un curso independiente.
+Sólo se mencionan comandos inevitables para obtener o ejecutar el proyecto. Git se aprende en el curso transversal independiente bajo `learn/es/git/` y los cursos de lenguaje lo recomiendan en vez de duplicar su contenido.
 
 ## GL-008 — Skills ASBN como referencia preferente
 
@@ -187,3 +187,20 @@ Excepciones: deuda legacy extensa, dependencia externa, riesgo desproporcionado 
 El owner usa como **heurística operativa** que diferir deuda hasta el final puede consumir del orden de 30% del esfuerzo del proyecto y que pagarla inmediatamente busca llevar ese overhead evitable hacia cero. Genkidama Learn adopta esa dirección como criterio de ejecución, no como estadística universal ni garantía matemática.
 
 Aplicación inicial: un enlace faltante entre lecciones no sólo se corrige; el validador común comprueba navegación secuencial para impedir que el mismo tipo de deuda reaparezca silenciosamente.
+
+## GL-016 — Git es un curso transversal compartido, no un lenguaje 46
+
+**Fecha:** 2026-08-13  
+**Estado:** aceptada
+
+El curso independiente de Git comienza bajo `learn/es/git/` y se considera infraestructura pedagógica transversal.
+
+Reglas:
+
+1. Git **no** modifica el denominador de 45 cursos de lenguaje de Learn v1 ni el catálogo de seis expansiones ya acordadas.
+2. Los cursos de lenguaje no deben “anunciar que algún día habrá un curso de Git”; deben recomendar y enlazar directamente `../git/` cuando corresponda.
+3. No se duplica enseñanza sustancial de Git dentro de C#, Python, JavaScript, COBOL u otros cursos. Sólo se permiten comandos inevitables para obtener/ejecutar material o una referencia puntual al curso transversal.
+4. El curso de Git sigue la misma disciplina pedagógica y DoD general, adaptando “aplicación canónica” a un repositorio de práctica real y observable.
+5. El laboratorio inicial es **ReleaseDesk**, deliberadamente independiente de un lenguaje para que pueda estudiarse antes, durante o después de cualquier curso de programación.
+6. Git tiene CI path-scoped propio y el validador común reconoce explícitamente su slug transversal sin convertirlo en entrada del catálogo de lenguajes.
+7. El frente autónomo `cobol_pilot` permanece sin cambios; el curso Git puede avanzar en un PR paralelo sin secuestrar la secuencia de pilotos.

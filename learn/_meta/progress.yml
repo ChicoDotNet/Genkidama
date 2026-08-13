@@ -16,6 +16,14 @@ foundation:
   decisions: complete
   validator: complete
   ci: green
+transversal_courses:
+  git:
+    status: complete
+    lessons_complete: 17
+    lessons_total: 17
+    ci: green
+    last_green_executable_sha: f582a3dd6dd5717d67ca67028459fe4b2c9565e9
+    pr: 38
 courses:
   csharp:
     status: complete
