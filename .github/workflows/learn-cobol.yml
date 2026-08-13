@@ -29,6 +29,7 @@ jobs:
         run: |
           brew update
           brew install gnucobol
+          echo "LD_LIBRARY_PATH=$(brew --prefix gnucobol)/lib" >> "$GITHUB_ENV"
           cobc --version
 
       - name: Verify NominaBatch
