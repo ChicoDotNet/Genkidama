@@ -21,7 +21,8 @@ toolchain:
   operating_systems_targeted:
     - windows-11
     - linux
-  operating_systems_tested: []
+  operating_systems_tested:
+    - github-actions-ubuntu-latest
 ci:
   supported: true
   workflow: .github/workflows/learn-python.yml
