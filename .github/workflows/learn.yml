@@ -2,8 +2,6 @@ name: Genkidama Learn
 
 on:
   pull_request:
-    branches:
-      - main
     paths:
       - 'learn/**'
       - '.github/workflows/learn.yml'
