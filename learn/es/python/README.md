@@ -50,7 +50,7 @@ Desde `learn/es/python/app`:
 python -m venv .venv
 ```
 
-Activa el entorno y, para ejecutar pruebas en el estado actual del curso, instala:
+Activa el entorno y, para ejecutar pruebas, instala:
 
 ```bash
 python -m pip install pytest==9.1.1
@@ -71,6 +71,13 @@ $env:PYTHONPATH = 'src'
 python -m ledgermatch examples/invoices.csv
 ```
 
+Filtros útiles:
+
+```bash
+PYTHONPATH=src python -m ledgermatch examples/invoices.csv --only-differences
+PYTHONPATH=src python -m ledgermatch examples/invoices.csv --customer "Cliente Uno" --by-customer
+```
+
 ## Test
 
 ```bash
@@ -83,16 +90,16 @@ La meta es que puedas leer y escribir Python sencillo e idiomático; modelar dat
 
 ## Ruta del curso
 
-Estado actual: **4 de 17 lecciones implementadas**.
+Estado actual: **8 de 17 lecciones implementadas**.
 
 1. [Tu primera conciliación en ejecución](lessons/01-tu-primera-conciliacion.md)
 2. [Datos de negocio: strings, fechas, Decimal y dataclasses](lessons/02-datos-y-tipos.md)
 3. [Validación y errores de entrada](lessons/03-validacion-y-errores.md)
 4. [Pruebas con pytest y primer checkpoint](lessons/04-pruebas-y-checkpoint.md)
-5. Colecciones, agrupación y duplicados
-6. Funciones, comprensiones e iteración
-7. Argumentos de CLI, rutas y archivos
-8. Módulos, responsabilidades y checkpoint 02
+5. [Colecciones, agrupación y duplicados](lessons/05-colecciones-y-agrupacion.md)
+6. [Funciones, comprehensions e iteración](lessons/06-funciones-comprensiones-e-iteracion.md)
+7. [Argumentos de CLI, rutas y archivos](lessons/07-cli-rutas-y-archivos.md)
+8. [Módulos, responsabilidades y checkpoint 02](lessons/08-modulos-responsabilidades-y-checkpoint.md)
 9. Persistencia con SQLite
 10. Transacciones e idempotencia
 11. Reportes CSV y JSON
@@ -105,7 +112,8 @@ Estado actual: **4 de 17 lecciones implementadas**.
 
 ## Checkpoints
 
-- después de la lección 4: [`checkpoint-01`](exercises/checkpoint-01.md), con [`solución de referencia`](solutions/checkpoint-01.md).
+- después de la lección 4: [`checkpoint-01`](exercises/checkpoint-01.md), con [`solución de referencia`](solutions/checkpoint-01.md);
+- después de la lección 8: [`checkpoint-02`](exercises/checkpoint-02.md), con [`solución de referencia`](solutions/checkpoint-02.md).
 
 ## ¿Qué tipo de trabajo utiliza estas habilidades?
 
@@ -134,10 +142,12 @@ No. Git tendrá su propio curso.
 - **Decimal:** tipo para aritmética decimal exacta en casos como dinero.
 - **dataclass:** forma concisa de declarar clases orientadas principalmente a datos.
 - **pytest:** herramienta de pruebas utilizada por el curso.
+- **comprehension:** sintaxis compacta para construir o seleccionar elementos a partir de un iterable.
+- **argparse:** módulo estándar para construir interfaces de línea de comandos.
 
 ## Cómo hablar de este proyecto en una entrevista
 
-Explica el problema antes que las bibliotecas: recibiste datos tabulares de facturación/pagos, modelaste dinero sin `float`, separaste parsing de conciliación, convertiste entradas defectuosas en errores controlados y protegiste reglas con pruebas. Conforme avance el curso podrás añadir persistencia, reporting y decisiones de arquitectura.
+Explica el problema antes que las bibliotecas: recibiste datos tabulares de facturación/pagos, modelaste dinero sin `float`, separaste parsing de conciliación, convertiste entradas defectuosas en errores controlados, agrupaste y filtraste resultados con colecciones, construiste una CLI con argumentos y separaste formato de I/O para mantener pruebas pequeñas.
 
 ## Referencias oficiales
 
@@ -145,10 +155,12 @@ Explica el problema antes que las bibliotecas: recibiste datos tabulares de fact
 - [`csv`](https://docs.python.org/3.14/library/csv.html)
 - [`decimal`](https://docs.python.org/3.14/library/decimal.html)
 - [`dataclasses`](https://docs.python.org/3.14/library/dataclasses.html)
+- [`argparse`](https://docs.python.org/3.14/library/argparse.html)
+- [`pathlib`](https://docs.python.org/3.14/library/pathlib.html)
 - [`sqlite3`](https://docs.python.org/3.14/library/sqlite3.html)
 - [Python Packaging User Guide](https://packaging.python.org/)
 - [pytest](https://docs.pytest.org/)
 
 ## Siguiente paso
 
-Empieza en la [Lección 1](lessons/01-tu-primera-conciliacion.md). La meta no es memorizar sintaxis: es aprender a convertir una entrada imperfecta en un resultado defendible.
+Si empiezas desde cero, ve a la [Lección 1](lessons/01-tu-primera-conciliacion.md). Si ya completaste el checkpoint 01, continúa con la [Lección 5](lessons/05-colecciones-y-agrupacion.md).

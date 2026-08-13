@@ -5,8 +5,10 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+from .analytics import select_lines
 from .parser import CsvSchemaError, read_invoices
 from .reconciler import reconcile
+from .reporting import format_report
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -15,6 +17,17 @@ def _parser() -> argparse.ArgumentParser:
         description="Concilia importes facturados y pagados desde un CSV.",
     )
     parser.add_argument("csv_file", type=Path, help="Archivo CSV a conciliar")
+    parser.add_argument("--customer", help="Muestra detalle sólo para este cliente")
+    parser.add_argument(
+        "--only-differences",
+        action="store_true",
+        help="Muestra en el detalle sólo registros con diferencia",
+    )
+    parser.add_argument(
+        "--by-customer",
+        action="store_true",
+        help="Agrega un resumen de totales agrupado por cliente",
+    )
     return parser
 
 
@@ -33,17 +46,18 @@ def main() -> int:
         return 2
 
     summary = reconcile(parsed)
-    print("LedgerMatch")
-    print(f"Procesadas: {len(summary.lines)}")
-    print(f"Coinciden: {summary.matched}")
-    print(f"Con diferencia: {summary.different}")
-    print(f"Filas inválidas: {summary.invalid_rows}")
-    print(f"Total facturado: {summary.invoice_total:.2f}")
-    print(f"Total pagado: {summary.payment_total:.2f}")
-
-    for line in summary.lines:
-        if line.difference:
-            print(f"- {line.record.invoice_id}: diferencia {line.difference:+.2f}")
+    selected = select_lines(
+        summary,
+        customer=args.customer,
+        only_differences=args.only_differences,
+    )
+    print(
+        format_report(
+            summary,
+            selected_lines=selected,
+            include_customers=args.by_customer,
+        )
+    )
 
     for issue in parsed.issues:
         print(f"! fila {issue.row_number} / {issue.field}: {issue.message}")

@@ -94,13 +94,7 @@ Ahora resuelve [`checkpoint-01`](../exercises/checkpoint-01.md) sin abrir la sol
 
 ## Cómo comprobar
 
-Antes del checkpoint debes tener:
-
-```text
-3 passed
-```
-
-Tu solución del checkpoint debe agregar pruebas nuevas y mantener las anteriores verdes.
+Antes del checkpoint debes tener las pruebas base en verde. Tu solución del checkpoint debe agregar una regresión para el identificador duplicado y mantener las anteriores verdes.
 
 ## Solución
 
@@ -121,7 +115,7 @@ Ejecuta una sola prueba por nombre con `pytest -k`. Esto será útil cuando la s
 
 ## Siguiente paso
 
-La lección 5 usará colecciones para detectar duplicados y agrupar resultados. Antes de avanzar, completa el checkpoint.
+En la [Lección 5](05-colecciones-y-agrupacion.md) usarás `set` y `dict` para descubrir duplicados y producir información agrupada sin esconder el recorrido de los datos.
 
 ## Referencias
 
