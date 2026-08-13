@@ -6,3 +6,9 @@ status: in_progress
 lessons_total: 17
 lessons_complete: 0
 canonical_app: FreelanceEscrow
+toolchain:
+  language: Solidity 0.8.35
+  compiler: solc 0.8.35
+  build_test_tool: Foundry stable
+  tested_os: Ubuntu 24.04
+  last_verified: '2026-08-13'
