@@ -51,7 +51,7 @@ public sealed class ProductCatalogTests
 
         var results = catalog.Search("mouse", 5);
 
-        Assert.HasCount(1, results);
+        Assert.AreEqual(1, results.Count);
         Assert.AreEqual("MOU-01", results[0].Sku);
     }
 
