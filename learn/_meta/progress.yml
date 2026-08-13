@@ -16,6 +16,13 @@ foundation:
   decisions: complete
   validator: complete
   ci: green
+transversal_courses:
+  git:
+    status: in_progress
+    lessons_complete: 4
+    lessons_total: 17
+    ci: pending
+    pr: null
 courses:
   csharp:
     status: complete
