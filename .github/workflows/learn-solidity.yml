@@ -1,0 +1,31 @@
+name: Learn Solidity
+
+on:
+  pull_request:
+    paths:
+      - 'learn/es/solidity/**'
+      - '.github/workflows/learn-solidity.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'learn/es/solidity/**'
+      - '.github/workflows/learn-solidity.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  solidity:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install Foundry stable
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
+
+      - name: Verify FreelanceEscrow
+        run: bash learn/es/solidity/tools/verify.sh
