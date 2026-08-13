@@ -21,7 +21,8 @@ transversal_courses:
     status: in_progress
     lessons_complete: 4
     lessons_total: 17
-    ci: pending
+    ci: green
+    last_green_executable_sha: 9c69fee42bf6ff1b799371fbf859e6fc67392655
     pr: 38
 courses:
   csharp:
