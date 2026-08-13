@@ -1,14 +1,41 @@
 schema_version: 1
 slug: solidity
+language: Solidity
 locale: es
-title: Curso de Solidity desde cero — FreelanceEscrow
+source_locale: es
+title: Curso de Solidity desde cero — Construye FreelanceEscrow
 status: in_progress
-lessons_total: 17
-lessons_complete: 0
-canonical_app: FreelanceEscrow
+canonical_app:
+  name: FreelanceEscrow
+  summary: Contrato educativo de cobro freelance con depósito, entrega, liberación y reembolso.
+audience: beginner
+prerequisites: []
+lesson_count: 17
+lessons_complete: 4
 toolchain:
-  language: Solidity 0.8.35
-  compiler: solc 0.8.35
-  build_test_tool: Foundry stable
-  tested_os: Ubuntu 24.04
-  last_verified: '2026-08-13'
+  verified_on: '2026-08-13'
+  version_tested: Solidity 0.8.35 + Foundry v1.7.1
+  runtime_or_compiler: solc 0.8.35
+  package_or_build_tool: Foundry v1.7.1
+  test_tool: forge test
+  operating_systems_targeted:
+    - windows-11
+    - linux
+  operating_systems_tested:
+    - github-actions-ubuntu-24.04
+ci:
+  supported: true
+  workflow: .github/workflows/learn-solidity.yml
+  isolation: path-scoped
+career_context:
+  uses:
+    - contratos inteligentes compatibles con EVM
+    - pruebas y mantenimiento de lógica on-chain
+    - integración técnica de aplicaciones que usan contratos
+  market_note: Solidity es un mercado especializado con alta exigencia de seguridad; el curso prepara fundamentos prácticos y no promete empleo ni presenta la demanda junior como masiva.
+official_references:
+  - https://docs.soliditylang.org/en/v0.8.35/
+  - https://docs.soliditylang.org/en/v0.8.35/contracts.html
+  - https://docs.soliditylang.org/en/v0.8.35/security-considerations.html
+  - https://getfoundry.sh/
+  - https://getfoundry.sh/forge/writing-tests
