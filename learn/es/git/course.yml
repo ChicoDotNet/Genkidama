@@ -1,0 +1,40 @@
+schema_version: 1
+slug: git
+language: Git
+course_kind: transversal
+locale: es
+source_locale: es
+title: Curso de Git desde cero — Domina cambios, ramas y recuperación con ReleaseDesk
+status: in_progress
+canonical_app:
+  name: ReleaseDesk
+  summary: Repositorio de práctica independiente para versionar una pequeña bitácora de entregas, trabajar con ramas, integrar cambios y recuperar errores sin depender de un lenguaje de programación.
+audience: beginner
+prerequisites: []
+lesson_count: 17
+toolchain:
+  verified_on: '2026-08-13'
+  version_tested: 2.54.0
+  runtime_or_compiler: Git CLI
+  package_or_build_tool: Git CLI + terminal del sistema
+  test_tool: Git CLI smoke assertions
+  operating_systems_targeted:
+    - windows-11
+    - linux
+  operating_systems_tested:
+    - github-actions-ubuntu-24.04
+ci:
+  supported: true
+  workflow: .github/workflows/learn-git.yml
+  isolation: path-scoped
+career_context:
+  uses:
+    - control de versiones de código, documentación y configuración
+    - colaboración mediante ramas, revisiones e integración de cambios
+    - diagnóstico, recuperación y trazabilidad de cambios en proyectos de software
+  market_note: Git es una herramienta transversal del trabajo de desarrollo de software; este curso enseña un flujo profesional básico y no promete contratación.
+official_references:
+  - https://git-scm.com/docs
+  - https://git-scm.com/book/en/v2
+  - https://git-scm.com/install/windows
+  - https://git-scm.com/install/linux
