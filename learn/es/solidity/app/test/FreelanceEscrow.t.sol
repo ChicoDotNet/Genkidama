@@ -52,7 +52,9 @@ contract FreelanceEscrowTest {
 
     function testFuzzPositiveDepositStartsFunded(uint96 rawAmount) public {
         uint256 amount = uint256(rawAmount);
-        if (amount == 0) return;
+        if (amount == 0) {
+            return;
+        }
 
         FreelanceEscrow escrow = _deployWithAmount(amount);
 
@@ -74,7 +76,9 @@ contract FreelanceEscrowTest {
 
     function testFuzzReleaseTransfersExactDeposit(uint96 rawAmount) public {
         uint256 amount = uint256(rawAmount);
-        if (amount == 0) return;
+        if (amount == 0) {
+            return;
+        }
 
         FreelanceEscrow escrow = _deployWithAmount(amount);
         uint256 beforeBalance = FREELANCER.balance;
@@ -115,7 +119,9 @@ contract FreelanceEscrowTest {
 
     function testFuzzRefundEmptiesEscrow(uint96 rawAmount) public {
         uint256 amount = uint256(rawAmount);
-        if (amount == 0) return;
+        if (amount == 0) {
+            return;
+        }
 
         FreelanceEscrow escrow = _deployWithAmount(amount);
         vm.prank(CLIENT);
@@ -133,7 +139,9 @@ contract FreelanceEscrowTest {
     }
 
     function testFuzzOnlyFreelancerCanMarkDelivered(address caller) public {
-        if (caller == FREELANCER) return;
+        if (caller == FREELANCER) {
+            return;
+        }
 
         FreelanceEscrow escrow = _deploy();
         vm.expectRevert(FreelanceEscrow.OnlyFreelancer.selector);
@@ -153,7 +161,9 @@ contract FreelanceEscrowTest {
     }
 
     function testFuzzOnlyClientCanRelease(address caller) public {
-        if (caller == CLIENT) return;
+        if (caller == CLIENT) {
+            return;
+        }
 
         FreelanceEscrow escrow = _deploy();
         vm.prank(FREELANCER);
