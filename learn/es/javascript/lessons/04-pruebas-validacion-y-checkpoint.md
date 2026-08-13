@@ -49,7 +49,7 @@ Añade una prueba que demuestre que dos tarjetas no pueden compartir id.
 - el checkpoint obliga a modificar comportamiento.
 
 ## Siguiente paso
-La Lección 05 añadirá edición y eliminación manteniendo al estado —no al DOM— como fuente de verdad.
+En la [Lección 5 — Editar y eliminar](05-editar-y-eliminar.md) mantendrás al estado —no al DOM— como fuente de verdad mientras agregas operaciones reales.
 
 ## Referencias
 - [`node:test`](https://nodejs.org/api/test.html)

@@ -37,5 +37,8 @@ official_references:
   - https://developer.mozilla.org/docs/Web/JavaScript
   - https://developer.mozilla.org/docs/Web/API/Window/localStorage
   - https://developer.mozilla.org/docs/Web/JavaScript/Guide/Modules
+  - https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
+  - https://developer.mozilla.org/docs/Web/API/Blob
+  - https://www.w3.org/WAI/fundamentals/accessibility-intro/
   - https://nodejs.org/en/about/previous-releases
   - https://nodejs.org/api/test.html
