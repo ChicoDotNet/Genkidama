@@ -6,6 +6,8 @@ from dataclasses import dataclass
 import os
 from pathlib import Path
 
+from .input_policy import DEFAULT_MAX_INPUT_BYTES
+
 _DEFAULT_DB = "ledgermatch.db"
 
 
@@ -15,32 +17,47 @@ class ConfigurationError(ValueError):
 
 @dataclass(frozen=True, slots=True)
 class Settings:
-    """Contain validated runtime settings used by the command-line application.
-
-    Attributes:
-        database: SQLite database path. The path is not opened by this type.
-    """
+    """Contain validated runtime settings used by the command-line application."""
 
     database: Path
+    max_input_bytes: int
 
 
-def load_settings(*, database: str | Path | None = None) -> Settings:
+def load_settings(
+    *,
+    database: str | Path | None = None,
+    max_input_bytes: int | None = None,
+) -> Settings:
     """Load LedgerMatch settings with explicit values taking precedence.
 
     Args:
-        database: Optional SQLite path supplied by the caller. When omitted,
-            ``LEDGERMATCH_DB`` is read and finally ``ledgermatch.db`` is used.
+        database: Optional SQLite path. Otherwise ``LEDGERMATCH_DB`` or the
+            local default ``ledgermatch.db`` is used.
+        max_input_bytes: Optional positive input limit. Otherwise
+            ``LEDGERMATCH_MAX_INPUT_BYTES`` or 10 MiB is used.
 
     Returns:
-        Validated immutable settings. ``~`` is expanded in the resulting path.
+        Validated immutable settings.
 
     Raises:
-        ConfigurationError: The selected database path is blank.
+        ConfigurationError: A path is blank or the size limit is not a positive
+            integer.
 
     Side Effects:
-        Reads ``LEDGERMATCH_DB`` only when ``database`` is not supplied.
+        Reads environment variables only for values not supplied explicitly.
     """
-    raw = database if database is not None else os.getenv("LEDGERMATCH_DB", _DEFAULT_DB)
-    if not str(raw).strip():
+    raw_database = database if database is not None else os.getenv("LEDGERMATCH_DB", _DEFAULT_DB)
+    if not str(raw_database).strip():
         raise ConfigurationError("La ruta de base de datos no puede estar vacía.")
-    return Settings(database=Path(raw).expanduser())
+
+    raw_limit: object = max_input_bytes
+    if raw_limit is None:
+        raw_limit = os.getenv("LEDGERMATCH_MAX_INPUT_BYTES", str(DEFAULT_MAX_INPUT_BYTES))
+    try:
+        parsed_limit = int(raw_limit)
+    except (TypeError, ValueError) as exc:
+        raise ConfigurationError("El límite de entrada debe ser un entero positivo.") from exc
+    if parsed_limit <= 0:
+        raise ConfigurationError("El límite de entrada debe ser un entero positivo.")
+
+    return Settings(database=Path(raw_database).expanduser(), max_input_bytes=parsed_limit)

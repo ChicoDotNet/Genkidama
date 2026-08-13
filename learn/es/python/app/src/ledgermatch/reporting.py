@@ -5,9 +5,12 @@ from __future__ import annotations
 import csv
 import json
 from pathlib import Path
+from typing import TextIO
 
 from .analytics import summarize_by_customer
 from .reconciler import ReconciliationLine, ReconciliationSummary
+
+_SPREADSHEET_FORMULA_PREFIXES = ("=", "+", "-", "@", "\t", "\r")
 
 
 def format_report(
@@ -16,17 +19,7 @@ def format_report(
     selected_lines: tuple[ReconciliationLine, ...] | None = None,
     include_customers: bool = False,
 ) -> str:
-    """Render one deterministic human-readable reconciliation report.
-
-    Args:
-        summary: Complete reconciliation result.
-        selected_lines: Optional detail subset. The global summary remains based
-            on the full reconciliation.
-        include_customers: Include aggregate totals grouped by customer.
-
-    Returns:
-        Newline-delimited text. This function performs no I/O.
-    """
+    """Render one deterministic human-readable reconciliation report."""
     detail = summary.lines if selected_lines is None else selected_lines
     output = [
         "LedgerMatch",
@@ -38,13 +31,11 @@ def format_report(
         f"Total pagado: {summary.payment_total:.2f}",
         f"Detalle seleccionado: {len(detail)}",
     ]
-
     for line in detail:
         output.append(
             f"- {line.record.invoice_id} | {line.record.customer} | "
             f"{line.status.value} | diferencia {line.difference:+.2f}"
         )
-
     if include_customers:
         output.append("Por cliente:")
         for customer in summarize_by_customer(summary):
@@ -54,8 +45,15 @@ def format_report(
                 f"pagado {customer.payment_total:.2f}, "
                 f"diferencia {customer.difference:+.2f}"
             )
-
     return "\n".join(output)
+
+
+def _open_destination(path: str | Path, *, force: bool, newline: str | None = None) -> TextIO:
+    return Path(path).open("w" if force else "x", encoding="utf-8", newline=newline)
+
+
+def _spreadsheet_safe_text(value: str) -> str:
+    return "'" + value if value.startswith(_SPREADSHEET_FORMULA_PREFIXES) else value
 
 
 def write_json_report(
@@ -63,21 +61,9 @@ def write_json_report(
     summary: ReconciliationSummary,
     *,
     selected_lines: tuple[ReconciliationLine, ...] | None = None,
+    force: bool = False,
 ) -> None:
-    """Write a UTF-8 JSON report with exact decimal values represented as text.
-
-    Args:
-        path: Destination file. Existing files are replaced in this lesson.
-        summary: Complete reconciliation result.
-        selected_lines: Optional detail subset to export.
-
-    Raises:
-        OSError: The destination cannot be written.
-
-    Side Effects:
-        Creates or replaces ``path``. Output order is deterministic for the same
-        input summary and selected line order.
-    """
+    """Write a UTF-8 JSON report, preserving Decimal values as text."""
     detail = summary.lines if selected_lines is None else selected_lines
     payload = {
         "summary": {
@@ -101,50 +87,28 @@ def write_json_report(
             for line in detail
         ],
     }
-    Path(path).write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
+    with _open_destination(path, force=force) as stream:
+        json.dump(payload, stream, ensure_ascii=False, indent=2)
+        stream.write("\n")
 
 
 def write_csv_report(
     path: str | Path,
     lines: tuple[ReconciliationLine, ...],
+    *,
+    force: bool = False,
 ) -> None:
-    """Write selected reconciliation detail as a UTF-8 CSV file.
-
-    Args:
-        path: Destination file. Existing files are replaced in this lesson.
-        lines: Detail rows to serialize in their existing order.
-
-    Raises:
-        OSError: The destination cannot be written.
-
-    Side Effects:
-        Creates or replaces ``path`` using ``csv.writer`` for quoting rules.
-    """
-    with Path(path).open("w", encoding="utf-8", newline="") as stream:
+    """Write selected detail as a spreadsheet-safer UTF-8 CSV report."""
+    with _open_destination(path, force=force, newline="") as stream:
         writer = csv.writer(stream)
-        writer.writerow(
-            [
-                "invoice_id",
-                "customer",
-                "issued_on",
-                "invoice_total",
-                "payment_total",
-                "status",
-                "difference",
-            ]
-        )
+        writer.writerow(["invoice_id", "customer", "issued_on", "invoice_total", "payment_total", "status", "difference"])
         for line in lines:
-            writer.writerow(
-                [
-                    line.record.invoice_id,
-                    line.record.customer,
-                    line.record.issued_on.isoformat(),
-                    str(line.record.invoice_total),
-                    str(line.record.payment_total),
-                    line.status.value,
-                    str(line.difference),
-                ]
-            )
+            writer.writerow([
+                _spreadsheet_safe_text(line.record.invoice_id),
+                _spreadsheet_safe_text(line.record.customer),
+                line.record.issued_on.isoformat(),
+                str(line.record.invoice_total),
+                str(line.record.payment_total),
+                line.status.value,
+                str(line.difference),
+            ])

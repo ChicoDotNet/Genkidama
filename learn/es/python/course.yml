@@ -16,7 +16,7 @@ toolchain:
   verified_on: '2026-08-12'
   version_tested: 3.14.7
   runtime_or_compiler: CPython 3.14.x
-  package_or_build_tool: venv + pip
+  package_or_build_tool: venv + pip + setuptools 83.0.0
   test_tool: pytest 9.1.1
   operating_systems_targeted:
     - windows-11
@@ -38,5 +38,7 @@ official_references:
   - https://docs.python.org/3.14/library/csv.html
   - https://docs.python.org/3.14/library/decimal.html
   - https://docs.python.org/3.14/library/sqlite3.html
+  - https://docs.python.org/3.14/library/typing.html
+  - https://docs.python.org/3.14/library/logging.html
   - https://packaging.python.org/
   - https://docs.pytest.org/

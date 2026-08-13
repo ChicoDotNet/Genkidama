@@ -7,21 +7,16 @@ from datetime import datetime, timezone
 import hashlib
 from pathlib import Path
 
+from .input_policy import DEFAULT_MAX_INPUT_BYTES, validate_input_file
 from .parser import ParseResult, read_invoices
+from .ports import RunRepository
 from .reconciler import ReconciliationSummary, reconcile
-from .storage import SaveResult, SqliteRunRepository
+from .storage import SaveResult
 
 
 @dataclass(frozen=True, slots=True)
 class ImportOutcome:
-    """Contain the observable result of one CSV import.
-
-    Attributes:
-        parsed: Accepted rows and validation issues from the input boundary.
-        summary: Deterministic reconciliation of accepted rows.
-        save: Persistence result, including whether the content was new.
-        source_sha256: Hexadecimal SHA-256 fingerprint of the source bytes.
-    """
+    """Contain the observable result of one CSV import."""
 
     parsed: ParseResult
     summary: ReconciliationSummary
@@ -54,30 +49,33 @@ def sha256_file(path: str | Path) -> str:
 
 def import_csv(
     path: str | Path,
-    repository: SqliteRunRepository,
+    repository: RunRepository,
     *,
     imported_at: datetime | None = None,
+    max_input_bytes: int = DEFAULT_MAX_INPUT_BYTES,
 ) -> ImportOutcome:
-    """Parse, reconcile, fingerprint and persist one CSV input.
+    """Validate, parse, reconcile, fingerprint and persist one CSV input.
 
     Args:
         path: Source CSV path.
-        repository: Repository receiving the reconciliation result.
-        imported_at: Optional timestamp for deterministic tests. UTC ``now`` is
-            used when omitted.
+        repository: Object satisfying the ``RunRepository`` protocol.
+        imported_at: Optional timestamp for deterministic tests.
+        max_input_bytes: Positive maximum source size accepted before reading.
 
     Returns:
         Parsed data, reconciliation summary, persistence result and fingerprint.
 
     Raises:
-        FileNotFoundError: The source file does not exist.
-        CsvSchemaError: Propagated by ``read_invoices`` for an invalid schema.
-        sqlite3.Error: Persistence fails.
+        InputPolicyError: The source is not a regular file or exceeds the limit.
+        FileNotFoundError: The source cannot be found during subsequent I/O.
+        CsvSchemaError: The CSV schema is invalid.
+        OSError: The source cannot be read.
+        Exception: Repository-specific persistence errors propagate.
 
     Side Effects:
-        Reads the source file and writes through ``repository``.
+        Reads the source file and writes through ``repository`` after validation.
     """
-    source = Path(path)
+    source = validate_input_file(path, max_bytes=max_input_bytes)
     parsed = read_invoices(source)
     summary = reconcile(parsed)
     fingerprint = sha256_file(source)

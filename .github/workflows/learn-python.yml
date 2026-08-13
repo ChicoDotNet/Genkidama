@@ -33,21 +33,28 @@ jobs:
       - name: Show Python version
         run: python --version
 
-      - name: Install test dependency
-        run: python -m pip install --disable-pip-version-check 'pytest==9.1.1'
+      - name: Install package and development dependency
+        working-directory: learn/es/python/app
+        run: python -m pip install --disable-pip-version-check -e '.[dev]'
 
       - name: Compile
-        run: python -m compileall -q learn/es/python/app/src
+        working-directory: learn/es/python/app
+        run: python -m compileall -q src
 
       - name: Test
         working-directory: learn/es/python/app
         run: python -m pytest
 
-      - name: Smoke test
+      - name: Build wheel
         working-directory: learn/es/python/app
-        env:
-          PYTHONPATH: src
+        run: python -m pip wheel --disable-pip-version-check --no-deps . -w /tmp/ledgermatch-wheel
+
+      - name: Smoke test installed command and idempotency
+        working-directory: learn/es/python/app
         run: |
-          python -m ledgermatch examples/invoices.csv | tee /tmp/ledgermatch.txt
-          grep -F 'Procesadas: 4' /tmp/ledgermatch.txt
-          grep -F 'Con diferencia: 2' /tmp/ledgermatch.txt
+          ledgermatch examples/invoices.csv --db /tmp/ledgermatch.db | tee /tmp/ledgermatch-first.txt
+          grep -F 'Procesadas: 4' /tmp/ledgermatch-first.txt
+          grep -F 'Con diferencia: 2' /tmp/ledgermatch-first.txt
+          grep -F 'Persistencia: importación #1 creada' /tmp/ledgermatch-first.txt
+          ledgermatch examples/invoices.csv --db /tmp/ledgermatch.db | tee /tmp/ledgermatch-second.txt
+          grep -F 'Persistencia: importación #1 ya registrada' /tmp/ledgermatch-second.txt
