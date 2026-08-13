@@ -21,8 +21,8 @@ courses:
     status: complete
     lessons_complete: 17
     lessons_total: 17
-    ci: validation_pending
-    last_green_executable_sha: 15c24c5641ece1f5982efa02ec0620f4c601f32c
+    ci: green
+    last_green_executable_sha: 8514359e30b06580953b46c055ae222a56a29139
     pr: 34
     pilot_order: 1
   typescript: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
