@@ -13,11 +13,47 @@ public sealed class ProductCatalog
             4)
     ];
 
-    public IReadOnlyList<Product> GetAll()
+    public IReadOnlyList<Product> GetAll() => Search(null, null);
+
+    public IReadOnlyList<Product> Search(string? text, int? maxStock)
     {
         lock (_gate)
         {
-            return [.. _products];
+            IEnumerable<Product> query = _products;
+
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                var normalizedText = text.Trim();
+                query = query.Where(product =>
+                    product.Sku.Contains(normalizedText, StringComparison.OrdinalIgnoreCase) ||
+                    product.Name.Contains(normalizedText, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (maxStock is not null)
+            {
+                query = query.Where(product => product.Stock <= maxStock.Value);
+            }
+
+            return query
+                .OrderBy(product => product.Name)
+                .ThenBy(product => product.Sku)
+                .ToArray();
+        }
+    }
+
+    public Product? GetBySku(string sku)
+    {
+        if (string.IsNullOrWhiteSpace(sku))
+        {
+            return null;
+        }
+
+        var normalizedSku = sku.Trim();
+
+        lock (_gate)
+        {
+            return _products.FirstOrDefault(product =>
+                string.Equals(product.Sku, normalizedSku, StringComparison.OrdinalIgnoreCase));
         }
     }
 
@@ -48,6 +84,63 @@ public sealed class ProductCatalog
 
             _products.Add(product);
             return ProductCreationResult.Success(product);
+        }
+    }
+
+    public StockReservationResult TryReserve(IReadOnlyList<StockRequest> requests)
+    {
+        if (requests.Count == 0)
+        {
+            return StockReservationResult.Failure("El pedido debe contener al menos una línea.");
+        }
+
+        if (requests.Any(request => request.Quantity <= 0))
+        {
+            return StockReservationResult.Failure("Todas las cantidades deben ser mayores que cero.");
+        }
+
+        var normalizedRequests = requests
+            .GroupBy(request => request.Sku.Trim(), StringComparer.OrdinalIgnoreCase)
+            .Select(group => new StockRequest(group.Key.ToUpperInvariant(), group.Sum(item => item.Quantity)))
+            .ToArray();
+
+        lock (_gate)
+        {
+            foreach (var request in normalizedRequests)
+            {
+                var product = _products.FirstOrDefault(candidate =>
+                    string.Equals(candidate.Sku, request.Sku, StringComparison.OrdinalIgnoreCase));
+
+                if (product is null)
+                {
+                    return StockReservationResult.Failure($"No existe el producto {request.Sku}.");
+                }
+
+                if (product.Stock < request.Quantity)
+                {
+                    return StockReservationResult.Failure(
+                        $"Stock insuficiente para {product.Sku}. Disponible: {product.Stock}.");
+                }
+            }
+
+            var reserved = new List<ReservedProduct>(normalizedRequests.Length);
+
+            foreach (var request in normalizedRequests)
+            {
+                var index = _products.FindIndex(candidate =>
+                    string.Equals(candidate.Sku, request.Sku, StringComparison.OrdinalIgnoreCase));
+                var product = _products[index];
+
+                _products[index] = product with { Stock = product.Stock - request.Quantity };
+                reserved.Add(new ReservedProduct(
+                    product.Id,
+                    product.Sku,
+                    product.Name,
+                    product.UnitPrice,
+                    request.Quantity));
+            }
+
+            return StockReservationResult.Success(reserved);
         }
     }
 

@@ -41,4 +41,34 @@ public sealed class ProductCatalogTests
         Assert.IsFalse(duplicate.IsSuccess);
         Assert.AreEqual("Ya existe un producto con ese SKU.", duplicate.Error);
     }
+
+    [TestMethod]
+    public void Search_WithTextAndStockFilter_ReturnsOnlyMatchingProducts()
+    {
+        var catalog = new ProductCatalog();
+        catalog.TryAdd(new CreateProductRequest("MOU-01", "Mouse inalámbrico", 450m, 3));
+        catalog.TryAdd(new CreateProductRequest("MOU-02", "Mouse ergonómico", 650m, 12));
+
+        var results = catalog.Search("mouse", 5);
+
+        Assert.HasCount(1, results);
+        Assert.AreEqual("MOU-01", results[0].Sku);
+    }
+
+    [TestMethod]
+    public void TryReserve_WhenAnyLineHasInsufficientStock_DoesNotChangeAnyProduct()
+    {
+        var catalog = new ProductCatalog();
+        catalog.TryAdd(new CreateProductRequest("MOU-01", "Mouse", 450m, 3));
+
+        var result = catalog.TryReserve(
+        [
+            new StockRequest("MOU-01", 2),
+            new StockRequest("LAP-001", 10)
+        ]);
+
+        Assert.IsFalse(result.IsSuccess);
+        Assert.AreEqual(3, catalog.GetBySku("MOU-01")!.Stock);
+        Assert.AreEqual(4, catalog.GetBySku("LAP-001")!.Stock);
+    }
 }

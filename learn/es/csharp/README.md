@@ -15,9 +15,9 @@ Sí. No necesitas haber programado antes. El curso presupone únicamente que pue
 **StockFlow** crecerá durante 17 lecciones hasta administrar:
 
 - productos y existencias;
-- altas y consultas con validación;
+- altas, consultas y filtros con validación;
 - pedidos con líneas y totales;
-- reglas básicas de inventario;
+- reserva atómica de inventario;
 - persistencia local;
 - facturación simplificada para fines educativos;
 - manejo explícito de errores;
@@ -89,16 +89,16 @@ Al completar el curso deberías poder:
 
 ## Ruta del curso
 
-Estado actual: **4 de 17 lecciones implementadas**.
+Estado actual: **8 de 17 lecciones implementadas**.
 
 1. [Tu primera API en ejecución](lessons/01-tu-primera-api.md)
 2. [Productos, variables y tipos que representan negocio](lessons/02-productos-y-tipos.md)
 3. [Validación y errores que el usuario puede entender](lessons/03-validacion-y-errores.md)
 4. [Pruebas y primer checkpoint profesional](lessons/04-pruebas-y-checkpoint.md)
-5. Consultas, colecciones y filtros
-6. Funciones, LINQ y transformaciones
-7. El primer pedido
-8. Clases, composición y reglas del dominio
+5. [Consultas, colecciones y filtros](lessons/05-consultas-colecciones-y-filtros.md)
+6. [Funciones, LINQ y transformaciones](lessons/06-linq-y-transformaciones.md)
+7. [El primer pedido](lessons/07-el-primer-pedido.md)
+8. [Composición, reglas del dominio y segundo checkpoint](lessons/08-composicion-reglas-y-checkpoint.md)
 9. Errores HTTP y límites de la API
 10. Persistencia local con SQLite
 11. I/O asíncrono y cancelación
@@ -109,9 +109,10 @@ Estado actual: **4 de 17 lecciones implementadas**.
 16. Seguridad básica y endurecimiento
 17. Evaluación final: extender StockFlow sin receta
 
-## Primer checkpoint
+## Checkpoints
 
-Después de la lección 4 resuelve [`exercises/checkpoint-01.md`](exercises/checkpoint-01.md) antes de consultar la [`solución de referencia`](solutions/checkpoint-01.md).
+- Después de la lección 4: [`checkpoint-01`](exercises/checkpoint-01.md) y su [`solución de referencia`](solutions/checkpoint-01.md).
+- Después de la lección 8: [`checkpoint-02`](exercises/checkpoint-02.md) y su [`solución de referencia`](solutions/checkpoint-02.md).
 
 ## ¿Qué tipo de trabajo utiliza estas habilidades?
 
@@ -142,6 +143,8 @@ No. Sólo necesitas obtener los archivos. Git tendrá su propio curso.
 - **Endpoint:** combinación de ruta y operación HTTP que expone una capacidad.
 - **Record:** tipo de C# útil para representar datos con semántica de valor.
 - **Servicio:** objeto que concentra una responsabilidad o conjunto pequeño de reglas.
+- **LINQ:** conjunto de operadores de consulta integrados en .NET para trabajar con secuencias.
+- **Composición:** construir un comportamiento mediante objetos que colaboran en lugar de una jerarquía innecesaria.
 - **Test:** código que comprueba automáticamente un comportamiento esperado.
 
 ## Cómo hablar de este proyecto en una entrevista
@@ -151,6 +154,8 @@ Cuando el curso esté completo podrás explicar decisiones como:
 - por qué empezaste en memoria antes de agregar persistencia;
 - dónde viven las reglas de inventario y por qué no están mezcladas con HTTP;
 - cómo representas un error de validación;
+- por qué una reserva de varias líneas debe ser todo-o-nada;
+- cómo una dependencia como el reloj se vuelve controlable en pruebas;
 - qué prueba protege una regla importante;
 - qué cambiarías si StockFlow tuviera múltiples instancias o miles de solicitudes concurrentes.
 
