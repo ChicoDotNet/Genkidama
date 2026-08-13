@@ -77,9 +77,9 @@ courses:
   gdscript: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   javascript:
     status: in_progress
-    lessons_complete: 4
+    lessons_complete: 8
     lessons_total: 17
-    ci: green
+    ci: pending
     last_green_executable_sha: 4abef22208e9c69625bd15175f91b96c08f5cac9
     pr: 36
     pilot_order: 3
