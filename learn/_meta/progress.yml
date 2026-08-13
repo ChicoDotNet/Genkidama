@@ -22,7 +22,7 @@ transversal_courses:
     lessons_complete: 4
     lessons_total: 17
     ci: pending
-    pr: null
+    pr: 38
 courses:
   csharp:
     status: complete
