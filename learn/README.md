@@ -29,7 +29,7 @@ El contenido fuente canónico es español (`es`). Las traducciones se preparan p
 | 1 | [C#](es/csharp/) | API de inventario, pedidos y facturación | **Completo** |
 | 2 | [Python](es/python/) | Conciliador de facturas CSV con validación, persistencia y reportes | **Completo** |
 | 3 | [JavaScript](es/javascript/) | Kanban offline-first/PWA principalmente nativo | **Completo** |
-| 4 | COBOL | Procesador batch de nómina | Planeado |
+| 4 | [COBOL](es/cobol/) | Procesador batch de nómina | **En progreso** |
 | 5 | Solidity | `FreelanceEscrow`: depósito, entrega, liberación y reembolso | Planeado |
 
 No se crean carpetas vacías para simular avance. Un curso aparece cuando existe contenido y código coherentes.
