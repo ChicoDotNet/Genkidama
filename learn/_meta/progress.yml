@@ -40,9 +40,9 @@ courses:
     status: in_progress
     lessons_complete: 4
     lessons_total: 17
-    ci: configured_pending_validation
-    last_green_executable_sha: null
-    pr: null
+    ci: green
+    last_green_executable_sha: d4a033c1faaf26cd2c92c6a1322132d973317768
+    pr: 35
     pilot_order: 2
   vbnet: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   cpp: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
