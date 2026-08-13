@@ -80,7 +80,7 @@ courses:
     lessons_complete: 12
     lessons_total: 17
     ci: green
-    last_green_executable_sha: 2088816234ebaff6c542b4a0d3b5e60b59340f85
+    last_green_executable_sha: 0e4fb94418892c3c47a9404dae380ad7dd82884d
     pr: 36
     pilot_order: 3
   matlab: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
