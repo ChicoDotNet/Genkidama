@@ -116,3 +116,59 @@ Preferencia: un PR activo por curso durante su construcción.
 Se usan PRs stacked sólo cuando la dependencia mejora realmente continuidad/revisión.
 
 Nunca merge ni auto-merge por parte de la iniciativa autónoma.
+
+## GL-012 — CI ejecutable aislado por curso/lenguaje
+
+**Fecha:** 2026-08-12  
+**Estado:** aceptada
+
+Cada curso DEBE disponer de un gate de CI ejecutable independiente y acotado por paths del propio curso.
+
+Un cambio localizado en `learn/es/vba/**`, por ejemplo, NO DEBE compilar ni ejecutar las pruebas de los otros 44 lenguajes. Debe ejecutar únicamente:
+
+1. la validación común ligera de Genkidama Learn; y
+2. el build/test/lint/smoke específico de VBA que técnicamente corresponda.
+
+La misma regla aplica a todos los cursos.
+
+La implementación preferida es un workflow por curso, por ejemplo `.github/workflows/learn-csharp.yml`, con filtros `paths` sobre `learn/es/csharp/**` y sobre su propio workflow. Puede sustituirse por un dispatcher/matriz dinámica sólo si preserva exactamente el mismo aislamiento observable.
+
+Cambios puramente operativos en `progress.yml`, `roadmap.md`, `decisions.md`, catálogo o documentación común NO DEBEN provocar por sí mismos una fan-out de builds de los 45 toolchains.
+
+Si en el futuro se introduce infraestructura ejecutable realmente compartida entre cursos, su cambio puede requerir una revalidación más amplia, pero esa expansión debe ser explícita y justificada; nunca accidental.
+
+## GL-013 — Latest stable/LTS y cero deuda de deprecaciones silenciosa
+
+**Fecha:** 2026-08-12  
+**Estado:** aceptada
+
+Genkidama Learn adopta como filosofía global usar tooling, runtimes, compiladores y GitHub Actions en versiones **estables y soportadas**.
+
+Reglas:
+
+1. Preferir la versión estable soportada más reciente cuando el ecosistema no distingue una línea de soporte prolongado.
+2. Cuando exista una línea LTS adecuada para material educativo y producción, preferir la LTS activa más reciente frente a previews, RCs o versiones de soporte corto sin una ventaja explícita.
+3. No adoptar previews/RC/nightly por novedad. Sólo se permiten por necesidad demostrable y documentada.
+4. Una advertencia de CI sobre runtime, action, SDK, compiler, package manager o dependencia deprecada se considera trabajo de mantenimiento accionable; debe corregirse en el mismo frente o en el siguiente incremento razonable.
+5. No ocultar deprecaciones con flags o variables de compatibilidad insegura como solución permanente. Un escape temporal sólo se acepta ante una emergencia concreta, con razón y plan de retiro documentados.
+6. Antes de subir el major de una action o toolchain se consulta su documentación/release oficial para detectar requisitos de runner, breaking changes o sintaxis nueva.
+7. La modernización debe conservar reproducibilidad: `course.yml` registra la versión probada y fecha de verificación, aunque el workflow pueda usar un canal estable/LTS cuando eso sea intencional.
+8. Los warnings de CI forman parte de la señal de calidad. Un gate verde con advertencias de deprecación conocidas no se considera estado ideal si existe una actualización soportada y razonable.
+
+Aplicación inicial de esta decisión: `actions/checkout@v7` y `actions/setup-dotnet@v6` reemplazan generaciones basadas en Node 20 donde correspondía, sin cambiar el objetivo .NET 10 LTS/C# 14 del curso.
+
+## GL-014 — Reporte ASBN SCRUMban por interacción autónoma
+
+**Fecha:** 2026-08-12  
+**Estado:** aceptada localmente
+
+Cada lane autónomo de Genkidama Learn termina su interacción con un reporte breve y comparable basado en ASBN SCRUMban:
+
+1. **¿Cómo estás?** Estado operativo actual del frente: sano, con deuda, con riesgo o esperando una interacción externa.
+2. **¿En qué avanzaste desde la última interacción?** Cambios concretos y dos estimaciones: porcentaje del incremento/curso actualmente construido y porcentaje global estimado de Genkidama Learn v1. Los porcentajes son aproximados y deben explicar su base cuando pueda inducir a error.
+3. **¿En qué planeas avanzar para la próxima interacción?** El siguiente incremento coherente, preferentemente sobre el mismo curso/PR incompleto.
+4. **¿Qué te bloquea?** No significa bloqueo absoluto. Aquí se reporta cualquier obstáculo parcial que una interacción humana pueda desbloquear: información faltante, decisión entre alternativas con consecuencias relevantes, permisos/credenciales, acción del mundo real, revisión requerida o dependencia externa. Si nada requiere interacción humana, responder explícitamente `Nada`.
+
+El reporte no sustituye pruebas, CI, `progress.yml`, roadmap ni decisiones. Es una vista ejecutiva del estado y debe ser factual, concisa y útil para decidir si intervenir.
+
+Esta adopción local permanece aunque el formato se formalice posteriormente dentro de `asbn-senior-tdd-developer` o en un skill ASBN independiente de reporting.

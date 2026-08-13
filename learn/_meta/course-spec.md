@@ -179,9 +179,17 @@ Excepciones técnicas se documentan al principio, por ejemplo Apple/Xcode, Offic
 
 No se convierte el curso en una demostración comercial de IDE o nube.
 
+La política de versiones es **latest stable/LTS soportado**:
+
+- preferir la línea estable más reciente cuando no exista concepto LTS;
+- preferir la LTS activa más reciente cuando aporte continuidad razonable para aprendizaje/producción;
+- evitar preview, RC, nightly y toolchains EOL salvo excepción demostrable y documentada;
+- verificar versiones con fuentes oficiales al iniciar o actualizar un curso;
+- actualizar `course.yml` con versión probada y fecha real de verificación.
+
 ## 11. CI
 
-Cuando exista una vía razonable, CI DEBE:
+Cuando exista una vía razonable, cada curso DEBE tener un gate ejecutable propio que:
 
 - instalar runtime/compiler;
 - restaurar dependencias;
@@ -190,7 +198,17 @@ Cuando exista una vía razonable, CI DEBE:
 - demostrar que la aplicación principal puede construirse o ejecutarse;
 - usar formatter/linter/static analysis sólo si es estándar y ligero.
 
+El gate de un curso DEBE estar aislado por paths. Un cambio dentro de `learn/es/<slug>/**` NO DEBE disparar builds/tests de otros lenguajes.
+
+La validación común ligera de metadata, estructura y enlaces PUEDE ejecutarse ante cualquier cambio en `learn/**`, pero no sustituye al CI específico de cada curso.
+
+Cambios en `progress.yml`, `roadmap.md`, `decisions.md`, catálogo o documentación común NO DEBEN provocar accidentalmente una matriz de 45 toolchains.
+
+Si aparece infraestructura ejecutable realmente compartida, la revalidación transversal debe ser explícita y justificada.
+
 Una limitación real del runner se documenta; nunca se desactiva una prueba sólo para obtener verde.
+
+Las advertencias de deprecación del CI son señal accionable. Cuando una action, runtime, SDK, compiler, package manager o dependencia anuncie EOL/deprecación y exista una actualización estable soportada, el curso DEBERÍA modernizarla en el mismo frente o en el siguiente incremento razonable. No se silencian warnings con flags de compatibilidad insegura como solución permanente. Antes de subir un major se consultan las notas oficiales para detectar requisitos de runner y breaking changes.
 
 ## 12. Referencias y enlaces
 
