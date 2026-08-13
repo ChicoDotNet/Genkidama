@@ -102,7 +102,7 @@ Explica cuándo preferirías `expectPartialRevert` sobre comparar el error ABI c
 
 ## Siguiente paso
 
-Después del checkpoint, el siguiente bloque profundizará en ABI, eventos, diseño de interfaces y pruebas de más fronteras del escrow.
+Continúa con la [Lección 05 — ABI: la frontera pública](05-abi-la-frontera-publica.md).
 
 ## Referencias
 
