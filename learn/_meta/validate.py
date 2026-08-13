@@ -116,6 +116,24 @@ def validate_progress(errors: list[str], catalog_slugs: set[str]) -> None:
         if item.get("pilot_order") != index:
             fail(errors, f"progress.yml: {slug} must have pilot_order {index}")
 
+    transversal = progress.get("transversal_courses")
+    if not isinstance(transversal, dict):
+        fail(errors, "progress.yml: transversal_courses must be a mapping")
+        return
+
+    if set(transversal) != TRANSVERSAL_COURSE_SLUGS:
+        fail(
+            errors,
+            "progress.yml: transversal_courses must track exactly the configured transversal course slugs",
+        )
+
+    for slug in TRANSVERSAL_COURSE_SLUGS:
+        item = transversal.get(slug, {})
+        complete = item.get("lessons_complete")
+        total = item.get("lessons_total")
+        if not isinstance(complete, int) or not isinstance(total, int) or not 0 <= complete <= total:
+            fail(errors, f"progress.yml: invalid lesson progress for transversal course {slug}")
+
 
 def validate_course_directories(errors: list[str], catalog_slugs: set[str]) -> None:
     locale_root = LEARN / "es"
