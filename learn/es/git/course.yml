@@ -5,7 +5,7 @@ course_kind: transversal
 locale: es
 source_locale: es
 title: Curso de Git desde cero — Domina cambios, ramas y recuperación con ReleaseDesk
-status: in_progress
+status: complete
 canonical_app:
   name: ReleaseDesk
   summary: Repositorio de práctica independiente para versionar una pequeña bitácora de entregas, trabajar con ramas, integrar cambios y recuperar errores sin depender de un lenguaje de programación.

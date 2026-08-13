@@ -128,4 +128,21 @@ git switch main
 git branch -D security/secret-demo
 
 test -z "$(git status --porcelain)"
-printf 'Advanced Git lessons 13-16 smoke passed.\n'
+
+# Course DoD: once course.yml says complete, the autonomous final assessment package must exist and be connected.
+for required in \
+  learn/es/git/lessons/17-evaluacion-final.md \
+  learn/es/git/exercises/evaluacion-final.md \
+  learn/es/git/exercises/rubrica-final.md \
+  learn/es/git/solutions/evaluacion-final.md; do
+  test -f "$repo_root/$required"
+done
+
+lesson_count="$(find "$repo_root/learn/es/git/lessons" -maxdepth 1 -type f -name '*.md' | wc -l | tr -d ' ')"
+test "$lesson_count" -eq 17
+grep -q '^status: complete$' "$repo_root/learn/es/git/course.yml"
+grep -q '../exercises/evaluacion-final.md' "$repo_root/learn/es/git/lessons/17-evaluacion-final.md"
+grep -q '../exercises/rubrica-final.md' "$repo_root/learn/es/git/lessons/17-evaluacion-final.md"
+grep -q '../solutions/evaluacion-final.md' "$repo_root/learn/es/git/lessons/17-evaluacion-final.md"
+
+printf 'Advanced Git lessons 13-16 and final Course DoD package passed.\n'

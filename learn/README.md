@@ -20,7 +20,9 @@ Cada lenguaje tiene una sola aplicación canónica principal que crece durante e
 
 ## Curso transversal
 
-[**Git — ReleaseDesk**](es/git/) enseña control de versiones desde cero sobre un laboratorio independiente y sin exigir conocimiento previo de un lenguaje. Es infraestructura pedagógica compartida: los cursos de C#, Python, JavaScript y los futuros lenguajes lo recomiendan en vez de duplicar una mini-lección de Git dentro de cada ruta.
+[**Git — ReleaseDesk**](es/git/) enseña control de versiones desde cero sobre un laboratorio independiente y sin exigir conocimiento previo de un lenguaje. Está **completo en 17/17 lecciones**, con cuatro checkpoints, evaluación final sin receta, rúbrica y CI reproducible.
+
+Es infraestructura pedagógica compartida: los cursos de C#, Python, JavaScript y los futuros lenguajes lo recomiendan en vez de duplicar una mini-lección de Git dentro de cada ruta.
 
 Git se sigue y valida aparte; **no altera el conteo de 45 lenguajes de Learn v1**.
 

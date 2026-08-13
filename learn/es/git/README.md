@@ -4,6 +4,8 @@ Este curso enseña **Git como herramienta profesional transversal**, no como una
 
 No necesitas saber programar. Los archivos del laboratorio son Markdown y texto para que Git sea el problema que estás aprendiendo a resolver.
 
+**Estado del curso: completo — 17/17 lecciones.**
+
 ## ¿Qué es Git y para qué se utiliza?
 
 Git es un sistema distribuido de control de versiones. Permite registrar cambios, comparar estados, recuperar versiones anteriores, trabajar en líneas paralelas, investigar regresiones y colaborar con trazabilidad.
@@ -67,7 +69,7 @@ cp -R ./app "$lab"
 cd "$lab"
 ```
 
-## Ruta — 16/17 implementadas
+## Ruta — 17/17 implementadas
 
 1. [Primer repositorio y primer commit](lessons/01-primer-repositorio-y-primer-commit.md)
 2. [Working tree, staging y diff](lessons/02-working-tree-staging-y-diff.md)
@@ -85,18 +87,19 @@ cd "$lab"
 14. [`reflog` y recuperación avanzada](lessons/14-reflog-y-recuperacion-avanzada.md)
 15. [Automatización, hooks y políticas](lessons/15-hooks-automatizacion-y-politicas.md)
 16. [Secretos, firma, hardening y checkpoint 04](lessons/16-secretos-firma-hardening-y-checkpoint-04.md)
-17. Evaluación final sin receta — planeada.
+17. [Evaluación final Git Junior sin receta](lessons/17-evaluacion-final.md)
 
-## Checkpoints
+## Checkpoints y evaluación
 
 - [Checkpoint 01](exercises/checkpoint-01.md) · [solución](solutions/checkpoint-01.md)
 - [Checkpoint 02](exercises/checkpoint-02.md) · [solución](solutions/checkpoint-02.md)
 - [Checkpoint 03](exercises/checkpoint-03.md) · [solución](solutions/checkpoint-03.md)
 - [Checkpoint 04](exercises/checkpoint-04.md) · [solución](solutions/checkpoint-04.md)
+- [Evaluación final](exercises/evaluacion-final.md) · [rúbrica de 100 puntos](exercises/rubrica-final.md) · [solución de referencia](solutions/evaluacion-final.md)
 
 ## Qué sabrás hacer al terminar
 
-El objetivo completo es que puedas explicar el modelo de Git; preparar cambios conscientemente; leer diffs e historia; usar ramas; integrar y resolver conflictos; trabajar con remotos y Pull Requests; marcar versiones; normalizar archivos; sincronizar sin destruir historia; cambiar de contexto; investigar regresiones; recuperar referencias perdidas; distinguir hooks locales de políticas compartidas; responder correctamente ante secretos versionados; interpretar firmas; y desenvolverte en un repositorio existente sin depender de recetas.
+El objetivo es que puedas explicar el modelo de Git; preparar cambios conscientemente; leer diffs e historia; usar ramas; integrar y resolver conflictos; trabajar con remotos y Pull Requests; marcar versiones; normalizar archivos; sincronizar sin destruir historia; cambiar de contexto; investigar regresiones; recuperar referencias perdidas; distinguir hooks locales de políticas compartidas; responder correctamente ante secretos versionados; interpretar firmas; y desenvolverte en un repositorio existente sin depender de recetas.
 
 ## Build, Test y Run
 
@@ -110,12 +113,11 @@ git worktree list
 git reflog --all
 ```
 
-El workflow [`learn-git.yml`](../../../.github/workflows/learn-git.yml) ejecuta dos capas reproducibles:
+El workflow [`learn-git.yml`](../../../.github/workflows/learn-git.yml) ejecuta tres capas reproducibles:
 
 1. el arco acumulado 1–12: init, staging, recuperación, branches, remotos, conflictos, rebase, tags, políticas de archivos, rechazo non-fast-forward, stash y worktree;
-2. el incidente avanzado 13–16 mediante [`tools/verify-advanced.sh`](tools/verify-advanced.sh): `log`/`blame`/`bisect`, recuperación por reflog, hook local con rechazo verificable y persistencia histórica de un secreto **falso**.
-
-El workflow además falla si queda un marcador temporal sin resolver dentro del contenido Markdown del curso.
+2. el incidente avanzado 13–16 mediante [`tools/verify-advanced.sh`](tools/verify-advanced.sh): `log`/`blame`/`bisect`, recuperación por reflog, hook local con rechazo verificable y persistencia histórica de un secreto **falso**;
+3. el contrato de cierre: 17 lecciones, evaluación final, rúbrica y solución de referencia presentes, enlazadas y sin marcadores temporales sin resolver.
 
 ## Trabajo y alcance
 
@@ -180,6 +182,8 @@ No. Una firma verificable aporta procedencia criptográfica. Revisión, calidad,
 
 Explica ReleaseDesk como un laboratorio distribuido y de incidentes. Describe working tree/staging/commit; por qué `fetch` no mueve automáticamente `main`; cómo resuelves divergencia sin fuerza bruta; cómo anclas una versión con tag; cómo evitas diffs de EOL; cuándo eliges stash, worktree, merge o rebase; cómo usarías `bisect` para una regresión; qué puede recuperar reflog; por qué un hook no sustituye CI; y qué harías primero si una credencial real entrara a historia.
 
+La [evaluación final](exercises/evaluacion-final.md) te obliga a demostrar estas capacidades sin una secuencia prescrita de comandos.
+
 ## Referencias oficiales
 
 - [Git Reference](https://git-scm.com/docs)
@@ -196,4 +200,4 @@ Explica ReleaseDesk como un laboratorio distribuido y de incidentes. Describe wo
 
 ## Siguiente paso
 
-Si empiezas desde cero, comienza con la [Lección 1](lessons/01-primer-repositorio-y-primer-commit.md). Si ya completaste los cuatro checkpoints, el siguiente y último incremento será la evaluación final autónoma de Git Junior.
+Completa la [evaluación final](exercises/evaluacion-final.md), repite las áreas débiles de la rúbrica y practica después sobre un repositorio existente que no hayas creado tú, comenzando por leer sus reglas e historia.

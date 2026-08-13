@@ -164,7 +164,7 @@ Diseña un flujo de respuesta para “secreto real encontrado en una PR ya fusio
 
 ## Siguiente paso
 
-La siguiente interacción cerrará el curso con una evaluación práctica sin receta, rúbrica y auditoría completa de Course DoD.
+Continúa con [Lección 17 — Evaluación final Git Junior sin receta](17-evaluacion-final.md).
 
 ## Referencias
 
