@@ -37,10 +37,10 @@ courses:
   ada: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   solidity:
     status: in_progress
-    lessons_complete: 4
+    lessons_complete: 6
     lessons_total: 17
     ci: green
-    last_green_executable_sha: ef5ac571eaf419c07389bcbc64f456c11d33449c
+    last_green_executable_sha: 1c056d7f02d3eeef0adcc4a28294824d7d85c83b
     pr: 40
     pilot_order: 5
   fortran: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
