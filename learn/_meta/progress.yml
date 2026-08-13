@@ -2,7 +2,7 @@ schema_version: 1
 initiative:
   status: pilots_in_progress
   source_locale: es
-  last_updated: '2026-08-12'
+  last_updated: '2026-08-13'
   active_work: javascript_pilot
   v1_courses_total: 45
   v1_courses_complete: 2
@@ -77,10 +77,10 @@ courses:
   gdscript: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   javascript:
     status: in_progress
-    lessons_complete: 8
+    lessons_complete: 12
     lessons_total: 17
-    ci: green
-    last_green_executable_sha: 29da3fc12c0591418b14e061b1f9ba05d61123e7
+    ci: pending
+    last_green_executable_sha: 2088816234ebaff6c542b4a0d3b5e60b59340f85
     pr: 36
     pilot_order: 3
   matlab: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
