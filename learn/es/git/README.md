@@ -1,6 +1,6 @@
 # Curso de Git desde cero — Domina cambios, ramas y recuperación con ReleaseDesk
 
-Este curso enseña **Git como herramienta profesional transversal**, no como una colección de comandos memorizados. Desde la primera lección trabajas sobre **ReleaseDesk**, un pequeño repositorio real que evoluciona mediante commits, staging, recuperación, ramas, remotos e integración.
+Este curso enseña **Git como herramienta profesional transversal**, no como una colección de comandos memorizados. Desde la primera lección trabajas sobre **ReleaseDesk**, un pequeño repositorio real que evoluciona mediante commits, staging, recuperación, ramas, remotos, versiones y trabajo paralelo.
 
 No necesitas saber programar. Los archivos del laboratorio son Markdown y texto para que Git sea el problema que estás aprendiendo a resolver.
 
@@ -18,7 +18,7 @@ Sí. Necesitas una terminal, editor y Git instalado. Las primeras lecciones son 
 
 **ReleaseDesk** es una bitácora de entregas con README, plan y changelog. Copiarás [`app/`](app/) fuera del checkout de Genkidama y convertirás esa copia en tu repositorio de práctica.
 
-El curso después crea un remoto bare y una segunda copia para practicar colaboración distribuida sin depender de una cuenta externa.
+El curso crea después un remoto bare, un segundo clone y worktrees adicionales para practicar colaboración distribuida y cambio de contexto sin depender de una cuenta externa.
 
 ## Tooling verificado
 
@@ -28,8 +28,6 @@ El curso después crea un remoto bare y una segunda copia para practicar colabor
 - El curso usa comportamiento estable y ampliamente soportado; `course.yml` conserva la versión realmente probada.
 
 ## Instalar
-
-Comprueba:
 
 ```text
 git --version
@@ -69,7 +67,7 @@ cp -R ./app "$lab"
 cd "$lab"
 ```
 
-## Ruta — 8/17 implementadas
+## Ruta — 12/17 implementadas
 
 1. [Primer repositorio y primer commit](lessons/01-primer-repositorio-y-primer-commit.md)
 2. [Working tree, staging y diff](lessons/02-working-tree-staging-y-diff.md)
@@ -79,10 +77,10 @@ cd "$lab"
 6. [Conflictos de merge sin pánico](lessons/06-conflictos-de-merge-sin-panico.md)
 7. [Pull Requests y revisión de cambios](lessons/07-pull-requests-y-revision.md)
 8. [Rebase consciente y checkpoint 02](lessons/08-rebase-consciente-y-checkpoint.md)
-9. Tags y releases — planeada.
-10. `.gitignore`, atributos y finales de línea — planeada.
-11. Colaboración segura y sincronización — planeada.
-12. Stash, worktree y checkpoint 03 — planeada.
+9. [Tags y releases](lessons/09-tags-y-releases.md)
+10. [`.gitignore`, `.gitattributes` y finales de línea](lessons/10-ignore-attributes-y-finales-de-linea.md)
+11. [Sincronización colaborativa segura](lessons/11-sincronizacion-colaborativa-segura.md)
+12. [Stash, worktree y checkpoint 03](lessons/12-stash-worktree-y-checkpoint-03.md)
 13. Buscar regresiones con log, blame y bisect — planeada.
 14. Reflog y recuperación avanzada — planeada.
 15. Automatización, hooks y políticas — planeada.
@@ -93,21 +91,24 @@ cd "$lab"
 
 - [Checkpoint 01](exercises/checkpoint-01.md) · [solución](solutions/checkpoint-01.md)
 - [Checkpoint 02](exercises/checkpoint-02.md) · [solución](solutions/checkpoint-02.md)
+- [Checkpoint 03](exercises/checkpoint-03.md) · [solución](solutions/checkpoint-03.md)
 
 ## Qué sabrás hacer al terminar
 
-El objetivo completo es que puedas explicar el modelo de Git; preparar cambios conscientemente; leer diffs e historia; usar ramas; integrar y resolver conflictos; trabajar con remotos y Pull Requests; recuperar errores; investigar regresiones; proteger secretos; y desenvolverte en un repositorio existente sin depender de recetas.
+El objetivo completo es que puedas explicar el modelo de Git; preparar cambios conscientemente; leer diffs e historia; usar ramas; integrar y resolver conflictos; trabajar con remotos y Pull Requests; marcar versiones; normalizar archivos; sincronizar sin destruir historia; cambiar de contexto; recuperar errores; investigar regresiones; proteger secretos; y desenvolverte en un repositorio existente sin depender de recetas.
 
 ## Build, Test y Run
 
-Git no compila ReleaseDesk. El equivalente operativo es demostrar que la historia, las referencias y los working trees tienen el estado esperado.
+Git no compila ReleaseDesk. El equivalente operativo es demostrar que historia, referencias, tags, atributos y working trees tienen el estado esperado.
 
 ```text
 git status
 git log --oneline --decorate --graph --all
+git tag --list
+git worktree list
 ```
 
-El workflow [`learn-git.yml`](../../../.github/workflows/learn-git.yml) crea una copia temporal, un remoto bare y un segundo clone. Ejecuta de forma reproducible el flujo de las lecciones 1–8: init, staging, restore, branches, merge, fetch/push, conflicto, revisión de feature y rebase privado.
+El workflow [`learn-git.yml`](../../../.github/workflows/learn-git.yml) crea repositorios temporales y ejecuta de forma reproducible el arco acumulado: init, staging, recuperación, branches, remotos, conflictos, rebase, tags, políticas de archivos, rechazo non-fast-forward, stash y worktree.
 
 ## Trabajo y alcance
 
@@ -121,11 +122,14 @@ No. Git es el sistema de control de versiones. GitHub es una plataforma que hosp
 ### ¿Por qué practicamos remotos sin GitHub?
 Porque `clone`, `fetch`, `merge`, `pull` y `push` pertenecen a Git. Un remoto bare local permite entenderlos de forma determinista antes de agregar autenticación, red y UX de una plataforma.
 
-### ¿Pull Request es un comando de Git?
-No. La PR es una capacidad de plataformas de colaboración. Git aporta las branches, commits, diffs y referencias que la PR compara.
-
 ### ¿Rebase es mejor que merge?
-No universalmente. Rebase puede ser apropiado para una branch privada que quieres actualizar sobre una base nueva; merge conserva explícitamente la topología de historias. El contexto y las reglas del equipo mandan.
+No universalmente. Rebase puede ser apropiado para una branch privada que quieres actualizar; merge conserva explícitamente topología. El contexto y las reglas del equipo mandan.
+
+### ¿Por qué no usar `push --force` cuando el remoto rechaza mi cambio?
+Porque el rechazo puede estar protegiendo commits de otra persona. Primero debes obtener e inspeccionar la historia remota y decidir cómo reconciliarla.
+
+### ¿Stash y worktree resuelven lo mismo?
+No. Stash conserva WIP temporal para limpiar un working tree; worktree permite mantener varios working trees/branches activos sobre el mismo repositorio de objetos.
 
 ## Glosario
 
@@ -138,21 +142,27 @@ No universalmente. Rebase puede ser apropiado para una branch privada que quiere
 - **remote-tracking branch:** observación local de una referencia remota, por ejemplo `origin/main`;
 - **merge:** reconciliación de historias;
 - **rebase:** reaplicación de commits sobre una base distinta;
-- **Pull Request:** conversación y proceso de revisión de una branch propuesto por una plataforma, no por Git core.
+- **tag:** referencia usada para nombrar un hito estable;
+- **`.gitignore`:** reglas para rutas no rastreadas que no deberían entrar al índice;
+- **`.gitattributes`:** política versionada sobre tratamiento de archivos;
+- **stash:** almacenamiento temporal de cambios no comprometidos;
+- **worktree:** working tree adicional asociado al mismo repositorio;
+- **Pull Request:** conversación/proceso de revisión de una branch ofrecido por una plataforma.
 
 ## Cómo hablar de este proyecto en una entrevista
 
-Explica ReleaseDesk como un laboratorio distribuido. Describe working tree/staging/commit; cómo inspeccionas antes de registrar; por qué `fetch` no mueve automáticamente `main`; cómo distingues un conflicto de corrupción; qué revisas antes de una PR; y cuándo una branch privada puede actualizarse con rebase sin reescribir historia compartida.
+Explica ReleaseDesk como un laboratorio distribuido. Describe working tree/staging/commit; cómo inspeccionas antes de registrar; por qué `fetch` no mueve automáticamente `main`; cómo resuelves divergencia sin fuerza bruta; cómo anclas una versión con tag; cómo evitas diffs de EOL; y cuándo eliges stash, worktree, merge o rebase.
 
 ## Referencias oficiales
 
 - [Git Reference](https://git-scm.com/docs)
 - [Pro Git](https://git-scm.com/book/en/v2)
 - [Working with Remotes](https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes)
-- [Basic Branching and Merging](https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging)
-- [Rebasing](https://git-scm.com/book/en/v2/Git-Branching-Rebasing)
-- [GitHub Docs — About pull requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests)
+- [Tagging](https://git-scm.com/book/en/v2/Git-Basics-Tagging)
+- [`gitattributes`](https://git-scm.com/docs/gitattributes)
+- [`git-worktree`](https://git-scm.com/docs/git-worktree)
+- [`git-stash`](https://git-scm.com/docs/git-stash)
 
 ## Siguiente paso
 
-Si empiezas desde cero, comienza con la [Lección 1](lessons/01-primer-repositorio-y-primer-commit.md). Si terminaste el primer bloque, continúa con la [Lección 5](lessons/05-remotos-clone-fetch-pull-push.md).
+Si empiezas desde cero, comienza con la [Lección 1](lessons/01-primer-repositorio-y-primer-commit.md). Si ya completaste los tres checkpoints, el próximo bloque empezará en la lección 13 con diagnóstico de regresiones.

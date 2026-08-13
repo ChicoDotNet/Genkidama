@@ -59,17 +59,7 @@ git diff origin/main...HEAD
 
 Tu feature debe contener sólo su intención, pero ahora parte de la `main` remota más reciente.
 
-Si ocurre un conflicto durante el rebase, resuelve el archivo, agrega la resolución y continúa con:
-
-```text
-git rebase --continue
-```
-
-Si decides que el rebase fue una mala idea:
-
-```text
-git rebase --abort
-```
+Si ocurre un conflicto durante el rebase, resuelve el archivo, agrega la resolución y continúa con `git rebase --continue`. Si decides que fue mala idea, usa `git rebase --abort`.
 
 ## Merge vs. rebase
 
@@ -83,9 +73,8 @@ No conviertas “historia bonita” en un objetivo superior a trazabilidad, segu
 
 - Rebasar una branch compartida sin avisar.
 - Creer que rebase “mueve” commits sin recrearlos.
-- Resolver conflictos de rebase mecánicamente sin entender qué commit se está reaplicando.
+- Resolver conflictos mecánicamente sin entender qué commit se reaplica.
 - Forzar una actualización remota sin comprobar quién depende de esa historia.
-- Usar rebase sólo porque una guía afirma que siempre es más limpio.
 
 ## Buenas prácticas
 
@@ -114,8 +103,6 @@ El ejercicio combina dos clones y un remoto bare. Tendrás que observar cambios 
 
 ## Cómo comprobar
 
-Al terminar:
-
 ```text
 git status --short
 git branch --show-current
@@ -129,21 +116,17 @@ Debes poder justificar por qué usaste merge en una parte y rebase en otra.
 
 Consulta [`../solutions/checkpoint-02.md`](../solutions/checkpoint-02.md) sólo después de un intento completo.
 
-## Reto adicional
-
-Dibuja en papel o texto la historia antes y después de un rebase con tres commits de feature. Luego compara tu dibujo con `git log --graph`. Si no puedes explicar por qué cambian los IDs, repite la demostración en una branch descartable.
-
 ## Resumen
 
 - rebase reaplica commits sobre una nueva base y recrea sus IDs;
-- merge y rebase resuelven problemas relacionados, pero preservan historias distintas;
+- merge y rebase preservan historias distintas;
 - una branch privada es el contexto más seguro para aprender rebase;
 - la historia compartida no se reescribe por capricho;
 - revisar estado, base, log y diff precede a una operación de historia.
 
 ## Siguiente paso
 
-El siguiente incremento empezará con tags y releases, y después cubrirá `.gitignore`, atributos/finales de línea, sincronización colaborativa y herramientas para trabajo paralelo.
+Continúa con [tags y releases](09-tags-y-releases.md): aprenderás a nombrar un commit estable sin convertir ese nombre en una branch móvil.
 
 ## Referencias
 

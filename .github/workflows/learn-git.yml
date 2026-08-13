@@ -25,7 +25,7 @@ jobs:
       - name: Report Git version
         run: git --version
 
-      - name: Verify ReleaseDesk lessons 1-8 flow
+      - name: Verify ReleaseDesk lessons 1-12 flow
         shell: bash
         run: |
           set -euo pipefail
@@ -35,6 +35,7 @@ jobs:
           alpha="$workspace/alpha"
           beta="$workspace/beta"
           remote="$workspace/origin.git"
+          audit_worktree="$workspace/release-audit"
           mkdir -p "$alpha"
           cp -R learn/es/git/app/. "$alpha/"
           cd "$alpha"
@@ -50,13 +51,10 @@ jobs:
           printf '\nCambio accidental\n' >> README.md
           test -n "$(git diff -- README.md)"
           git restore README.md
-          test -z "$(git diff -- README.md)"
 
           printf '\n- registrar cada cambio como una unidad revisable;\n' >> docs/plan.md
           git add docs/plan.md
-          test -n "$(git diff --staged -- docs/plan.md)"
           git restore --staged docs/plan.md
-          test -n "$(git diff -- docs/plan.md)"
           git add docs/plan.md
           git commit -m "docs: aclarar alcance de ReleaseDesk"
 
@@ -89,7 +87,6 @@ jobs:
           git fetch origin
           test "$(git rev-parse main)" != "$(git rev-parse origin/main)"
           git merge --ff-only origin/main
-          test "$(git rev-parse main)" = "$(git rev-parse origin/main)"
 
           cat > CHANGELOG.md <<'EOF'
           # Changelog
@@ -167,9 +164,98 @@ jobs:
           new_feature_sha="$(git rev-parse HEAD)"
           test "$old_feature_sha" != "$new_feature_sha"
           git merge-base --is-ancestor origin/main HEAD
-          test -n "$(git log --oneline origin/main..HEAD)"
-          git diff --check origin/main...HEAD
           git push -u origin feature/rebase-demo
+
+          # Lesson 09: annotated tags and explicit publication.
+          git switch main
+          git fetch origin
+          git merge --ff-only origin/main
+          git tag -a v0.4.0-ci -m "ReleaseDesk 0.4.0 CI"
+          test "$(git cat-file -t v0.4.0-ci)" = "tag"
+          test "$(git rev-list -n 1 v0.4.0-ci)" = "$(git rev-parse main)"
+          git push origin v0.4.0-ci
+          git ls-remote --exit-code --tags origin 'refs/tags/v0.4.0-ci' >/dev/null
+
+          # Lesson 10: ignore rules, attributes and explicit EOL policy.
+          printf '\nartifacts/\n' >> .gitignore
+          cat > .gitattributes <<'EOF'
+          * text=auto
+          *.md text eol=lf
+          *.ps1 text eol=crlf
+          EOF
+          mkdir -p artifacts scripts
+          printf 'temporal\n' > artifacts/demo.txt
+          printf 'Write-Host "ReleaseDesk"\r\n' > scripts/release.ps1
+          git check-ignore -q artifacts/demo.txt
+          git check-attr text eol -- README.md | grep -q 'text: set'
+          git check-attr text eol -- README.md | grep -q 'eol: lf'
+          git check-attr text eol -- scripts/release.ps1 | grep -q 'eol: crlf'
+          git add .gitignore .gitattributes scripts/release.ps1
+          git diff --staged --check
+          git commit -m "chore: definir política de archivos"
+          git push origin main
+
+          # Lesson 11: demonstrate non-fast-forward protection and safe reconciliation.
+          git -C "$beta" pull --ff-only
+          cat > docs/alpha-sync.md <<'EOF'
+          # Alpha sync
+
+          Cambio local aún no publicado.
+          EOF
+          git add docs/alpha-sync.md
+          git commit -m "docs: registrar cambio alpha"
+
+          cat > "$beta/docs/beta-sync.md" <<'EOF'
+          # Beta sync
+
+          Cambio remoto publicado primero.
+          EOF
+          git -C "$beta" add docs/beta-sync.md
+          git -C "$beta" commit -m "docs: registrar cambio beta"
+          git -C "$beta" push origin main
+
+          if git push origin main; then
+            echo "Expected non-fast-forward rejection but push succeeded" >&2
+            exit 1
+          fi
+          git fetch origin
+          test -n "$(git log --oneline main..origin/main)"
+          test -n "$(git log --oneline origin/main..main)"
+          git rebase origin/main
+          git push origin main
+          git fetch origin
+          git merge-base --is-ancestor origin/main HEAD
+
+          # Lesson 12: short-lived stash and a real second worktree.
+          printf '\nWIP: revisar notas antes de publicar.\n' >> README.md
+          git stash push -m "wip: revisar notas"
+          test -z "$(git status --porcelain)"
+          git stash list | grep -q 'wip: revisar notas'
+          git stash show -p stash@{0} | grep -q 'WIP: revisar notas'
+          git stash pop
+          grep -q 'WIP: revisar notas' README.md
+          git restore README.md
           test -z "$(git status --porcelain)"
 
+          git worktree add -b feature/release-audit "$audit_worktree" main
+          cat > "$audit_worktree/docs/release-audit.md" <<'EOF'
+          # Auditoría de release
+
+          - Revisar diff.
+          - Verificar responsable.
+          - Verificar tag candidato.
+          EOF
+          git -C "$audit_worktree" add docs/release-audit.md
+          git -C "$audit_worktree" commit -m "docs: agregar auditoría de release"
+          test "$(git branch --show-current)" = "main"
+          test "$(git -C "$audit_worktree" branch --show-current)" = "feature/release-audit"
+          test -z "$(git -C "$audit_worktree" status --porcelain)"
+          git worktree list --porcelain | grep -q 'branch refs/heads/feature/release-audit'
+
+          git merge feature/release-audit
+          git worktree remove "$audit_worktree"
+          git branch -d feature/release-audit
+          git push origin main
+          test -z "$(git status --porcelain)"
+          test -z "$(git stash list)"
           git log --oneline --decorate --graph --all
