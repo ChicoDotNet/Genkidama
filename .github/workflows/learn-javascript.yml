@@ -29,7 +29,7 @@ jobs:
         run: |
           node --version
           npm --version
-      - name: Syntax check
+      - name: Syntax and PWA integrity check
         working-directory: learn/es/javascript/app
         run: npm run check
       - name: Test
@@ -49,4 +49,6 @@ jobs:
             sleep 0.25
           done
           grep -F '<h1>Kanban Local</h1>' /tmp/kanban-local.html
-          curl --fail --silent http://127.0.0.1:4173/src/app.js | grep -F 'loadBoard'
+          curl --fail --silent http://127.0.0.1:4173/src/app.js | grep -F 'loadPreferredBoard'
+          curl --fail --silent http://127.0.0.1:4173/manifest.webmanifest | grep -F '"display": "standalone"'
+          curl --fail --silent http://127.0.0.1:4173/service-worker.js | grep -F 'const APP_SHELL'

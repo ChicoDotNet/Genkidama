@@ -10,6 +10,8 @@ Aprende JavaScript desde cero construyendo **Kanban Local**, una aplicación web
 ## Instalar, Build, Test y Run
 Desde `app/` ejecuta `npm run check`, `npm test`, `npm run smoke` y `npm start`. Abre `http://127.0.0.1:4173`.
 
+`npm run check` valida sintaxis y también coherencia básica de PWA: manifest, archivos declarados en la app shell y módulos locales importados desde `src/app.js`. La prueba real online/offline sigue siendo una comprobación de navegador, no una afirmación fabricada por CI.
+
 ## Ruta del curso
 Estado actual: **12 de 17 lecciones implementadas**.
 
@@ -40,6 +42,8 @@ Estas habilidades son base directa de frontend web y se transfieren a Node.js y 
 
 ## FAQ
 **¿Por qué no React desde el inicio?** Porque los fundamentos de JavaScript y plataforma web son transferibles.
+
+**¿`npm run check` demuestra que la PWA funciona offline?** No. Detecta incoherencias estructurales reproducibles. El service worker y la recarga offline se verifican además en un navegador.
 
 **¿Se enseña Git?** No; tendrá su propio curso.
 
