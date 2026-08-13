@@ -18,17 +18,17 @@ Desde `app/`:
 
 ```text
 cobc -x -free -Wall -I copybooks -o nomina src/nomina.cob
-bash tests/smoke.sh
+bash tools/verify.sh
 ./nomina
 ```
 
 En Windows el ejecutable generado será `nomina.exe`. La entrada canónica vive en `data/employees.dat` y el resultado en `report.txt`.
 
-El workflow `.github/workflows/learn-cobol.yml` compila y ejecuta el smoke del curso de forma aislada por paths.
+El workflow `.github/workflows/learn-cobol.yml` ejecuta `tests/smoke.sh`; ese smoke ahora incluye tanto resultados de negocio como escenarios operativos. `tools/verify.sh` es el wrapper local equivalente.
 
 ## Ruta actual
 
-Estado: **12 de 17 lecciones implementadas**.
+Estado: **16 de 17 lecciones implementadas**.
 
 1. [Tu primer batch COBOL](lessons/01-tu-primer-batch-cobol.md)
 2. [Datos `PIC` y registros](lessons/02-datos-pic-y-registros.md)
@@ -42,20 +42,25 @@ Estado: **12 de 17 lecciones implementadas**.
 10. [Recorrer tablas con `PERFORM VARYING`](lessons/10-perform-varying-y-reportes.md)
 11. [Buscar IDs y proteger la integridad del lote](lessons/11-busqueda-ids-duplicados.md)
 12. [Límites, reconciliación y checkpoint 03](lessons/12-limites-reconciliacion-y-checkpoint.md)
+13. [Organización y fronteras del programa](lessons/13-organizacion-y-fronteras.md)
+14. [Tooling y gate profesional](lessons/14-tooling-y-gate-profesional.md)
+15. [Diagnóstico y rendimiento con evidencia](lessons/15-diagnostico-y-rendimiento.md)
+16. [Operación confiable y checkpoint 04](lessons/16-operacion-confiable-y-checkpoint-04.md)
 
 ## Checkpoints
 
 - [Checkpoint 01 — Regla de horas extra](exercises/checkpoint-01.md) · [solución](solutions/checkpoint-01.md)
 - [Checkpoint 02 — Reconciliación de registros](exercises/checkpoint-02.md) · [solución](solutions/checkpoint-02.md)
 - [Checkpoint 03 — Reconciliar agregados por banda](exercises/checkpoint-03.md) · [solución](solutions/checkpoint-03.md)
+- [Checkpoint 04 — Invariantes operativas](exercises/checkpoint-04.md) · [solución](solutions/checkpoint-04.md)
 
 ## Qué sabrás hacer al terminar
 
-Leer y escribir COBOL sencillo; modelar datos con `PIC` y `OCCURS`; recorrer y consultar tablas pequeñas; trabajar con archivos; implementar reglas deterministas; separar parsing, validación, cálculo y reporting; compilar con `cobc`; probar comportamiento; modificar una base existente y explicar arquitectura y límites en una entrevista junior.
+Leer y escribir COBOL sencillo; modelar datos con `PIC` y `OCCURS`; recorrer tablas pequeñas; trabajar con archivos; implementar reglas deterministas; separar parsing, validación, cálculo y reporting; compilar con `cobc`; construir gates reproducibles; diagnosticar fallos por contratos observables; razonar sobre rendimiento con evidencia; modificar una base existente y explicar arquitectura y límites en una entrevista junior.
 
 ## Cómo hablar de este proyecto en una entrevista
 
-Cuenta el flujo de negocio antes de la sintaxis: entrada batch → validación → cálculo decimal → reporte → controles → pruebas. Explica por qué `FILE STATUS` y los códigos de retorno hacen operable un batch, por qué el copybook es un contrato de datos, cómo `OCCURS` modela agregados fijos y por qué un ID duplicado se rechaza antes de afectar cifras. Distingue GnuCOBOL local de un entorno mainframe real y no afirmes experiencia que el proyecto no demuestra.
+Cuenta el flujo de negocio antes de la sintaxis: entrada batch → validación → cálculo decimal → reporte → controles → pruebas. Explica por qué `FILE STATUS` y los códigos de retorno hacen operable un batch, por qué el copybook es un contrato de datos, cómo `OCCURS` modela agregados fijos y por qué un ID duplicado se rechaza antes de afectar cifras. Menciona que el smoke cubre camino funcional y escenarios operativos reproducibles. Distingue GnuCOBOL local de un entorno mainframe real y no afirmes experiencia que el proyecto no demuestra.
 
 ## FAQ
 
@@ -65,9 +70,11 @@ Cuenta el flujo de negocio antes de la sintaxis: entrada batch → validación �
 
 **¿Por qué formato libre?** Reduce fricción de columnas durante el aprendizaje, sin negar que mucho código COBOL histórico usa formato fijo.
 
-**¿Las pruebas actuales miden cobertura de líneas?** No. El smoke valida comportamientos concretos de punta a punta; no se publica un porcentaje de cobertura no medido.
+**¿Las pruebas actuales miden cobertura de líneas?** No. Los gates validan comportamientos concretos de punta a punta; no se publica un porcentaje de cobertura no medido.
 
-**¿La tabla de IDs escala sin límite?** No. Esta versión acepta hasta 100 IDs por lote y lo documenta explícitamente; es una estructura didáctica para un conjunto pequeño, no una base de datos.
+**¿La tabla de IDs escala sin límite?** No. Esta versión acepta hasta 100 IDs por lote y lo documenta explícitamente.
+
+**¿Por qué no optimizar ya la búsqueda de duplicados?** Porque el contrato actual está acotado a 100 IDs. Si el volumen cambia, primero se mide y después se elige otra estructura.
 
 ## Glosario inicial
 
@@ -82,6 +89,8 @@ Cuenta el flujo de negocio antes de la sintaxis: entrada batch → validación �
 - **total de control:** acumulador usado para reconciliar el conjunto procesado.
 - **OCCURS:** cláusula para declarar elementos repetidos de una estructura.
 - **PERFORM VARYING:** iteración controlada con variable, incremento y condición de término.
+- **código de retorno:** valor entregado al sistema operativo para distinguir éxito de clases de fallo.
+- **invariancia:** condición que debe permanecer verdadera independientemente del fixture concreto.
 
 ## Referencias oficiales
 
@@ -92,4 +101,4 @@ Cuenta el flujo de negocio antes de la sintaxis: entrada batch → validación �
 
 ## Siguiente paso
 
-Empieza con la [Lección 1](lessons/01-tu-primer-batch-cobol.md). Si ya completaste el bloque actual, resuelve el checkpoint 03 antes de avanzar a organización profesional, tooling y diagnóstico.
+Empieza con la [Lección 1](lessons/01-tu-primer-batch-cobol.md). Si ya completaste el bloque actual, resuelve el checkpoint 04 antes de la evaluación final sin receta.
