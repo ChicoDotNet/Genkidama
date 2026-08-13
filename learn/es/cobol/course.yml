@@ -14,7 +14,7 @@ prerequisites: []
 lesson_count: 17
 toolchain:
   verified_on: '2026-08-13'
-  version_tested: '3.2'
+  version_tested: '3.2.0'
   runtime_or_compiler: GnuCOBOL 3.2
   package_or_build_tool: cobc + shell/PowerShell
   test_tool: shell assertions sobre ejecutable compilado
@@ -22,7 +22,7 @@ toolchain:
     - windows-11
     - linux
   operating_systems_tested:
-    - github-actions-ubuntu-latest
+    - github-actions-ubuntu-24.04
 ci:
   supported: true
   workflow: .github/workflows/learn-cobol.yml
@@ -36,4 +36,4 @@ career_context:
 official_references:
   - https://gnucobol.sourceforge.io/
   - https://sourceforge.net/projects/gnucobol/files/gnucobol/3.2/
-  - https://packages.ubuntu.com/resolute/gnucobol3
+  - https://formulae.brew.sh/formula/gnucobol
