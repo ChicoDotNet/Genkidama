@@ -19,9 +19,9 @@ foundation:
 courses:
   csharp:
     status: in_progress
-    lessons_complete: 12
+    lessons_complete: 16
     lessons_total: 17
-    ci: green
+    ci: configured_pending_validation
     last_green_executable_sha: 88c62437e0938b6766dc29d64215cb19fa9197e7
     pr: 34
     pilot_order: 1

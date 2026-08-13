@@ -1,6 +1,6 @@
 # Curso de C# desde cero — Construye una API de inventario, pedidos y facturación
 
-Este curso enseña C# desde cero construyendo **StockFlow**, una API local para una pequeña empresa. No empieza con horas de sintaxis: en la primera lección levantas un servidor y ves datos reales. Después la misma aplicación introduce tipos, colecciones, LINQ, validación, pedidos, persistencia, asincronía, pruebas y arquitectura.
+Este curso enseña C# desde cero construyendo **StockFlow**, una API local para una pequeña empresa. No empieza con horas de sintaxis: en la primera lección levantas un servidor y ves datos reales. Después la misma aplicación introduce tipos, colecciones, LINQ, validación, pedidos, persistencia, asincronía, pruebas, contratos, observabilidad y arquitectura.
 
 ## ¿Qué es C# y para qué se utiliza?
 
@@ -12,13 +12,13 @@ Sí. No necesitas haber programado antes. El curso presupone únicamente que pue
 
 ## ¿Qué vas a construir?
 
-**StockFlow** crecerá durante 17 lecciones hasta administrar productos, existencias, pedidos y facturación simplificada, con persistencia local, manejo explícito de errores, pruebas y documentación.
+**StockFlow** crecerá durante 17 lecciones hasta administrar productos, existencias, pedidos y facturación simplificada, con persistencia local, manejo explícito de errores, pruebas, documentación OpenAPI y hardening básico.
 
 La aplicación canónica vive en [`app/`](app/) y no depende del CLI principal de Genkidama.
 
 ## Tooling verificado
 
-La línea elegida es **.NET 10 LTS / C# 14**. La metadata exacta vive en [`course.yml`](course.yml). Para SQLite se usa `Microsoft.Data.Sqlite 10.0.10`, proveedor ADO.NET ligero, sin ORM en esta etapa.
+La línea elegida es **.NET 10 LTS / C# 14**. La metadata exacta vive en [`course.yml`](course.yml). Para SQLite se usa `Microsoft.Data.Sqlite 10.0.10`; para pruebas HTTP, `Microsoft.AspNetCore.Mvc.Testing 10.0.10`; y para documentación ejecutable, `Microsoft.AspNetCore.OpenApi 10.0.10`.
 
 Objetivo de uso: Windows 11 + PowerShell + VS Code y Linux actual + bash + VS Code.
 
@@ -52,11 +52,11 @@ Después abre `http://localhost:5073/health` o consulta `http://localhost:5073/a
 
 ## Qué sabrás hacer al terminar
 
-Deberías poder leer y escribir C# sencillo e idiomático; modelar datos; trabajar con colecciones y LINQ; crear endpoints; separar reglas de I/O; manejar errores; persistir datos; usar async/cancelación; escribir pruebas; depurar problemas y extender una base existente sin receta paso a paso.
+Deberías poder leer y escribir C# sencillo e idiomático; modelar datos; trabajar con colecciones y LINQ; crear endpoints; separar reglas de I/O; manejar errores; persistir datos; usar async/cancelación; escribir pruebas unitarias y HTTP; documentar contratos; diagnosticar problemas; aplicar hardening básico y extender una base existente sin receta paso a paso.
 
 ## Ruta del curso
 
-Estado actual: **12 de 17 lecciones implementadas**.
+Estado actual: **16 de 17 lecciones implementadas**.
 
 1. [Tu primera API en ejecución](lessons/01-tu-primera-api.md)
 2. [Productos, variables y tipos que representan negocio](lessons/02-productos-y-tipos.md)
@@ -70,17 +70,18 @@ Estado actual: **12 de 17 lecciones implementadas**.
 10. [Persistencia local con SQLite](lessons/10-persistencia-sqlite.md)
 11. [I/O asíncrono y cancelación](lessons/11-async-y-cancelacion.md)
 12. [Inyección de dependencias sin magia](lessons/12-inyeccion-dependencias.md)
-13. Pruebas de endpoints y regresiones
-14. Documentación de API y contratos
-15. Debugging, logging y diagnóstico
-16. Seguridad básica y endurecimiento
+13. [Pruebas de endpoints y regresiones HTTP](lessons/13-pruebas-de-endpoints.md)
+14. [Documentación de API y contratos con OpenAPI](lessons/14-openapi-y-contratos.md)
+15. [Debugging, logging y diagnóstico](lessons/15-logging-y-diagnostico.md)
+16. [Seguridad básica y hardening](lessons/16-seguridad-y-hardening.md)
 17. Evaluación final: extender StockFlow sin receta
 
 ## Checkpoints
 
 - después de la lección 4: [`checkpoint-01`](exercises/checkpoint-01.md);
 - después de la lección 8: [`checkpoint-02`](exercises/checkpoint-02.md);
-- después de la lección 12: [`checkpoint-03`](exercises/checkpoint-03.md).
+- después de la lección 12: [`checkpoint-03`](exercises/checkpoint-03.md);
+- después de la lección 16: [`checkpoint-04`](exercises/checkpoint-04.md), con [`solución de referencia`](solutions/checkpoint-04.md).
 
 ## ¿Qué tipo de trabajo utiliza estas habilidades?
 
@@ -98,12 +99,18 @@ Porque una API pequeña vuelve visibles problemas cercanos al trabajo real sin c
 Porque primero queremos ver SQL, conexiones, serialización, `async` y una frontera de persistencia. Un ORM puede estudiarse después sobre fundamentos entendidos.
 
 ### ¿Persiste ya todo el inventario?
-No. En este incremento persiste el historial de pedidos; el catálogo sigue en memoria. Esa limitación es intencional y sirve para discutir consistencia y próximos pasos, no para fingir que StockFlow ya es producción.
+No. Persiste el historial de pedidos; el catálogo sigue en memoria. Esa limitación es intencional y sirve para discutir consistencia y próximos pasos, no para fingir que StockFlow ya es producción.
+
+### ¿OpenAPI está expuesto en producción?
+No por defecto. StockFlow lo mapea sólo en Development. La documentación generada sigue siendo parte del contrato y puede publicarse de otra forma cuando exista una necesidad real.
+
+### ¿StockFlow ya es seguro para Internet?
+No. El curso aplica hardening básico, pero no implementa autenticación, autorización ni la operación de producción completa.
 
 ### ¿Tengo que aprender Git aquí?
 No. Git tendrá su propio curso.
 
-## Glosario inicial
+## Glosario
 
 - **SDK:** herramientas para compilar, ejecutar y probar .NET.
 - **Endpoint:** ruta y operación HTTP que expone una capacidad.
@@ -111,19 +118,27 @@ No. Git tendrá su propio curso.
 - **Repositorio:** frontera que guarda y recupera objetos del dominio.
 - **CancellationToken:** señal cooperativa para detener trabajo que dejó de ser útil.
 - **DI:** técnica para recibir dependencias en lugar de construirlas ocultamente.
+- **WebApplicationFactory:** utilidad de ASP.NET Core para probar una aplicación mediante un servidor HTTP de pruebas.
+- **OpenAPI:** especificación independiente del lenguaje para describir APIs HTTP.
+- **ProblemDetails:** formato estándar para comunicar errores HTTP con estructura consistente.
+- **Hardening:** reducción deliberada de superficie y riesgos evitables.
 
 ## Cómo hablar de este proyecto en una entrevista
 
-Prepárate para explicar por qué empezaste en memoria, qué problema justificó SQLite, por qué `OrderService` no conoce SQL, cómo proteges el stock si guardar falla, dónde viaja `CancellationToken`, y qué cambiarías para persistir inventario y pedidos bajo una transacción real.
+Prepárate para explicar por qué empezaste en memoria, qué problema justificó SQLite, por qué `OrderService` no conoce SQL, cómo proteges el stock si guardar falla, dónde viaja `CancellationToken`, qué riesgo cubren las pruebas HTTP, por qué OpenAPI sólo se expone en Development y qué faltaría antes de operar StockFlow en Internet.
 
 ## Referencias oficiales
 
 - [Documentación de C#](https://learn.microsoft.com/dotnet/csharp/)
 - [ASP.NET Core](https://learn.microsoft.com/aspnet/core/)
 - [Microsoft.Data.Sqlite](https://learn.microsoft.com/dotnet/standard/data/sqlite/)
+- [Pruebas de integración en ASP.NET Core](https://learn.microsoft.com/aspnet/core/test/integration-tests)
+- [OpenAPI en ASP.NET Core](https://learn.microsoft.com/aspnet/core/fundamentals/openapi/overview)
+- [Logging en ASP.NET Core](https://learn.microsoft.com/aspnet/core/fundamentals/logging/)
+- [Manejo de errores](https://learn.microsoft.com/aspnet/core/fundamentals/error-handling)
 - [Política de soporte de .NET](https://dotnet.microsoft.com/platform/support/policy)
 - [MSTest](https://learn.microsoft.com/dotnet/core/testing/unit-testing-mstest-intro)
 
 ## Siguiente paso
 
-Empieza en la [Lección 1](lessons/01-tu-primera-api.md). La meta no es memorizar sintaxis: es poder comprender y modificar StockFlow por tu cuenta.
+Si estudias el curso desde cero, empieza en la [Lección 1](lessons/01-tu-primera-api.md). Si vienes siguiendo la construcción, completa el [`checkpoint-04`](exercises/checkpoint-04.md): la siguiente lección será la evaluación final sin receta.
