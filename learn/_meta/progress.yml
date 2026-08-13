@@ -19,10 +19,10 @@ foundation:
 transversal_courses:
   git:
     status: in_progress
-    lessons_complete: 8
+    lessons_complete: 12
     lessons_total: 17
     ci: green
-    last_green_executable_sha: 0c1be0df12a3841c019e472144e7caca59cf3907
+    last_green_executable_sha: 5c8f0fe04aad57408e04ba99a5e231ba7c3e1170
     pr: 38
 courses:
   csharp:
