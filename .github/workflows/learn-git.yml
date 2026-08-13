@@ -259,3 +259,16 @@ jobs:
           test -z "$(git status --porcelain)"
           test -z "$(git stash list)"
           git log --oneline --decorate --graph --all
+
+      - name: Reject unfinished Git course placeholders
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -R -n --include='*.md' 'PLACEHOLDER' learn/es/git; then
+            echo "Unfinished PLACEHOLDER found in Git course content." >&2
+            exit 1
+          fi
+
+      - name: Verify advanced Git lessons 13-16
+        shell: bash
+        run: bash learn/es/git/tools/verify-advanced.sh

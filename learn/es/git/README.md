@@ -1,12 +1,12 @@
 # Curso de Git desde cero — Domina cambios, ramas y recuperación con ReleaseDesk
 
-Este curso enseña **Git como herramienta profesional transversal**, no como una colección de comandos memorizados. Desde la primera lección trabajas sobre **ReleaseDesk**, un pequeño repositorio real que evoluciona mediante commits, staging, recuperación, ramas, remotos, versiones y trabajo paralelo.
+Este curso enseña **Git como herramienta profesional transversal**, no como una colección de comandos memorizados. Desde la primera lección trabajas sobre **ReleaseDesk**, un pequeño repositorio real que evoluciona mediante commits, staging, recuperación, ramas, remotos, versiones, diagnóstico y trabajo paralelo.
 
 No necesitas saber programar. Los archivos del laboratorio son Markdown y texto para que Git sea el problema que estás aprendiendo a resolver.
 
 ## ¿Qué es Git y para qué se utiliza?
 
-Git es un sistema distribuido de control de versiones. Permite registrar cambios, comparar estados, recuperar versiones anteriores, trabajar en líneas paralelas y colaborar con trazabilidad.
+Git es un sistema distribuido de control de versiones. Permite registrar cambios, comparar estados, recuperar versiones anteriores, trabajar en líneas paralelas, investigar regresiones y colaborar con trazabilidad.
 
 Los cursos de lenguajes de Genkidama Learn **no vuelven a enseñar Git sustancialmente**: cuando necesites esa habilidad, te referirán a este curso.
 
@@ -18,7 +18,7 @@ Sí. Necesitas una terminal, editor y Git instalado. Las primeras lecciones son 
 
 **ReleaseDesk** es una bitácora de entregas con README, plan y changelog. Copiarás [`app/`](app/) fuera del checkout de Genkidama y convertirás esa copia en tu repositorio de práctica.
 
-El curso crea después un remoto bare, un segundo clone y worktrees adicionales para practicar colaboración distribuida y cambio de contexto sin depender de una cuenta externa.
+El curso crea después un remoto bare, un segundo clone y worktrees adicionales para practicar colaboración distribuida, diagnóstico y recuperación sin depender de una cuenta externa.
 
 ## Tooling verificado
 
@@ -67,7 +67,7 @@ cp -R ./app "$lab"
 cd "$lab"
 ```
 
-## Ruta — 12/17 implementadas
+## Ruta — 16/17 implementadas
 
 1. [Primer repositorio y primer commit](lessons/01-primer-repositorio-y-primer-commit.md)
 2. [Working tree, staging y diff](lessons/02-working-tree-staging-y-diff.md)
@@ -81,10 +81,10 @@ cd "$lab"
 10. [`.gitignore`, `.gitattributes` y finales de línea](lessons/10-ignore-attributes-y-finales-de-linea.md)
 11. [Sincronización colaborativa segura](lessons/11-sincronizacion-colaborativa-segura.md)
 12. [Stash, worktree y checkpoint 03](lessons/12-stash-worktree-y-checkpoint-03.md)
-13. Buscar regresiones con log, blame y bisect — planeada.
-14. Reflog y recuperación avanzada — planeada.
-15. Automatización, hooks y políticas — planeada.
-16. Secretos, firma, hardening y checkpoint 04 — planeada.
+13. [Diagnosticar regresiones con `log`, `blame` y `bisect`](lessons/13-log-blame-bisect.md)
+14. [`reflog` y recuperación avanzada](lessons/14-reflog-y-recuperacion-avanzada.md)
+15. [Automatización, hooks y políticas](lessons/15-hooks-automatizacion-y-politicas.md)
+16. [Secretos, firma, hardening y checkpoint 04](lessons/16-secretos-firma-hardening-y-checkpoint-04.md)
 17. Evaluación final sin receta — planeada.
 
 ## Checkpoints
@@ -92,10 +92,11 @@ cd "$lab"
 - [Checkpoint 01](exercises/checkpoint-01.md) · [solución](solutions/checkpoint-01.md)
 - [Checkpoint 02](exercises/checkpoint-02.md) · [solución](solutions/checkpoint-02.md)
 - [Checkpoint 03](exercises/checkpoint-03.md) · [solución](solutions/checkpoint-03.md)
+- [Checkpoint 04](exercises/checkpoint-04.md) · [solución](solutions/checkpoint-04.md)
 
 ## Qué sabrás hacer al terminar
 
-El objetivo completo es que puedas explicar el modelo de Git; preparar cambios conscientemente; leer diffs e historia; usar ramas; integrar y resolver conflictos; trabajar con remotos y Pull Requests; marcar versiones; normalizar archivos; sincronizar sin destruir historia; cambiar de contexto; recuperar errores; investigar regresiones; proteger secretos; y desenvolverte en un repositorio existente sin depender de recetas.
+El objetivo completo es que puedas explicar el modelo de Git; preparar cambios conscientemente; leer diffs e historia; usar ramas; integrar y resolver conflictos; trabajar con remotos y Pull Requests; marcar versiones; normalizar archivos; sincronizar sin destruir historia; cambiar de contexto; investigar regresiones; recuperar referencias perdidas; distinguir hooks locales de políticas compartidas; responder correctamente ante secretos versionados; interpretar firmas; y desenvolverte en un repositorio existente sin depender de recetas.
 
 ## Build, Test y Run
 
@@ -106,9 +107,15 @@ git status
 git log --oneline --decorate --graph --all
 git tag --list
 git worktree list
+git reflog --all
 ```
 
-El workflow [`learn-git.yml`](../../../.github/workflows/learn-git.yml) crea repositorios temporales y ejecuta de forma reproducible el arco acumulado: init, staging, recuperación, branches, remotos, conflictos, rebase, tags, políticas de archivos, rechazo non-fast-forward, stash y worktree.
+El workflow [`learn-git.yml`](../../../.github/workflows/learn-git.yml) ejecuta dos capas reproducibles:
+
+1. el arco acumulado 1–12: init, staging, recuperación, branches, remotos, conflictos, rebase, tags, políticas de archivos, rechazo non-fast-forward, stash y worktree;
+2. el incidente avanzado 13–16 mediante [`tools/verify-advanced.sh`](tools/verify-advanced.sh): `log`/`blame`/`bisect`, recuperación por reflog, hook local con rechazo verificable y persistencia histórica de un secreto **falso**.
+
+El workflow además falla si queda un marcador `PLACEHOLDER` sin resolver dentro del contenido Markdown del curso.
 
 ## Trabajo y alcance
 
@@ -131,6 +138,21 @@ Porque el rechazo puede estar protegiendo commits de otra persona. Primero debes
 ### ¿Stash y worktree resuelven lo mismo?
 No. Stash conserva WIP temporal para limpiar un working tree; worktree permite mantener varios working trees/branches activos sobre el mismo repositorio de objetos.
 
+### ¿`git blame` dice quién tuvo la culpa?
+No. Muestra procedencia de líneas del estado actual. Es evidencia histórica, no un juicio sobre intención, contexto o responsabilidad humana.
+
+### ¿Reflog es un backup?
+No. Es una bitácora local y temporal de movimientos de referencias. Puede ayudarte a recuperar estados recientes, pero no sustituye remotos, backups ni una estrategia de continuidad.
+
+### ¿Un pre-commit hook puede imponer una política de empresa?
+No por sí solo. Da feedback local temprano, pero la integración compartida debe gobernarse con CI, protección de branches, revisiones y permisos.
+
+### ¿Borrar un secreto del último commit resuelve el incidente?
+No. Si una credencial real fue versionada, debes tratarla como comprometida y rotarla/revocarla. La limpieza de historia atiende exposición residual; no vuelve confiable la credencial original.
+
+### ¿Un commit firmado significa que es seguro?
+No. Una firma verificable aporta procedencia criptográfica. Revisión, calidad, seguridad y autorización de integración son controles distintos.
+
 ## Glosario
 
 - **working tree:** archivos que ves y editas;
@@ -147,11 +169,16 @@ No. Stash conserva WIP temporal para limpiar un working tree; worktree permite m
 - **`.gitattributes`:** política versionada sobre tratamiento de archivos;
 - **stash:** almacenamiento temporal de cambios no comprometidos;
 - **worktree:** working tree adicional asociado al mismo repositorio;
+- **bisect:** búsqueda binaria del punto donde una condición cambia de buena a mala;
+- **blame:** procedencia por línea del estado actual;
+- **reflog:** registro local reciente de movimientos de refs y `HEAD`;
+- **hook:** programa local invocado por Git en un evento concreto;
+- **firma:** evidencia criptográfica asociada a un commit o tag cuando se configura y verifica correctamente;
 - **Pull Request:** conversación/proceso de revisión de una branch ofrecido por una plataforma.
 
 ## Cómo hablar de este proyecto en una entrevista
 
-Explica ReleaseDesk como un laboratorio distribuido. Describe working tree/staging/commit; cómo inspeccionas antes de registrar; por qué `fetch` no mueve automáticamente `main`; cómo resuelves divergencia sin fuerza bruta; cómo anclas una versión con tag; cómo evitas diffs de EOL; y cuándo eliges stash, worktree, merge o rebase.
+Explica ReleaseDesk como un laboratorio distribuido y de incidentes. Describe working tree/staging/commit; por qué `fetch` no mueve automáticamente `main`; cómo resuelves divergencia sin fuerza bruta; cómo anclas una versión con tag; cómo evitas diffs de EOL; cuándo eliges stash, worktree, merge o rebase; cómo usarías `bisect` para una regresión; qué puede recuperar reflog; por qué un hook no sustituye CI; y qué harías primero si una credencial real entrara a historia.
 
 ## Referencias oficiales
 
@@ -162,7 +189,11 @@ Explica ReleaseDesk como un laboratorio distribuido. Describe working tree/stagi
 - [`gitattributes`](https://git-scm.com/docs/gitattributes)
 - [`git-worktree`](https://git-scm.com/docs/git-worktree)
 - [`git-stash`](https://git-scm.com/docs/git-stash)
+- [`git-bisect`](https://git-scm.com/docs/git-bisect)
+- [`git-reflog`](https://git-scm.com/docs/git-reflog)
+- [`githooks`](https://git-scm.com/docs/githooks)
+- [Signing Your Work](https://git-scm.com/book/en/v2/Git-Tools-Signing-Your-Work)
 
 ## Siguiente paso
 
-Si empiezas desde cero, comienza con la [Lección 1](lessons/01-primer-repositorio-y-primer-commit.md). Si ya completaste los tres checkpoints, el próximo bloque empezará en la lección 13 con diagnóstico de regresiones.
+Si empiezas desde cero, comienza con la [Lección 1](lessons/01-primer-repositorio-y-primer-commit.md). Si ya completaste los cuatro checkpoints, el siguiente y último incremento será la evaluación final autónoma de Git Junior.

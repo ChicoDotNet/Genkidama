@@ -127,7 +127,7 @@ Compara una segunda clonación con un worktree adicional usando `git rev-parse -
 
 ## Siguiente paso
 
-El siguiente incremento investigará regresiones con `log`, `blame` y `bisect`, y después profundizará en recuperación con `reflog`.
+Continúa con [diagnóstico de regresiones con `log`, `blame` y `bisect`](13-log-blame-bisect.md).
 
 ## Referencias
 
