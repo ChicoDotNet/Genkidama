@@ -79,8 +79,8 @@ courses:
     status: in_progress
     lessons_complete: 8
     lessons_total: 17
-    ci: pending
-    last_green_executable_sha: 4abef22208e9c69625bd15175f91b96c08f5cac9
+    ci: green
+    last_green_executable_sha: 29da3fc12c0591418b14e061b1f9ba05d61123e7
     pr: 36
     pilot_order: 3
   matlab: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
