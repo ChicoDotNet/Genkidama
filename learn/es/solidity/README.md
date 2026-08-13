@@ -22,7 +22,7 @@ La misma aplicación crece para enseñar tipos, estado, funciones, visibilidad, 
 
 ## Estado del curso
 
-**4/17 lecciones del piloto completadas.** El primer vertical ya compila y pasa su suite con Foundry en CI sobre Ubuntu 24.04.
+**6/17 lecciones del piloto completadas.** El vertical actual compila y pasa su suite con Foundry en CI sobre Ubuntu 24.04; además ya cubre ABI y eventos como fronteras públicas de integración.
 
 ## Qué necesitas instalar
 
@@ -34,7 +34,7 @@ Comprueba Foundry:
 forge --version
 ```
 
-No necesitas una wallet, una RPC comercial ni Ether real para completar estas primeras lecciones.
+No necesitas una wallet, una RPC comercial ni Ether real para completar estas lecciones.
 
 ## Build, test y verificación
 
@@ -48,12 +48,20 @@ bash tools/verify.sh
 
 `tools/verify.sh` es el gate local: comprueba formato, compilación y pruebas usando la misma configuración de proyecto que CI.
 
+Para inspeccionar la superficie pública:
+
+```bash
+forge inspect FreelanceEscrow abi
+```
+
 ## Lecciones
 
 1. [Primer depósito y estado del escrow](lessons/01-primer-deposito-y-estado.md)
 2. [Máquina de estados, roles y entrega](lessons/02-maquina-de-estados-roles-y-entrega.md)
 3. [Liberación, reembolso y transferencia de valor](lessons/03-liberacion-reembolso-y-transferencia-de-valor.md)
 4. [Reverts precisos, suite y checkpoint](lessons/04-reverts-precisos-suite-y-checkpoint.md)
+5. [ABI: el contrato que otros programas realmente ven](lessons/05-abi-la-frontera-publica.md)
+6. [Eventos como contrato observable](lessons/06-eventos-como-contrato-observable.md)
 
 ### Checkpoint 01
 
@@ -82,6 +90,10 @@ No. El proyecto se mantiene enfocado en un problema de negocio concreto: custodi
 
 No. Solidity es el lenguaje y Foundry es el toolchain elegido para compilar, probar y trabajar localmente de forma reproducible.
 
+### ¿La ABI es lo mismo que el contrato?
+
+No. La ABI describe la frontera codificable que consumen herramientas e integraciones; el bytecode y la lógica interna siguen siendo artefactos distintos.
+
 ### ¿Este proyecto está listo para producción?
 
 No. Es una aplicación educativa diseñada para aprender fundamentos profesionales y practicar decisiones de seguridad.
@@ -92,17 +104,20 @@ No. Es una aplicación educativa diseñada para aprender fundamentos profesional
 - **Wei/Ether:** unidades de valor nativo; `1 ether` es una unidad de conveniencia de Solidity.
 - **`msg.sender`:** dirección que realiza la llamada actual.
 - **`msg.value`:** valor enviado junto con una llamada `payable`.
-- **ABI:** convención para codificar llamadas, argumentos, resultados y errores.
+- **ABI:** convención para codificar llamadas, argumentos, resultados, eventos y errores.
+- **selector:** primeros cuatro bytes derivados de la firma canónica de una función o error.
+- **event/log:** señal observable emitida durante una ejecución exitosa.
 - **custom error:** error tipado y eficiente que puede devolver datos al llamador.
 
 ## Referencias oficiales
 
 - [Solidity documentation](https://docs.soliditylang.org/en/v0.8.35/)
 - [Solidity contracts](https://docs.soliditylang.org/en/v0.8.35/contracts.html)
+- [Solidity ABI specification](https://docs.soliditylang.org/en/v0.8.35/abi-spec.html)
 - [Solidity security considerations](https://docs.soliditylang.org/en/v0.8.35/security-considerations.html)
 - [Foundry Book](https://getfoundry.sh/)
 - [Foundry — Writing Tests](https://getfoundry.sh/forge/writing-tests)
 
 ## Siguiente paso
 
-Empieza en la [Lección 01](lessons/01-primer-deposito-y-estado.md). Después del checkpoint 01, el siguiente incremento profundizará en ABI, eventos y fronteras de diseño sin abandonar FreelanceEscrow.
+Empieza en la [Lección 01](lessons/01-primer-deposito-y-estado.md). Después de la Lección 06, el siguiente incremento profundizará en interfaces explícitas y fronteras de seguridad antes del checkpoint 02.
