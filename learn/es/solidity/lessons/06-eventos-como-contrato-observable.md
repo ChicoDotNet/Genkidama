@@ -93,7 +93,7 @@ Investiga qué coste y limitaciones tiene marcar un parámetro como `indexed` y 
 
 ## Siguiente paso
 
-El siguiente incremento profundizará en interfaces explícitas, fronteras de seguridad y el checkpoint 02 antes de añadir nuevas capacidades al escrow.
+Continúa con la [Lección 07 — Interfaces explícitas y compatibilidad](07-interfaces-explicitas-y-compatibilidad.md).
 
 ## Referencias
 
