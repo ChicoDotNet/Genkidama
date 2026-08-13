@@ -64,7 +64,7 @@ Las estructuras en memoria son útiles cuando su tamaño, contrato y límites so
 
 ## Siguiente paso
 
-El siguiente bloque llevará NominaBatch hacia organización profesional, tooling y diagnóstico antes de la evaluación final.
+Continúa con la [Lección 13 — organización y fronteras](13-organizacion-y-fronteras.md).
 
 ## Referencias
 
