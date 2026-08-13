@@ -18,6 +18,9 @@ permissions:
 jobs:
   solidity:
     runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: learn/es/solidity/app
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -27,5 +30,11 @@ jobs:
         with:
           version: stable
 
-      - name: Verify FreelanceEscrow
-        run: bash learn/es/solidity/tools/verify.sh
+      - name: Check formatting
+        run: forge fmt --check
+
+      - name: Build FreelanceEscrow
+        run: forge build
+
+      - name: Test FreelanceEscrow
+        run: forge test -vv
