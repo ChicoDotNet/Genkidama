@@ -30,7 +30,12 @@ public sealed class SqliteOrderRepositoryTests
             var orders = await reader.GetAllAsync();
 
             Assert.HasCount(1, orders);
-            Assert.AreEqual(expected, orders[0]);
+            var actual = orders[0];
+            Assert.AreEqual(expected.Id, actual.Id);
+            Assert.AreEqual(expected.CreatedAt, actual.CreatedAt);
+            Assert.AreEqual(expected.Total, actual.Total);
+            Assert.HasCount(1, actual.Lines);
+            Assert.AreEqual(expected.Lines[0], actual.Lines[0]);
         }
         finally
         {
