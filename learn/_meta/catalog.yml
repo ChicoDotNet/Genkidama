@@ -220,7 +220,7 @@ courses:
   name: JavaScript
   v1_required: true
   linguist_detected: true
-  status: planned
+  status: in_progress
   canonical_app: Kanban offline-first/PWA construido principalmente con JavaScript nativo
   pilot_order: 3
 - slug: matlab
