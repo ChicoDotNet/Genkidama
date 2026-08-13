@@ -10,6 +10,16 @@ interface Vm {
     function expectRevert(bytes calldata revertData) external;
 }
 
+contract RejectingFreelancer {
+    function deliver(FreelanceEscrow escrow) external {
+        escrow.markDelivered();
+    }
+
+    receive() external payable {
+        revert("reject payment");
+    }
+}
+
 contract FreelanceEscrowTest {
     Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
     address private constant CLIENT = address(0xC1);
@@ -44,6 +54,20 @@ contract FreelanceEscrowTest {
         require(uint256(escrow.state()) == uint256(FreelanceEscrow.State.Released), "released");
         require(FREELANCER.balance == beforeBalance + DEPOSIT, "payment");
         require(address(escrow).balance == 0, "escrow empty");
+    }
+
+    function testReleaseFailureRevertsStateAndRetainsFunds() public {
+        RejectingFreelancer rejecting = new RejectingFreelancer();
+        vm.prank(CLIENT);
+        FreelanceEscrow escrow = new FreelanceEscrow{value: DEPOSIT}(address(rejecting));
+        rejecting.deliver(escrow);
+
+        vm.expectRevert(FreelanceEscrow.TransferFailed.selector);
+        vm.prank(CLIENT);
+        escrow.release();
+
+        require(uint256(escrow.state()) == uint256(FreelanceEscrow.State.Delivered), "state rolled back");
+        require(address(escrow).balance == DEPOSIT, "funds retained");
     }
 
     function testClientCanRefundBeforeDelivery() public {
