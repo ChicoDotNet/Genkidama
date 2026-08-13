@@ -1,0 +1,41 @@
+schema_version: 1
+slug: python
+language: Python
+locale: es
+source_locale: es
+title: Curso de Python desde cero — Construye un conciliador de facturas CSV
+authoring_status: pilot
+status: in_progress
+canonical_app:
+  name: LedgerMatch
+  summary: CLI local para importar facturas y pagos desde CSV, validar datos, conciliar importes, persistir resultados y generar reportes.
+audience: beginner
+prerequisites: []
+lesson_count: 17
+toolchain:
+  verified_on: '2026-08-12'
+  version_tested: 3.14.6
+  runtime_or_compiler: CPython 3.14.x
+  package_or_build_tool: venv + pip
+  test_tool: pytest 9.1.1
+  operating_systems_targeted:
+    - windows-11
+    - linux
+  operating_systems_tested: []
+ci:
+  supported: true
+  workflow: .github/workflows/learn-python.yml
+  isolation: path-scoped
+career_context:
+  uses:
+    - automatización y scripting de procesos
+    - importación, limpieza y transformación de datos
+    - backend, integraciones y tareas de soporte sobre ecosistemas Python
+  market_note: Python tiene uso profesional amplio en automatización, datos y backend; este curso enseña fundamentos transferibles mediante una herramienta verificable y no promete empleo.
+official_references:
+  - https://docs.python.org/3.14/
+  - https://docs.python.org/3.14/library/csv.html
+  - https://docs.python.org/3.14/library/decimal.html
+  - https://docs.python.org/3.14/library/sqlite3.html
+  - https://packaging.python.org/
+  - https://docs.pytest.org/
