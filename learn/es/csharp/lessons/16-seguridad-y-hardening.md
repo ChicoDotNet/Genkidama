@@ -90,7 +90,7 @@ Resuelve [`../exercises/checkpoint-04.md`](../exercises/checkpoint-04.md) antes 
 
 ## Siguiente paso
 
-Ya no habrá una lección guiada. La 17 es la evaluación final: leerás requisitos, modificarás StockFlow y defenderás tus decisiones sin receta.
+La [Lección 17](17-evaluacion-final.md) es la evaluación final: leerás requisitos, modificarás StockFlow y defenderás tus decisiones sin receta.
 
 ## Referencias
 

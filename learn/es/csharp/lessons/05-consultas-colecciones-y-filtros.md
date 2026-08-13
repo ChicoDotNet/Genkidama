@@ -136,7 +136,7 @@ Para esta búsqueda usamos `StringComparison.OrdinalIgnoreCase`, que deja explí
 
 ## Siguiente paso
 
-En la próxima lección profundizarás en LINQ. No para aprender una lista de métodos, sino para producir información que el negocio pueda usar.
+En la [Lección 06](06-linq-y-transformaciones.md) profundizarás en LINQ. No para aprender una lista de métodos, sino para producir información que el negocio pueda usar.
 
 ## Referencias
 

@@ -69,7 +69,7 @@ DI hace visibles las dependencias, facilita pruebas y reduce acoplamiento cuando
 
 ## Siguiente paso
 
-El siguiente bloque probará endpoints completos y regresiones HTTP, no sólo servicios aislados.
+En la [Lección 13](13-pruebas-de-endpoints.md) probaremos endpoints completos y regresiones HTTP, no sólo servicios aislados.
 
 ## Referencias
 

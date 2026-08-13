@@ -124,7 +124,7 @@ Una sola expresión de quince operaciones puede ser técnicamente correcta y dif
 
 ## Siguiente paso
 
-Ya tenemos catálogo y reserva atómica. Ahora construiremos el primer pedido y veremos cómo varios objetos colaboran sin convertirse en una clase gigante.
+En la [Lección 07](07-el-primer-pedido.md) construiremos el primer pedido y veremos cómo varios objetos colaboran sin convertirse en una clase gigante.
 
 ## Referencias
 
