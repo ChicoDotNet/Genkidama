@@ -105,7 +105,7 @@ Sólo después de intentarlo consulta [`../solutions/importacion-segura-04.md`](
 - checkpoint 04 integra diseño, UX, pruebas y seguridad.
 
 ## Siguiente paso
-La Lección 17 será la evaluación final autónoma: tendrás que leer arquitectura existente, modificar comportamiento, corregir un defecto, escribir pruebas y justificar decisiones sin una receta paso a paso.
+Continúa con la [Lección 17 — Evaluación final sin receta](17-evaluacion-final.md): tendrás que leer arquitectura existente, modificar comportamiento, corregir un defecto, escribir pruebas y justificar decisiones sin una receta paso a paso.
 
 ## Referencias
 - [Content Security Policy — MDN](https://developer.mozilla.org/docs/Web/HTTP/CSP)
