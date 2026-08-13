@@ -28,7 +28,7 @@ Suponer que el manifest por sí solo ofrece offline; usar rutas que rompen al co
 Mantén rutas relativas y verifica una recarga offline después de una primera carga online.
 
 ## Tu turno — Checkpoint 03
-Resuelve [`../exercises/checkpoint-03.md`](../exercises/checkpoint-03.md) sin abrir la solución.
+Resuelve [`../exercises/pwa-resilience-03.md`](../exercises/pwa-resilience-03.md) sin abrir la solución.
 
 [PAUSA PARA EJERCICIO]
 
@@ -36,7 +36,7 @@ Resuelve [`../exercises/checkpoint-03.md`](../exercises/checkpoint-03.md) sin ab
 Ejecuta `npm run check`, `npm test`, `npm run smoke` y después prueba online → offline → recarga.
 
 ## Solución
-Compara con [`../solutions/checkpoint-03.md`](../solutions/checkpoint-03.md) cuando termines.
+Compara con [`../solutions/pwa-resilience-03.md`](../solutions/pwa-resilience-03.md) cuando termines.
 
 ## Reto adicional
 Diseña cómo informarías que existe una nueva versión de la app shell lista para usarse.
