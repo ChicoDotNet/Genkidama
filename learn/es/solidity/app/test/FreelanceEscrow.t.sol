@@ -7,6 +7,7 @@ interface Vm {
     function deal(address who, uint256 newBalance) external;
     function prank(address msgSender) external;
     function expectRevert(bytes4 revertData) external;
+    function expectRevert(bytes calldata revertData) external;
 }
 
 contract FreelanceEscrowTest {
@@ -74,7 +75,13 @@ contract FreelanceEscrowTest {
         FreelanceEscrow escrow = _deploy();
         vm.prank(FREELANCER);
         escrow.markDelivered();
-        vm.expectRevert(FreelanceEscrow.InvalidState.selector);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                FreelanceEscrow.InvalidState.selector,
+                FreelanceEscrow.State.Funded,
+                FreelanceEscrow.State.Delivered
+            )
+        );
         vm.prank(CLIENT);
         escrow.refund();
     }
