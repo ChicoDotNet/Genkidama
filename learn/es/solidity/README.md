@@ -22,7 +22,7 @@ La misma aplicación crece para enseñar tipos, estado, funciones, visibilidad, 
 
 ## Estado del curso
 
-**6/17 lecciones del piloto completadas.** El vertical actual compila y pasa su suite con Foundry en CI sobre Ubuntu 24.04; además ya cubre ABI y eventos como fronteras públicas de integración.
+**8/17 lecciones del piloto completadas.** El vertical actual compila y pasa su suite con Foundry en CI sobre Ubuntu 24.04; además cubre ABI, eventos, diseño de interfaces y una regresión que demuestra rollback atómico cuando el receptor rechaza Ether.
 
 ## Qué necesitas instalar
 
@@ -62,11 +62,18 @@ forge inspect FreelanceEscrow abi
 4. [Reverts precisos, suite y checkpoint](lessons/04-reverts-precisos-suite-y-checkpoint.md)
 5. [ABI: el contrato que otros programas realmente ven](lessons/05-abi-la-frontera-publica.md)
 6. [Eventos como contrato observable](lessons/06-eventos-como-contrato-observable.md)
+7. [Interfaces explícitas y compatibilidad](lessons/07-interfaces-explicitas-y-compatibilidad.md)
+8. [Transferencias, atomicidad y checkpoint 02](lessons/08-transferencias-atomicidad-y-checkpoint.md)
 
 ### Checkpoint 01
 
 - [Ejercicio — Constructor seguro](exercises/checkpoint-01.md)
 - [Solución de referencia](solutions/checkpoint-01.md) — ábrela sólo después de tu intento.
+
+### Checkpoint 02
+
+- [Ejercicio — Falla de pago sin corromper el escrow](exercises/checkpoint-02.md)
+- [Solución de referencia](solutions/checkpoint-02.md) — ábrela sólo después de tu intento.
 
 ## Qué sabrás hacer al terminar
 
@@ -79,35 +86,31 @@ Todos los ejemplos usan ejecución local y valores ficticios. Un ejercicio educa
 ## Preguntas frecuentes
 
 ### ¿Necesito MetaMask?
-
 No para el curso base. Foundry proporciona cuentas y una EVM local para pruebas.
 
 ### ¿Vamos a crear un token?
-
-No. El proyecto se mantiene enfocado en un problema de negocio concreto: custodia y liquidación de un pago freelance.
+No. El proyecto se mantiene enfocado en custodia y liquidación de un pago freelance.
 
 ### ¿Foundry es parte de Solidity?
-
-No. Solidity es el lenguaje y Foundry es el toolchain elegido para compilar, probar y trabajar localmente de forma reproducible.
+No. Solidity es el lenguaje y Foundry es el toolchain elegido para compilar y probar localmente.
 
 ### ¿La ABI es lo mismo que el contrato?
-
-No. La ABI describe la frontera codificable que consumen herramientas e integraciones; el bytecode y la lógica interna siguen siendo artefactos distintos.
+No. La ABI describe la frontera codificable que consumen herramientas e integraciones; el bytecode y la lógica interna son artefactos distintos.
 
 ### ¿Este proyecto está listo para producción?
-
-No. Es una aplicación educativa diseñada para aprender fundamentos profesionales y practicar decisiones de seguridad.
+No. Es una aplicación educativa; pruebas verdes no equivalen a auditoría de seguridad.
 
 ## Glosario inicial
 
 - **EVM:** máquina virtual que ejecuta bytecode de contratos compatibles.
-- **Wei/Ether:** unidades de valor nativo; `1 ether` es una unidad de conveniencia de Solidity.
+- **Wei/Ether:** unidades de valor nativo; `1 ether` es una unidad de conveniencia.
 - **`msg.sender`:** dirección que realiza la llamada actual.
 - **`msg.value`:** valor enviado junto con una llamada `payable`.
 - **ABI:** convención para codificar llamadas, argumentos, resultados, eventos y errores.
 - **selector:** primeros cuatro bytes derivados de la firma canónica de una función o error.
 - **event/log:** señal observable emitida durante una ejecución exitosa.
-- **custom error:** error tipado y eficiente que puede devolver datos al llamador.
+- **custom error:** error tipado que puede devolver datos al llamador.
+- **atomicidad:** una transacción confirma todos sus efectos o, si revierte, no confirma un estado parcial.
 
 ## Referencias oficiales
 
@@ -120,4 +123,4 @@ No. Es una aplicación educativa diseñada para aprender fundamentos profesional
 
 ## Siguiente paso
 
-Empieza en la [Lección 01](lessons/01-primer-deposito-y-estado.md). Después de la Lección 06, el siguiente incremento profundizará en interfaces explícitas y fronteras de seguridad antes del checkpoint 02.
+Empieza en la [Lección 01](lessons/01-primer-deposito-y-estado.md). Después de la Lección 08, el siguiente bloque profundizará en composición, fuzzing/invariantes y propiedades antes de tooling/hardening final.
