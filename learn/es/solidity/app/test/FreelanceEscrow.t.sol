@@ -67,8 +67,7 @@ contract FreelanceEscrowTest {
         escrow.release();
 
         require(
-            uint256(escrow.state()) == uint256(FreelanceEscrow.State.Delivered),
-            "state rolled back"
+            uint256(escrow.state()) == uint256(FreelanceEscrow.State.Delivered), "state rolled back"
         );
         require(address(escrow).balance == DEPOSIT, "funds retained");
     }
