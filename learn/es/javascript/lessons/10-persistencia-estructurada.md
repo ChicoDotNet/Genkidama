@@ -43,7 +43,7 @@ Diseña almacenes e índices para un tablero mucho mayor.
 IndexedDB aporta persistencia estructurada y asíncrona.
 
 ## Siguiente paso
-La Lección 11 añadirá disponibilidad offline de la app shell.
+Continúa con [Lección 11 — App shell offline](11-app-shell-offline.md).
 
 ## Referencias
 - [IndexedDB API — MDN](https://developer.mozilla.org/docs/Web/API/IndexedDB_API)
