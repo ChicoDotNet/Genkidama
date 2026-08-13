@@ -30,8 +30,11 @@ jobs:
         with:
           version: stable
 
-      - name: Check formatting
-        run: forge fmt --check
+      - name: Check contract formatting
+        run: forge fmt --check src/FreelanceEscrow.sol
+
+      - name: Check test formatting
+        run: forge fmt --check test/FreelanceEscrow.t.sol
 
       - name: Build FreelanceEscrow
         run: forge build
