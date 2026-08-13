@@ -1,1 +1,96 @@
 schema_version: 1
+initiative:
+  status: pilots_in_progress
+  source_locale: es
+  last_updated: '2026-08-12'
+  active_work: python_pilot
+  v1_courses_total: 45
+  v1_courses_complete: 1
+foundation:
+  status: complete
+  catalog: complete
+  pedagogy: complete
+  course_spec: complete
+  authoring_guide: complete
+  roadmap: complete
+  decisions: complete
+  validator: complete
+  ci: green
+courses:
+  csharp:
+    status: complete
+    lessons_complete: 17
+    lessons_total: 17
+    ci: green
+    last_green_executable_sha: 8514359e30b06580953b46c055ae222a56a29139
+    pr: 34
+    pilot_order: 1
+  typescript: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  ada: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  solidity:
+    status: planned
+    lessons_complete: 0
+    lessons_total: null
+    ci: not_configured
+    pr: null
+    pilot_order: 5
+  fortran: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  pascal: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  python:
+    status: in_progress
+    lessons_complete: 8
+    lessons_total: 17
+    ci: green
+    last_green_executable_sha: dbc29362085696f9565b8c87e50decbb493aecb1
+    pr: 35
+    pilot_order: 2
+  vbnet: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  cpp: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  objective-c: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  java: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  rust: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  zig: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  go: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  php: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  nim: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  dart: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  kotlin: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  swift: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  fsharp: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  crystal: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  lua: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  haskell: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  cobol:
+    status: planned
+    lessons_complete: 0
+    lessons_total: null
+    ci: not_configured
+    pr: null
+    pilot_order: 4
+  scala: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  groovy: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  ruby: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  c: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  ocaml: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  julia: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  vba: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  gdscript: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  javascript:
+    status: planned
+    lessons_complete: 0
+    lessons_total: null
+    ci: not_configured
+    pr: null
+    pilot_order: 3
+  matlab: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  perl: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  r: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  powershell: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  html: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  assembly: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  elixir: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  shell: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  erlang: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  clojure: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  common-lisp: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  prolog: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
