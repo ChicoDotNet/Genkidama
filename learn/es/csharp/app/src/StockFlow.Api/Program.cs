@@ -21,4 +21,6 @@ app.MapPost("/api/products", (CreateProductRequest request, ProductCatalog catal
 
 app.Run();
 
-public partial class Program;
+public partial class Program
+{
+}
