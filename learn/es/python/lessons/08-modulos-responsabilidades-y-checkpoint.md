@@ -86,7 +86,7 @@ Explica qué módulo debería cambiar si mañana el reporte se escribiera ademá
 
 ## Siguiente paso
 
-El próximo bloque introducirá persistencia con `sqlite3`. Ahora sí existe información derivada que vale la pena conservar entre ejecuciones.
+En la [Lección 9](09-persistencia-sqlite.md) introduciremos persistencia con `sqlite3`. Ahora sí existe información derivada que vale la pena conservar entre ejecuciones.
 
 ## Referencias
 
