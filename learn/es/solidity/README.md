@@ -22,7 +22,7 @@ La misma aplicación crece para enseñar tipos, estado, funciones, visibilidad, 
 
 ## Estado del curso
 
-**8/17 lecciones del piloto completadas.** El vertical actual compila y pasa su suite con Foundry en CI sobre Ubuntu 24.04; además cubre ABI, eventos, diseño de interfaces y una regresión que demuestra rollback atómico cuando el receptor rechaza Ether.
+**12/17 lecciones del piloto completadas.** El vertical actual compila y pasa su suite con Foundry en CI sobre Ubuntu 24.04. Además de ABI, eventos e interfaces, la suite ya incluye propiedades fuzz sobre montos y autorización y una prueba de composición con un receptor contractual que rechaza Ether.
 
 ## Qué necesitas instalar
 
@@ -64,16 +64,22 @@ forge inspect FreelanceEscrow abi
 6. [Eventos como contrato observable](lessons/06-eventos-como-contrato-observable.md)
 7. [Interfaces explícitas y compatibilidad](lessons/07-interfaces-explicitas-y-compatibilidad.md)
 8. [Transferencias, atomicidad y checkpoint 02](lessons/08-transferencias-atomicidad-y-checkpoint.md)
+9. [Fuzzing: propiedades sobre valor](lessons/09-fuzzing-propiedades-de-valor.md)
+10. [Invariantes de estado y autorización](lessons/10-invariantes-de-estado-y-autorizacion.md)
+11. [Composición y colaboradores hostiles](lessons/11-composicion-y-colaboradores-hostiles.md)
+12. [Estrategia de pruebas y checkpoint 03](lessons/12-estrategia-de-pruebas-y-checkpoint-03.md)
 
 ### Checkpoint 01
-
 - [Ejercicio — Constructor seguro](exercises/checkpoint-01.md)
 - [Solución de referencia](solutions/checkpoint-01.md) — ábrela sólo después de tu intento.
 
 ### Checkpoint 02
-
 - [Ejercicio — Falla de pago sin corromper el escrow](exercises/checkpoint-02.md)
 - [Solución de referencia](solutions/checkpoint-02.md) — ábrela sólo después de tu intento.
+
+### Checkpoint 03
+- [Ejercicio — Propiedades de reembolso](exercises/checkpoint-03.md)
+- [Solución de referencia](solutions/checkpoint-03.md) — ábrela sólo después de tu intento.
 
 ## Qué sabrás hacer al terminar
 
@@ -97,6 +103,9 @@ No. Solidity es el lenguaje y Foundry es el toolchain elegido para compilar y pr
 ### ¿La ABI es lo mismo que el contrato?
 No. La ABI describe la frontera codificable que consumen herramientas e integraciones; el bytecode y la lógica interna son artefactos distintos.
 
+### ¿Qué aporta fuzzing si ya tengo pruebas normales?
+Permite expresar una propiedad y comprobarla sobre muchas entradas generadas, mientras las pruebas deterministas siguen documentando historias concretas.
+
 ### ¿Este proyecto está listo para producción?
 No. Es una aplicación educativa; pruebas verdes no equivalen a auditoría de seguridad.
 
@@ -111,6 +120,8 @@ No. Es una aplicación educativa; pruebas verdes no equivalen a auditoría de se
 - **event/log:** señal observable emitida durante una ejecución exitosa.
 - **custom error:** error tipado que puede devolver datos al llamador.
 - **atomicidad:** una transacción confirma todos sus efectos o, si revierte, no confirma un estado parcial.
+- **fuzzing:** ejecución repetida de una propiedad con entradas generadas por el framework de pruebas.
+- **invariante:** afirmación que debe conservarse para una región o secuencia válida del sistema.
 
 ## Referencias oficiales
 
@@ -120,7 +131,8 @@ No. Es una aplicación educativa; pruebas verdes no equivalen a auditoría de se
 - [Solidity security considerations](https://docs.soliditylang.org/en/v0.8.35/security-considerations.html)
 - [Foundry Book](https://getfoundry.sh/)
 - [Foundry — Writing Tests](https://getfoundry.sh/forge/writing-tests)
+- [Foundry — Fuzz Testing](https://getfoundry.sh/forge/advanced-testing/fuzz-testing)
 
 ## Siguiente paso
 
-Empieza en la [Lección 01](lessons/01-primer-deposito-y-estado.md). Después de la Lección 08, el siguiente bloque profundizará en composición, fuzzing/invariantes y propiedades antes de tooling/hardening final.
+Empieza en la [Lección 01](lessons/01-primer-deposito-y-estado.md). Después de la Lección 12, el bloque final previo a evaluación cubrirá tooling, diagnóstico, gas y hardening del contrato.
