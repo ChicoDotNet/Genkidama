@@ -1,0 +1,63 @@
+name: Learn JavaScript
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'learn/es/javascript/**'
+      - '.github/workflows/learn-javascript.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'learn/es/javascript/**'
+      - '.github/workflows/learn-javascript.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  javascript:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js 24.18.1 LTS
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24.18.1'
+
+      - name: Show Node.js and npm versions
+        run: |
+          node --version
+          npm --version
+
+      - name: Syntax check
+        working-directory: learn/es/javascript/app
+        run: npm run check
+
+      - name: Test
+        working-directory: learn/es/javascript/app
+        run: npm test
+
+      - name: Domain smoke test
+        working-directory: learn/es/javascript/app
+        run: npm run smoke
+
+      - name: HTTP smoke test
+        working-directory: learn/es/javascript/app
+        run: |
+          npm start >/tmp/kanban-local.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          for attempt in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:4173/ >/tmp/kanban-local.html; then
+              break
+            fi
+            sleep 0.25
+          done
+          grep -F '<h1>Kanban Local</h1>' /tmp/kanban-local.html
+          curl --fail --silent http://127.0.0.1:4173/src/app.js | grep -F 'loadBoard'

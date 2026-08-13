@@ -1,0 +1,41 @@
+schema_version: 1
+slug: javascript
+language: JavaScript
+locale: es
+source_locale: es
+title: Curso de JavaScript desde cero — Construye un Kanban offline-first
+authoring_status: pilot
+status: in_progress
+canonical_app:
+  name: Kanban Local
+  summary: PWA offline-first principalmente nativa para organizar tareas en columnas, persistirlas localmente y operar sin cuenta ni backend.
+audience: beginner
+prerequisites: []
+lesson_count: 17
+toolchain:
+  verified_on: '2026-08-12'
+  version_tested: 24.18.1
+  runtime_or_compiler: Node.js 24 LTS + navegador moderno
+  package_or_build_tool: npm + Web Platform APIs
+  test_tool: node:test
+  operating_systems_targeted:
+    - windows-11
+    - linux
+  operating_systems_tested:
+    - github-actions-ubuntu-latest
+ci:
+  supported: true
+  workflow: .github/workflows/learn-javascript.yml
+  isolation: path-scoped
+career_context:
+  uses:
+    - interfaces web y aplicaciones frontend
+    - automatización y tooling con Node.js
+    - mantenimiento de aplicaciones JavaScript en navegador
+  market_note: JavaScript sigue siendo una base central del desarrollo web; este curso prepara fundamentos transferibles y no promete empleo ni sustituye experiencia profesional.
+official_references:
+  - https://developer.mozilla.org/docs/Web/JavaScript
+  - https://developer.mozilla.org/docs/Web/API/Window/localStorage
+  - https://developer.mozilla.org/docs/Web/JavaScript/Guide/Modules
+  - https://nodejs.org/en/about/previous-releases
+  - https://nodejs.org/api/test.html

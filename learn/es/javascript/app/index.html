@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kanban Local</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <p class="eyebrow">Genkidama Learn · JavaScript</p>
+      <h1>Kanban Local</h1>
+      <p>Organiza trabajo en tu navegador sin cuenta ni servidor.</p>
+    </header>
+    <form id="new-card-form" novalidate>
+      <label for="card-title">Nueva tarea</label>
+      <div class="new-card-row">
+        <input id="card-title" name="title" maxlength="80" autocomplete="off" required>
+        <button type="submit">Agregar</button>
+      </div>
+      <p id="form-error" role="alert" aria-live="polite"></p>
+    </form>
+    <section id="board" class="board" aria-label="Tablero Kanban">
+      <section data-column="todo"><h2>Por hacer</h2><ul class="cards"></ul></section>
+      <section data-column="doing"><h2>En curso</h2><ul class="cards"></ul></section>
+      <section data-column="done"><h2>Terminado</h2><ul class="cards"></ul></section>
+    </section>
+  </main>
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>
