@@ -9,6 +9,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
+    <!-- Microsoft.AspNetCore.OpenApi allows an affected OpenAPI.NET 2.x floor; pin a patched compatible 2.x release. -->
+    <PackageReference Include="Microsoft.OpenApi" Version="2.11.0" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.10" />
     <!-- Microsoft.Data.Sqlite currently permits SQLitePCLRaw 2.1.11; pin the patched compatible line explicitly. -->
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.12" />
