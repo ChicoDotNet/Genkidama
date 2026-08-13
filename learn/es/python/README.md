@@ -20,7 +20,7 @@ La aplicación vive en [`app/`](app/).
 
 ## Tooling verificado
 
-- **CPython 3.14.6**;
+- **CPython 3.14.7**;
 - `venv` + `pip`;
 - **pytest 9.1.1** para pruebas;
 - Windows 11 + PowerShell + VS Code como entorno ideal;

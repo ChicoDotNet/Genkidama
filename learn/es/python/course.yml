@@ -14,7 +14,7 @@ prerequisites: []
 lesson_count: 17
 toolchain:
   verified_on: '2026-08-12'
-  version_tested: 3.14.6
+  version_tested: 3.14.7
   runtime_or_compiler: CPython 3.14.x
   package_or_build_tool: venv + pip
   test_tool: pytest 9.1.1

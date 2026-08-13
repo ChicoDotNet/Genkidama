@@ -47,3 +47,20 @@ def test_missing_required_columns_fails_fast(tmp_path):
 
     with pytest.raises(CsvSchemaError, match="Faltan columnas obligatorias"):
         read_invoices(path)
+
+
+def test_duplicate_invoice_id_is_rejected_after_normalization(tmp_path):
+    path = _write(
+        tmp_path,
+        "invoice_id,customer,issued_on,invoice_total,payment_total\n"
+        "F-1,Cliente Uno,2026-08-01,100.00,100.00\n"
+        " F-1 ,Cliente Uno,2026-08-02,50.00,50.00\n",
+    )
+
+    parsed = read_invoices(path)
+
+    assert tuple(record.invoice_id for record in parsed.records) == ("F-1",)
+    assert len(parsed.issues) == 1
+    assert parsed.issues[0].row_number == 3
+    assert parsed.issues[0].field == "invoice_id"
+    assert parsed.issues[0].message == "El identificador está duplicado."

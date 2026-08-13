@@ -25,10 +25,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Setup Python 3.14
+      - name: Setup Python 3.14.7
         uses: actions/setup-python@v7
         with:
-          python-version: '3.14'
+          python-version: '3.14.7'
 
       - name: Show Python version
         run: python --version
