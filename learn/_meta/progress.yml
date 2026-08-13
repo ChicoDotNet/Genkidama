@@ -3,9 +3,9 @@ initiative:
   status: pilots_in_progress
   source_locale: es
   last_updated: '2026-08-13'
-  active_work: cobol_pilot
+  active_work: solidity_pilot
   v1_courses_total: 45
-  v1_courses_complete: 3
+  v1_courses_complete: 4
 foundation:
   status: complete
   catalog: complete
@@ -69,11 +69,11 @@ courses:
   lua: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   haskell: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   cobol:
-    status: in_progress
-    lessons_complete: 16
+    status: complete
+    lessons_complete: 17
     lessons_total: 17
     ci: green
-    last_green_executable_sha: a33ca9b2ef1e4049b095d5dd3004927667b08053
+    last_green_executable_sha: df197af441096c4be377ce1ecc69702de7e45635
     pr: 39
     pilot_order: 4
   scala: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
