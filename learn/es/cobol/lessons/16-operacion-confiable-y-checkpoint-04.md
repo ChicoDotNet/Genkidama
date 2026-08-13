@@ -71,7 +71,7 @@ Una aplicación batch profesional necesita resultados de negocio correctos y con
 
 ## Siguiente paso
 
-La siguiente lección será la evaluación final COBOL sin receta.
+Continúa con la [Lección 17 — evaluación final sin receta](17-evaluacion-final.md).
 
 ## Referencias
 
