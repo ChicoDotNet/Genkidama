@@ -64,7 +64,7 @@ Diseña cómo informarías que existe una nueva versión de la app shell lista p
 - el checkpoint integra asincronía, persistencia y offline sin introducir framework.
 
 ## Siguiente paso
-La Lección 13 separará aún mejor responsabilidades antes de entrar a tooling y diagnóstico.
+Continúa con la [Lección 13 — Capas y comandos](13-capas-y-comandos.md).
 
 ## Referencias
 - [Web app manifests — MDN](https://developer.mozilla.org/docs/Web/Progressive_web_apps/Manifest)
