@@ -3,7 +3,7 @@ initiative:
   status: pilots_in_progress
   source_locale: es
   last_updated: '2026-08-12'
-  active_work: csharp_pilot
+  active_work: python_pilot
   v1_courses_total: 45
   v1_courses_complete: 1
 foundation:
@@ -37,10 +37,11 @@ courses:
   fortran: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   pascal: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   python:
-    status: planned
-    lessons_complete: 0
-    lessons_total: null
-    ci: not_configured
+    status: in_progress
+    lessons_complete: 4
+    lessons_total: 17
+    ci: configured_pending_validation
+    last_green_executable_sha: null
     pr: null
     pilot_order: 2
   vbnet: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
