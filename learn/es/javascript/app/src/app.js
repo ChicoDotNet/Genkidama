@@ -1,12 +1,7 @@
-import {
-  addCard,
-  COLUMN_IDS,
-  deleteCard,
-  editCard,
-  filterCards,
-  moveCard,
-} from "./board.js";
-import { exportBoard, importBoard, loadBoard, saveBoard } from "./storage.js";
+import { addCard, COLUMN_IDS, deleteCard, editCard, filterCards, moveCard } from "./board.js";
+import { loadBoardFromIndexedDb, saveBoardToIndexedDb } from "./idb-storage.js";
+import { loadPreferredBoard, savePreferredBoard } from "./repository.js";
+import { exportBoard, importBoard } from "./storage.js";
 
 const boardElement = document.querySelector("#board");
 const form = document.querySelector("#new-card-form");
@@ -17,150 +12,68 @@ const columnFilter = document.querySelector("#column-filter");
 const exportButton = document.querySelector("#export-board");
 const importInput = document.querySelector("#import-board");
 const statusElement = document.querySelector("#status-message");
-let board = loadBoard(window.localStorage);
+let board = { cards: [] };
+let persistenceMode = "localstorage";
 
-function setStatus(message) {
-  statusElement.textContent = message;
-}
+function setStatus(message) { statusElement.textContent = message; }
 
-function persistAndRender(message) {
-  saveBoard(window.localStorage, board);
+async function persistAndRender(message) {
+  persistenceMode = await savePreferredBoard({ indexedDbFactory: window.indexedDB, storage: window.localStorage, board, saveIndexedDb: saveBoardToIndexedDb });
   render();
-  setStatus(message);
+  setStatus(`${message} Persistencia: ${persistenceMode}.`);
 }
 
 function render() {
-  const visibleCards = filterCards(board, {
-    query: searchInput.value,
-    column: columnFilter.value,
-  });
-
+  const visibleCards = filterCards(board, { query: searchInput.value, column: columnFilter.value });
   for (const column of COLUMN_IDS) {
     const list = boardElement.querySelector(`[data-column="${column}"] .cards`);
     list.replaceChildren();
-
     for (const card of visibleCards.filter((candidate) => candidate.column === column)) {
-      const item = document.createElement("li");
-      item.className = "card";
-      item.dataset.cardId = card.id;
-
-      const text = document.createElement("span");
-      text.className = "card-title";
-      text.textContent = card.title;
-      item.append(text);
-
-      const actions = document.createElement("div");
-      actions.className = "card-actions";
-
-      const editButton = document.createElement("button");
-      editButton.type = "button";
-      editButton.dataset.action = "edit";
-      editButton.textContent = "Editar";
-      editButton.setAttribute("aria-label", `Editar ${card.title}`);
-      actions.append(editButton);
-
-      const deleteButton = document.createElement("button");
-      deleteButton.type = "button";
-      deleteButton.dataset.action = "delete";
-      deleteButton.textContent = "Eliminar";
-      deleteButton.setAttribute("aria-label", `Eliminar ${card.title}`);
-      actions.append(deleteButton);
-
-      for (const target of COLUMN_IDS.filter((candidate) => candidate !== column)) {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.dataset.action = "move";
-        button.dataset.moveTo = target;
-        button.textContent = `Mover a ${target}`;
-        button.setAttribute("aria-label", `Mover ${card.title} a ${target}`);
-        actions.append(button);
+      const item = document.createElement("li"); item.className = "card"; item.dataset.cardId = card.id;
+      const text = document.createElement("span"); text.className = "card-title"; text.textContent = card.title; item.append(text);
+      const actions = document.createElement("div"); actions.className = "card-actions";
+      for (const [action, label] of [["edit", "Editar"], ["delete", "Eliminar"]]) {
+        const button = document.createElement("button"); button.type = "button"; button.dataset.action = action; button.textContent = label;
+        button.setAttribute("aria-label", `${label} ${card.title}`); actions.append(button);
       }
-
-      item.append(actions);
-      list.append(item);
+      for (const target of COLUMN_IDS.filter((candidate) => candidate !== column)) {
+        const button = document.createElement("button"); button.type = "button"; button.dataset.action = "move"; button.dataset.moveTo = target;
+        button.textContent = `Mover a ${target}`; button.setAttribute("aria-label", `Mover ${card.title} a ${target}`); actions.append(button);
+      }
+      item.append(actions); list.append(item);
     }
   }
 }
 
-form.addEventListener("submit", (event) => {
-  event.preventDefault();
-  errorElement.textContent = "";
-  try {
-    board = addCard(board, titleInput.value);
-    form.reset();
-    titleInput.focus();
-    persistAndRender("Tarjeta agregada.");
-  } catch (error) {
-    errorElement.textContent = error.message;
-  }
+form.addEventListener("submit", async (event) => {
+  event.preventDefault(); errorElement.textContent = "";
+  try { board = addCard(board, titleInput.value); form.reset(); titleInput.focus(); await persistAndRender("Tarjeta agregada."); }
+  catch (error) { errorElement.textContent = error.message; }
 });
 
-boardElement.addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-action]");
-  if (!button) return;
-  const cardElement = button.closest("[data-card-id]");
-  if (!cardElement) return;
-  const cardId = cardElement.dataset.cardId;
-  const currentCard = board.cards.find((card) => card.id === cardId);
-  if (!currentCard) return;
-
+boardElement.addEventListener("click", async (event) => {
+  const button = event.target.closest("button[data-action]"); if (!button) return;
+  const cardElement = button.closest("[data-card-id]"); if (!cardElement) return;
+  const cardId = cardElement.dataset.cardId; const currentCard = board.cards.find((card) => card.id === cardId); if (!currentCard) return;
   errorElement.textContent = "";
   try {
-    if (button.dataset.action === "move") {
-      board = moveCard(board, cardId, button.dataset.moveTo);
-      persistAndRender("Tarjeta movida.");
-      return;
-    }
-
-    if (button.dataset.action === "edit") {
-      const title = window.prompt("Nuevo título", currentCard.title);
-      if (title === null) return;
-      board = editCard(board, cardId, title);
-      persistAndRender("Tarjeta editada.");
-      return;
-    }
-
-    if (button.dataset.action === "delete") {
-      const confirmed = window.confirm(`¿Eliminar "${currentCard.title}"?`);
-      if (!confirmed) return;
-      board = deleteCard(board, cardId);
-      persistAndRender("Tarjeta eliminada.");
-    }
-  } catch (error) {
-    errorElement.textContent = error.message;
-  }
+    if (button.dataset.action === "move") { board = moveCard(board, cardId, button.dataset.moveTo); await persistAndRender("Tarjeta movida."); return; }
+    if (button.dataset.action === "edit") { const title = window.prompt("Nuevo título", currentCard.title); if (title === null) return; board = editCard(board, cardId, title); await persistAndRender("Tarjeta editada."); return; }
+    if (button.dataset.action === "delete") { if (!window.confirm(`¿Eliminar "${currentCard.title}"?`)) return; board = deleteCard(board, cardId); await persistAndRender("Tarjeta eliminada."); }
+  } catch (error) { errorElement.textContent = error.message; }
 });
 
 searchInput.addEventListener("input", render);
 columnFilter.addEventListener("change", render);
+exportButton.addEventListener("click", () => { const blob = new Blob([exportBoard(board)], { type: "application/json" }); const url = URL.createObjectURL(blob); const link = document.createElement("a"); link.href = url; link.download = "kanban-local.json"; link.click(); URL.revokeObjectURL(url); setStatus("Tablero exportado como JSON."); });
+importInput.addEventListener("change", async () => { const [file] = importInput.files; if (!file) return; errorElement.textContent = ""; try { board = importBoard(await file.text()); searchInput.value = ""; columnFilter.value = "all"; await persistAndRender(`Tablero importado: ${board.cards.length} tarjeta(s).`); } catch (error) { errorElement.textContent = error.message; } finally { importInput.value = ""; } });
 
-exportButton.addEventListener("click", () => {
-  const content = exportBoard(board);
-  const blob = new Blob([content], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "kanban-local.json";
-  link.click();
-  URL.revokeObjectURL(url);
-  setStatus("Tablero exportado como JSON.");
-});
+async function initialize() {
+  const loaded = await loadPreferredBoard({ indexedDbFactory: window.indexedDB, storage: window.localStorage, loadIndexedDb: loadBoardFromIndexedDb });
+  board = loaded.board; persistenceMode = loaded.mode;
+  if (loaded.mode === "localstorage" && board.cards.length > 0) persistenceMode = await savePreferredBoard({ indexedDbFactory: window.indexedDB, storage: window.localStorage, board, saveIndexedDb: saveBoardToIndexedDb });
+  render(); setStatus(`Tablero listo. Persistencia: ${persistenceMode}.`);
+  if ("serviceWorker" in navigator) { try { await navigator.serviceWorker.register("./service-worker.js"); } catch { setStatus(`Tablero listo. Persistencia: ${persistenceMode}. El modo offline no pudo registrarse.`); } }
+}
 
-importInput.addEventListener("change", async () => {
-  const [file] = importInput.files;
-  if (!file) return;
-  errorElement.textContent = "";
-  try {
-    const content = await file.text();
-    board = importBoard(content);
-    searchInput.value = "";
-    columnFilter.value = "all";
-    persistAndRender(`Tablero importado: ${board.cards.length} tarjeta(s).`);
-  } catch (error) {
-    errorElement.textContent = error.message;
-  } finally {
-    importInput.value = "";
-  }
-});
-
-render();
+initialize().catch((error) => { errorElement.textContent = `No se pudo iniciar el tablero: ${error.message}`; });

@@ -1,11 +1,11 @@
 {
   "name": "genkidama-kanban-local",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "engines": { "node": ">=24 <25" },
   "scripts": {
-    "check": "node --check src/board.js && node --check src/storage.js && node --check src/app.js && node --check tools/server.mjs",
+    "check": "node --check src/board.js && node --check src/storage.js && node --check src/idb-storage.js && node --check src/repository.js && node --check src/app.js && node --check service-worker.js && node --check tools/server.mjs",
     "test": "node --test tests/*.test.js",
     "smoke": "node tools/smoke.mjs",
     "start": "node tools/server.mjs"
