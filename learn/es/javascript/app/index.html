@@ -13,14 +13,39 @@
       <h1>Kanban Local</h1>
       <p>Organiza trabajo en tu navegador sin cuenta ni servidor.</p>
     </header>
+
     <form id="new-card-form" novalidate>
       <label for="card-title">Nueva tarea</label>
       <div class="new-card-row">
         <input id="card-title" name="title" maxlength="80" autocomplete="off" required>
         <button type="submit">Agregar</button>
       </div>
-      <p id="form-error" role="alert" aria-live="polite"></p>
+      <p id="form-error" role="alert" aria-live="assertive"></p>
     </form>
+
+    <section class="toolbar" aria-label="Herramientas del tablero">
+      <div>
+        <label for="search-cards">Buscar tarjetas</label>
+        <input id="search-cards" type="search" autocomplete="off" placeholder="Texto del título">
+      </div>
+      <div>
+        <label for="column-filter">Mostrar columna</label>
+        <select id="column-filter">
+          <option value="all">Todas</option>
+          <option value="todo">Por hacer</option>
+          <option value="doing">En curso</option>
+          <option value="done">Terminado</option>
+        </select>
+      </div>
+      <div class="transfer-actions">
+        <button id="export-board" type="button">Exportar JSON</button>
+        <label for="import-board">Importar JSON</label>
+        <input id="import-board" type="file" accept="application/json,.json">
+      </div>
+    </section>
+
+    <p id="status-message" role="status" aria-live="polite" class="status-message"></p>
+
     <section id="board" class="board" aria-label="Tablero Kanban">
       <section data-column="todo"><h2>Por hacer</h2><ul class="cards"></ul></section>
       <section data-column="doing"><h2>En curso</h2><ul class="cards"></ul></section>
