@@ -3,6 +3,8 @@
 
 /** Stable column identifiers used by domain and UI code. */
 export const COLUMN_IDS = Object.freeze(["todo", "doing", "done"]);
+/** Defensive upper bound for one local board. */
+export const MAX_CARDS = 500;
 
 /** Create a new empty board. @returns {Board} */
 export function createBoard() {
@@ -25,6 +27,9 @@ export function normalizeTitle(title) {
 export function assertValidBoard(value) {
   if (!value || typeof value !== "object" || !Array.isArray(value.cards)) {
     throw new TypeError("El tablero debe contener un arreglo de tarjetas.");
+  }
+  if (value.cards.length > MAX_CARDS) {
+    throw new RangeError(`El tablero no puede contener más de ${MAX_CARDS} tarjetas.`);
   }
 
   const ids = new Set();
@@ -54,6 +59,9 @@ export function assertValidBoard(value) {
 
 /** Add one card to the todo column without mutating the input board. @param {Board} board @param {string} title @param {string} [id] @returns {Board} */
 export function addCard(board, title, id = crypto.randomUUID()) {
+  if (board.cards.length >= MAX_CARDS) {
+    throw new RangeError(`El tablero alcanzó el límite de ${MAX_CARDS} tarjetas.`);
+  }
   const normalized = normalizeTitle(title);
   if (board.cards.some((card) => card.id === id)) {
     throw new Error("El identificador de la tarjeta ya existe.");

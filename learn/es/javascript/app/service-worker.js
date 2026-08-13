@@ -1,4 +1,4 @@
-const CACHE_NAME = "kanban-local-v1";
+const CACHE_NAME = "kanban-local-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -7,15 +7,15 @@ const APP_SHELL = [
   "./icon.svg",
   "./src/app.js",
   "./src/board.js",
+  "./src/commands.js",
+  "./src/diagnostics.js",
   "./src/storage.js",
   "./src/idb-storage.js",
   "./src/repository.js",
 ];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)),
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
   self.skipWaiting();
 });
 

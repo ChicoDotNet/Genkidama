@@ -2,6 +2,19 @@ import { assertValidBoard } from "./board.js";
 
 const STORAGE_KEY = "genkidama-kanban-v1";
 const EXPORT_VERSION = 1;
+/** Defensive limit before reading an imported file into memory. */
+export const MAX_IMPORT_BYTES = 1_000_000;
+
+/** Validate a File-like byte size before reading its contents. @param {number} size @returns {number} */
+export function assertImportFileSize(size) {
+  if (!Number.isSafeInteger(size) || size < 0) {
+    throw new TypeError("El tamaño del archivo debe ser un entero no negativo.");
+  }
+  if (size > MAX_IMPORT_BYTES) {
+    throw new RangeError(`El archivo supera el límite de ${MAX_IMPORT_BYTES} bytes.`);
+  }
+  return size;
+}
 
 /** Load a board through a Storage-compatible reader, including the pre-versioned lesson format. @param {{getItem(key:string): string|null}} storage @returns {{cards:Array<object>}} */
 export function loadBoard(storage) {
