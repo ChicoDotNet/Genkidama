@@ -1,3 +1,5 @@
+"""Parse and validate LedgerMatch CSV input at the file boundary."""
+
 from __future__ import annotations
 
 import csv
@@ -17,6 +19,8 @@ class CsvSchemaError(ValueError):
 
 @dataclass(frozen=True, slots=True)
 class ParseResult:
+    """Contain accepted records and row-level validation issues from one CSV."""
+
     records: tuple[InvoiceRecord, ...]
     issues: tuple[ValidationIssue, ...]
 
@@ -35,6 +39,20 @@ def _money(raw: str | None, *, row_number: int, field: str) -> tuple[Decimal | N
 
 
 def read_invoices(path: str | Path) -> ParseResult:
+    """Read, validate and normalize invoice/payment rows from a CSV file.
+
+    Args:
+        path: CSV file path. UTF-8 with an optional BOM is accepted.
+
+    Returns:
+        Accepted records plus row-level validation issues. Invalid rows are not
+        included in ``records`` and input order is preserved.
+
+    Raises:
+        FileNotFoundError: The requested file does not exist.
+        CsvSchemaError: One or more required columns are missing.
+    """
+
     source = Path(path)
     records: list[InvoiceRecord] = []
     issues: list[ValidationIssue] = []

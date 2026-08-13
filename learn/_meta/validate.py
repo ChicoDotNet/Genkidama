@@ -28,6 +28,7 @@ REQUIRED_FOUNDATION = (
 EXPECTED_LOCALES = ["es", "en", "zh-Hans", "ja", "fr", "it", "pt-BR", "ru", "de"]
 EXPECTED_PILOTS = ["csharp", "python", "javascript", "cobol", "solidity"]
 MARKDOWN_LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
+LESSON_FILE = re.compile(r"^(?P<number>\d+)-.+\.md$")
 
 
 def fail(errors: list[str], message: str) -> None:
@@ -154,6 +155,48 @@ def clean_target(raw_target: str) -> str:
     return unquote(target)
 
 
+def local_markdown_targets(markdown: Path) -> set[Path]:
+    targets: set[Path] = set()
+    text = markdown.read_text(encoding="utf-8")
+    for raw_target in MARKDOWN_LINK.findall(text):
+        target = clean_target(raw_target)
+        if not target or target.startswith(("#", "http://", "https://", "mailto:")):
+            continue
+        target = target.split("#", 1)[0]
+        if target:
+            targets.add((markdown.parent / target).resolve())
+    return targets
+
+
+def validate_lesson_navigation(errors: list[str]) -> None:
+    locale_root = LEARN / "es"
+    if not locale_root.exists():
+        return
+
+    for course_dir in sorted(path for path in locale_root.iterdir() if path.is_dir()):
+        lessons_dir = course_dir / "lessons"
+        if not lessons_dir.is_dir():
+            continue
+
+        numbered_lessons: list[tuple[int, Path]] = []
+        for lesson in lessons_dir.glob("*.md"):
+            match = LESSON_FILE.match(lesson.name)
+            if match:
+                numbered_lessons.append((int(match.group("number")), lesson))
+        numbered_lessons.sort(key=lambda item: item[0])
+
+        for (current_number, current), (next_number, next_lesson) in zip(
+            numbered_lessons, numbered_lessons[1:]
+        ):
+            if next_number != current_number + 1:
+                continue
+            if next_lesson.resolve() not in local_markdown_targets(current):
+                fail(
+                    errors,
+                    f"{current.relative_to(ROOT)}: lesson {current_number:02d} must link to next lesson {next_lesson.name}",
+                )
+
+
 def validate_markdown_links(errors: list[str]) -> None:
     for markdown in sorted(LEARN.rglob("*.md")):
         text = markdown.read_text(encoding="utf-8")
@@ -181,6 +224,7 @@ def main() -> int:
         _, catalog_slugs = validate_catalog(errors)
         validate_progress(errors, catalog_slugs)
         validate_course_directories(errors, catalog_slugs)
+        validate_lesson_navigation(errors)
         validate_markdown_links(errors)
     except (OSError, ValueError, yaml.YAMLError) as exc:
         fail(errors, str(exc))
@@ -192,7 +236,7 @@ def main() -> int:
         return 1
 
     print("Genkidama Learn validation passed.")
-    print("Validated 45 v1 courses, 6 planned additions, metadata and Markdown links.")
+    print("Validated 45 v1 courses, 6 planned additions, metadata, lesson navigation and Markdown links.")
     return 0
 
 

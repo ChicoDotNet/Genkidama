@@ -1,3 +1,5 @@
+"""Command-line entry point for the LedgerMatch educational application."""
+
 from __future__ import annotations
 
 import argparse
@@ -17,6 +19,8 @@ def _parser() -> argparse.ArgumentParser:
 
 
 def main() -> int:
+    """Run LedgerMatch from command-line arguments and return a process code."""
+
     args = _parser().parse_args()
 
     try:

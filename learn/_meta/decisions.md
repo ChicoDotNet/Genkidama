@@ -172,3 +172,18 @@ Cada lane autónomo de Genkidama Learn termina su interacción con un reporte br
 El reporte no sustituye pruebas, CI, `progress.yml`, roadmap ni decisiones. Es una vista ejecutiva del estado y debe ser factual, concisa y útil para decidir si intervenir.
 
 Esta adopción local permanece aunque el formato se formalice posteriormente dentro de `asbn-senior-tdd-developer` o en un skill ASBN independiente de reporting.
+
+## GL-015 — Debt First: liquidar deuda temprana en la siguiente interacción
+
+**Fecha:** 2026-08-12  
+**Estado:** aceptada localmente
+
+Cuando una interacción descubre deuda técnica **acotada, verificable y razonablemente corregible** dentro del frente activo, la siguiente interacción DEBE comenzar liquidándola al 100% antes de expandir funcionalidad nueva.
+
+La corrección no termina en editar el síntoma. Cuando sea proporcionado, debe añadir una defensa que reduzca la probabilidad de recurrencia: prueba de regresión, validador, regla de autoría, automatización o contrato explícito.
+
+Excepciones: deuda legacy extensa, dependencia externa, riesgo desproporcionado o una corrección que requiera una decisión arquitectónica/material del owner. En esos casos la deuda debe quedar explícita, con alcance medible, secuencia de pago y siguiente objetivo concreto; no se deja como “luego”.
+
+El owner usa como **heurística operativa** que diferir deuda hasta el final puede consumir del orden de 30% del esfuerzo del proyecto y que pagarla inmediatamente busca llevar ese overhead evitable hacia cero. Genkidama Learn adopta esa dirección como criterio de ejecución, no como estadística universal ni garantía matemática.
+
+Aplicación inicial: un enlace faltante entre lecciones no sólo se corrige; el validador común comprueba navegación secuencial para impedir que el mismo tipo de deuda reaparezca silenciosamente.
