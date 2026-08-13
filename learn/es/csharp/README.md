@@ -12,7 +12,7 @@ Sí. No necesitas haber programado antes. El curso presupone únicamente que pue
 
 ## ¿Qué vas a construir?
 
-**StockFlow** crecerá durante 17 lecciones hasta administrar productos, existencias, pedidos y facturación simplificada, con persistencia local, manejo explícito de errores, pruebas, documentación OpenAPI y hardening básico.
+**StockFlow** administra productos, existencias y pedidos; la evaluación final te pide completar una facturación simplificada educativa sobre la misma base. El proyecto incluye persistencia local, errores explícitos, pruebas, documentación OpenAPI y hardening básico.
 
 La aplicación canónica vive en [`app/`](app/) y no depende del CLI principal de Genkidama.
 
@@ -56,7 +56,7 @@ Deberías poder leer y escribir C# sencillo e idiomático; modelar datos; trabaj
 
 ## Ruta del curso
 
-Estado actual: **16 de 17 lecciones implementadas**.
+Estado actual: **17 de 17 lecciones implementadas**.
 
 1. [Tu primera API en ejecución](lessons/01-tu-primera-api.md)
 2. [Productos, variables y tipos que representan negocio](lessons/02-productos-y-tipos.md)
@@ -74,14 +74,15 @@ Estado actual: **16 de 17 lecciones implementadas**.
 14. [Documentación de API y contratos con OpenAPI](lessons/14-openapi-y-contratos.md)
 15. [Debugging, logging y diagnóstico](lessons/15-logging-y-diagnostico.md)
 16. [Seguridad básica y hardening](lessons/16-seguridad-y-hardening.md)
-17. Evaluación final: extender StockFlow sin receta
+17. [Evaluación final: extiende StockFlow sin receta](lessons/17-evaluacion-final.md)
 
-## Checkpoints
+## Checkpoints y evaluación
 
 - después de la lección 4: [`checkpoint-01`](exercises/checkpoint-01.md);
 - después de la lección 8: [`checkpoint-02`](exercises/checkpoint-02.md);
 - después de la lección 12: [`checkpoint-03`](exercises/checkpoint-03.md);
-- después de la lección 16: [`checkpoint-04`](exercises/checkpoint-04.md), con [`solución de referencia`](solutions/checkpoint-04.md).
+- después de la lección 16: [`checkpoint-04`](exercises/checkpoint-04.md), con [`solución de referencia`](solutions/checkpoint-04.md);
+- cierre: [`evaluación final`](exercises/evaluacion-final.md), [`rúbrica`](rubric.md) y [`solución de referencia`](solutions/evaluacion-final.md).
 
 ## ¿Qué tipo de trabajo utiliza estas habilidades?
 
@@ -107,6 +108,9 @@ No por defecto. StockFlow lo mapea sólo en Development. La documentación gener
 ### ¿StockFlow ya es seguro para Internet?
 No. El curso aplica hardening básico, pero no implementa autenticación, autorización ni la operación de producción completa.
 
+### ¿La factura de la evaluación es fiscalmente válida?
+No. Es un comprobante educativo simplificado. El curso evita enseñar reglas fiscales ficticias o hacer pasar el ejercicio por un CFDI.
+
 ### ¿Tengo que aprender Git aquí?
 No. Git tendrá su propio curso.
 
@@ -127,6 +131,8 @@ No. Git tendrá su propio curso.
 
 Prepárate para explicar por qué empezaste en memoria, qué problema justificó SQLite, por qué `OrderService` no conoce SQL, cómo proteges el stock si guardar falla, dónde viaja `CancellationToken`, qué riesgo cubren las pruebas HTTP, por qué OpenAPI sólo se expone en Development y qué faltaría antes de operar StockFlow en Internet.
 
+Después de la evaluación, añade cómo recibiste una base existente, implementaste una facturación simplificada, protegiste un bug con una prueba y justificaste una mejora transaccional futura. Describe exactamente lo construido; no lo presentes como un ERP ni como experiencia laboral que no tuviste.
+
 ## Referencias oficiales
 
 - [Documentación de C#](https://learn.microsoft.com/dotnet/csharp/)
@@ -141,4 +147,4 @@ Prepárate para explicar por qué empezaste en memoria, qué problema justificó
 
 ## Siguiente paso
 
-Si estudias el curso desde cero, empieza en la [Lección 1](lessons/01-tu-primera-api.md). Si vienes siguiendo la construcción, completa el [`checkpoint-04`](exercises/checkpoint-04.md): la siguiente lección será la evaluación final sin receta.
+Si estudias el curso desde cero, empieza en la [Lección 1](lessons/01-tu-primera-api.md). Si ya completaste las 16 lecciones guiadas y los checkpoints, resuelve la [evaluación final](exercises/evaluacion-final.md) sin abrir la solución hasta terminar tu intento.

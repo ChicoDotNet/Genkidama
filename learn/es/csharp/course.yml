@@ -4,10 +4,10 @@ language: C#
 locale: es
 source_locale: es
 title: Curso de C# desde cero — Construye una API de inventario, pedidos y facturación
-status: in_progress
+status: complete
 canonical_app:
   name: StockFlow
-  summary: API local para administrar productos, inventario, pedidos y facturación de una pequeña empresa.
+  summary: API local para administrar productos, inventario, pedidos y facturación simplificada de una pequeña empresa.
 audience: beginner
 prerequisites: []
 lesson_count: 17
@@ -35,4 +35,6 @@ career_context:
 official_references:
   - https://learn.microsoft.com/dotnet/csharp/
   - https://learn.microsoft.com/aspnet/core/
+  - https://learn.microsoft.com/aspnet/core/test/integration-tests
+  - https://learn.microsoft.com/aspnet/core/fundamentals/openapi/overview
   - https://dotnet.microsoft.com/platform/support/policy

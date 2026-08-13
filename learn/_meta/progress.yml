@@ -5,7 +5,7 @@ initiative:
   last_updated: '2026-08-12'
   active_work: csharp_pilot
   v1_courses_total: 45
-  v1_courses_complete: 0
+  v1_courses_complete: 1
 foundation:
   status: complete
   catalog: complete
@@ -18,10 +18,10 @@ foundation:
   ci: green
 courses:
   csharp:
-    status: in_progress
-    lessons_complete: 16
+    status: complete
+    lessons_complete: 17
     lessons_total: 17
-    ci: green
+    ci: validation_pending
     last_green_executable_sha: 15c24c5641ece1f5982efa02ec0620f4c601f32c
     pr: 34
     pilot_order: 1
