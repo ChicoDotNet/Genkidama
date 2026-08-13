@@ -39,5 +39,29 @@ jobs:
       - name: Build FreelanceEscrow
         run: forge build
 
+      - name: Diagnose deposit test
+        continue-on-error: true
+        run: forge test --match-test testDepositStartsFunded -vv
+
+      - name: Diagnose release test
+        continue-on-error: true
+        run: forge test --match-test testFreelancerDeliversAndClientReleases -vv
+
+      - name: Diagnose refund test
+        continue-on-error: true
+        run: forge test --match-test testClientCanRefundBeforeDelivery -vv
+
+      - name: Diagnose delivery authorization test
+        continue-on-error: true
+        run: forge test --match-test testOnlyFreelancerCanMarkDelivered -vv
+
+      - name: Diagnose release authorization test
+        continue-on-error: true
+        run: forge test --match-test testOnlyClientCanRelease -vv
+
+      - name: Diagnose invalid transition test
+        continue-on-error: true
+        run: forge test --match-test testCannotRefundAfterDelivery -vv
+
       - name: Test FreelanceEscrow
         run: forge test -vv
