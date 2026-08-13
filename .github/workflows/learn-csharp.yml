@@ -31,7 +31,14 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Restore API
-        run: dotnet restore learn/es/csharp/app/src/StockFlow.Api/StockFlow.Api.csproj
+        shell: bash
+        run: |
+          set -o pipefail
+          if ! dotnet restore learn/es/csharp/app/src/StockFlow.Api/StockFlow.Api.csproj 2>&1 | tee /tmp/restore-api.log; then
+            diagnostic=$(tail -n 8 /tmp/restore-api.log | tr '\n' ' ' | sed 's/%/%25/g; s/\r/%0D/g; s/\n/%0A/g')
+            echo "::error title=StockFlow API restore failed::$diagnostic"
+            exit 1
+          fi
 
       - name: Restore tests
         run: dotnet restore learn/es/csharp/app/tests/StockFlow.Api.Tests/StockFlow.Api.Tests.csproj
