@@ -136,3 +136,23 @@ La implementación preferida es un workflow por curso, por ejemplo `.github/work
 Cambios puramente operativos en `progress.yml`, `roadmap.md`, `decisions.md`, catálogo o documentación común NO DEBEN provocar por sí mismos una fan-out de builds de los 45 toolchains.
 
 Si en el futuro se introduce infraestructura ejecutable realmente compartida entre cursos, su cambio puede requerir una revalidación más amplia, pero esa expansión debe ser explícita y justificada; nunca accidental.
+
+## GL-013 — Latest stable/LTS y cero deuda de deprecaciones silenciosa
+
+**Fecha:** 2026-08-12  
+**Estado:** aceptada
+
+Genkidama Learn adopta como filosofía global usar tooling, runtimes, compiladores y GitHub Actions en versiones **estables y soportadas**.
+
+Reglas:
+
+1. Preferir la versión estable soportada más reciente cuando el ecosistema no distingue una línea de soporte prolongado.
+2. Cuando exista una línea LTS adecuada para material educativo y producción, preferir la LTS activa más reciente frente a previews, RCs o versiones de soporte corto sin una ventaja explícita.
+3. No adoptar previews/RC/nightly por novedad. Sólo se permiten por necesidad demostrable y documentada.
+4. Una advertencia de CI sobre runtime, action, SDK, compiler, package manager o dependencia deprecada se considera trabajo de mantenimiento accionable; debe corregirse en el mismo frente o en el siguiente incremento razonable.
+5. No ocultar deprecaciones con flags o variables de compatibilidad insegura como solución permanente. Un escape temporal sólo se acepta ante una emergencia concreta, con razón y plan de retiro documentados.
+6. Antes de subir el major de una action o toolchain se consulta su documentación/release oficial para detectar requisitos de runner, breaking changes o sintaxis nueva.
+7. La modernización debe conservar reproducibilidad: `course.yml` registra la versión probada y fecha de verificación, aunque el workflow pueda usar un canal estable/LTS cuando eso sea intencional.
+8. Los warnings de CI forman parte de la señal de calidad. Un gate verde con advertencias de deprecación conocidas no se considera estado ideal si existe una actualización soportada y razonable.
+
+Aplicación inicial de esta decisión: `actions/checkout@v7` y `actions/setup-dotnet@v6` reemplazan generaciones basadas en Node 20 donde correspondía, sin cambiar el objetivo .NET 10 LTS/C# 14 del curso.
