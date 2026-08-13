@@ -68,7 +68,7 @@ Analiza qué riesgo aparecería si `release()` hiciera una llamada externa antes
 - checks-effects-interactions reduce superficie de reentrancia, pero no sustituye revisión de seguridad.
 
 ## Siguiente paso
-El siguiente bloque profundizará en composición, propiedades e invariantes antes de entrar a tooling y hardening final.
+Continúa con la [Lección 09](09-fuzzing-propiedades-de-valor.md) para pasar de ejemplos concretos a propiedades sobre múltiples entradas.
 
 ## Referencias
 - [Security Considerations — Reentrancy](https://docs.soliditylang.org/en/v0.8.35/security-considerations.html#reentrancy)
