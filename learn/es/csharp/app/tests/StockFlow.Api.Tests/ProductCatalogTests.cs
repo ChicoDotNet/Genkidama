@@ -1,3 +1,4 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StockFlow.Api.Products;
 
 namespace StockFlow.Api.Tests;
