@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools==83.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "genkidama-ledgermatch"
+version = "1.0.0"
+description = "Conciliador educativo de facturas y pagos para Genkidama Learn"
+requires-python = ">=3.14,<3.15"
+license = "MIT"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest==9.1.1"]
+
+[project.scripts]
+ledgermatch = "ledgermatch.__main__:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]

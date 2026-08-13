@@ -60,7 +60,7 @@ Explica por qué cancelar después de descontar stock, pero antes de persistir, 
 
 ## Siguiente paso
 
-Ya tenemos dos repositorios intercambiables. La siguiente lección pondrá nombre a la técnica que permite elegir uno sin acoplar `OrderService` a SQLite.
+En la [Lección 12](12-inyeccion-dependencias.md) pondremos nombre a la técnica que permite elegir entre repositorios sin acoplar `OrderService` a SQLite.
 
 ## Referencias
 

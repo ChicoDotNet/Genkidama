@@ -87,7 +87,7 @@ Provoca el error desde HTTP y confirma que la respuesta sigue siendo el mismo `P
 
 ## Siguiente paso
 
-La última lección guiada endurece las fronteras antes de entregarte StockFlow para una evaluación autónoma.
+En la [Lección 16](16-seguridad-y-hardening.md) endureceremos las fronteras antes de entregarte StockFlow para una evaluación autónoma.
 
 ## Referencias
 

@@ -91,7 +91,7 @@ Si el código y una wiki discrepan, ¿cuál creerá un consumidor automático? �
 
 ## Siguiente paso
 
-Un contrato dice qué debería pasar. Los logs ayudan a explicar qué pasó cuando producción se comporta distinto.
+En la [Lección 15](15-logging-y-diagnostico.md) usaremos logs para explicar qué pasó cuando la ejecución real se comporta distinto a lo esperado.
 
 ## Referencias
 

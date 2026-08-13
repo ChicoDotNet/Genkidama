@@ -129,7 +129,7 @@ Aquí conviene provocar un fallo intencional, leer el mensaje de MSTest en panta
 
 ## Siguiente paso
 
-La siguiente lección introducirá consultas, colecciones y filtros sobre un problema visible: encontrar productos sin descargar todo el inventario mentalmente.
+En la [Lección 05](05-consultas-colecciones-y-filtros.md) introduciremos consultas, colecciones y filtros sobre un problema visible: encontrar productos sin descargar todo el inventario mentalmente.
 
 ## Referencias
 

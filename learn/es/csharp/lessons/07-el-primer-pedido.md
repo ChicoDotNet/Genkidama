@@ -156,7 +156,7 @@ Si mañana el catálogo se guarda en SQLite, ¿debería cambiar la forma de calc
 
 ## Siguiente paso
 
-En la próxima lección veremos por qué la reserva debe ser atómica y cerraremos este bloque con un checkpoint que obliga a modificar una regla sin receta.
+En la [Lección 08](08-composicion-reglas-y-checkpoint.md) veremos por qué la reserva debe ser atómica y cerraremos este bloque con un checkpoint que obliga a modificar una regla sin receta.
 
 ## Referencias
 

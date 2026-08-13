@@ -69,7 +69,7 @@ Persistir no significa añadir una dependencia y ya: significa definir una front
 
 ## Siguiente paso
 
-Leer y escribir almacenamiento es I/O. La siguiente lección explica por qué esos caminos se vuelven `async` y cómo se cancela trabajo que ya no interesa.
+En la [Lección 11](11-async-y-cancelacion.md) veremos por qué los caminos de I/O se vuelven `async` y cómo se cancela trabajo que ya no interesa.
 
 ## Referencias
 

@@ -92,7 +92,7 @@ Ejecuta sólo `EndpointTests` y luego la suite completa. Ambas deben quedar verd
 
 ## Siguiente paso
 
-Ahora que el contrato puede romperse y detectarse, vamos a hacerlo visible también para personas y herramientas mediante OpenAPI.
+En la [Lección 14](14-openapi-y-contratos.md) haremos visible el contrato para personas y herramientas mediante OpenAPI.
 
 ## Referencias
 

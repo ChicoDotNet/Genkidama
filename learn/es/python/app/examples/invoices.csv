@@ -1,0 +1,5 @@
+invoice_id,customer,issued_on,invoice_total,payment_total
+F-1001,Acme Norte,2026-08-01,1250.00,1250.00
+F-1002,Taller Azul,2026-08-02,850.50,800.50
+F-1003,Café Central,2026-08-03,99.90,99.90
+F-1004,Estudio Sur,2026-08-04,430.00,450.00

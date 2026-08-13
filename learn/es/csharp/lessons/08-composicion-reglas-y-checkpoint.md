@@ -126,7 +126,7 @@ El mensaje importa, pero la propiedad crítica es que el inventario no cambie.
 
 ## Siguiente paso
 
-El siguiente bloque hará más preciso el contrato HTTP, y después reemplazará la memoria volátil por SQLite. La persistencia aparecerá porque ahora sí tenemos datos que perder al reiniciar.
+En la [Lección 09](09-contratos-http.md) haremos más preciso el contrato HTTP; después reemplazaremos la memoria volátil por SQLite porque ahora sí tenemos datos que perder al reiniciar.
 
 ## Referencias
 

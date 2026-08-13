@@ -63,7 +63,7 @@ HTTP también es parte del diseño público de una aplicación. Una API junior r
 
 ## Siguiente paso
 
-Ahora StockFlow ya tiene pedidos que vale la pena conservar. En la siguiente lección el reinicio del proceso dejará de borrar ese historial.
+En la [Lección 10](10-persistencia-sqlite.md) StockFlow conservará el historial de pedidos después de reiniciar el proceso.
 
 ## Referencias
 

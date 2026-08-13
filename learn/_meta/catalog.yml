@@ -62,7 +62,7 @@ courses:
   name: Python
   v1_required: true
   linguist_detected: true
-  status: planned
+  status: complete
   canonical_app: 'Conciliador de facturas: importar CSV, validar, persistir y generar reportes'
   pilot_order: 2
 - slug: vbnet
