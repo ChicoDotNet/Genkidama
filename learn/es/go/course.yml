@@ -4,13 +4,13 @@ language: Go
 locale: es
 source_locale: es
 title: Curso de Go desde cero — Construye un monitor concurrente de uptime
-status: in_progress
+status: complete
 canonical_app:
   name: UptimeLab
   summary: Monitor local concurrente de endpoints HTTP con API, dashboard, historial persistente, scheduling cancelable, diagnóstico agregado y hardening HTTP.
 audience: beginner
 prerequisites: []
-lesson_count: 16
+lesson_count: 17
 toolchain:
   verified_on: '2026-08-14'
   version_tested: 1.26.5
