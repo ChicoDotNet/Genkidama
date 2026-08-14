@@ -104,7 +104,7 @@ El segundo bloque añadió configuración tipada, historial durable, operación 
 
 ## Siguiente paso
 
-Las siguientes lecciones usarán el estado histórico para consultas y diagnóstico más ricos y para practicar patrones idiomáticos de Go sobre una aplicación ya operativa.
+Continúa con [Lección 09 — Resúmenes derivados del historial](09-resumenes-derivados-del-historial.md).
 
 ## Referencias
 

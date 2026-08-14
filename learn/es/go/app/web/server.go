@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/ChicoDotNet/Genkidama/learn/es/go/app/history"
+	"github.com/ChicoDotNet/Genkidama/learn/es/go/app/insights"
 	"github.com/ChicoDotNet/Genkidama/learn/es/go/app/monitor"
 )
 
@@ -64,6 +66,8 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusNoContent) })
 	mux.HandleFunc("GET /api/checks", s.handleChecks)
 	mux.HandleFunc("GET /api/history", s.handleHistory)
+	mux.HandleFunc("GET /api/summary", s.handleSummary)
+	mux.HandleFunc("GET /api/trends", s.handleTrends)
 	mux.HandleFunc("GET /", s.handleDashboard)
 	return mux
 }
@@ -78,11 +82,36 @@ func (s *Server) handleChecks(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleHistory(w http.ResponseWriter, _ *http.Request) {
-	if s.history == nil {
-		writeJSON(w, []monitor.Result{})
+	writeJSON(w, s.historyEntries())
+}
+
+func (s *Server) handleSummary(w http.ResponseWriter, _ *http.Request) {
+	writeJSON(w, insights.Summarize(s.historyEntries()))
+}
+
+func (s *Server) handleTrends(w http.ResponseWriter, r *http.Request) {
+	window := 5
+	if raw := r.URL.Query().Get("window"); raw != "" {
+		parsed, err := strconv.Atoi(raw)
+		if err != nil || parsed < 1 || parsed > 100 {
+			http.Error(w, "window must be an integer between 1 and 100", http.StatusBadRequest)
+			return
+		}
+		window = parsed
+	}
+	trends, err := insights.Trends(s.historyEntries(), window)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	writeJSON(w, s.history.Entries())
+	writeJSON(w, trends)
+}
+
+func (s *Server) historyEntries() []monitor.Result {
+	if s.history == nil {
+		return []monitor.Result{}
+	}
+	return s.history.Entries()
 }
 
 func writeJSON(w http.ResponseWriter, value any) {
@@ -92,5 +121,5 @@ func writeJSON(w http.ResponseWriter, value any) {
 
 func (s *Server) handleDashboard(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	_, _ = w.Write([]byte(`<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>UptimeLab</title></head><body><main><h1>UptimeLab</h1><p>Monitor concurrente local escrito en Go.</p><button id="refresh">Comprobar ahora</button><pre id="results">Sin ejecutar</pre></main><script>async function load(){const r=await fetch('/api/checks');document.querySelector('#results').textContent=JSON.stringify(await r.json(),null,2)}document.querySelector('#refresh').addEventListener('click',load);load();</script></body></html>`))
+	_, _ = w.Write([]byte(`<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>UptimeLab</title></head><body><main><h1>UptimeLab</h1><p>Monitor concurrente local escrito en Go.</p><button id="refresh">Comprobar ahora</button><h2>Último check</h2><pre id="results">Sin ejecutar</pre><h2>Resumen histórico</h2><pre id="summary">Sin historial</pre></main><script>async function load(){const r=await fetch('/api/checks');document.querySelector('#results').textContent=JSON.stringify(await r.json(),null,2);const s=await fetch('/api/summary');document.querySelector('#summary').textContent=JSON.stringify(await s.json(),null,2)}document.querySelector('#refresh').addEventListener('click',load);load();</script></body></html>`))
 }
