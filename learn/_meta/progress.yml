@@ -54,7 +54,13 @@ courses:
   vbnet: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   cpp: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   objective-c: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
-  java: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  java:
+    status: in_progress
+    lessons_complete: 4
+    lessons_total: 17
+    ci: green
+    last_green_executable_sha: aac4225be04abf334e7d5b3c674d49ba5ffd5bbc
+    pr: 43
   rust: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   zig: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   go: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
