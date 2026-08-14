@@ -44,7 +44,7 @@ Los pilotos estabilizaron:
 - CI;
 - experiencia Windows/Linux cuando corresponde.
 
-El siguiente frente de producción v1 es **TypeScript**, sujeto a la revalidación breve de demanda, tooling y aplicación canónica que exige este roadmap antes de iniciar cada curso.
+TypeScript ya completó también su Course DoD como primer curso posterior a los pilotos. El siguiente frente de producción v1 es **Java**, sujeto a la revalidación breve de demanda, tooling y aplicación canónica que exige este roadmap antes de iniciar cada curso.
 
 ## Orden v1 provisional
 
