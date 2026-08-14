@@ -1,0 +1,11 @@
+[profile.default]
+src = "app/src"
+test = "app/test"
+out = "out"
+solc_version = "0.8.35"
+evm_version = "prague"
+optimizer = true
+optimizer_runs = 200
+
+[fmt]
+line_length = 100

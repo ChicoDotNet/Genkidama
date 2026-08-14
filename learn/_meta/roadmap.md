@@ -29,7 +29,7 @@ Su estado se conserva en `progress.yml` bajo `transversal_courses` y no altera e
 
 ## Fase 1 — Pilotos
 
-Los pilotos prueban ecosistemas deliberadamente distintos:
+**Estado: completa.** Los cinco pilotos terminaron su Course DoD en español y ya probaron la plantilla sobre ecosistemas deliberadamente distintos:
 
 1. C#
 2. Python
@@ -37,7 +37,7 @@ Los pilotos prueban ecosistemas deliberadamente distintos:
 4. COBOL
 5. Solidity
 
-Cada piloto debe estabilizar:
+Los pilotos estabilizaron:
 
 - longitud real de lecciones;
 - densidad de contenido;
@@ -48,9 +48,9 @@ Cada piloto debe estabilizar:
 - evaluación;
 - metadata;
 - CI;
-- experiencia Windows/Linux cuando corresponda.
+- experiencia Windows/Linux cuando corresponde.
 
-No se da por “validada” la plantilla sólo porque el primer curso la usó.
+El siguiente frente de producción v1 es **TypeScript**, sujeto a la revalidación breve de demanda, tooling y aplicación canónica que exige este roadmap antes de iniciar cada curso.
 
 ## Orden v1 provisional
 
