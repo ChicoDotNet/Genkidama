@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -11,7 +12,10 @@ import (
 )
 
 func main() {
-	targets := parseTargets(os.Getenv("UPTIMELAB_TARGETS"))
+	targets, err := parseTargets(os.Getenv("UPTIMELAB_TARGETS"))
+	if err != nil {
+		log.Fatal(err)
+	}
 	server, err := web.NewServer(monitor.NewChecker(nil), targets, 4)
 	if err != nil {
 		log.Fatal(err)
@@ -26,18 +30,18 @@ func main() {
 	}
 }
 
-func parseTargets(raw string) []monitor.Target {
+func parseTargets(raw string) ([]monitor.Target, error) {
 	if strings.TrimSpace(raw) == "" {
-		return []monitor.Target{{Name: "Go", URL: "https://go.dev"}}
+		return []monitor.Target{{Name: "Go", URL: "https://go.dev"}}, nil
 	}
 	parts := strings.Split(raw, ",")
 	targets := make([]monitor.Target, 0, len(parts))
 	for _, part := range parts {
 		name, targetURL, ok := strings.Cut(part, "=")
-		if !ok {
-			continue
+		if !ok || strings.TrimSpace(name) == "" || strings.TrimSpace(targetURL) == "" {
+			return nil, fmt.Errorf("UPTIMELAB_TARGETS entry %q must use name=https://url", part)
 		}
 		targets = append(targets, monitor.Target{Name: strings.TrimSpace(name), URL: strings.TrimSpace(targetURL)})
 	}
-	return targets
+	return targets, nil
 }
