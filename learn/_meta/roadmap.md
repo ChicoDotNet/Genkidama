@@ -12,7 +12,7 @@ Calidad antes de cantidad. Un curso incompleto se retoma antes de iniciar otro s
 
 **Estado: completa.** C#, Python, JavaScript, COBOL y Solidity terminaron su Course DoD en español y estabilizaron longitud, formato escrito/video, ejercicios, soluciones, checkpoints, evaluación, metadata y CI.
 
-TypeScript y Java completaron también su Course DoD como primeros cursos posteriores a pilotos. El siguiente frente de producción v1 es **Go**, sujeto a la revalidación breve previa.
+TypeScript, Java y Go completaron también su Course DoD como primeros cursos posteriores a pilotos. El siguiente frente de producción v1 es **Rust**, sujeto a la revalidación breve previa.
 
 ## Orden v1 provisional
 
