@@ -212,3 +212,29 @@ test("una falla de persistencia responde 503 y no deja memoria adelantada", asyn
     assert.deepEqual(await after.json(), []);
   });
 });
+
+test("falla al enviar cotización conserva draft y permite reintento", async () => {
+  await withServer(async (baseUrl, store) => {
+    const clientId = await createClient(baseUrl);
+    const quoteId = await createQuote(baseUrl, clientId);
+
+    store.failNextSave = true;
+    const failed = await fetch(`${baseUrl}/api/quotes/${quoteId}/status`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ status: "sent" }),
+    });
+    assert.equal(failed.status, 503);
+
+    const drafts = await fetch(`${baseUrl}/api/quotes?status=draft`);
+    assert.deepEqual((await drafts.json() as Array<{ id: string }>).map((quote) => quote.id), [quoteId]);
+
+    const retry = await fetch(`${baseUrl}/api/quotes/${quoteId}/status`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ status: "sent" }),
+    });
+    assert.equal(retry.status, 200);
+    assert.equal((await retry.json() as { status: string }).status, "sent");
+  });
+});
