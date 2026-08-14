@@ -170,6 +170,22 @@ fn write_manifest(destination: &Path, manifest: &Manifest) -> Result<(), BackupE
     Ok(())
 }
 
+fn can_reuse_entry(
+    previous: &ManifestEntry,
+    current: &ManifestEntry,
+    destination_file: &Path,
+) -> Result<bool, BackupError> {
+    if previous.bytes != current.bytes
+        || previous.sha256 != current.sha256
+        || !destination_file.is_file()
+    {
+        return Ok(false);
+    }
+
+    Ok(fs::metadata(destination_file)?.len() == current.bytes
+        && sha256_file(destination_file)? == current.sha256)
+}
+
 /// Crea un backup completo determinista y escribe `manifest.json` al final.
 pub fn create_backup(source: &Path, destination: &Path) -> Result<Manifest, BackupError> {
     let mut relative_files = Vec::new();
@@ -229,15 +245,8 @@ pub fn update_backup(source: &Path, destination: &Path) -> Result<IncrementalRep
         current_paths.insert(entry.path.clone());
 
         let can_reuse = match previous_by_path.get(entry.path.as_str()) {
-            Some(previous_entry)
-                if previous_entry.bytes == entry.bytes
-                    && previous_entry.sha256 == entry.sha256
-                    && destination_file.is_file() =>
-            {
-                fs::metadata(&destination_file)?.len() == entry.bytes
-                    && sha256_file(&destination_file)? == entry.sha256
-            }
-            _ => false,
+            Some(previous_entry) => can_reuse_entry(previous_entry, &entry, &destination_file)?,
+            None => false,
         };
 
         if can_reuse {

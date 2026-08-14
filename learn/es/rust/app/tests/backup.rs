@@ -95,7 +95,15 @@ fn incremental_update_removes_files_no_longer_present_in_source() {
     assert_eq!(0, report.copied);
     assert_eq!(1, report.removed);
     assert!(!backup.path().join("remove.txt").exists());
-    assert_eq!(vec!["keep.txt"], report.manifest.files.iter().map(|e| e.path.as_str()).collect::<Vec<_>>());
+    assert_eq!(
+        vec!["keep.txt"],
+        report
+            .manifest
+            .files
+            .iter()
+            .map(|entry| entry.path.as_str())
+            .collect::<Vec<_>>()
+    );
 }
 
 #[test]
