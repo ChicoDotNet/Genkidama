@@ -10,7 +10,7 @@ canonical_app:
   summary: Herramienta local de backup incremental verificable por checksums SHA-256, con manifest, restauración segura, snapshots históricos inmutables y auditoría de contenido inesperado.
 audience: beginner
 prerequisites: []
-lesson_count: 16
+lesson_count: 17
 toolchain:
   verified_on: '2026-08-14'
   version_tested: 1.97.1
