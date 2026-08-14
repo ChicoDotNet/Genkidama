@@ -62,7 +62,7 @@ Explica qué controles necesitarías antes de afirmar que un repositorio remoto 
 BackupForge distingue ahora verificación de contenido declarado, auditoría estricta del directorio y seguridad de host, que sigue fuera de alcance.
 
 ## Siguiente paso
-La siguiente lección será la evaluación Junior final sin receta.
+Continúa con la [Lección 17 — Evaluación final sin receta](17-evaluacion-final.md).
 
 ## Referencias
 - https://doc.rust-lang.org/std/fs/struct.DirEntry.html
