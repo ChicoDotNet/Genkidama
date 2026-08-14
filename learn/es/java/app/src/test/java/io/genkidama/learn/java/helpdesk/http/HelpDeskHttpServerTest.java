@@ -22,29 +22,34 @@ class HelpDeskHttpServerTest {
             HttpResponse<String> response = client.send(
                     HttpRequest.newBuilder(uri(server, "/health")).GET().build(),
                     HttpResponse.BodyHandlers.ofString());
-
             assertEquals(200, response.statusCode());
             assertEquals("ok", json.readTree(response.body()).get("status").asText());
         }
     }
 
     @Test
-    void createsListsAndAdvancesATicketThroughJsonApi() throws Exception {
+    void createsFiltersUpdatesAndAdvancesATicketThroughJsonApi() throws Exception {
         try (var server = startedServer()) {
-            HttpResponse<String> created = sendJson(server, "/api/tickets", """
+            HttpResponse<String> created = sendJson(server, "POST", "/api/tickets", """
                     {"title":"VPN caída","description":"Sin acceso remoto","priority":"HIGH"}
                     """);
             assertEquals(201, created.statusCode());
-            JsonNode ticket = json.readTree(created.body());
-            assertEquals("OPEN", ticket.get("status").asText());
 
-            HttpResponse<String> listed = client.send(
-                    HttpRequest.newBuilder(uri(server, "/api/tickets")).GET().build(),
-                    HttpResponse.BodyHandlers.ofString());
-            assertEquals(200, listed.statusCode());
-            assertEquals(1, json.readTree(listed.body()).size());
+            sendJson(server, "POST", "/api/tickets", """
+                    {"title":"Monitor","priority":"LOW"}
+                    """);
 
-            HttpResponse<String> advanced = sendJson(server, "/api/tickets/1/advance", "{}");
+            HttpResponse<String> filtered = get(server, "/api/tickets?priority=high&status=open");
+            assertEquals(200, filtered.statusCode());
+            assertEquals(1, json.readTree(filtered.body()).size());
+
+            HttpResponse<String> priority = sendJson(server, "PUT", "/api/tickets/1/priority", """
+                    {"priority":"NORMAL"}
+                    """);
+            assertEquals(200, priority.statusCode());
+            assertEquals("NORMAL", json.readTree(priority.body()).get("priority").asText());
+
+            HttpResponse<String> advanced = sendJson(server, "POST", "/api/tickets/1/advance", "{}");
             assertEquals(200, advanced.statusCode());
             assertEquals("IN_PROGRESS", json.readTree(advanced.body()).get("status").asText());
         }
@@ -53,13 +58,13 @@ class HelpDeskHttpServerTest {
     @Test
     void translatesDomainAndInputFailuresToUsefulHttpStatuses() throws Exception {
         try (var server = startedServer()) {
-            HttpResponse<String> invalid = sendJson(server, "/api/tickets", """
+            HttpResponse<String> invalid = sendJson(server, "POST", "/api/tickets", """
                     {"title":"   ","priority":"NORMAL"}
                     """);
             assertEquals(400, invalid.statusCode());
 
-            HttpResponse<String> missing = sendJson(server, "/api/tickets/999/advance", "{}");
-            assertEquals(404, missing.statusCode());
+            assertEquals(400, get(server, "/api/tickets?status=unknown").statusCode());
+            assertEquals(404, sendJson(server, "POST", "/api/tickets/999/advance", "{}").statusCode());
         }
     }
 
@@ -69,11 +74,15 @@ class HelpDeskHttpServerTest {
         return server;
     }
 
-    private HttpResponse<String> sendJson(HelpDeskHttpServer server, String path, String body) throws Exception {
+    private HttpResponse<String> get(HelpDeskHttpServer server, String path) throws Exception {
+        return client.send(HttpRequest.newBuilder(uri(server, path)).GET().build(), HttpResponse.BodyHandlers.ofString());
+    }
+
+    private HttpResponse<String> sendJson(HelpDeskHttpServer server, String method, String path, String body) throws Exception {
         return client.send(
                 HttpRequest.newBuilder(uri(server, path))
                         .header("Content-Type", "application/json")
-                        .POST(HttpRequest.BodyPublishers.ofString(body))
+                        .method(method, HttpRequest.BodyPublishers.ofString(body))
                         .build(),
                 HttpResponse.BodyHandlers.ofString());
     }
