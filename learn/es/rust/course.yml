@@ -4,7 +4,7 @@ language: Rust
 locale: es
 source_locale: es
 title: Curso de Rust desde cero — Construye un backup incremental verificable
-status: in_progress
+status: complete
 canonical_app:
   name: BackupForge
   summary: Herramienta local de backup incremental verificable por checksums SHA-256, con manifest, restauración segura, snapshots históricos inmutables y auditoría de contenido inesperado.
