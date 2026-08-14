@@ -20,13 +20,15 @@ contract ReentrantClient {
     }
 
     receive() external payable {
-        (bool success,) = address(escrow).call(abi.encodeWithSelector(FreelanceEscrow.refund.selector));
+        (bool success,) =
+            address(escrow).call(abi.encodeWithSelector(FreelanceEscrow.refund.selector));
         reentrySucceeded = success;
     }
 }
 
 contract FreelanceEscrowSecurityTest {
-    VmSecurity private constant vm = VmSecurity(address(uint160(uint256(keccak256("hevm cheat code")))));
+    VmSecurity private constant vm =
+        VmSecurity(address(uint160(uint256(keccak256("hevm cheat code")))));
     address private constant FREELANCER = address(0xF1);
     uint256 private constant DEPOSIT = 1 ether;
 
