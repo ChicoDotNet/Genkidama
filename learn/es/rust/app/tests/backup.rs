@@ -1,6 +1,6 @@
 use backupforge::{
-    create_backup, load_manifest, restore_backup, sha256_file, update_backup, verify_backup,
-    BackupError, Manifest, ManifestEntry,
+    BackupError, Manifest, ManifestEntry, create_backup, load_manifest, restore_backup,
+    sha256_file, update_backup, verify_backup,
 };
 use std::fs;
 use tempfile::tempdir;
@@ -75,9 +75,11 @@ fn incremental_update_reuses_unchanged_and_copies_modified_files() {
     assert_eq!(1, report.reused);
     assert_eq!(1, report.copied);
     assert_eq!(0, report.removed);
-    assert!(verify_backup(backup.path(), &report.manifest)
-        .unwrap()
-        .is_valid());
+    assert!(
+        verify_backup(backup.path(), &report.manifest)
+            .unwrap()
+            .is_valid()
+    );
 }
 
 #[test]
@@ -118,9 +120,11 @@ fn incremental_update_repairs_corrupt_destination_instead_of_reusing_it() {
 
     assert_eq!(0, report.reused);
     assert_eq!(1, report.copied);
-    assert!(verify_backup(backup.path(), &report.manifest)
-        .unwrap()
-        .is_valid());
+    assert!(
+        verify_backup(backup.path(), &report.manifest)
+            .unwrap()
+            .is_valid()
+    );
 }
 
 #[test]

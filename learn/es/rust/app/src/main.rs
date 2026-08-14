@@ -1,6 +1,4 @@
-use backupforge::{
-    create_backup, load_manifest, restore_backup, update_backup, verify_backup,
-};
+use backupforge::{create_backup, load_manifest, restore_backup, update_backup, verify_backup};
 use std::env;
 use std::path::Path;
 
