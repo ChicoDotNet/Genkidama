@@ -31,7 +31,7 @@ jobs:
           version: stable
 
       - name: Check formatting
-        run: forge fmt --check app/src/FreelanceEscrow.sol app/test/FreelanceEscrow.t.sol
+        run: forge fmt --check app/src/FreelanceEscrow.sol app/test/FreelanceEscrow.t.sol app/test/Security.t.sol
 
       - name: Build FreelanceEscrow
         run: forge build
