@@ -3,9 +3,9 @@ initiative:
   status: pilots_complete
   source_locale: es
   last_updated: '2026-08-14'
-  active_work: rust_course
+  active_work: php_course
   v1_courses_total: 45
-  v1_courses_complete: 8
+  v1_courses_complete: 9
 foundation: {status: complete, catalog: complete, pedagogy: complete, course_spec: complete, authoring_guide: complete, roadmap: complete, decisions: complete, validator: complete, ci: green}
 courses:
   csharp: {status: complete, lessons_complete: 17, lessons_total: 17, ci: green, last_green_executable_sha: 8514359e30b06580953b46c055ae222a56a29139, pr: 34, pilot_order: 1}
@@ -19,7 +19,7 @@ courses:
   cpp: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   objective-c: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   java: {status: complete, lessons_complete: 17, lessons_total: 17, ci: green, last_green_executable_sha: 864affe5d606ad445342c3c12a5d1b2fb171d2aa, pr: 43}
-  rust: {status: in_progress, lessons_complete: 16, lessons_total: 17, ci: green, last_green_executable_sha: a20ca193ff18475c6559a3df91714da3aa2bd57f, pr: 46}
+  rust: {status: complete, lessons_complete: 17, lessons_total: 17, ci: green, last_green_executable_sha: c1f03ee17261f71752e4b6313c93d2c8233413ca, pr: 46}
   zig: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   go: {status: complete, lessons_complete: 17, lessons_total: 17, ci: green, last_green_executable_sha: fe8847c70d699845d47d8a18d6a68553a0878224, pr: 45}
   php: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
