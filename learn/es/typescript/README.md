@@ -19,9 +19,11 @@ FreelanceDesk crece sobre una sola aplicación:
 - interfaz web que consume la API;
 - persistencia JSON detrás de una frontera reemplazable;
 - mutaciones durables que no adelantan memoria cuando la persistencia falla;
-- pruebas, tooling, diagnóstico y hardening conforme avance el curso.
+- contratos HTTP explícitos, límite de cuerpos JSON y headers defensivos;
+- diagnóstico agregado opt-in sin URLs, cuerpos ni datos personales;
+- pruebas y un gate reproducible de type-check, build y test.
 
-Desde la lección 08 el servidor conserva clientes, cotizaciones y proyectos en `app/data/freelance-desk.json`. Desde la lección 11 una escritura fallida devuelve `503` y conserva el estado previo en memoria.
+Desde la lección 08 el servidor conserva clientes, cotizaciones y proyectos en `app/data/freelance-desk.json`. Desde la lección 11 una escritura fallida devuelve `503` y conserva el estado previo en memoria. Desde la lección 16 los cuerpos JSON están limitados a 64 KiB por defecto y deben declarar `Content-Type: application/json`.
 
 ## Toolchain objetivo
 
@@ -66,6 +68,14 @@ npm start
 
 Abre `http://localhost:3000`. Puedes cambiar el archivo de datos mediante `FREELANCEDESK_DATA_FILE`.
 
+Para habilitar temporalmente el diagnóstico agregado:
+
+```bash
+FREELANCEDESK_DIAGNOSTICS=1 npm start
+```
+
+Entonces `/api/diagnostics` expone sólo conteos y duraciones agregadas. Sin esa variable el endpoint responde 404.
+
 ## Lecciones
 
 1. [Tu primera cotización tipada](lessons/01-tu-primera-cotizacion-tipada.md)
@@ -80,6 +90,10 @@ Abre `http://localhost:3000`. Puedes cambiar el archivo de datos mediante `FREEL
 10. [Ciclo comercial de cotizaciones](lessons/10-ciclo-comercial-de-cotizaciones.md)
 11. [Mutaciones durables y fallas asíncronas](lessons/11-mutaciones-durables-y-fallas-asincronas.md)
 12. [Contratos de error y Checkpoint 03](lessons/12-contratos-de-error-y-checkpoint-03.md)
+13. [Errores HTTP y fronteras explícitas](lessons/13-errores-http-y-fronteras-explicitas.md)
+14. [Tooling y gate profesional](lessons/14-tooling-y-gate-profesional.md)
+15. [Diagnóstico y rendimiento con evidencia](lessons/15-diagnostico-y-rendimiento-con-evidencia.md)
+16. [Hardening HTTP y Checkpoint 04](lessons/16-hardening-http-y-checkpoint-04.md)
 
 ## Qué sabrás hacer al terminar
 
@@ -111,6 +125,14 @@ La API responde `503` y no aplica el snapshot candidato a la memoria del proceso
 
 Porque satisface la necesidad actual sin añadir una dependencia antes de tiempo. La interfaz del store permite migrar después a SQLite u otro motor sin mover las reglas del dominio.
 
+### ¿El diagnóstico registra mis clientes o cotizaciones?
+
+No. `RequestMetrics` sólo agrega cantidad de peticiones, fallas y duraciones. El endpoint además está deshabilitado por defecto. Una aplicación desplegada necesitaría una política de observabilidad más completa, pero recolectar datos sensibles “por si acaso” no es esa política.
+
+### ¿Estos headers vuelven segura la aplicación?
+
+No. CSP, `nosniff`, límites de body y validación de media type reducen superficie. No sustituyen autenticación, autorización, TLS, gestión de secretos ni revisión de seguridad cuando el sistema crece.
+
 ## Glosario
 
 - **tipo:** descripción estática de los valores aceptados por una expresión o contrato.
@@ -120,10 +142,11 @@ Porque satisface la necesidad actual sin añadir una dependencia antes de tiempo
 - **frontera:** punto donde entran o salen datos externos al núcleo.
 - **snapshot:** representación serializable del estado en un momento determinado.
 - **durabilidad:** aquí, condición de considerar confirmada una mutación sólo después de que la persistencia la acepta.
+- **hardening:** controles adicionales que reducen superficie de falla/ataque sin afirmar seguridad absoluta.
 
 ## Cómo hablar de este proyecto en una entrevista
 
-Empieza por el problema: un freelancer necesita administrar clientes, proyectos y cotizaciones sin depender de servicios externos. Explica por qué separaste reglas puras, HTTP, DOM y persistencia; dónde TypeScript ayuda y dónde sigue siendo necesaria la validación runtime. Muestra una prueba de ciclo de estados y la regresión donde `save()` falla sin dejar memoria adelantada. Reconoce que JSON local no resuelve concurrencia multiusuario y explica por qué `AppStateStore` permite evolucionar la infraestructura sin acoplar el dominio.
+Empieza por el problema: un freelancer necesita administrar clientes, proyectos y cotizaciones sin depender de servicios externos. Explica por qué separaste reglas puras, HTTP, DOM y persistencia; dónde TypeScript ayuda y dónde sigue siendo necesaria la validación runtime. Muestra una prueba de ciclo de estados y la regresión donde `save()` falla sin dejar memoria adelantada. Explica también por qué limitas cuerpos antes de persistir y por qué el diagnóstico es opt-in y no guarda PII. Reconoce que JSON local no resuelve concurrencia multiusuario y explica por qué `AppStateStore` permite evolucionar la infraestructura sin acoplar el dominio.
 
 ## Referencias oficiales
 
@@ -132,9 +155,11 @@ Empieza por el problema: un freelancer necesita administrar clientes, proyectos 
 - [Node.js releases](https://nodejs.org/en/about/previous-releases)
 - [Node.js HTTP](https://nodejs.org/api/http.html)
 - [Node.js File system](https://nodejs.org/api/fs.html)
+- [Node.js Performance Measurement APIs](https://nodejs.org/api/perf_hooks.html)
 - [Fetch API — MDN](https://developer.mozilla.org/docs/Web/API/Fetch_API)
 - [HTTP status codes — MDN](https://developer.mozilla.org/docs/Web/HTTP/Status)
+- [Content Security Policy — MDN](https://developer.mozilla.org/docs/Web/HTTP/CSP)
 
 ## Siguiente paso
 
-Completa las lecciones 9–12 y el Checkpoint 03 antes de entrar al bloque profesional de tooling, diagnóstico, rendimiento y hardening.
+Completa las lecciones 13–16 y el Checkpoint 04. Después sólo quedará la evaluación final autónoma, rúbrica, solución de referencia y auditoría del Course DoD.
