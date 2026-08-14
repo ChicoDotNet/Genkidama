@@ -66,7 +66,7 @@ Propón una invariante stateful que merecería un handler de Foundry y explica q
 - verde significa evidencia, no auditoría.
 
 ## Siguiente paso
-El siguiente bloque entra a tooling, diagnóstico, gas y hardening antes de la evaluación final.
+Continúa con [Lección 13 — Tooling y superficie profesional](13-tooling-y-superficie-profesional.md).
 
 ## Referencias
 - [Foundry — Forge](https://getfoundry.sh/forge/overview)
