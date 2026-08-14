@@ -58,7 +58,11 @@ fn audit_backup(
     manifest: &Manifest,
 ) -> Result<AuditReport, Box<dyn std::error::Error>> {
     let verification = verify_backup(root, manifest)?;
-    let expected: HashSet<&str> = manifest.files.iter().map(|entry| entry.path.as_str()).collect();
+    let expected: HashSet<&str> = manifest
+        .files
+        .iter()
+        .map(|entry| entry.path.as_str())
+        .collect();
     let mut observed = Vec::new();
     collect_entries(root, root, &mut observed)?;
     let unexpected = observed
