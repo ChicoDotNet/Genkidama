@@ -150,5 +150,6 @@ Fase separada:
 - nuevos lenguajes;
 - mejoras SEO/AEO/GEO;
 - posible sitio estático;
-- cursos complementarios;
-- curso independiente de Git.
+- cursos complementarios adicionales.
+
+El curso transversal de Git (`ReleaseDesk`) ya forma parte de la infraestructura educativa compartida y no se pospone a esta fase.
