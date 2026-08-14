@@ -102,7 +102,7 @@ Diseña, sin implementar, una respuesta JSON con código de error estable ademá
 
 ## Siguiente paso
 
-Tras el checkpoint, el siguiente bloque ampliará consultas/modificación y añadirá persistencia sólo cuando el problema lo requiera.
+Continúa con [Lección 05 — Consultas tipadas sin esconder el dominio](05-consultas-tipadas.md).
 
 ## Referencias
 
