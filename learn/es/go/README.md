@@ -1,30 +1,30 @@
 # Curso de Go desde cero — Construye un monitor concurrente de uptime
 
-Go es un lenguaje compilado de propósito general especialmente usado en servicios de red, APIs, CLIs e infraestructura. Este curso parte desde cero y construye **UptimeLab**, un monitor local que comprueba endpoints HTTP concurrentemente, conserva historial y expone resultados, resúmenes y tendencias mediante API y dashboard.
+Go es un lenguaje compilado de propósito general usado ampliamente en servicios de red, APIs, CLIs e infraestructura. Este curso parte desde cero y construye **UptimeLab**, un monitor local que comprueba endpoints HTTP concurrentemente, conserva historial y expone resultados, resúmenes, tendencias y diagnóstico agregado mediante API y dashboard.
 
-El objetivo es preparación práctica para trabajo inicial: leer y escribir Go sencillo, probarlo, depurarlo, explicar sus decisiones y modificar una base existente. No promete empleo. La encuesta oficial de Go 2025 muestra APIs, CLIs e infraestructura entre los usos relevantes del ecosistema, pero también indica que Go suele aprenderse después de comenzar una carrera profesional; tratamos el mercado con esa realidad.
+El objetivo es preparación práctica para trabajo inicial: leer y escribir Go sencillo, probarlo, depurarlo, explicar sus decisiones y modificar una base existente. No promete empleo. La encuesta oficial de Go 2025 muestra APIs, CLIs e infraestructura entre los usos relevantes del ecosistema, pero también indica que Go suele aprenderse después de comenzar una carrera profesional.
 
 ## Qué vas a construir
 
-UptimeLab crece durante 17 lecciones. Después de las primeras doce ya puedes:
+UptimeLab crece durante 17 lecciones. Después de las primeras dieciséis ya puedes:
 
 - validar targets HTTP y distinguir errores de transporte de respuestas HTTP;
 - medir estado y latencia;
-- ejecutar varios checks con concurrencia acotada y cancelación mediante `context.Context`;
-- consultar y ejecutar checks desde `/api/checks`;
-- persistir un historial JSON acotado y consultarlo desde `/api/history`;
+- ejecutar checks con concurrencia acotada y cancelación mediante `context.Context`;
+- persistir un historial JSON acotado y mantener consistente memoria/disco ante fallos;
 - ejecutar checks periódicos con shutdown limpio;
-- mantener consistente memoria/disco cuando una persistencia falla;
-- derivar disponibilidad, latencia media, último estado y rachas de fallas mediante `/api/summary`;
-- comparar ventanas reciente/anterior con `/api/trends?window=N`;
-- validar parámetros HTTP sin contaminar el paquete de análisis;
-- ejecutar pruebas offline con `httptest` y el detector de carreras.
+- derivar disponibilidad, latencia media, último estado, rachas y tendencias;
+- validar contratos HTTP;
+- diagnosticar fallas desde evidencia reproducible;
+- ejecutar `gofmt`, `go vet`, `go test -race` y build como gate profesional;
+- medir peticiones/fallas/duración de forma agregada y opt-in sin guardar PII ni datos de targets;
+- aplicar headers defensivos y 404 reales sin presentar la app educativa como producto de seguridad completo.
 
 ## Requisitos
 
-- Go **1.26.5** (línea estable soportada verificada el 14-ago-2026; Go 1.27 seguía en prerelease);
+- Go **1.26.5** estable, verificado el 14-ago-2026;
 - Windows 11 + PowerShell o Linux + bash;
-- VS Code u otro editor es opcional.
+- VS Code u otro editor, opcional.
 
 ## Instalar, build, test y run
 
@@ -41,24 +41,12 @@ go run ./cmd/uptimelab
 
 Abre `http://127.0.0.1:8080`.
 
-Para usar tus propios targets:
+Configuración típica:
 
 ```bash
-UPTIMELAB_TARGETS='API=https://example.com,Go=https://go.dev' go run ./cmd/uptimelab
-```
-
-Para operación periódica con historial en otra ruta:
-
-```bash
-UPTIMELAB_INTERVAL=30s UPTIMELAB_HISTORY_FILE=data/demo-history.json go run ./cmd/uptimelab
-```
-
-En PowerShell:
-
-```powershell
-$env:UPTIMELAB_TARGETS='API=https://example.com,Go=https://go.dev'
-$env:UPTIMELAB_INTERVAL='30s'
-$env:UPTIMELAB_HISTORY_FILE='data/demo-history.json'
+UPTIMELAB_TARGETS='API=https://example.com,Go=https://go.dev' \
+UPTIMELAB_INTERVAL=30s \
+UPTIMELAB_HISTORY_FILE=data/demo-history.json \
 go run ./cmd/uptimelab
 ```
 
@@ -67,13 +55,14 @@ La carpeta `app/data/` se ignora para no versionar historial local por accidente
 ## Endpoints actuales
 
 - `GET /health` — liveness local;
-- `GET /api/checks` — ejecuta un batch y lo persiste antes de responder éxito;
+- `GET /api/checks` — ejecuta un batch y persiste antes de responder éxito;
 - `GET /api/history` — evidencia histórica retenida;
 - `GET /api/summary` — resumen derivado por target;
 - `GET /api/trends?window=5` — ventana reciente vs anterior;
+- `GET /api/diagnostics` — sólo cuando el servidor se construye con collector agregado;
 - `GET /` — dashboard local.
 
-`window` acepta enteros de 1 a 100. Un valor inválido devuelve HTTP 400.
+Rutas inexistentes devuelven 404. El handler añade `nosniff`, `no-referrer` y CSP. La CSP actual todavía permite el script inline del dashboard; el curso lo documenta como límite de hardening, no como estado ideal de producción.
 
 ## Lecciones
 
@@ -89,12 +78,17 @@ La carpeta `app/data/` se ignora para no versionar historial local por accidente
 10. [Tendencias por ventanas](lessons/10-tendencias-por-ventanas.md)
 11. [Contratos HTTP para diagnóstico](lessons/11-contratos-http-para-diagnostico.md)
 12. [Diagnóstico reproducible y checkpoint 03](lessons/12-diagnostico-reproducible-y-checkpoint.md)
+13. [Gate profesional de Go](lessons/13-gate-profesional-de-go.md)
+14. [Debugging desde evidencia](lessons/14-debugging-desde-evidencia.md)
+15. [Medir antes de optimizar](lessons/15-medir-antes-de-optimizar.md)
+16. [Hardening operativo y checkpoint 04](lessons/16-hardening-y-checkpoint-04.md)
 
 ## Checkpoints
 
 - [Checkpoint 01 — Timeout configurable](exercises/checkpoint-01.md) → [solución](solutions/checkpoint-01.md)
 - [Checkpoint 02 — Historial durable sin estado fantasma](exercises/checkpoint-02.md) → [solución](solutions/checkpoint-02.md)
 - [Checkpoint 03 — Señal de deterioro sin falsear la evidencia](exercises/checkpoint-03.md) → [solución](solutions/checkpoint-03.md)
+- [Checkpoint 04 — Diagnóstico útil sin filtrar datos](exercises/checkpoint-04.md) → [solución](solutions/checkpoint-04.md)
 
 ## Arquitectura actual
 
@@ -104,54 +98,51 @@ cmd/uptimelab
    └── web.Server ───────┼→ monitor.Checker → net/http
             │            │
             ├→ history.Log → history.Store → JSON local
-            └→ insights → summary / trends derivados
+            ├→ insights → summary / trends derivados
+            └→ RequestMetrics → agregados HTTP opt-in
 ```
 
-`monitor` no conoce dashboard, variables de entorno, archivos ni scheduling. `history` no conoce HTTP. `insights` no conoce persistencia ni query strings. `scheduler` sólo conoce una operación cancelable. `cmd/uptimelab` compone las fronteras y el ciclo de vida del proceso.
+`monitor` no conoce dashboard, archivos ni scheduling. `history` no conoce HTTP. `insights` no conoce persistencia ni query strings. `RequestMetrics` sólo observa status y duración; no recibe URLs, bodies ni targets. `cmd/uptimelab` compone las fronteras y el ciclo de vida.
 
 ## Contratos importantes
 
-- Un HTTP 5xx de un target es un resultado válido de monitoreo; un error de transporte se representa por separado.
-- El orden de resultados de `CheckAll` coincide con el orden de targets aunque el trabajo sea concurrente.
-- Un historial inexistente significa primera ejecución; JSON corrupto es error y no se silencia.
-- Un batch sólo se considera exitoso cuando sus resultados pudieron persistirse. Si `Store.Save` falla, el historial visible anterior no cambia.
-- Summary y trends son vistas reconstruibles del historial y no se persisten como otra fuente de verdad.
-- La disponibilidad expresa sólo la muestra retenida localmente; no se presenta como SLA universal.
-- El scheduler es cancelable y no oculta goroutines dentro del dominio.
+- Un HTTP 5xx de un target es un resultado válido; un error de transporte se representa por separado.
+- `CheckAll` conserva el orden de targets aunque el trabajo sea concurrente.
+- JSON corrupto es error y no se silencia.
+- Si `Store.Save` falla, el historial visible anterior no cambia.
+- Summary y trends son vistas reconstruibles, no una segunda fuente de verdad.
+- La disponibilidad expresa sólo la muestra retenida localmente; no es un SLA universal.
+- Diagnóstico está apagado por defecto y contiene sólo agregados.
+- Los headers defensivos no sustituyen TLS, identidad, autorización ni rate limiting.
 
 ## Preguntas frecuentes
 
 **¿Necesito saber programar?** No. Las primeras lecciones explican paquetes, structs, métodos, errores y comandos mientras la misma app crece.
 
-**¿Por qué no usamos un framework web?** `net/http` cubre el vertical actual y mantiene visibles los fundamentos de Go. Añadiremos dependencias sólo si resuelven un problema real.
+**¿Por qué no usamos un framework web?** `net/http` cubre el vertical actual y mantiene visibles los fundamentos de Go.
 
-**¿Por qué JSON y no una base de datos?** El historial actual es pequeño y local. Una interfaz `history.Store` permite cambiar la implementación cuando volumen, consultas o multi-proceso lo justifiquen.
+**¿Por qué JSON y no una base de datos?** El historial es pequeño y local. La interfaz `history.Store` permite cambiarlo cuando volumen, consultas o multi-proceso lo justifiquen.
 
-**¿Por qué no guardamos summary y trends?** Porque son datos derivados. Persistirlos crearía otra fuente que podría quedar desincronizada del historial.
+**¿Por qué no guardamos summary, trends o diagnóstico detallado?** Los dos primeros son derivados; el diagnóstico detallado ampliaría retención de datos sensibles sin necesidad educativa.
 
-**¿La concurrencia significa lanzar goroutines sin límite?** No. UptimeLab usa un límite explícito y conserva el orden de entrada de los resultados.
-
-**¿Una tendencia negativa demuestra la causa del problema?** No. Es una señal para reducir hipótesis; causa raíz requiere evidencia adicional.
-
-**¿Esto ya es un producto de monitoreo de producción?** No. Es una aplicación educativa local. Aún faltan tooling profesional, profiling/rendimiento, hardening y una evaluación Junior final.
+**¿Esto ya es monitoreo de producción?** No. Es una app educativa local con contratos profesionales acotados; faltan identidad, TLS gestionado, almacenamiento multi-proceso, telemetría de producción y operación distribuida.
 
 ## Glosario
 
 - **goroutine:** función ejecutada concurrentemente por el runtime de Go.
-- **channel:** mecanismo tipado para coordinación/comunicación entre goroutines.
+- **channel:** mecanismo tipado de coordinación entre goroutines.
 - **context:** contrato estándar para cancelación y deadlines.
-- **interface:** conjunto de métodos satisfecho implícitamente por tipos compatibles.
-- **httptest:** utilidades estándar para probar HTTP sin depender de servicios externos.
-- **snapshot candidato:** siguiente estado que se persiste antes de sustituir el estado visible actual.
-- **ticker:** fuente periódica de eventos del paquete `time`.
+- **httptest:** utilidades estándar para probar HTTP sin internet.
+- **race detector:** instrumentación que detecta ciertas carreras durante ejecución de pruebas.
 - **vista derivada:** información reconstruible desde la fuente durable.
-- **punto porcentual:** diferencia aritmética entre dos porcentajes, no porcentaje relativo de cambio.
+- **diagnóstico opt-in:** observabilidad que sólo se habilita explícitamente.
+- **CSP:** política del navegador que restringe fuentes de contenido/script.
 
 ## Cómo hablar de este proyecto en una entrevista
 
-Explica primero el problema: comprobar varios endpoints sin serializar esperas de red y conservar evidencia entre reinicios. Después describe límite de concurrencia, `context`, preservación del orden, inyección de cliente/clock, persistencia detrás de interfaz, rollback lógico, scheduler cancelable y análisis derivado determinista. Reconoce límites: el JSON es single-process, la retención es pequeña y una tendencia no prueba causalidad.
+Explica el problema: comprobar varios endpoints sin serializar esperas de red y conservar evidencia entre reinicios. Describe límite de concurrencia, `context`, orden determinista, persistencia detrás de interfaz, rollback lógico, scheduler cancelable, análisis derivado, race detector, diagnóstico agregado y hardening HTTP. Reconoce límites: JSON single-process, retención pequeña, CSP con script inline y ausencia deliberada de claims de monitoreo/seguridad de producción.
 
-Preguntas probables: ¿por qué limitar goroutines?, ¿por qué `context.Context`?, ¿cómo pruebas HTTP sin internet?, ¿qué diferencia hay entre un error de transporte y un HTTP 500?, ¿por qué persistir antes de actualizar memoria?, ¿por qué no persistir summary/trends?, ¿qué cambiarías para múltiples procesos o millones de checks?
+Preguntas probables: ¿por qué limitar goroutines?, ¿qué diferencia hay entre error de transporte y HTTP 500?, ¿por qué persistir antes de actualizar memoria?, ¿cómo pruebas HTTP sin internet?, ¿qué detecta `-race`?, ¿por qué el diagnóstico no guarda URLs?, ¿qué cambiarías para millones de checks o múltiples procesos?
 
 ## Referencias oficiales
 
@@ -163,11 +154,12 @@ Preguntas probables: ¿por qué limitar goroutines?, ¿por qué `context.Context
 - https://pkg.go.dev/encoding/json
 - https://pkg.go.dev/os/signal
 - https://pkg.go.dev/time
-- https://pkg.go.dev/sort
-- https://pkg.go.dev/strconv
+- https://pkg.go.dev/sync
+- https://pkg.go.dev/errors
 - https://go.dev/doc/diagnostics
+- https://go.dev/doc/articles/race_detector
 - https://go.dev/blog/survey2025
 
 ## Siguiente paso
 
-El siguiente bloque cubre tooling profesional, debugging, medición antes de optimizar y hardening operativo antes de la evaluación Junior final.
+Queda la Lección 17: evaluación Junior autónoma sin receta, rúbrica, solución de referencia, entrevista y auditoría final del Course DoD.
