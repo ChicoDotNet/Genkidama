@@ -56,10 +56,10 @@ courses:
   objective-c: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   java:
     status: in_progress
-    lessons_complete: 8
+    lessons_complete: 12
     lessons_total: 17
     ci: green
-    last_green_executable_sha: 793b877007ff0e6529b0a594794f02d318854173
+    last_green_executable_sha: 8f92ad951d45c4199e6482fba4791c243d4f161d
     pr: 43
   rust: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   zig: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
