@@ -1,11 +1,11 @@
 schema_version: 1
 initiative:
-  status: pilots_in_progress
+  status: pilots_complete
   source_locale: es
   last_updated: '2026-08-13'
-  active_work: solidity_pilot
+  active_work: typescript_course
   v1_courses_total: 45
-  v1_courses_complete: 4
+  v1_courses_complete: 5
 foundation:
   status: complete
   catalog: complete
@@ -36,11 +36,11 @@ courses:
   typescript: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   ada: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   solidity:
-    status: in_progress
-    lessons_complete: 8
+    status: complete
+    lessons_complete: 17
     lessons_total: 17
     ci: green
-    last_green_executable_sha: 9fce94e06d66a4ab89e8dabb696763480d1ed06e
+    last_green_executable_sha: 023b6a95b98e7d0e16eec326175b4b1f7a436c35
     pr: 40
     pilot_order: 5
   fortran: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
