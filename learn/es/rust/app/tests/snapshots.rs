@@ -17,7 +17,12 @@ fn creates_immutable_snapshot_and_lists_summary() {
     assert_eq!("2026-08-14", created.name);
     assert_eq!(2, created.files);
     assert_eq!(8, created.bytes);
-    assert!(repository.path().join("snapshots/2026-08-14/manifest.json").is_file());
+    assert!(
+        repository
+            .path()
+            .join("snapshots/2026-08-14/manifest.json")
+            .is_file()
+    );
 
     let listed = list_snapshots(repository.path()).unwrap();
     assert_eq!(vec![created], listed);
@@ -85,7 +90,9 @@ fn restore_snapshot_verifies_before_writing() {
     assert_eq!(1, restored);
     assert_eq!(
         b"ABCD",
-        fs::read(restore.path().join("data.txt")).unwrap().as_slice()
+        fs::read(restore.path().join("data.txt"))
+            .unwrap()
+            .as_slice()
     );
 }
 
@@ -96,11 +103,7 @@ fn corrupt_snapshot_is_reported_and_not_restored() {
     let restore = tempdir().unwrap();
     fs::write(source.path().join("data.txt"), b"ABCD").unwrap();
     create_snapshot(source.path(), repository.path(), "broken").unwrap();
-    fs::write(
-        repository.path().join("snapshots/broken/data.txt"),
-        b"WXYZ",
-    )
-    .unwrap();
+    fs::write(repository.path().join("snapshots/broken/data.txt"), b"WXYZ").unwrap();
 
     let verification = verify_snapshot(repository.path(), "broken").unwrap();
     assert!(!verification.is_valid());

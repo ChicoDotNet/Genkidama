@@ -32,34 +32,17 @@ jobs:
         working-directory: learn/es/rust/app
         run: rustc --version && cargo --version
 
-      - name: Diagnose exact rustfmt delta
-        shell: bash
-        run: |
-          set -euo pipefail
-          cargo fmt --manifest-path learn/es/rust/app/Cargo.toml
-          if ! git diff --quiet -- learn/es/rust/app; then
-            delta="$(git diff -- learn/es/rust/app)"
-            delta="${delta//'%'/'%25'}"
-            delta="${delta//$'\r'/'%0D'}"
-            delta="${delta//$'\n'/'%0A'}"
-            echo "::error title=rustfmt delta::$delta"
-            echo 'RUSTFMT_CHANGED=1' >> "$GITHUB_ENV"
-          fi
+      - name: Format
+        working-directory: learn/es/rust/app
+        run: cargo fmt --check
 
-      - name: Clippy after rustfmt
+      - name: Clippy
         working-directory: learn/es/rust/app
         run: cargo clippy --all-targets --all-features -- -D warnings
 
-      - name: Test after rustfmt
+      - name: Test
         working-directory: learn/es/rust/app
         run: cargo test
-
-      - name: Fail if rustfmt changed files
-        shell: bash
-        run: |
-          if [ "${RUSTFMT_CHANGED:-0}" = "1" ]; then
-            exit 1
-          fi
 
       - name: Build release
         working-directory: learn/es/rust/app
