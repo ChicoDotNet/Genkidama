@@ -12,15 +12,16 @@ audience: beginner
 prerequisites: []
 lesson_count: 4
 toolchain:
-  verified_on: null
-  version_tested: pending-ci
+  verified_on: '2026-08-13'
+  version_tested: TypeScript 6.0.3 + Node.js 24.18.0
   runtime_or_compiler: TypeScript 6.0 sobre Node.js 24 LTS + navegador moderno
   package_or_build_tool: npm + tsc
   test_tool: node:test
   operating_systems_targeted:
     - windows-11
     - linux
-  operating_systems_tested: []
+  operating_systems_tested:
+    - github-actions-ubuntu-24.04
 ci:
   supported: true
   workflow: .github/workflows/learn-typescript.yml
