@@ -82,14 +82,22 @@ export function createRequestHandler(state: AppState, store?: AppStateStore) {
       }
       if (method === "GET" && url.pathname === "/api/quotes") {
         const rawStatus = url.searchParams.get("status");
-        const status = rawStatus === null ? undefined : parseQuoteStatus(rawStatus);
-        sendJson(response, 200, queryQuotes(state.quotes, { clientId: url.searchParams.get("clientId") ?? undefined, status }));
+        const rawClientId = url.searchParams.get("clientId");
+        const query = {
+          ...(rawClientId === null ? {} : { clientId: rawClientId }),
+          ...(rawStatus === null ? {} : { status: parseQuoteStatus(rawStatus) }),
+        };
+        sendJson(response, 200, queryQuotes(state.quotes, query));
         return;
       }
       if (method === "GET" && url.pathname === "/api/projects") {
         const rawStatus = url.searchParams.get("status");
-        const status = rawStatus === null ? undefined : parseProjectStatus(rawStatus);
-        sendJson(response, 200, queryProjects(state.projects, { clientId: url.searchParams.get("clientId") ?? undefined, status }));
+        const rawClientId = url.searchParams.get("clientId");
+        const query = {
+          ...(rawClientId === null ? {} : { clientId: rawClientId }),
+          ...(rawStatus === null ? {} : { status: parseProjectStatus(rawStatus) }),
+        };
+        sendJson(response, 200, queryProjects(state.projects, query));
         return;
       }
       if (method === "POST" && url.pathname === "/api/clients") {
