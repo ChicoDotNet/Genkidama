@@ -71,7 +71,7 @@ Un sistema confiable no sólo modela el camino feliz; distingue fallas, conserva
 
 ## Siguiente paso
 
-El siguiente bloque profundizará tooling, diagnóstico, rendimiento y hardening antes de la evaluación final.
+Continúa con la [Lección 13 — Errores HTTP y fronteras explícitas](13-errores-http-y-fronteras-explicitas.md).
 
 ## Referencias
 

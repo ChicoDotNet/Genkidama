@@ -1,12 +1,16 @@
 import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { performance } from "node:perf_hooks";
 import { fileURLToPath } from "node:url";
 import { createClient } from "../domain/clients.js";
 import type { Client, CreateClientInput, CreateProjectInput, CreateQuoteInput, Project, Quote } from "../domain/models.js";
 import { changeProjectStatus, createProject, parseProjectStatus, queryProjects } from "../domain/projects.js";
 import { changeQuoteStatus, createQuote, parseQuoteStatus, queryQuotes } from "../domain/quotes.js";
+import type { RequestMetrics } from "./diagnostics.js";
 import type { AppSnapshot, AppStateStore } from "./persistence.js";
+
+const DEFAULT_MAX_JSON_BYTES = 64 * 1024;
 
 /** Estado mutable en memoria; la persistencia se mantiene detrás de `AppStateStore`. */
 export interface AppState {
@@ -15,7 +19,24 @@ export interface AppState {
   readonly projects: Project[];
 }
 
-class PersistenceFailure extends Error {}
+/** Opciones operativas del adaptador HTTP; no forman parte del dominio. */
+export interface RequestHandlerOptions {
+  readonly diagnostics?: RequestMetrics;
+  readonly maxJsonBytes?: number;
+  readonly now?: () => number;
+}
+
+class HttpFailure extends Error {
+  public constructor(public readonly statusCode: number, message: string) {
+    super(message);
+  }
+}
+
+class PersistenceFailure extends HttpFailure {
+  public constructor() {
+    super(503, "No se pudo persistir el cambio. Intenta de nuevo.");
+  }
+}
 
 /** Crea un estado independiente para servidor o pruebas a partir de un snapshot opcional. */
 export function createAppState(snapshot?: AppSnapshot): AppState {
@@ -40,7 +61,7 @@ async function commitSnapshot(state: AppState, store: AppStateStore | undefined,
     try {
       await store.save(next);
     } catch {
-      throw new PersistenceFailure("No se pudo persistir el cambio. Intenta de nuevo.");
+      throw new PersistenceFailure();
     }
   }
   replaceArray(state.clients, next.clients);
@@ -48,11 +69,42 @@ async function commitSnapshot(state: AppState, store: AppStateStore | undefined,
   replaceArray(state.projects, next.projects);
 }
 
-async function readJson<T>(request: IncomingMessage): Promise<T> {
+function requireJsonContentType(request: IncomingMessage): void {
+  const contentType = request.headers["content-type"] ?? "";
+  if (!contentType.toLowerCase().startsWith("application/json")) {
+    throw new HttpFailure(415, "La petición debe usar Content-Type application/json.");
+  }
+}
+
+async function readJson<T>(request: IncomingMessage, maxBytes: number): Promise<T> {
+  requireJsonContentType(request);
+  if (!Number.isInteger(maxBytes) || maxBytes <= 0) throw new Error("maxJsonBytes debe ser un entero positivo.");
+
+  const declaredLength = Number(request.headers["content-length"] ?? 0);
+  if (Number.isFinite(declaredLength) && declaredLength > maxBytes) {
+    request.resume();
+    throw new HttpFailure(413, `El cuerpo JSON supera el límite de ${maxBytes} bytes.`);
+  }
+
   const chunks: Buffer[] = [];
-  for await (const chunk of request) chunks.push(Buffer.from(chunk));
-  if (chunks.length === 0) throw new Error("La petición requiere un cuerpo JSON.");
+  let totalBytes = 0;
+  for await (const chunk of request) {
+    const buffer = Buffer.from(chunk);
+    totalBytes += buffer.length;
+    if (totalBytes > maxBytes) {
+      request.resume();
+      throw new HttpFailure(413, `El cuerpo JSON supera el límite de ${maxBytes} bytes.`);
+    }
+    chunks.push(buffer);
+  }
+  if (chunks.length === 0) throw new HttpFailure(400, "La petición requiere un cuerpo JSON.");
   return JSON.parse(Buffer.concat(chunks).toString("utf8")) as T;
+}
+
+function applySecurityHeaders(response: ServerResponse): void {
+  response.setHeader("x-content-type-options", "nosniff");
+  response.setHeader("referrer-policy", "no-referrer");
+  response.setHeader("content-security-policy", "default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'");
 }
 
 function sendJson(response: ServerResponse, status: number, value: unknown): void {
@@ -68,14 +120,24 @@ async function sendFile(response: ServerResponse, file: URL, contentType: string
 
 /**
  * Crea el manejador HTTP de FreelanceDesk sobre estado y persistencia inyectados.
- * Los errores de entrada se convierten en 400; una falla de persistencia se informa como 503 sin mutar memoria.
+ * Los errores de entrada conservan un status explícito; una falla de persistencia se informa como 503 sin mutar memoria.
+ * El diagnóstico es opt-in y sólo agrega conteos/duraciones, nunca URLs, cuerpos ni datos personales.
  */
-export function createRequestHandler(state: AppState, store?: AppStateStore) {
+export function createRequestHandler(state: AppState, store?: AppStateStore, options: RequestHandlerOptions = {}) {
+  const maxJsonBytes = options.maxJsonBytes ?? DEFAULT_MAX_JSON_BYTES;
+  const now = options.now ?? (() => performance.now());
+
   return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
+    const startedAt = now();
+    applySecurityHeaders(response);
     try {
       const method = request.method ?? "GET";
       const url = new URL(request.url ?? "/", "http://localhost");
 
+      if (method === "GET" && url.pathname === "/api/diagnostics" && options.diagnostics) {
+        sendJson(response, 200, options.diagnostics.snapshot());
+        return;
+      }
       if (method === "GET" && url.pathname === "/api/clients") {
         sendJson(response, 200, state.clients);
         return;
@@ -101,15 +163,15 @@ export function createRequestHandler(state: AppState, store?: AppStateStore) {
         return;
       }
       if (method === "POST" && url.pathname === "/api/clients") {
-        const client = createClient(randomUUID(), await readJson<CreateClientInput>(request));
+        const client = createClient(randomUUID(), await readJson<CreateClientInput>(request, maxJsonBytes));
         const current = snapshotState(state);
         await commitSnapshot(state, store, { ...current, clients: [...current.clients, client] });
         sendJson(response, 201, client);
         return;
       }
       if (method === "POST" && url.pathname === "/api/quotes") {
-        const input = await readJson<CreateQuoteInput>(request);
-        if (!state.clients.some((client) => client.id === input.clientId)) throw new Error("El cliente indicado no existe.");
+        const input = await readJson<CreateQuoteInput>(request, maxJsonBytes);
+        if (!state.clients.some((client) => client.id === input.clientId)) throw new HttpFailure(400, "El cliente indicado no existe.");
         const quote = createQuote(randomUUID(), input);
         const current = snapshotState(state);
         await commitSnapshot(state, store, { ...current, quotes: [...current.quotes, quote] });
@@ -117,8 +179,8 @@ export function createRequestHandler(state: AppState, store?: AppStateStore) {
         return;
       }
       if (method === "POST" && url.pathname === "/api/projects") {
-        const input = await readJson<CreateProjectInput>(request);
-        if (!state.clients.some((client) => client.id === input.clientId)) throw new Error("El cliente indicado no existe.");
+        const input = await readJson<CreateProjectInput>(request, maxJsonBytes);
+        if (!state.clients.some((client) => client.id === input.clientId)) throw new HttpFailure(400, "El cliente indicado no existe.");
         const project = createProject(randomUUID(), input);
         const current = snapshotState(state);
         await commitSnapshot(state, store, { ...current, projects: [...current.projects, project] });
@@ -131,8 +193,8 @@ export function createRequestHandler(state: AppState, store?: AppStateStore) {
         const projectId = decodeURIComponent(projectStatusMatch[1] ?? "");
         const index = state.projects.findIndex((project) => project.id === projectId);
         const currentProject = state.projects[index];
-        if (index < 0 || !currentProject) throw new Error("El proyecto indicado no existe.");
-        const input = await readJson<{ readonly status?: unknown }>(request);
+        if (index < 0 || !currentProject) throw new HttpFailure(400, "El proyecto indicado no existe.");
+        const input = await readJson<{ readonly status?: unknown }>(request, maxJsonBytes);
         const updated = changeProjectStatus(currentProject, parseProjectStatus(input.status));
         const current = snapshotState(state);
         const projects = [...current.projects];
@@ -147,8 +209,8 @@ export function createRequestHandler(state: AppState, store?: AppStateStore) {
         const quoteId = decodeURIComponent(quoteStatusMatch[1] ?? "");
         const index = state.quotes.findIndex((quote) => quote.id === quoteId);
         const currentQuote = state.quotes[index];
-        if (index < 0 || !currentQuote) throw new Error("La cotización indicada no existe.");
-        const input = await readJson<{ readonly status?: unknown }>(request);
+        if (index < 0 || !currentQuote) throw new HttpFailure(400, "La cotización indicada no existe.");
+        const input = await readJson<{ readonly status?: unknown }>(request, maxJsonBytes);
         const updated = changeQuoteStatus(currentQuote, parseQuoteStatus(input.status));
         const current = snapshotState(state);
         const quotes = [...current.quotes];
@@ -169,12 +231,14 @@ export function createRequestHandler(state: AppState, store?: AppStateStore) {
 
       sendJson(response, 404, { error: "Ruta no encontrada." });
     } catch (error: unknown) {
-      if (error instanceof PersistenceFailure) {
-        sendJson(response, 503, { error: error.message });
+      if (error instanceof HttpFailure) {
+        sendJson(response, error.statusCode, { error: error.message });
         return;
       }
       const message = error instanceof Error ? error.message : "Error inesperado.";
       sendJson(response, 400, { error: message });
+    } finally {
+      options.diagnostics?.record(response.statusCode, Math.max(0, now() - startedAt));
     }
   };
 }
