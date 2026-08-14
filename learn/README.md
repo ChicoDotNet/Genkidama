@@ -8,7 +8,7 @@ No promete empleo. Su objetivo es dejar evidencia práctica suficiente para que 
 
 Al terminar un curso deberías poder leer y escribir código idiomático sencillo, manejar errores/I/O/persistencia cuando apliquen, usar tooling y pruebas, modificar una base existente, consultar documentación oficial, explicar arquitectura y resolver una evaluación final sin receta.
 
-Git no se enseña aquí como materia principal. Tendrá su propio curso.
+Git no se repite como materia sustancial dentro de cada lenguaje. El curso transversal [**Git — ReleaseDesk**](es/git/) ya enseña control de versiones, colaboración, diagnóstico, recuperación y seguridad como infraestructura pedagógica compartida.
 
 ## Cómo se aprende
 
@@ -20,19 +20,31 @@ Cada lenguaje tiene una sola aplicación canónica principal que crece durante e
 
 ## Idioma
 
-El contenido fuente canónico es español (`es`). Las traducciones se preparan para `en`, `zh-Hans`, `ja`, `fr`, `it`, `pt-BR`, `ru`, `de`, pero no comenzarán hasta que varios cursos en español estén maduros.
+El contenido fuente canónico es español (`es`). Las traducciones se preparan para `en`, `zh-Hans`, `ja`, `fr`, `it`, `pt-BR`, `ru`, `de`, pero no comenzarán hasta que la colección en español tenga madurez suficiente.
 
-## Cursos piloto
+## Pilotos completados
 
 | Orden | Lenguaje | Aplicación canónica | Estado |
 |---|---|---|---|
 | 1 | [C#](es/csharp/) | API de inventario, pedidos y facturación | **Completo** |
 | 2 | [Python](es/python/) | Conciliador de facturas CSV con validación, persistencia y reportes | **Completo** |
 | 3 | [JavaScript](es/javascript/) | Kanban offline-first/PWA principalmente nativo | **Completo** |
-| 4 | [COBOL](es/cobol/) | Procesador batch de nómina | **En progreso** |
-| 5 | Solidity | `FreelanceEscrow`: depósito, entrega, liberación y reembolso | Planeado |
+| 4 | [COBOL](es/cobol/) | Procesador batch de nómina | **Completo** |
+| 5 | [Solidity](es/solidity/) | `FreelanceEscrow`: depósito, entrega, liberación y reembolso | **Completo** |
 
-No se crean carpetas vacías para simular avance. Un curso aparece cuando existe contenido y código coherentes.
+Los cinco pilotos estabilizaron estructura, longitud, ejercicios, soluciones, checkpoints, evaluación, metadata y CI. No se crean carpetas vacías para simular avance.
+
+## Producción v1
+
+Después de los pilotos continúan los cursos del roadmap, uno a la vez salvo dependencia documentada:
+
+| Lenguaje | Aplicación canónica | Estado |
+|---|---|---|
+| [TypeScript](es/typescript/) | FreelanceDesk: proyectos, clientes y cotizaciones | **Completo** |
+| [Java](es/java/) | HelpDesk API de tickets | **Completo** |
+| [Go](es/go/) | UptimeLab: monitor concurrente de uptime con API/dashboard | **En progreso — 4/17** |
+
+El orden completo y sus criterios viven en el [roadmap](./_meta/roadmap.md).
 
 ## Qué contiene un curso
 
@@ -58,7 +70,7 @@ La memoria operativa vive en:
 
 Genkidama Learn v1 termina cuando los 45 lenguajes actuales tienen un curso completo en español, aplicación canónica funcional y validación razonable.
 
-Delphi, GNU Octave, SQL, CSS, MicroPython y Rockstar están registrados como expansión posterior. Rockstar se presenta como contenido pedagógico/esotérico, no como una ruta con demanda laboral significativa.
+El curso transversal Git mejora la preparación compartida pero no modifica ese denominador. Delphi, GNU Octave, SQL, CSS, MicroPython y Rockstar están registrados como expansión posterior. Rockstar se presenta como contenido pedagógico/esotérico, no como una ruta con demanda laboral significativa.
 
 ## Licencia
 
