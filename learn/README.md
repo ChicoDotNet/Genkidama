@@ -8,7 +8,7 @@ No promete empleo. Su objetivo es dejar evidencia práctica suficiente para que 
 
 Al terminar un curso deberías poder leer y escribir código idiomático sencillo, manejar errores/I/O/persistencia cuando apliquen, usar tooling y pruebas, modificar una base existente, consultar documentación oficial, explicar arquitectura y resolver una evaluación final sin receta.
 
-Git no se repite como materia sustancial dentro de cada lenguaje. El curso transversal [**Git — ReleaseDesk**](es/git/) ya enseña control de versiones, colaboración, diagnóstico, recuperación y seguridad como infraestructura pedagógica compartida.
+Git no se repite como materia sustancial dentro de cada lenguaje. ReleaseDesk se mantiene como curso transversal independiente de los 45 lenguajes v1; mientras su PR dedicado no forme parte de esta cadena, este README evita crear un enlace relativo que todavía no exista en el árbol actual.
 
 ## Cómo se aprende
 
