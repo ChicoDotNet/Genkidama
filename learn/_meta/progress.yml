@@ -69,11 +69,11 @@ courses:
   lua: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   haskell: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   cobol:
-    status: planned
-    lessons_complete: 0
-    lessons_total: null
-    ci: not_configured
-    pr: null
+    status: in_progress
+    lessons_complete: 4
+    lessons_total: 17
+    ci: pending
+    pr: 37
     pilot_order: 4
   scala: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   groovy: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
