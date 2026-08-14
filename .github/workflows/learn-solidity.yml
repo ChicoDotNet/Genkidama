@@ -30,6 +30,18 @@ jobs:
         with:
           version: stable
 
+      - name: Produce formatted security diagnostic
+        run: |
+          mkdir -p .diagnostic
+          cp app/test/Security.t.sol .diagnostic/Security.t.sol
+          forge fmt .diagnostic/Security.t.sol
+
+      - name: Upload formatted security diagnostic
+        uses: actions/upload-artifact@v4
+        with:
+          name: formatted-security-test
+          path: learn/es/solidity/.diagnostic/Security.t.sol
+
       - name: Check formatting
         run: forge fmt --check app/src/FreelanceEscrow.sol app/test/FreelanceEscrow.t.sol app/test/Security.t.sol
 
