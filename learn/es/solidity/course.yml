@@ -4,14 +4,14 @@ language: Solidity
 locale: es
 source_locale: es
 title: Curso de Solidity desde cero — Construye FreelanceEscrow
-status: in_progress
+status: complete
 canonical_app:
   name: FreelanceEscrow
   summary: Contrato educativo de cobro freelance con depósito, entrega, liberación y reembolso.
 audience: beginner
 prerequisites: []
 lesson_count: 17
-lessons_complete: 16
+lessons_complete: 17
 toolchain:
   verified_on: '2026-08-13'
   version_tested: Solidity 0.8.35 + Foundry v1.7.1
