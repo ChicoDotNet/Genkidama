@@ -2,55 +2,21 @@
 
 ## Principio de planificación
 
-Calidad antes de cantidad. No se abren muchos cursos para mostrar actividad.
-
-Un curso incompleto se retoma antes de iniciar otro salvo que exista una razón técnica o de independencia claramente documentada.
+Calidad antes de cantidad. Un curso incompleto se retoma antes de iniciar otro salvo razón técnica o independencia documentada. Antes de iniciar cada curso se revalida brevemente demanda, tooling, oportunidad de contenido y aplicación canónica.
 
 ## Fase 0 — Fundación compartida
 
-Objetivo:
-
-- pedagogía;
-- especificación;
-- guía de autoría;
-- catálogo;
-- progreso persistente;
-- decisiones;
-- validación automática;
-- navegación desde el README raíz.
-
-No se crean esqueletos vacíos de cursos.
+**Estado: completa.** Pedagogía, especificación, guía de autoría, catálogo, progreso persistente, decisiones, validación automática y navegación están materializados.
 
 ## Fase 1 — Pilotos
 
-**Estado: completa.** Los cinco pilotos terminaron su Course DoD en español y ya probaron la plantilla sobre ecosistemas deliberadamente distintos:
+**Estado: completa.** C#, Python, JavaScript, COBOL y Solidity terminaron su Course DoD en español y estabilizaron longitud, formato escrito/video, ejercicios, soluciones, checkpoints, evaluación, metadata y CI.
 
-1. C#
-2. Python
-3. JavaScript
-4. COBOL
-5. Solidity
-
-Los pilotos estabilizaron:
-
-- longitud real de lecciones;
-- densidad de contenido;
-- formato escrito/video;
-- ejercicios;
-- soluciones;
-- checkpoints;
-- evaluación;
-- metadata;
-- CI;
-- experiencia Windows/Linux cuando corresponde.
-
-TypeScript ya completó también su Course DoD como primer curso posterior a los pilotos. El siguiente frente de producción v1 es **Java**, sujeto a la revalidación breve de demanda, tooling y aplicación canónica que exige este roadmap antes de iniciar cada curso.
+TypeScript y Java completaron también su Course DoD como primeros cursos posteriores a pilotos. El siguiente frente de producción v1 es **Go**, sujeto a la revalidación breve previa.
 
 ## Orden v1 provisional
 
-Este orden es una hipótesis de producción, no un ranking universal de empleabilidad.
-
-Antes de iniciar cada curso se revalida brevemente demanda, tooling, oportunidad de contenido y aplicación canónica. El orden puede cambiar y la decisión se registra.
+Este orden es una hipótesis de producción, no un ranking universal de empleabilidad. Puede moverse por impacto laboral, demanda de búsqueda, oportunidad de contenido, diversidad de paradigma, facilidad/limitación de CI, interés educativo o aprendizaje acumulado.
 
 1. **C#** (`csharp`)
 2. **Python** (`python`)
@@ -98,58 +64,16 @@ Antes de iniciar cada curso se revalida brevemente demanda, tooling, oportunidad
 44. **Prolog** (`prolog`)
 45. **VBA** (`vba`)
 
-## Criterios para mover el orden
-
-Se puede adelantar o retrasar un curso por:
-
-- impacto laboral;
-- demanda de búsqueda;
-- oportunidad de contenido útil;
-- diversidad de paradigma;
-- facilidad o limitación de CI;
-- interés educativo;
-- ausencia de buenos recursos actuales;
-- aprendizaje obtenido en pilotos.
-
 No se altera el concepto central de Solidity: `FreelanceEscrow`.
 
 ## Expansión posterior a v1
 
-Registrados, no comprometidos como parte de los 45 actuales:
-
-- Delphi
-- GNU Octave
-- SQL
-- CSS
-- MicroPython
-- Rockstar
-
-Rockstar se presenta como ejercicio pedagógico/esotérico, no como una ruta de empleo con demanda significativa.
+Planeados: Delphi, GNU Octave, SQL, CSS, MicroPython y Rockstar. Rockstar se presenta como ejercicio pedagógico/esotérico, no como ruta de empleo con demanda significativa.
 
 ## Traducciones
 
-Sólo después de que la estructura y varios cursos en español estén maduros:
-
-1. `en`
-2. `zh-Hans`
-3. `ja`
-4. `fr`
-5. `it`
-6. `pt-BR`
-7. `ru`
-8. `de`
-
-Español (`es`) permanece como fuente de verdad inicial.
+Después de madurez suficiente en español: `en`, `zh-Hans`, `ja`, `fr`, `it`, `pt-BR`, `ru`, `de`. Español (`es`) permanece como fuente de verdad inicial.
 
 ## Después de v1
 
-Fase separada:
-
-- traducciones;
-- actualización periódica;
-- nuevos lenguajes;
-- mejoras SEO/AEO/GEO;
-- posible sitio estático;
-- cursos complementarios adicionales.
-
-El curso transversal de Git (`ReleaseDesk`) ya forma parte de la infraestructura educativa compartida y no se pospone a esta fase.
+Traducciones, actualización periódica, nuevos lenguajes, mejoras SEO/AEO/GEO, posible sitio estático y cursos complementarios adicionales. El curso transversal de Git (`ReleaseDesk`) ya forma parte de la infraestructura educativa compartida.
