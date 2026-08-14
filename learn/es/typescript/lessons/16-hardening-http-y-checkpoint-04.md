@@ -73,7 +73,7 @@ Hardening útil es específico, verificable y honesto sobre sus límites. La seg
 
 ## Siguiente paso
 
-El siguiente incremento cerrará el curso con la evaluación Junior autónoma, rúbrica, solución de referencia e historia de entrevista.
+Continúa con la [Lección 17 — Evaluación final sin receta](17-evaluacion-final.md), donde integrarás el curso completo sin una guía paso a paso.
 
 ## Referencias
 
