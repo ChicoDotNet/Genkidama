@@ -4,13 +4,15 @@ Rust es un lenguaje de sistemas orientado a seguridad de memoria, rendimiento y 
 
 No promete empleo. Rust tiene demanda profesional real, especialmente en sistemas, infraestructura, tooling y componentes de alto rendimiento, pero suele tener menos vacantes junior que lenguajes generalistas.
 
+**Estado del curso: completo — 17/17 lecciones.**
+
 ## Qué vas a construir
 
 BackupForge copia árboles de archivos, genera un `manifest.json` portable, verifica integridad, actualiza sólo contenido que necesita escritura, restaura únicamente después de validar el backup completo y conserva **snapshots históricos inmutables por nombre**. Cada snapshot tiene su propio manifest y sólo se publica después de verificarse.
 
 Además, `audit` compara lo declarado con lo realmente presente para detectar entradas inesperadas sin cambiar el contrato histórico de `verify`.
 
-La herramienta sigue siendo deliberadamente local: todavía no implementa retención automática, locking multi-proceso, almacenamiento remoto ni deduplicación global entre snapshots.
+La herramienta sigue siendo deliberadamente local: no implementa retención automática, locking multi-proceso, almacenamiento remoto ni deduplicación global entre snapshots.
 
 ## Requisitos
 
@@ -62,6 +64,7 @@ bash tools/verify.sh
 14. [Debugging basado en evidencia](lessons/14-debugging-basado-en-evidencia.md)
 15. [Medir antes de optimizar](lessons/15-medir-antes-de-optimizar.md)
 16. [Hardening operativo y Checkpoint 04](lessons/16-hardening-operativo-y-checkpoint-04.md)
+17. [Evaluación final sin receta](lessons/17-evaluacion-final.md)
 
 ## Checkpoints
 
@@ -69,6 +72,14 @@ bash tools/verify.sh
 - [Checkpoint 02 — incrementalidad que no propaga corrupción](exercises/checkpoint-02.md) · [solución](solutions/checkpoint-02.md)
 - [Checkpoint 03 — un snapshot visible debe estar completo](exercises/checkpoint-03.md) · [solución](solutions/checkpoint-03.md)
 - [Checkpoint 04 — el backup contiene algo no declarado](exercises/checkpoint-04.md) · [solución](solutions/checkpoint-04.md)
+
+## Evaluación final
+
+- [Encargo autónomo — BackupForge](exercises/evaluacion-final.md)
+- [Rúbrica de 100 puntos](exercises/rubrica-final.md)
+- [Solución de referencia](solutions/evaluacion-final.md) — consúltala sólo después de tu intento.
+
+La evaluación pide extender la misma base existente, corregir un bug de integridad de rutas, conservar errores idiomáticos, añadir regresiones, consultar documentación oficial y defender el diseño. La solución de referencia es una dirección posible, no una receta obligatoria.
 
 ## Qué sabrás hacer al terminar
 
@@ -107,7 +118,7 @@ Explica primero el problema: copiar archivos no basta; necesitas poder demostrar
 
 Añade la distinción operacional: `verify` protege entradas declaradas mientras `audit` reporta también contenido inesperado. Explica por qué no cambiaste silenciosamente el contrato existente y por qué medir rendimiento no justifica debilitar checksums.
 
-Reconoce límites reales: SHA-256 no sustituye cifrado o firma; los snapshots actuales pueden duplicar bytes y no existe todavía retención automática, locking multi-proceso ni almacenamiento remoto.
+Reconoce límites reales: SHA-256 no sustituye cifrado o firma; los snapshots actuales pueden duplicar bytes y no existe retención automática, locking multi-proceso ni almacenamiento remoto.
 
 Preguntas probables:
 
@@ -118,6 +129,7 @@ Preguntas probables:
 - ¿Qué diferencia hay entre `verify` y `audit`?
 - ¿Qué medirías antes de paralelizar el hashing?
 - ¿Qué garantías da y cuáles no da `fs::rename` en este diseño?
+- ¿Cómo tratarías rutas equivalentes o no canónicas en un manifest?
 - ¿Qué cambiarías para almacenamiento remoto o varios procesos concurrentes?
 
 ## Referencias oficiales
@@ -130,4 +142,4 @@ Preguntas probables:
 
 ## Siguiente paso
 
-Completa las primeras dieciséis lecciones y los cuatro checkpoints. La siguiente lección es la evaluación Junior final sin receta, con rúbrica, solución de referencia y auditoría completa del Course DoD.
+Usa la [evaluación final](exercises/evaluacion-final.md) y su [rúbrica](exercises/rubrica-final.md) para identificar áreas débiles. Después construye una variante propia de BackupForge o un proyecto Rust pequeño donde debas decidir las fronteras sin copiar esta solución.
