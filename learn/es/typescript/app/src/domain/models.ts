@@ -15,12 +15,16 @@ export interface QuoteItem {
   readonly unitPrice: number;
 }
 
+/** Estado comercial permitido para una cotización. */
+export type QuoteStatus = "draft" | "sent" | "accepted" | "rejected";
+
 /** Cotización calculada para un cliente existente. */
 export interface Quote {
   readonly id: EntityId;
   readonly clientId: EntityId;
   readonly items: readonly QuoteItem[];
   readonly subtotal: number;
+  readonly status: QuoteStatus;
 }
 
 /** Estado permitido para un proyecto de FreelanceDesk. */
@@ -55,4 +59,16 @@ export interface CreateProjectInput {
 /** Cambio de estado solicitado para un proyecto existente. */
 export interface ChangeProjectStatusInput {
   readonly status: ProjectStatus;
+}
+
+/** Criterios opcionales para consultar proyectos sin mutarlos. */
+export interface ProjectQuery {
+  readonly clientId?: EntityId;
+  readonly status?: ProjectStatus;
+}
+
+/** Criterios opcionales para consultar cotizaciones sin mutarlas. */
+export interface QuoteQuery {
+  readonly clientId?: EntityId;
+  readonly status?: QuoteStatus;
 }

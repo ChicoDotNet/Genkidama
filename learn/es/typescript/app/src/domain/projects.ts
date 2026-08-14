@@ -1,4 +1,4 @@
-import type { CreateProjectInput, EntityId, Project, ProjectStatus } from "./models.js";
+import type { CreateProjectInput, EntityId, Project, ProjectQuery, ProjectStatus } from "./models.js";
 
 const transitions: Readonly<Record<ProjectStatus, readonly ProjectStatus[]>> = {
   planned: ["active"],
@@ -36,4 +36,13 @@ export function changeProjectStatus(project: Project, nextStatus: ProjectStatus)
   }
 
   return Object.freeze({ ...project, status: nextStatus });
+}
+
+/** Filtra proyectos por cliente y/o estado sin alterar la colección original. */
+export function queryProjects(projects: readonly Project[], query: ProjectQuery): readonly Project[] {
+  const clientId = query.clientId?.trim();
+  return projects.filter((project) =>
+    (clientId === undefined || clientId.length === 0 || project.clientId === clientId)
+    && (query.status === undefined || project.status === query.status)
+  );
 }

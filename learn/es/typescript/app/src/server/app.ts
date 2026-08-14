@@ -4,8 +4,8 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { fileURLToPath } from "node:url";
 import { createClient } from "../domain/clients.js";
 import type { Client, CreateClientInput, CreateProjectInput, CreateQuoteInput, Project, Quote } from "../domain/models.js";
-import { changeProjectStatus, createProject, parseProjectStatus } from "../domain/projects.js";
-import { createQuote } from "../domain/quotes.js";
+import { changeProjectStatus, createProject, parseProjectStatus, queryProjects } from "../domain/projects.js";
+import { changeQuoteStatus, createQuote, parseQuoteStatus, queryQuotes } from "../domain/quotes.js";
 import type { AppSnapshot, AppStateStore } from "./persistence.js";
 
 /** Estado mutable en memoria; la persistencia se mantiene detrás de `AppStateStore`. */
@@ -14,6 +14,8 @@ export interface AppState {
   readonly quotes: Quote[];
   readonly projects: Project[];
 }
+
+class PersistenceFailure extends Error {}
 
 /** Crea un estado independiente para servidor o pruebas a partir de un snapshot opcional. */
 export function createAppState(snapshot?: AppSnapshot): AppState {
@@ -26,15 +28,24 @@ export function createAppState(snapshot?: AppSnapshot): AppState {
 
 /** Obtiene una copia serializable del estado actual. */
 export function snapshotState(state: AppState): AppSnapshot {
-  return Object.freeze({
-    clients: [...state.clients],
-    quotes: [...state.quotes],
-    projects: [...state.projects],
-  });
+  return Object.freeze({ clients: [...state.clients], quotes: [...state.quotes], projects: [...state.projects] });
 }
 
-async function persist(store: AppStateStore | undefined, state: AppState): Promise<void> {
-  if (store) await store.save(snapshotState(state));
+function replaceArray<T>(target: T[], values: readonly T[]): void {
+  target.splice(0, target.length, ...values);
+}
+
+async function commitSnapshot(state: AppState, store: AppStateStore | undefined, next: AppSnapshot): Promise<void> {
+  if (store) {
+    try {
+      await store.save(next);
+    } catch {
+      throw new PersistenceFailure("No se pudo persistir el cambio. Intenta de nuevo.");
+    }
+  }
+  replaceArray(state.clients, next.clients);
+  replaceArray(state.quotes, next.quotes);
+  replaceArray(state.projects, next.projects);
 }
 
 async function readJson<T>(request: IncomingMessage): Promise<T> {
@@ -57,7 +68,7 @@ async function sendFile(response: ServerResponse, file: URL, contentType: string
 
 /**
  * Crea el manejador HTTP de FreelanceDesk sobre estado y persistencia inyectados.
- * Los errores de entrada se convierten en respuestas 400 sin ocultar el mensaje útil.
+ * Los errores de entrada se convierten en 400; una falla de persistencia se informa como 503 sin mutar memoria.
  */
 export function createRequestHandler(state: AppState, store?: AppStateStore) {
   return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
@@ -70,53 +81,71 @@ export function createRequestHandler(state: AppState, store?: AppStateStore) {
         return;
       }
       if (method === "GET" && url.pathname === "/api/quotes") {
-        sendJson(response, 200, state.quotes);
+        const rawStatus = url.searchParams.get("status");
+        const status = rawStatus === null ? undefined : parseQuoteStatus(rawStatus);
+        sendJson(response, 200, queryQuotes(state.quotes, { clientId: url.searchParams.get("clientId") ?? undefined, status }));
         return;
       }
       if (method === "GET" && url.pathname === "/api/projects") {
-        sendJson(response, 200, state.projects);
+        const rawStatus = url.searchParams.get("status");
+        const status = rawStatus === null ? undefined : parseProjectStatus(rawStatus);
+        sendJson(response, 200, queryProjects(state.projects, { clientId: url.searchParams.get("clientId") ?? undefined, status }));
         return;
       }
       if (method === "POST" && url.pathname === "/api/clients") {
         const client = createClient(randomUUID(), await readJson<CreateClientInput>(request));
-        state.clients.push(client);
-        await persist(store, state);
+        const current = snapshotState(state);
+        await commitSnapshot(state, store, { ...current, clients: [...current.clients, client] });
         sendJson(response, 201, client);
         return;
       }
       if (method === "POST" && url.pathname === "/api/quotes") {
         const input = await readJson<CreateQuoteInput>(request);
-        if (!state.clients.some((client) => client.id === input.clientId)) {
-          throw new Error("El cliente indicado no existe.");
-        }
+        if (!state.clients.some((client) => client.id === input.clientId)) throw new Error("El cliente indicado no existe.");
         const quote = createQuote(randomUUID(), input);
-        state.quotes.push(quote);
-        await persist(store, state);
+        const current = snapshotState(state);
+        await commitSnapshot(state, store, { ...current, quotes: [...current.quotes, quote] });
         sendJson(response, 201, quote);
         return;
       }
       if (method === "POST" && url.pathname === "/api/projects") {
         const input = await readJson<CreateProjectInput>(request);
-        if (!state.clients.some((client) => client.id === input.clientId)) {
-          throw new Error("El cliente indicado no existe.");
-        }
+        if (!state.clients.some((client) => client.id === input.clientId)) throw new Error("El cliente indicado no existe.");
         const project = createProject(randomUUID(), input);
-        state.projects.push(project);
-        await persist(store, state);
+        const current = snapshotState(state);
+        await commitSnapshot(state, store, { ...current, projects: [...current.projects, project] });
         sendJson(response, 201, project);
         return;
       }
 
-      const statusMatch = /^\/api\/projects\/([^/]+)\/status$/.exec(url.pathname);
-      if (method === "PATCH" && statusMatch) {
-        const projectId = decodeURIComponent(statusMatch[1] ?? "");
+      const projectStatusMatch = /^\/api\/projects\/([^/]+)\/status$/.exec(url.pathname);
+      if (method === "PATCH" && projectStatusMatch) {
+        const projectId = decodeURIComponent(projectStatusMatch[1] ?? "");
         const index = state.projects.findIndex((project) => project.id === projectId);
-        const current = state.projects[index];
-        if (index < 0 || !current) throw new Error("El proyecto indicado no existe.");
+        const currentProject = state.projects[index];
+        if (index < 0 || !currentProject) throw new Error("El proyecto indicado no existe.");
         const input = await readJson<{ readonly status?: unknown }>(request);
-        const updated = changeProjectStatus(current, parseProjectStatus(input.status));
-        state.projects[index] = updated;
-        await persist(store, state);
+        const updated = changeProjectStatus(currentProject, parseProjectStatus(input.status));
+        const current = snapshotState(state);
+        const projects = [...current.projects];
+        projects[index] = updated;
+        await commitSnapshot(state, store, { ...current, projects });
+        sendJson(response, 200, updated);
+        return;
+      }
+
+      const quoteStatusMatch = /^\/api\/quotes\/([^/]+)\/status$/.exec(url.pathname);
+      if (method === "PATCH" && quoteStatusMatch) {
+        const quoteId = decodeURIComponent(quoteStatusMatch[1] ?? "");
+        const index = state.quotes.findIndex((quote) => quote.id === quoteId);
+        const currentQuote = state.quotes[index];
+        if (index < 0 || !currentQuote) throw new Error("La cotización indicada no existe.");
+        const input = await readJson<{ readonly status?: unknown }>(request);
+        const updated = changeQuoteStatus(currentQuote, parseQuoteStatus(input.status));
+        const current = snapshotState(state);
+        const quotes = [...current.quotes];
+        quotes[index] = updated;
+        await commitSnapshot(state, store, { ...current, quotes });
         sendJson(response, 200, updated);
         return;
       }
@@ -132,6 +161,10 @@ export function createRequestHandler(state: AppState, store?: AppStateStore) {
 
       sendJson(response, 404, { error: "Ruta no encontrada." });
     } catch (error: unknown) {
+      if (error instanceof PersistenceFailure) {
+        sendJson(response, 503, { error: error.message });
+        return;
+      }
       const message = error instanceof Error ? error.message : "Error inesperado.";
       sendJson(response, 400, { error: message });
     }

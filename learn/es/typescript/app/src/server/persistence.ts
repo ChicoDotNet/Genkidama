@@ -1,6 +1,6 @@
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
-import type { Client, Project, ProjectStatus, Quote } from "../domain/models.js";
+import type { Client, Project, ProjectStatus, Quote, QuoteStatus } from "../domain/models.js";
 
 /** Estado serializable de FreelanceDesk. */
 export interface AppSnapshot {
@@ -33,6 +33,10 @@ function isProjectStatus(value: unknown): value is ProjectStatus {
   return value === "planned" || value === "active" || value === "completed";
 }
 
+function isQuoteStatus(value: unknown): value is QuoteStatus {
+  return value === "draft" || value === "sent" || value === "accepted" || value === "rejected";
+}
+
 function parseClient(value: unknown): Client {
   if (!isRecord(value) || !isString(value.id) || !isString(value.name) || !isString(value.email)) {
     throw new Error("Persistencia inválida: cliente mal formado.");
@@ -50,7 +54,9 @@ function parseQuote(value: unknown): Quote {
     }
     return Object.freeze({ description: item.description, quantity: item.quantity, unitPrice: item.unitPrice });
   });
-  return Object.freeze({ id: value.id, clientId: value.clientId, items, subtotal: value.subtotal });
+  const status = value.status === undefined ? "draft" : value.status;
+  if (!isQuoteStatus(status)) throw new Error("Persistencia inválida: estado de cotización desconocido.");
+  return Object.freeze({ id: value.id, clientId: value.clientId, items, subtotal: value.subtotal, status });
 }
 
 function parseProject(value: unknown): Project {

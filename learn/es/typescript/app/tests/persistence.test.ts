@@ -7,7 +7,7 @@ import { JsonFileStateStore, parseSnapshot } from "../src/server/persistence.js"
 
 const snapshot = {
   clients: [{ id: "c1", name: "Acme", email: "hola@example.com" }],
-  quotes: [{ id: "q1", clientId: "c1", items: [{ description: "API", quantity: 1, unitPrice: 2500 }], subtotal: 2500 }],
+  quotes: [{ id: "q1", clientId: "c1", items: [{ description: "API", quantity: 1, unitPrice: 2500 }], subtotal: 2500, status: "sent" as const }],
   projects: [{ id: "p1", clientId: "c1", name: "Portal", status: "active" as const }],
 };
 
@@ -23,6 +23,23 @@ test("JsonFileStateStore persiste y recupera un snapshot completo", async () => 
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
+});
+
+test("persistencia legacy sin estado de cotización migra a draft", () => {
+  const parsed = parseSnapshot({
+    clients: [],
+    quotes: [{ id: "q-old", clientId: "c1", items: [{ description: "API", quantity: 1, unitPrice: 10 }], subtotal: 10 }],
+    projects: [],
+  });
+  assert.equal(parsed.quotes[0]?.status, "draft");
+});
+
+test("persistencia rechaza estado de cotización desconocido", () => {
+  assert.throws(() => parseSnapshot({
+    clients: [],
+    quotes: [{ id: "q1", clientId: "c1", items: [{ description: "API", quantity: 1, unitPrice: 10 }], subtotal: 10, status: "expired" }],
+    projects: [],
+  }), /estado de cotización/i);
 });
 
 test("JsonFileStateStore interpreta archivo inexistente como estado vacío", async () => {
