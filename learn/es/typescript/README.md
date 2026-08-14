@@ -21,7 +21,8 @@ FreelanceDesk crece sobre una sola aplicación:
 - mutaciones durables que no adelantan memoria cuando la persistencia falla;
 - contratos HTTP explícitos, límite de cuerpos JSON y headers defensivos;
 - diagnóstico agregado opt-in sin URLs, cuerpos ni datos personales;
-- pruebas y un gate reproducible de type-check, build y test.
+- pruebas y un gate reproducible de type-check, build y test;
+- evaluación final autónoma que exige modificar la misma base sin receta.
 
 Desde la lección 08 el servidor conserva clientes, cotizaciones y proyectos en `app/data/freelance-desk.json`. Desde la lección 11 una escritura fallida devuelve `503` y conserva el estado previo en memoria. Desde la lección 16 los cuerpos JSON están limitados a 64 KiB por defecto y deben declarar `Content-Type: application/json`.
 
@@ -94,10 +95,17 @@ Entonces `/api/diagnostics` expone sólo conteos y duraciones agregadas. Sin esa
 14. [Tooling y gate profesional](lessons/14-tooling-y-gate-profesional.md)
 15. [Diagnóstico y rendimiento con evidencia](lessons/15-diagnostico-y-rendimiento-con-evidencia.md)
 16. [Hardening HTTP y Checkpoint 04](lessons/16-hardening-http-y-checkpoint-04.md)
+17. [Evaluación final sin receta](lessons/17-evaluacion-final.md)
+
+## Evaluación final
+
+La [evaluación final](exercises/evaluacion-final.md) extiende FreelanceDesk con fecha objetivo y consulta de proyectos vencidos, exige resolver una ambigüedad de IDs, conservar durabilidad y hardening, escribir regresiones y consultar documentación oficial. No prescribe archivos ni líneas.
+
+Usa la [rúbrica final](exercises/rubrica-final.md) para autoevaluarte y abre la [solución de referencia](solutions/evaluacion-final.md) sólo después de un intento.
 
 ## Qué sabrás hacer al terminar
 
-El Course DoD completo llevará a poder leer y escribir TypeScript idiomático, modelar contratos, validar datos externos, trabajar con Node y navegador, persistir información, probar comportamiento y caminos de falla, depurar, explicar arquitectura y resolver una evaluación final sin receta.
+Al completar el Course DoD deberías poder leer y escribir TypeScript idiomático, modelar contratos, validar datos externos, trabajar con Node y navegador, persistir información, probar comportamiento y caminos de falla, depurar, explicar arquitectura y resolver una evaluación final sin receta.
 
 ## Trabajo que usa estas habilidades
 
@@ -133,6 +141,10 @@ No. `RequestMetrics` sólo agrega cantidad de peticiones, fallas y duraciones. E
 
 No. CSP, `nosniff`, límites de body y validación de media type reducen superficie. No sustituyen autenticación, autorización, TLS, gestión de secretos ni revisión de seguridad cuando el sistema crece.
 
+### ¿Completar el curso garantiza empleo?
+
+No. Produce una base y evidencia práctica para comenzar a competir por tareas Junior / Entry Level. La contratación depende también de experiencia, comunicación, mercado, entrevistas y capacidad para seguir aprendiendo.
+
 ## Glosario
 
 - **tipo:** descripción estática de los valores aceptados por una expresión o contrato.
@@ -148,9 +160,21 @@ No. CSP, `nosniff`, límites de body y validación de media type reducen superfi
 
 Empieza por el problema: un freelancer necesita administrar clientes, proyectos y cotizaciones sin depender de servicios externos. Explica por qué separaste reglas puras, HTTP, DOM y persistencia; dónde TypeScript ayuda y dónde sigue siendo necesaria la validación runtime. Muestra una prueba de ciclo de estados y la regresión donde `save()` falla sin dejar memoria adelantada. Explica también por qué limitas cuerpos antes de persistir y por qué el diagnóstico es opt-in y no guarda PII. Reconoce que JSON local no resuelve concurrencia multiusuario y explica por qué `AppStateStore` permite evolucionar la infraestructura sin acoplar el dominio.
 
+Preguntas probables:
+
+- ¿Qué diferencia hay entre tipos estáticos y validación runtime?
+- ¿Por qué usar `unknown` en una frontera externa?
+- ¿Cómo modelaste estados y transiciones inválidas?
+- ¿Cómo aseguras que una falla de persistencia no deja memoria adelantada?
+- ¿Por qué el dominio no conoce códigos HTTP?
+- ¿Qué limitaciones tiene JSON frente a una base multiusuario?
+- ¿Qué medirías antes de optimizar?
+- ¿Qué información deliberadamente no registras en diagnóstico?
+
 ## Referencias oficiales
 
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
+- [TypeScript narrowing](https://www.typescriptlang.org/docs/handbook/2/narrowing.html)
 - [TypeScript 6.0](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-6-0.html)
 - [Node.js releases](https://nodejs.org/en/about/previous-releases)
 - [Node.js HTTP](https://nodejs.org/api/http.html)
@@ -162,4 +186,4 @@ Empieza por el problema: un freelancer necesita administrar clientes, proyectos 
 
 ## Siguiente paso
 
-Completa las lecciones 13–16 y el Checkpoint 04. Después sólo quedará la evaluación final autónoma, rúbrica, solución de referencia y auditoría del Course DoD.
+Completa la evaluación final sin receta. Después conserva FreelanceDesk como evidencia, repite las áreas débiles de la rúbrica y construye una variante propia antes de incorporar frameworks o infraestructura por inercia.
