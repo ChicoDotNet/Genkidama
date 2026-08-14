@@ -66,7 +66,7 @@ Construye un pequeño threat model: activos, actores, fronteras externas, tres a
 - una suite educativa verde no equivale a auditoría.
 
 ## Siguiente paso
-La siguiente lección será la evaluación final sin receta: deberás modificar FreelanceEscrow, corregir un defecto y defender tus decisiones con evidencia.
+Continúa con [Lección 17 — Evaluación final sin receta](17-evaluacion-final.md).
 
 ## Referencias
 - [Solidity — Security Considerations: Reentrancy](https://docs.soliditylang.org/en/v0.8.35/security-considerations.html#reentrancy)
