@@ -9,18 +9,24 @@ if (!clientForm || !quoteForm || !clientSelect || !output) {
   throw new Error("La interfaz no contiene los elementos requeridos.");
 }
 
+const clientSelectElement = clientSelect;
+
 async function requestJson<T>(url: string, init?: RequestInit): Promise<T> {
   const response = await fetch(url, init);
-  const body = (await response.json()) as T | { error: string };
+  const body: unknown = await response.json();
   if (!response.ok) {
-    throw new Error("error" in body ? body.error : `HTTP ${response.status}`);
+    const message =
+      typeof body === "object" && body !== null && "error" in body && typeof body.error === "string"
+        ? body.error
+        : `HTTP ${response.status}`;
+    throw new Error(message);
   }
   return body as T;
 }
 
 async function refreshClients(): Promise<void> {
   const clients = await requestJson<Client[]>("/api/clients");
-  clientSelect.replaceChildren(
+  clientSelectElement.replaceChildren(
     ...clients.map((client) => {
       const option = document.createElement("option");
       option.value = client.id;
