@@ -5,12 +5,12 @@ locale: es
 source_locale: es
 title: Curso de Java desde cero — Construye una API de mesa de ayuda
 audience: beginner
-status: in_progress
+status: complete
 canonical_app:
   name: HelpDesk API
   summary: API HTTP local para registrar, consultar, priorizar y persistir tickets de soporte con reglas de dominio probadas.
 prerequisites: []
-lesson_count: 16
+lesson_count: 17
 toolchain:
   verified_on: '2026-08-14'
   version_tested: '25'
