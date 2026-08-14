@@ -94,7 +94,7 @@ UptimeLab ya puede operar periódicamente con lifecycle explícito, cancelación
 
 ## Siguiente paso
 
-Integraremos configuración, persistencia y scheduling en un checkpoint que debe demostrar que una falla de disco no publica estado fantasma.
+Continúa con la [Lección 08 — Estado consistente y checkpoint 02](08-estado-consistente-y-checkpoint.md), donde integraremos persistencia y scheduling bajo un contrato de éxito end-to-end.
 
 ## Referencias
 

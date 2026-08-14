@@ -95,7 +95,7 @@ Persistencia es una frontera explícita, los errores de corrupción son visibles
 
 ## Siguiente paso
 
-Automatizaremos los checks con un scheduler pequeño, cancelable y sin goroutines ocultas dentro del dominio.
+Continúa con la [Lección 07 — Scheduling y cancelación](07-scheduling-y-cancelacion.md): automatizaremos checks sin goroutines ocultas dentro del dominio.
 
 ## Referencias
 

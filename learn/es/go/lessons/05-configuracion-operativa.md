@@ -88,7 +88,7 @@ El proceso traduce configuración externa a contratos tipados; los paquetes de n
 
 ## Siguiente paso
 
-Persistiremos resultados reales y trataremos un archivo corrupto como error explícito, no como “historial vacío”.
+Continúa con la [Lección 06 — Historial persistente](06-historial-persistente.md): persistiremos resultados reales y trataremos un archivo corrupto como error explícito, no como “historial vacío”.
 
 ## Referencias
 
