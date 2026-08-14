@@ -42,7 +42,7 @@ Después de los pilotos continúan los cursos del roadmap, uno a la vez salvo de
 |---|---|---|
 | [TypeScript](es/typescript/) | FreelanceDesk: proyectos, clientes y cotizaciones | **Completo** |
 | [Java](es/java/) | HelpDesk API de tickets | **Completo** |
-| [Go](es/go/) | UptimeLab: monitor concurrente de uptime con API/dashboard | **En progreso — 4/17** |
+| [Go](es/go/) | UptimeLab: monitor concurrente de uptime con API/dashboard | **En progreso — 8/17** |
 
 El orden completo y sus criterios viven en el [roadmap](./_meta/roadmap.md).
 
