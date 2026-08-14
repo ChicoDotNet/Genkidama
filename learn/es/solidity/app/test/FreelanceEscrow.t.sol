@@ -58,9 +58,7 @@ contract FreelanceEscrowTest {
 
         FreelanceEscrow escrow = _deployWithAmount(amount);
 
-        require(
-            uint256(escrow.state()) == uint256(FreelanceEscrow.State.Funded), "state"
-        );
+        require(uint256(escrow.state()) == uint256(FreelanceEscrow.State.Funded), "state");
         require(address(escrow).balance == amount, "exact deposit");
     }
 
@@ -129,9 +127,7 @@ contract FreelanceEscrowTest {
         vm.prank(CLIENT);
         escrow.refund();
 
-        require(
-            uint256(escrow.state()) == uint256(FreelanceEscrow.State.Refunded), "refunded"
-        );
+        require(uint256(escrow.state()) == uint256(FreelanceEscrow.State.Refunded), "refunded");
         require(address(escrow).balance == 0, "escrow empty");
     }
 
