@@ -31,29 +31,10 @@ jobs:
           version: stable
 
       - name: Check formatting
-        id: formatting
-        continue-on-error: true
         run: forge fmt --check app/src/FreelanceEscrow.sol app/test/FreelanceEscrow.t.sol
-
-      - name: Capture formatted Solidity
-        if: steps.formatting.outcome == 'failure'
-        run: forge fmt app/src/FreelanceEscrow.sol app/test/FreelanceEscrow.t.sol
-
-      - name: Upload formatter diagnostic
-        if: steps.formatting.outcome == 'failure'
-        uses: actions/upload-artifact@v4
-        with:
-          name: solidity-formatted-source
-          path: |
-            learn/es/solidity/app/src/FreelanceEscrow.sol
-            learn/es/solidity/app/test/FreelanceEscrow.t.sol
 
       - name: Build FreelanceEscrow
         run: forge build
 
       - name: Test FreelanceEscrow
         run: forge test -vv
-
-      - name: Enforce formatting gate
-        if: steps.formatting.outcome == 'failure'
-        run: exit 1
