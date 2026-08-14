@@ -1,0 +1,55 @@
+name: Learn Java
+
+on:
+  pull_request:
+    paths:
+      - 'learn/es/java/**'
+      - '.github/workflows/learn-java.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'learn/es/java/**'
+      - '.github/workflows/learn-java.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  java:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Java 25 LTS
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Report toolchain
+        run: |
+          java --version
+          mvn --version
+
+      - name: Verify HelpDesk API
+        run: mvn -B -f learn/es/java/app/pom.xml verify
+
+      - name: Smoke HelpDesk process
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd learn/es/java/app
+          HELPDESK_PORT=18080 mvn -q -DskipTests exec:java -Dexec.mainClass=io.genkidama.learn.java.helpdesk.HelpDeskApplication > /tmp/helpdesk-java.log 2>&1 &
+          app_pid=$!
+          trap 'kill "$app_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:18080/health | grep -q '"status":"ok"'; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/helpdesk-java.log
+          exit 1

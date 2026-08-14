@@ -1,0 +1,40 @@
+schema_version: 1
+slug: java
+language: Java
+locale: es
+source_locale: es
+title: Curso de Java desde cero — Construye una API de mesa de ayuda
+audience: beginner
+status: in_progress
+canonical_app:
+  name: HelpDesk API
+  summary: API HTTP local para registrar tickets de soporte, priorizarlos y avanzar su ciclo de atención con reglas de dominio probadas.
+prerequisites: []
+lesson_count: 4
+toolchain:
+  verified_on: '2026-08-14'
+  version_tested: '25'
+  runtime_or_compiler: Java 25 LTS (Temurin/OpenJDK compatible)
+  package_or_build_tool: Apache Maven 3.9.x
+  test_tool: JUnit 6.1.2
+  operating_systems_targeted:
+    - windows-11
+    - linux
+  operating_systems_tested:
+    - github-actions-ubuntu-latest
+ci:
+  supported: true
+  workflow: .github/workflows/learn-java.yml
+  isolation: path-scoped
+career_context:
+  uses:
+    - APIs y servicios backend empresariales
+    - sistemas internos, integración y procesamiento de negocio
+    - mantenimiento de aplicaciones Java existentes
+  market_note: Java tiene un ecosistema empresarial amplio; este curso desarrolla fundamentos transferibles y no promete contratación. Frameworks como Spring se presentan como siguiente puente, no como sustituto del lenguaje.
+official_references:
+  - https://openjdk.org/projects/jdk/25/
+  - https://docs.oracle.com/en/java/javase/25/docs/api/
+  - https://maven.apache.org/
+  - https://docs.junit.org/6.1.2/
+  - https://github.com/FasterXML/jackson
