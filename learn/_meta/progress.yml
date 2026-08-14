@@ -27,10 +27,10 @@ courses:
     pilot_order: 1
   typescript:
     status: in_progress
-    lessons_complete: 8
+    lessons_complete: 12
     lessons_total: 17
     ci: green
-    last_green_executable_sha: b592507f7791a8a949fc8a69f9bb1d773f441e74
+    last_green_executable_sha: 71588b3068694d93961cc1a7a8b7f4462211893c
     pr: 42
   ada: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   solidity:
