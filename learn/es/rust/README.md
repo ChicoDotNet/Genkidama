@@ -8,6 +8,8 @@ No promete empleo. Rust tiene demanda profesional real, especialmente en sistema
 
 BackupForge copia árboles de archivos, genera un `manifest.json` portable, verifica integridad, actualiza sólo contenido que necesita escritura, restaura únicamente después de validar el backup completo y conserva **snapshots históricos inmutables por nombre**. Cada snapshot tiene su propio manifest y sólo se publica después de verificarse.
 
+Además, `audit` compara lo declarado con lo realmente presente para detectar entradas inesperadas sin cambiar el contrato histórico de `verify`.
+
 La herramienta sigue siendo deliberadamente local: todavía no implementa retención automática, locking multi-proceso, almacenamiento remoto ni deduplicación global entre snapshots.
 
 ## Requisitos
@@ -28,11 +30,18 @@ cargo build --release
 cargo run -- create ./origen ./backup
 cargo run -- update ./origen ./backup
 cargo run -- verify ./backup
+cargo run -- audit ./backup
 cargo run -- restore ./backup ./restaurado
 cargo run -- snapshot ./origen ./repositorio 2026-08-14-a
 cargo run -- snapshots ./repositorio
 cargo run -- verify-snapshot ./repositorio 2026-08-14-a
 cargo run -- restore-snapshot ./repositorio 2026-08-14-a ./restaurado
+```
+
+Desde la raíz del curso también puedes ejecutar el gate completo:
+
+```bash
+bash tools/verify.sh
 ```
 
 ## Lecciones
@@ -49,16 +58,21 @@ cargo run -- restore-snapshot ./repositorio 2026-08-14-a ./restaurado
 10. [Inspección determinista de snapshots](lessons/10-inspeccion-de-snapshots.md)
 11. [Verificar y restaurar una versión](lessons/11-verificar-y-restaurar-versiones.md)
 12. [Fronteras de historial y Checkpoint 03](lessons/12-fronteras-historial-y-checkpoint-03.md)
+13. [Un gate profesional y repetible](lessons/13-gate-profesional-y-repetible.md)
+14. [Debugging basado en evidencia](lessons/14-debugging-basado-en-evidencia.md)
+15. [Medir antes de optimizar](lessons/15-medir-antes-de-optimizar.md)
+16. [Hardening operativo y Checkpoint 04](lessons/16-hardening-operativo-y-checkpoint-04.md)
 
 ## Checkpoints
 
 - [Checkpoint 01 — rutas seguras](exercises/checkpoint-01.md) · [solución](solutions/checkpoint-01.md)
 - [Checkpoint 02 — incrementalidad que no propaga corrupción](exercises/checkpoint-02.md) · [solución](solutions/checkpoint-02.md)
 - [Checkpoint 03 — un snapshot visible debe estar completo](exercises/checkpoint-03.md) · [solución](solutions/checkpoint-03.md)
+- [Checkpoint 04 — el backup contiene algo no declarado](exercises/checkpoint-04.md) · [solución](solutions/checkpoint-04.md)
 
 ## Qué sabrás hacer al terminar
 
-Leer y escribir Rust idiomático sencillo, razonar sobre ownership/borrowing, modelar errores con `Result`, separar core e I/O, probar con Cargo, usar formatter/Clippy, persistir manifests, verificar integridad, hacer actualizaciones incrementales, restaurar con validación previa, conservar versiones históricas verificables, modificar una base existente y explicar decisiones de arquitectura.
+Leer y escribir Rust idiomático sencillo, razonar sobre ownership/borrowing, modelar errores con `Result`, separar core e I/O, probar con Cargo, usar formatter/Clippy, persistir manifests, verificar integridad, hacer actualizaciones incrementales, restaurar con validación previa, conservar versiones históricas verificables, diagnosticar diferencias entre contenido declarado/observado, medir antes de optimizar, modificar una base existente y explicar decisiones de arquitectura.
 
 ## FAQ
 
@@ -69,6 +83,8 @@ Leer y escribir Rust idiomático sencillo, razonar sobre ownership/borrowing, mo
 **¿Qué significa “incremental” aquí?** Que al actualizar el mismo backup sólo se reescriben archivos nuevos, modificados o corruptos; archivos ya correctos se reutilizan.
 
 **¿Qué significa “snapshot” aquí?** Una versión histórica nombrada que no se sobrescribe. Actualmente cada snapshot conserva sus propios bytes; no implica deduplicación global ni una política automática de retención.
+
+**¿Cuál es la diferencia entre `verify` y `audit`?** `verify` comprueba tamaño y SHA-256 de lo declarado en el manifest. `audit` añade una comprobación del conjunto observado para reportar entradas no declaradas. Ninguno sustituye firma, antivirus o controles del host.
 
 **¿Por qué SHA-256?** Porque permite detectar cambios de contenido de manera reproducible; no demuestra por sí solo autenticidad ni protege contra un atacante que pueda reemplazar tanto datos como manifest.
 
@@ -82,11 +98,14 @@ Leer y escribir Rust idiomático sencillo, razonar sobre ownership/borrowing, mo
 - **checksum:** resumen calculado del contenido para detectar cambios.
 - **incremental:** actualización que evita reescribir contenido cuya integridad actual ya coincide.
 - **snapshot:** versión histórica identificada por un nombre inmutable.
+- **audit:** comparación entre contenido declarado y contenido observado.
 - **restore:** reconstrucción de archivos desde un backup validado.
 
 ## Cómo hablar de este proyecto en una entrevista
 
 Explica primero el problema: copiar archivos no basta; necesitas poder demostrar después qué fue respaldado, detectar corrupción y recuperar una versión concreta. Describe por qué el core calcula hashes y valida manifests mientras filesystem/CLI permanecen en los bordes. Explica que `update_backup` verifica destino antes de reutilizar, que `restore_backup` verifica todo antes de escribir y que un snapshot se construye como `.partial`, se verifica y sólo entonces se publica mediante `rename`.
+
+Añade la distinción operacional: `verify` protege entradas declaradas mientras `audit` reporta también contenido inesperado. Explica por qué no cambiaste silenciosamente el contrato existente y por qué medir rendimiento no justifica debilitar checksums.
 
 Reconoce límites reales: SHA-256 no sustituye cifrado o firma; los snapshots actuales pueden duplicar bytes y no existe todavía retención automática, locking multi-proceso ni almacenamiento remoto.
 
@@ -96,6 +115,8 @@ Preguntas probables:
 - ¿Por qué verificas el archivo físico antes de marcarlo como reutilizado?
 - ¿Qué evita que un nombre de snapshot escape del repositorio?
 - ¿Por qué el listado se deriva de manifests en vez de mantener otro índice?
+- ¿Qué diferencia hay entre `verify` y `audit`?
+- ¿Qué medirías antes de paralelizar el hashing?
 - ¿Qué garantías da y cuáles no da `fs::rename` en este diseño?
 - ¿Qué cambiarías para almacenamiento remoto o varios procesos concurrentes?
 
@@ -109,4 +130,4 @@ Preguntas probables:
 
 ## Siguiente paso
 
-Completa las primeras doce lecciones y los tres checkpoints. El siguiente bloque 13–16 añadirá tooling profesional, debugging, medición/rendimiento y hardening antes de la evaluación final.
+Completa las primeras dieciséis lecciones y los cuatro checkpoints. La siguiente lección es la evaluación Junior final sin receta, con rúbrica, solución de referencia y auditoría completa del Course DoD.
