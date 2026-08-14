@@ -18,18 +18,16 @@ class HelpDeskHttpServerTest {
 
     @Test
     void healthEndpointProvesTheApplicationCanServeHttp() throws Exception {
-        try (var server = startedServer()) {
-            HttpResponse<String> response = client.send(
-                    HttpRequest.newBuilder(uri(server, "/health")).GET().build(),
-                    HttpResponse.BodyHandlers.ofString());
+        try (var server = startedServer(false)) {
+            HttpResponse<String> response = get(server, "/health");
             assertEquals(200, response.statusCode());
             assertEquals("ok", json.readTree(response.body()).get("status").asText());
         }
     }
 
     @Test
-    void createsFiltersUpdatesAndAdvancesATicketThroughJsonApi() throws Exception {
-        try (var server = startedServer()) {
+    void createsFiltersUpdatesAdvancesAndSummarizesTicketsThroughJsonApi() throws Exception {
+        try (var server = startedServer(false)) {
             HttpResponse<String> created = sendJson(server, "POST", "/api/tickets", """
                     {"title":"VPN caída","description":"Sin acceso remoto","priority":"HIGH"}
                     """);
@@ -52,12 +50,30 @@ class HelpDeskHttpServerTest {
             HttpResponse<String> advanced = sendJson(server, "POST", "/api/tickets/1/advance", "{}");
             assertEquals(200, advanced.statusCode());
             assertEquals("IN_PROGRESS", json.readTree(advanced.body()).get("status").asText());
+
+            JsonNode summary = json.readTree(get(server, "/api/tickets/summary").body());
+            assertEquals(2, summary.get("total").asLong());
+            assertEquals(1, summary.get("open").asLong());
+            assertEquals(1, summary.get("inProgress").asLong());
+        }
+    }
+
+    @Test
+    void diagnosticsAreOptInAndExposeOnlyAggregateCounters() throws Exception {
+        try (var server = startedServer(true)) {
+            assertEquals(200, get(server, "/health").statusCode());
+            assertEquals(404, get(server, "/api/tickets/not-a-route").statusCode());
+
+            JsonNode diagnostics = json.readTree(get(server, "/api/diagnostics").body());
+            assertEquals(2, diagnostics.get("requests").get("requests").asLong());
+            assertEquals(0, diagnostics.get("requests").get("failures").asLong());
+            assertEquals(0, diagnostics.get("tickets").get("total").asLong());
         }
     }
 
     @Test
     void translatesDomainAndInputFailuresToUsefulHttpStatuses() throws Exception {
-        try (var server = startedServer()) {
+        try (var server = startedServer(false)) {
             HttpResponse<String> invalid = sendJson(server, "POST", "/api/tickets", """
                     {"title":"   ","priority":"NORMAL"}
                     """);
@@ -68,8 +84,8 @@ class HelpDeskHttpServerTest {
         }
     }
 
-    private HelpDeskHttpServer startedServer() throws Exception {
-        var server = new HelpDeskHttpServer(new TicketService(), json, 0);
+    private HelpDeskHttpServer startedServer(boolean diagnostics) throws Exception {
+        var server = new HelpDeskHttpServer(new TicketService(), json, 0, diagnostics);
         server.start();
         return server;
     }

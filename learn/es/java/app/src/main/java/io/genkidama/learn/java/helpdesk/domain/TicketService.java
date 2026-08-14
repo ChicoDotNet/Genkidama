@@ -88,6 +88,22 @@ public final class TicketService {
     }
 
     /**
+     * Computes operational counts from the current immutable ticket snapshot.
+     * @return deterministic summary that does not change or persist ticket state
+     */
+    public synchronized TicketSummary summary() {
+        List<Ticket> snapshot = List.copyOf(tickets.values());
+        return new TicketSummary(
+                snapshot.size(),
+                countStatus(snapshot, TicketStatus.OPEN),
+                countStatus(snapshot, TicketStatus.IN_PROGRESS),
+                countStatus(snapshot, TicketStatus.RESOLVED),
+                countPriority(snapshot, TicketPriority.LOW),
+                countPriority(snapshot, TicketPriority.NORMAL),
+                countPriority(snapshot, TicketPriority.HIGH));
+    }
+
+    /**
      * Finds one ticket.
      * @param id positive ticket identifier
      * @return existing ticket
@@ -156,6 +172,14 @@ public final class TicketService {
         store.save(List.copyOf(candidate.values()));
         tickets.clear();
         tickets.putAll(candidate);
+    }
+
+    private static long countStatus(List<Ticket> tickets, TicketStatus status) {
+        return tickets.stream().filter(ticket -> ticket.status() == status).count();
+    }
+
+    private static long countPriority(List<Ticket> tickets, TicketPriority priority) {
+        return tickets.stream().filter(ticket -> ticket.priority() == priority).count();
     }
 
     private static void validateStoredState(List<Ticket> loaded) {

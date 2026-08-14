@@ -80,7 +80,7 @@ Diseña una estrategia para dos procesos escribiendo el mismo archivo. No la imp
 
 ## Siguiente paso
 
-El próximo bloque profundizará en operaciones asíncronas/diagnóstico y contratos de aplicación antes de considerar un framework.
+Continúa con la [Lección 09 — Resumen operativo con streams](09-resumen-operativo-y-streams.md), donde separarás datos persistidos de vistas derivadas.
 
 ## Referencias
 

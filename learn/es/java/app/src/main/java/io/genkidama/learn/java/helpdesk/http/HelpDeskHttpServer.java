@@ -20,26 +20,52 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-/** Minimal HTTP adapter for the HelpDesk ticket domain. */
+/** Minimal concurrent HTTP adapter for the HelpDesk ticket domain. */
 public final class HelpDeskHttpServer implements AutoCloseable {
+    private static final int HTTP_WORKERS = 4;
+
     private final TicketService tickets;
     private final ObjectMapper json;
     private final HttpServer server;
+    private final ExecutorService executor;
+    private final RequestMetrics metrics = new RequestMetrics();
+    private final boolean diagnosticsEnabled;
 
     /**
-     * Creates a server bound to the requested port.
+     * Creates a server with diagnostics disabled by default.
      * @param tickets domain service
      * @param json JSON mapper used only at the HTTP boundary
      * @param port TCP port; use {@code 0} in tests for an ephemeral port
      * @throws IOException when the socket cannot be created
      */
     public HelpDeskHttpServer(TicketService tickets, ObjectMapper json, int port) throws IOException {
+        this(tickets, json, port, false);
+    }
+
+    /**
+     * Creates a server with a bounded worker pool and optional aggregate diagnostics.
+     * @param tickets domain service
+     * @param json JSON mapper used only at the HTTP boundary
+     * @param port TCP port; use {@code 0} in tests for an ephemeral port
+     * @param diagnosticsEnabled exposes aggregate diagnostics when true
+     * @throws IOException when the socket cannot be created
+     */
+    public HelpDeskHttpServer(TicketService tickets, ObjectMapper json, int port, boolean diagnosticsEnabled)
+            throws IOException {
         this.tickets = tickets;
         this.json = json;
+        this.diagnosticsEnabled = diagnosticsEnabled;
         this.server = HttpServer.create(new InetSocketAddress(port), 0);
+        this.executor = Executors.newFixedThreadPool(HTTP_WORKERS);
+        this.server.setExecutor(executor);
         this.server.createContext("/health", this::handleHealth);
         this.server.createContext("/api/tickets", this::handleTickets);
+        if (diagnosticsEnabled) {
+            this.server.createContext("/api/diagnostics", this::handleDiagnostics);
+        }
     }
 
     /** Starts accepting HTTP requests. */
@@ -49,7 +75,10 @@ public final class HelpDeskHttpServer implements AutoCloseable {
     public int port() { return server.getAddress().getPort(); }
 
     @Override
-    public void close() { server.stop(0); }
+    public void close() {
+        server.stop(0);
+        executor.shutdownNow();
+    }
 
     private void handleHealth(HttpExchange exchange) throws IOException {
         if (!"GET".equals(exchange.getRequestMethod())) {
@@ -59,11 +88,33 @@ public final class HelpDeskHttpServer implements AutoCloseable {
         send(exchange, 200, Map.of("status", "ok"));
     }
 
+    private void handleDiagnostics(HttpExchange exchange) throws IOException {
+        if (!diagnosticsEnabled) {
+            send(exchange, 404, new ErrorResponse("route not found"));
+            return;
+        }
+        if (!"GET".equals(exchange.getRequestMethod())) {
+            send(exchange, 405, new ErrorResponse("method not allowed"));
+            return;
+        }
+        send(exchange, 200, Map.of(
+                "requests", metrics.snapshot(),
+                "tickets", tickets.summary()));
+    }
+
     private void handleTickets(HttpExchange exchange) throws IOException {
         try {
             String path = exchange.getRequestURI().getPath();
             if ("/api/tickets".equals(path)) {
                 handleCollection(exchange);
+                return;
+            }
+            if ("/api/tickets/summary".equals(path)) {
+                if (!"GET".equals(exchange.getRequestMethod())) {
+                    send(exchange, 405, new ErrorResponse("method not allowed"));
+                    return;
+                }
+                send(exchange, 200, tickets.summary());
                 return;
             }
             if (path.matches("/api/tickets/\\d+/advance")) {
@@ -153,6 +204,10 @@ public final class HelpDeskHttpServer implements AutoCloseable {
         byte[] payload = json.writeValueAsString(body).getBytes(StandardCharsets.UTF_8);
         exchange.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8");
         exchange.sendResponseHeaders(statusCode, payload.length);
-        try (var output = exchange.getResponseBody()) { output.write(payload); }
+        try (var output = exchange.getResponseBody()) {
+            output.write(payload);
+        } finally {
+            metrics.record(statusCode);
+        }
     }
 }

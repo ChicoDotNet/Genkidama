@@ -19,11 +19,16 @@ public final class HelpDeskApplication {
     public static void main(String[] args) throws Exception {
         int port = Integer.parseInt(System.getenv().getOrDefault("HELPDESK_PORT", "8080"));
         Path dataFile = Path.of(System.getenv().getOrDefault("HELPDESK_DATA_FILE", "data/tickets.json"));
+        boolean diagnostics = "1".equals(System.getenv("HELPDESK_DIAGNOSTICS"))
+                || "true".equalsIgnoreCase(System.getenv("HELPDESK_DIAGNOSTICS"));
         ObjectMapper json = new ObjectMapper();
         var store = new JsonFileTicketStore(json, dataFile);
-        var server = new HelpDeskHttpServer(new TicketService(store), json, port);
+        var server = new HelpDeskHttpServer(new TicketService(store), json, port, diagnostics);
         Runtime.getRuntime().addShutdownHook(new Thread(server::close));
         server.start();
         System.out.printf("HelpDesk API listening on http://localhost:%d%n", server.port());
+        if (diagnostics) {
+            System.out.println("Aggregate diagnostics enabled at /api/diagnostics");
+        }
     }
 }
