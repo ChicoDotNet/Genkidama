@@ -6,7 +6,7 @@ El objetivo es preparación práctica para trabajo inicial: leer y escribir Go s
 
 ## Qué vas a construir
 
-UptimeLab crece durante 17 lecciones. Después de las primeras dieciséis ya puedes:
+UptimeLab crece durante 17 lecciones. Al completar el curso puedes:
 
 - validar targets HTTP y distinguir errores de transporte de respuestas HTTP;
 - medir estado y latencia;
@@ -18,7 +18,8 @@ UptimeLab crece durante 17 lecciones. Después de las primeras dieciséis ya pue
 - diagnosticar fallas desde evidencia reproducible;
 - ejecutar `gofmt`, `go vet`, `go test -race` y build como gate profesional;
 - medir peticiones/fallas/duración de forma agregada y opt-in sin guardar PII ni datos de targets;
-- aplicar headers defensivos y 404 reales sin presentar la app educativa como producto de seguridad completo.
+- aplicar headers defensivos y 404 reales sin presentar la app educativa como producto de seguridad completo;
+- modificar la base existente mediante una evaluación final autónoma y defender sus decisiones en entrevista.
 
 ## Requisitos
 
@@ -82,13 +83,15 @@ Rutas inexistentes devuelven 404. El handler añade `nosniff`, `no-referrer` y C
 14. [Debugging desde evidencia](lessons/14-debugging-desde-evidencia.md)
 15. [Medir antes de optimizar](lessons/15-medir-antes-de-optimizar.md)
 16. [Hardening operativo y checkpoint 04](lessons/16-hardening-y-checkpoint-04.md)
+17. [Evaluación final sin receta](lessons/17-evaluacion-final.md)
 
-## Checkpoints
+## Checkpoints y evaluación
 
 - [Checkpoint 01 — Timeout configurable](exercises/checkpoint-01.md) → [solución](solutions/checkpoint-01.md)
 - [Checkpoint 02 — Historial durable sin estado fantasma](exercises/checkpoint-02.md) → [solución](solutions/checkpoint-02.md)
 - [Checkpoint 03 — Señal de deterioro sin falsear la evidencia](exercises/checkpoint-03.md) → [solución](solutions/checkpoint-03.md)
 - [Checkpoint 04 — Diagnóstico útil sin filtrar datos](exercises/checkpoint-04.md) → [solución](solutions/checkpoint-04.md)
+- [Evaluación final](exercises/evaluacion-final.md) → [rúbrica](exercises/rubrica-final.md) → [solución de referencia](solutions/evaluacion-final.md)
 
 ## Arquitectura actual
 
@@ -162,4 +165,4 @@ Preguntas probables: ¿por qué limitar goroutines?, ¿qué diferencia hay entre
 
 ## Siguiente paso
 
-Queda la Lección 17: evaluación Junior autónoma sin receta, rúbrica, solución de referencia, entrevista y auditoría final del Course DoD.
+Usa la evaluación final para detectar áreas débiles y construye una variante propia de UptimeLab. Para continuar Genkidama Learn, el siguiente curso v1 planificado es Rust.
