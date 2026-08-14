@@ -84,7 +84,7 @@ UptimeLab ya es una aplicación pequeña pero real: ejecuta checks concurrentes 
 
 ## Siguiente paso
 
-El próximo bloque incorporará configuración y estado que justifiquen persistencia e historial, manteniendo el checker independiente de I/O adicional.
+Continúa con la [Lección 05 — Configuración operativa](05-configuracion-operativa.md), donde el proceso traduce variables externas a contratos Go tipados sin contaminar el dominio.
 
 ## Referencias
 

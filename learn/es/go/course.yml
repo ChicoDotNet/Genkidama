@@ -7,16 +7,16 @@ title: Curso de Go desde cero — Construye un monitor concurrente de uptime
 status: in_progress
 canonical_app:
   name: UptimeLab
-  summary: Monitor local concurrente de endpoints HTTP con API y dashboard, diseñado para crecer hacia historial, scheduling y operación confiable.
+  summary: Monitor local concurrente de endpoints HTTP con API, dashboard, historial persistente y scheduling cancelable.
 audience: beginner
 prerequisites: []
-lesson_count: 4
+lesson_count: 8
 toolchain:
   verified_on: '2026-08-14'
   version_tested: 1.26.5
   runtime_or_compiler: Go 1.26.5
   package_or_build_tool: Go modules + go command
-  test_tool: go test + net/http/httptest
+  test_tool: go test + race detector + net/http/httptest
   operating_systems_targeted:
     - windows-11
     - linux
@@ -38,4 +38,7 @@ official_references:
   - https://pkg.go.dev/net/http
   - https://pkg.go.dev/context
   - https://pkg.go.dev/net/http/httptest
+  - https://pkg.go.dev/encoding/json
+  - https://pkg.go.dev/os/signal
+  - https://pkg.go.dev/time
   - https://go.dev/blog/survey2025
