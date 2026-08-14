@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createClient } from "../src/domain/clients.js";
+import { changeProjectStatus, createProject, parseProjectStatus } from "../src/domain/projects.js";
 import { createQuote } from "../src/domain/quotes.js";
 
 test("createClient normaliza nombre y correo", () => {
@@ -24,4 +25,23 @@ test("createQuote rechaza cantidades no positivas", () => {
     () => createQuote("q1", { clientId: "c1", items: [{ description: "Trabajo", quantity: 0, unitPrice: 10 }] }),
     /cantidad/i,
   );
+});
+
+test("createProject normaliza nombre e inicia en planned", () => {
+  const project = createProject("p1", { clientId: "c1", name: "  Portal B2B  " });
+  assert.deepEqual(project, { id: "p1", clientId: "c1", name: "Portal B2B", status: "planned" });
+});
+
+test("changeProjectStatus exige planned → active → completed", () => {
+  const planned = createProject("p1", { clientId: "c1", name: "Portal" });
+  assert.throws(() => changeProjectStatus(planned, "completed"), /no permitida/i);
+  const active = changeProjectStatus(planned, "active");
+  const completed = changeProjectStatus(active, "completed");
+  assert.equal(completed.status, "completed");
+  assert.equal(planned.status, "planned");
+});
+
+test("parseProjectStatus valida valores externos en runtime", () => {
+  assert.equal(parseProjectStatus("active"), "active");
+  assert.throws(() => parseProjectStatus("paused"), /estado.*inválido/i);
 });

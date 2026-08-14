@@ -72,7 +72,7 @@ Ya tienes una aplicación full-stack pequeña, tipada y probada, con una deuda i
 
 ## Siguiente paso
 
-El siguiente incremento ampliará operaciones de clientes/proyectos y convertirá esa deuda visible en persistencia testeable.
+Continúa con [Lección 05 — Proyectos y estados que no se contradicen](05-proyectos-y-estados-tipados.md).
 
 ## Referencias
 

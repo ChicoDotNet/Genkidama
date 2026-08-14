@@ -2,17 +2,44 @@ import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import test from "node:test";
 import { createAppState, createRequestHandler } from "../src/server/app.js";
+import type { AppSnapshot, AppStateStore } from "../src/server/persistence.js";
 
-async function withServer(run: (baseUrl: string) => Promise<void>): Promise<void> {
-  const server = createServer(createRequestHandler(createAppState()));
+class CaptureStore implements AppStateStore {
+  public readonly saves: AppSnapshot[] = [];
+
+  public async load(): Promise<AppSnapshot> {
+    return { clients: [], quotes: [], projects: [] };
+  }
+
+  public async save(snapshot: AppSnapshot): Promise<void> {
+    this.saves.push(snapshot);
+  }
+}
+
+async function withServer(
+  run: (baseUrl: string, store: CaptureStore) => Promise<void>,
+): Promise<void> {
+  const store = new CaptureStore();
+  const server = createServer(createRequestHandler(createAppState(), store));
   await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
   try {
     const address = server.address();
     if (!address || typeof address === "string") throw new Error("No se pudo resolver el puerto de prueba.");
-    await run(`http://127.0.0.1:${address.port}`);
+    await run(`http://127.0.0.1:${address.port}`, store);
   } finally {
     await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
   }
+}
+
+async function createClient(baseUrl: string): Promise<string> {
+  const response = await fetch(`${baseUrl}/api/clients`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ name: "Estudio Uno", email: "hola@example.com" }),
+  });
+  assert.equal(response.status, 201);
+  const client = await response.json() as { id: string };
+  return client.id;
 }
 
 test("servidor entrega la interfaz web compilada", async () => {
@@ -25,18 +52,11 @@ test("servidor entrega la interfaz web compilada", async () => {
 
 test("API crea cliente y cotización conectados", async () => {
   await withServer(async (baseUrl) => {
-    const clientResponse = await fetch(`${baseUrl}/api/clients`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ name: "Estudio Uno", email: "hola@example.com" }),
-    });
-    assert.equal(clientResponse.status, 201);
-    const client = await clientResponse.json() as { id: string };
-
+    const clientId = await createClient(baseUrl);
     const quoteResponse = await fetch(`${baseUrl}/api/quotes`, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ clientId: client.id, items: [{ description: "Sitio", quantity: 1, unitPrice: 2500 }] }),
+      body: JSON.stringify({ clientId, items: [{ description: "Sitio", quantity: 1, unitPrice: 2500 }] }),
     });
     assert.equal(quoteResponse.status, 201);
     const quote = await quoteResponse.json() as { subtotal: number };
@@ -53,5 +73,58 @@ test("API no crea cotización para cliente inexistente", async () => {
     });
     assert.equal(response.status, 400);
     assert.match(await response.text(), /no existe/i);
+  });
+});
+
+test("API crea proyecto y sólo permite transiciones secuenciales", async () => {
+  await withServer(async (baseUrl, store) => {
+    const clientId = await createClient(baseUrl);
+    const projectResponse = await fetch(`${baseUrl}/api/projects`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ clientId, name: "Portal B2B" }),
+    });
+    assert.equal(projectResponse.status, 201);
+    const project = await projectResponse.json() as { id: string; status: string };
+    assert.equal(project.status, "planned");
+
+    const invalid = await fetch(`${baseUrl}/api/projects/${project.id}/status`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ status: "completed" }),
+    });
+    assert.equal(invalid.status, 400);
+    assert.match(await invalid.text(), /no permitida/i);
+
+    const active = await fetch(`${baseUrl}/api/projects/${project.id}/status`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ status: "active" }),
+    });
+    assert.equal(active.status, 200);
+    assert.equal((await active.json() as { status: string }).status, "active");
+    assert.equal(store.saves.at(-1)?.projects[0]?.status, "active");
+  });
+});
+
+test("API rechaza estado externo desconocido sin persistir el cambio", async () => {
+  await withServer(async (baseUrl, store) => {
+    const clientId = await createClient(baseUrl);
+    const created = await fetch(`${baseUrl}/api/projects`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ clientId, name: "Auditoría" }),
+    });
+    const project = await created.json() as { id: string };
+    const savesBefore = store.saves.length;
+
+    const response = await fetch(`${baseUrl}/api/projects/${project.id}/status`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ status: "paused" }),
+    });
+    assert.equal(response.status, 400);
+    assert.match(await response.text(), /estado.*inválido/i);
+    assert.equal(store.saves.length, savesBefore);
   });
 });

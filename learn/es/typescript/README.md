@@ -2,7 +2,7 @@
 
 TypeScript añade un sistema de tipos estático sobre JavaScript para detectar errores antes de ejecutar el programa y mejorar el mantenimiento de aplicaciones que crecen. En este curso aprenderás desde cero construyendo **FreelanceDesk**, una aplicación full-stack local para administrar clientes, proyectos y cotizaciones.
 
-TypeScript se usa ampliamente en frontend, backend con Node.js, tooling y aplicaciones full-stack. GitHub reportó que en agosto de 2025 se convirtió en el lenguaje con más contribuidores de su plataforma; eso no garantiza empleo, pero sí confirma un ecosistema grande y activo.
+TypeScript se usa ampliamente en frontend, backend con Node.js, tooling y aplicaciones full-stack. Su ecosistema es grande y activo, pero ningún lenguaje garantiza empleo: el objetivo aquí es producir evidencia práctica defendible para tareas Junior / Entry Level.
 
 ## ¿Puedo aprender TypeScript desde cero?
 
@@ -13,13 +13,14 @@ Sí. El curso explica la sintaxis necesaria y no exige haber tomado el curso de 
 FreelanceDesk crece sobre una sola aplicación:
 
 - clientes con nombre y correo normalizados;
-- proyectos y estado de trabajo en incrementos posteriores;
+- proyectos con ciclo `planned → active → completed`;
 - cotizaciones con conceptos, cantidades y precios;
 - API HTTP local con Node.js;
 - interfaz web que consume la API;
-- persistencia, pruebas, tooling, diagnóstico y hardening conforme avance el curso.
+- persistencia JSON detrás de una frontera reemplazable;
+- pruebas, tooling, diagnóstico y hardening conforme avance el curso.
 
-El primer incremento ya permite crear clientes y cotizaciones desde el navegador. El estado todavía vive en memoria; la persistencia se incorpora cuando exista una necesidad visible.
+A partir de la lección 08 el servidor conserva clientes, cotizaciones y proyectos en `app/data/freelance-desk.json`. El archivo se valida al cargar y una persistencia corrupta no se convierte silenciosamente en estado vacío.
 
 ## Toolchain objetivo
 
@@ -28,7 +29,7 @@ El primer incremento ya permite crear clientes y cotizaciones desde el navegador
 - npm.
 - Navegador moderno.
 
-No usamos TypeScript 7 previews/beta: el curso sigue la política de versiones estables soportadas.
+No usamos TypeScript 7 preview/beta: el curso sigue la política de versiones estables soportadas.
 
 ## Instalar
 
@@ -62,7 +63,7 @@ npm run verify
 npm start
 ```
 
-Abre `http://localhost:3000`.
+Abre `http://localhost:3000`. Puedes cambiar el archivo de datos mediante `FREELANCEDESK_DATA_FILE`.
 
 ## Lecciones
 
@@ -70,6 +71,10 @@ Abre `http://localhost:3000`.
 2. [Modela clientes y datos de negocio](lessons/02-modela-clientes-y-datos-de-negocio.md)
 3. [Funciones, módulos y validación](lessons/03-funciones-modulos-y-validacion.md)
 4. [De tipos a una aplicación full-stack](lessons/04-de-tipos-a-app-full-stack-y-checkpoint.md)
+5. [Proyectos y estados tipados](lessons/05-proyectos-y-estados-tipados.md)
+6. [Transiciones de proyecto y API](lessons/06-transiciones-de-proyecto-y-api.md)
+7. [Una frontera de persistencia](lessons/07-frontera-de-persistencia.md)
+8. [JSON confiable y Checkpoint 02](lessons/08-json-confiable-y-checkpoint.md)
 
 ## Qué sabrás hacer al terminar
 
@@ -83,7 +88,7 @@ TypeScript aparece en equipos de frontend, Node.js/backend, full-stack, tooling 
 
 ### ¿Por qué no React desde la primera lección?
 
-Porque el objetivo es aprender TypeScript. La primera versión usa Node y APIs web estándar para que los tipos, módulos, HTTP y fronteras sean visibles. Un framework sólo se incorpora si aporta una ventaja didáctica o profesional clara sin ocultar el lenguaje.
+Porque el objetivo es aprender TypeScript. La primera versión usa Node y APIs web estándar para que tipos, módulos, HTTP y fronteras sean visibles. Un framework sólo se incorpora si aporta una ventaja didáctica o profesional clara sin ocultar el lenguaje.
 
 ### ¿Los tipos sustituyen validación?
 
@@ -91,19 +96,24 @@ No. Los tipos desaparecen al ejecutar JavaScript. JSON, formularios, archivos y 
 
 ### ¿La app guarda datos al reiniciar?
 
-Todavía no. El primer vertical usa memoria deliberadamente; la persistencia llegará en un incremento posterior y entonces tendrá pruebas y contrato explícitos.
+Sí, desde la lección 08. Producción local usa un archivo JSON validado y las pruebas pueden inyectar otro `AppStateStore` sin tocar tus datos.
+
+### ¿Por qué JSON y no una base de datos?
+
+Porque la necesidad actual es enseñar una frontera real de persistencia y validación sin añadir una dependencia antes de tiempo. La interfaz del store permite migrar después a SQLite u otro motor sin mover las reglas del dominio.
 
 ## Glosario
 
 - **tipo:** descripción estática de los valores aceptados por una expresión o contrato.
-- **interface:** forma nombrada de un objeto en TypeScript.
-- **narrowing:** proceso de reducir un tipo amplio a uno más específico mediante evidencia del programa.
+- **interface:** forma nombrada de un objeto o capacidad en TypeScript.
+- **narrowing:** proceso de reducir un tipo amplio a uno específico mediante evidencia del programa.
 - **runtime:** momento en que el JavaScript emitido se ejecuta.
 - **frontera:** punto donde entran o salen datos externos al núcleo del programa.
+- **snapshot:** representación serializable del estado en un momento determinado.
 
 ## Cómo hablar de este proyecto en una entrevista
 
-Empieza por el problema: un freelancer necesita administrar clientes y cotizaciones sin depender de servicios externos. Explica después por qué separaste reglas puras, HTTP y DOM; dónde TypeScript ayuda y dónde sigue siendo necesaria la validación runtime. Muestra una prueba de regresión y reconoce la limitación actual de persistencia en memoria.
+Empieza por el problema: un freelancer necesita administrar clientes, proyectos y cotizaciones sin depender de servicios externos. Explica por qué separaste reglas puras, HTTP, DOM y persistencia; dónde TypeScript ayuda y dónde sigue siendo necesaria la validación runtime. Muestra una prueba que impide saltar estados de proyecto y otra que rechaza persistencia corrupta. Reconoce que JSON local no resuelve concurrencia multiusuario y explica por qué la frontera `AppStateStore` permite evolucionar sin acoplar el dominio.
 
 ## Referencias oficiales
 
@@ -111,8 +121,9 @@ Empieza por el problema: un freelancer necesita administrar clientes y cotizacio
 - [TypeScript 6.0](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-6-0.html)
 - [Node.js releases](https://nodejs.org/en/about/previous-releases)
 - [Node.js HTTP](https://nodejs.org/api/http.html)
+- [Node.js File system](https://nodejs.org/api/fs.html)
 - [Fetch API — MDN](https://developer.mozilla.org/docs/Web/API/Fetch_API)
 
 ## Siguiente paso
 
-Completa las cuatro primeras lecciones y el Checkpoint 01 antes de ampliar FreelanceDesk.
+Completa las lecciones 5–8 y el Checkpoint 02 antes de ampliar consultas y edición de FreelanceDesk.
