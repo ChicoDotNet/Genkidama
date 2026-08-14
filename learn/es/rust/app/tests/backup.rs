@@ -54,5 +54,6 @@ fn rejects_parent_directory_in_manifest() {
         r#"{"format_version":1,"files":[{"path":"../escape.txt","bytes":1,"sha256":"00"}]}"#,
     )
     .unwrap();
+
     assert!(load_manifest(backup.path()).is_err());
 }

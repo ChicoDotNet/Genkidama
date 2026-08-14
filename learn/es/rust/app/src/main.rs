@@ -23,8 +23,13 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 println!("backup válido: {} archivos", verification.checked);
                 Ok(())
             } else {
-                eprintln!("backup inválido: {} archivo(s) no coinciden", verification.mismatches.len());
-                for path in verification.mismatches { eprintln!("- {path}"); }
+                eprintln!(
+                    "backup inválido: {} archivo(s) no coinciden",
+                    verification.mismatches.len()
+                );
+                for path in verification.mismatches {
+                    eprintln!("- {path}");
+                }
                 std::process::exit(1);
             }
         }

@@ -17,15 +17,26 @@ pub enum BackupError {
 impl std::fmt::Display for BackupError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Io(e) => write!(f, "error de I/O: {e}"),
-            Self::Json(e) => write!(f, "manifest inválido: {e}"),
-            Self::InvalidManifest(m) => write!(f, "manifest inconsistente: {m}"),
+            Self::Io(error) => write!(f, "error de I/O: {error}"),
+            Self::Json(error) => write!(f, "manifest inválido: {error}"),
+            Self::InvalidManifest(message) => write!(f, "manifest inconsistente: {message}"),
         }
     }
 }
+
 impl std::error::Error for BackupError {}
-impl From<io::Error> for BackupError { fn from(value: io::Error) -> Self { Self::Io(value) } }
-impl From<serde_json::Error> for BackupError { fn from(value: serde_json::Error) -> Self { Self::Json(value) } }
+
+impl From<io::Error> for BackupError {
+    fn from(value: io::Error) -> Self {
+        Self::Io(value)
+    }
+}
+
+impl From<serde_json::Error> for BackupError {
+    fn from(value: serde_json::Error) -> Self {
+        Self::Json(value)
+    }
+}
 
 /// Entrada verificable de un archivo respaldado.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -48,30 +59,48 @@ pub struct Verification {
     pub checked: usize,
     pub mismatches: Vec<String>,
 }
-impl Verification { pub fn is_valid(&self) -> bool { self.mismatches.is_empty() } }
+
+impl Verification {
+    /// Indica si todos los archivos verificados coinciden con el manifest.
+    pub fn is_valid(&self) -> bool {
+        self.mismatches.is_empty()
+    }
+}
 
 /// Calcula SHA-256 leyendo el archivo por streaming.
 pub fn sha256_file(path: &Path) -> Result<String, BackupError> {
     let mut file = File::open(path)?;
     let mut hasher = Sha256::new();
     let mut buffer = [0_u8; 64 * 1024];
+
     loop {
         let read = file.read(&mut buffer)?;
-        if read == 0 { break; }
+        if read == 0 {
+            break;
+        }
         hasher.update(&buffer[..read]);
     }
+
     Ok(format!("{:x}", hasher.finalize()))
 }
 
 fn collect_files(root: &Path, current: &Path, out: &mut Vec<PathBuf>) -> Result<(), BackupError> {
     let mut entries = fs::read_dir(current)?.collect::<Result<Vec<_>, _>>()?;
     entries.sort_by_key(|entry| entry.file_name());
+
     for entry in entries {
         let path = entry.path();
-        let ty = entry.file_type()?;
-        if ty.is_dir() { collect_files(root, &path, out)?; }
-        else if ty.is_file() { out.push(path.strip_prefix(root).map_err(|_| BackupError::InvalidManifest("ruta fuera de raíz".into()))?.to_path_buf()); }
+        let file_type = entry.file_type()?;
+        if file_type.is_dir() {
+            collect_files(root, &path, out)?;
+        } else if file_type.is_file() {
+            let relative = path
+                .strip_prefix(root)
+                .map_err(|_| BackupError::InvalidManifest("ruta fuera de raíz".into()))?;
+            out.push(relative.to_path_buf());
+        }
     }
+
     Ok(())
 }
 
@@ -80,47 +109,81 @@ pub fn create_backup(source: &Path, destination: &Path) -> Result<Manifest, Back
     let mut relative_files = Vec::new();
     collect_files(source, source, &mut relative_files)?;
     fs::create_dir_all(destination)?;
+
     let mut files = Vec::with_capacity(relative_files.len());
     for relative in relative_files {
-        let src = source.join(&relative);
-        let dst = destination.join(&relative);
-        if let Some(parent) = dst.parent() { fs::create_dir_all(parent)?; }
-        fs::copy(&src, &dst)?;
+        let source_file = source.join(&relative);
+        let destination_file = destination.join(&relative);
+        if let Some(parent) = destination_file.parent() {
+            fs::create_dir_all(parent)?;
+        }
+        fs::copy(&source_file, &destination_file)?;
         files.push(ManifestEntry {
             path: relative.to_string_lossy().replace('\\', "/"),
-            bytes: fs::metadata(&src)?.len(),
-            sha256: sha256_file(&src)?,
+            bytes: fs::metadata(&source_file)?.len(),
+            sha256: sha256_file(&source_file)?,
         });
     }
-    let manifest = Manifest { format_version: 1, files };
-    fs::write(destination.join("manifest.json"), serde_json::to_vec_pretty(&manifest)?)?;
+
+    let manifest = Manifest {
+        format_version: 1,
+        files,
+    };
+    fs::write(
+        destination.join("manifest.json"),
+        serde_json::to_vec_pretty(&manifest)?,
+    )?;
+
     Ok(manifest)
 }
 
 /// Carga un manifest y rechaza versiones desconocidas o rutas inseguras.
 pub fn load_manifest(backup: &Path) -> Result<Manifest, BackupError> {
-    let manifest: Manifest = serde_json::from_slice(&fs::read(backup.join("manifest.json"))?)?;
-    if manifest.format_version != 1 { return Err(BackupError::InvalidManifest(format!("versión {} no soportada", manifest.format_version))); }
+    let manifest: Manifest =
+        serde_json::from_slice(&fs::read(backup.join("manifest.json"))?)?;
+
+    if manifest.format_version != 1 {
+        return Err(BackupError::InvalidManifest(format!(
+            "versión {} no soportada",
+            manifest.format_version
+        )));
+    }
+
     for entry in &manifest.files {
         let path = Path::new(&entry.path);
-        if path.is_absolute() || path.components().any(|c| matches!(c, std::path::Component::ParentDir)) {
-            return Err(BackupError::InvalidManifest(format!("ruta insegura: {}", entry.path)));
+        if path.is_absolute()
+            || path
+                .components()
+                .any(|component| matches!(component, std::path::Component::ParentDir))
+        {
+            return Err(BackupError::InvalidManifest(format!(
+                "ruta insegura: {}",
+                entry.path
+            )));
         }
     }
+
     Ok(manifest)
 }
 
 /// Verifica tamaño y SHA-256 de cada archivo descrito por el manifest.
 pub fn verify_backup(backup: &Path, manifest: &Manifest) -> Result<Verification, BackupError> {
     let mut mismatches = Vec::new();
+
     for entry in &manifest.files {
         let path = backup.join(&entry.path);
         match fs::metadata(&path) {
-            Ok(meta) if meta.is_file() => {
-                if meta.len() != entry.bytes || sha256_file(&path)? != entry.sha256 { mismatches.push(entry.path.clone()); }
+            Ok(metadata) if metadata.is_file() => {
+                if metadata.len() != entry.bytes || sha256_file(&path)? != entry.sha256 {
+                    mismatches.push(entry.path.clone());
+                }
             }
             _ => mismatches.push(entry.path.clone()),
         }
     }
-    Ok(Verification { checked: manifest.files.len(), mismatches })
+
+    Ok(Verification {
+        checked: manifest.files.len(),
+        mismatches,
+    })
 }
