@@ -77,7 +77,7 @@ Haz un mini threat model: enumera tres riesgos que estos controles sí reducen y
 
 ## Siguiente paso
 
-La próxima lección será la evaluación Junior autónoma sin receta.
+Continúa con la [Lección 17 — Evaluación final Junior sin receta](17-evaluacion-final-junior.md).
 
 ## Referencias
 
