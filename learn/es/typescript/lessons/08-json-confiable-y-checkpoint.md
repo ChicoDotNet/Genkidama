@@ -79,7 +79,7 @@ Persistir no es sólo escribir bytes: es definir un contrato de datos, validar a
 
 ## Siguiente paso
 
-El siguiente bloque incorporará consultas, edición y contratos más ricos antes de introducir nuevas dependencias.
+Continúa con la [Lección 09](09-consultas-tipadas.md) para convertir el estado persistido en consultas útiles y validadas.
 
 ## Referencias
 
