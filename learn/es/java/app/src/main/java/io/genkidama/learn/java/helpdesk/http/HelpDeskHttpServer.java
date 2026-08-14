@@ -3,6 +3,7 @@ package io.genkidama.learn.java.helpdesk.http;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import io.genkidama.learn.java.helpdesk.domain.InvalidTicketTransitionException;
 import io.genkidama.learn.java.helpdesk.domain.Ticket;
@@ -22,10 +23,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.LongSupplier;
 
 /** Minimal concurrent HTTP adapter for the HelpDesk ticket domain. */
 public final class HelpDeskHttpServer implements AutoCloseable {
     private static final int HTTP_WORKERS = 4;
+    private static final int MAX_JSON_BODY_BYTES = 64 * 1024;
 
     private final TicketService tickets;
     private final ObjectMapper json;
@@ -33,6 +36,7 @@ public final class HelpDeskHttpServer implements AutoCloseable {
     private final ExecutorService executor;
     private final RequestMetrics metrics = new RequestMetrics();
     private final boolean diagnosticsEnabled;
+    private final LongSupplier nanoTime;
 
     /**
      * Creates a server with diagnostics disabled by default.
@@ -55,16 +59,26 @@ public final class HelpDeskHttpServer implements AutoCloseable {
      */
     public HelpDeskHttpServer(TicketService tickets, ObjectMapper json, int port, boolean diagnosticsEnabled)
             throws IOException {
+        this(tickets, json, port, diagnosticsEnabled, System::nanoTime);
+    }
+
+    HelpDeskHttpServer(
+            TicketService tickets,
+            ObjectMapper json,
+            int port,
+            boolean diagnosticsEnabled,
+            LongSupplier nanoTime) throws IOException {
         this.tickets = tickets;
         this.json = json;
         this.diagnosticsEnabled = diagnosticsEnabled;
+        this.nanoTime = nanoTime;
         this.server = HttpServer.create(new InetSocketAddress(port), 0);
         this.executor = Executors.newFixedThreadPool(HTTP_WORKERS);
         this.server.setExecutor(executor);
-        this.server.createContext("/health", this::handleHealth);
-        this.server.createContext("/api/tickets", this::handleTickets);
+        this.server.createContext("/health", measured(this::handleHealth));
+        this.server.createContext("/api/tickets", measured(this::handleTickets));
         if (diagnosticsEnabled) {
-            this.server.createContext("/api/diagnostics", this::handleDiagnostics);
+            this.server.createContext("/api/diagnostics", measured(this::handleDiagnostics));
         }
     }
 
@@ -78,6 +92,17 @@ public final class HelpDeskHttpServer implements AutoCloseable {
     public void close() {
         server.stop(0);
         executor.shutdownNow();
+    }
+
+    private HttpHandler measured(HttpHandler handler) {
+        return exchange -> {
+            long started = nanoTime.getAsLong();
+            try {
+                handler.handle(exchange);
+            } finally {
+                metrics.recordDuration(Math.max(0L, nanoTime.getAsLong() - started));
+            }
+        };
     }
 
     private void handleHealth(HttpExchange exchange) throws IOException {
@@ -126,6 +151,8 @@ public final class HelpDeskHttpServer implements AutoCloseable {
                 return;
             }
             send(exchange, 404, new ErrorResponse("route not found"));
+        } catch (HttpInputException exception) {
+            send(exchange, exception.statusCode(), new ErrorResponse(exception.getMessage()));
         } catch (TicketNotFoundException exception) {
             send(exchange, 404, new ErrorResponse(exception.getMessage()));
         } catch (InvalidTicketTransitionException exception) {
@@ -141,7 +168,7 @@ public final class HelpDeskHttpServer implements AutoCloseable {
         switch (exchange.getRequestMethod()) {
             case "GET" -> send(exchange, 200, tickets.list(parseQuery(exchange.getRequestURI().getRawQuery())));
             case "POST" -> {
-                CreateTicketRequest request = json.readValue(exchange.getRequestBody(), CreateTicketRequest.class);
+                CreateTicketRequest request = readJson(exchange, CreateTicketRequest.class);
                 Ticket created = tickets.create(request.title(), request.description(), request.priority());
                 send(exchange, 201, created);
             }
@@ -163,9 +190,31 @@ public final class HelpDeskHttpServer implements AutoCloseable {
             send(exchange, 405, new ErrorResponse("method not allowed"));
             return;
         }
-        UpdatePriorityRequest request = json.readValue(exchange.getRequestBody(), UpdatePriorityRequest.class);
+        UpdatePriorityRequest request = readJson(exchange, UpdatePriorityRequest.class);
         long id = idFrom(path, "/priority");
         send(exchange, 200, tickets.changePriority(id, request.priority()));
+    }
+
+    private <T> T readJson(HttpExchange exchange, Class<T> type) throws IOException {
+        String contentType = exchange.getRequestHeaders().getFirst("Content-Type");
+        if (contentType == null || !"application/json".equalsIgnoreCase(contentType.split(";", 2)[0].strip())) {
+            throw new HttpInputException(415, "Content-Type application/json is required");
+        }
+        String contentLength = exchange.getRequestHeaders().getFirst("Content-Length");
+        if (contentLength != null) {
+            try {
+                if (Long.parseLong(contentLength) > MAX_JSON_BODY_BYTES) {
+                    throw new HttpInputException(413, "JSON body exceeds 64 KiB limit");
+                }
+            } catch (NumberFormatException exception) {
+                throw new HttpInputException(400, "invalid Content-Length");
+            }
+        }
+        byte[] payload = exchange.getRequestBody().readNBytes(MAX_JSON_BODY_BYTES + 1);
+        if (payload.length > MAX_JSON_BODY_BYTES) {
+            throw new HttpInputException(413, "JSON body exceeds 64 KiB limit");
+        }
+        return json.readValue(payload, type);
     }
 
     private static long idFrom(String path, String suffix) {
@@ -203,11 +252,25 @@ public final class HelpDeskHttpServer implements AutoCloseable {
     private void send(HttpExchange exchange, int statusCode, Object body) throws IOException {
         byte[] payload = json.writeValueAsString(body).getBytes(StandardCharsets.UTF_8);
         exchange.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8");
+        exchange.getResponseHeaders().set("X-Content-Type-Options", "nosniff");
+        exchange.getResponseHeaders().set("Referrer-Policy", "no-referrer");
+        exchange.getResponseHeaders().set("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'; base-uri 'none'");
         exchange.sendResponseHeaders(statusCode, payload.length);
         try (var output = exchange.getResponseBody()) {
             output.write(payload);
         } finally {
             metrics.record(statusCode);
         }
+    }
+
+    private static final class HttpInputException extends IllegalArgumentException {
+        private final int statusCode;
+
+        private HttpInputException(int statusCode, String message) {
+            super(message);
+            this.statusCode = statusCode;
+        }
+
+        private int statusCode() { return statusCode; }
     }
 }

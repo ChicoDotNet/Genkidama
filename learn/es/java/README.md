@@ -6,17 +6,7 @@ Java se usa ampliamente en backend, sistemas empresariales, integración y servi
 
 ## Qué vas a construir
 
-HelpDesk API ya permite:
-
-- crear tickets JSON por HTTP;
-- listar y filtrar por `status` y `priority`;
-- cambiar prioridad y avanzar `OPEN → IN_PROGRESS → RESOLVED`;
-- persistir/restaurar tickets mediante JSON local detrás de `TicketStore`;
-- evitar estado fantasma cuando falla la persistencia;
-- obtener un resumen operativo derivado por estado y prioridad;
-- atender peticiones con un worker pool acotado sin perder IDs bajo concurrencia local;
-- habilitar diagnóstico agregado opt-in sin almacenar URLs, cuerpos, títulos, descripciones ni IDs;
-- probar dominio, persistencia, concurrencia y servidor HTTP con JUnit.
+HelpDesk API ya permite crear, consultar, filtrar, priorizar y avanzar tickets; persistirlos en JSON detrás de `TicketStore`; conservar consistencia local bajo concurrencia; derivar resúmenes; habilitar diagnóstico agregado opt-in sin PII; medir duración con reloj monotónico; limitar bodies JSON a 64 KiB; exigir `application/json` en mutaciones que deserializan contenido; y emitir headers HTTP defensivos. Todo está protegido con JUnit y un gate reproducible de Maven.
 
 ## Toolchain
 
@@ -80,52 +70,57 @@ curl http://localhost:8080/api/tickets/summary
 10. [Concurrencia explícita y executor](lessons/10-concurrencia-y-executor.md)
 11. [Diagnóstico opt-in sin PII](lessons/11-diagnostico-opt-in-sin-pii.md)
 12. [Operación confiable + Checkpoint 03](lessons/12-operacion-confiable-y-checkpoint.md)
+13. [Gate profesional y contratos HTTP](lessons/13-gate-profesional-y-contratos-http.md)
+14. [Debugging desde evidencia](lessons/14-debugging-desde-evidencia.md)
+15. [Medir antes de optimizar](lessons/15-medir-antes-de-optimizar.md)
+16. [Hardening + Checkpoint 04](lessons/16-hardening-y-checkpoint-04.md)
 
-Estado actual: **12/17 lecciones construidas**. El curso permanece `in_progress` hasta cumplir el Course DoD completo.
+Estado actual: **16/17 lecciones construidas**. El curso permanece `in_progress` hasta cumplir la evaluación final y el Course DoD completo.
 
 ## Checkpoints
 
 - [Checkpoint 01 — Prioridad crítica](exercises/checkpoint-01.md) · [solución](solutions/checkpoint-01.md)
 - [Checkpoint 02 — Escalamiento persistente](exercises/checkpoint-02.md) · [solución](solutions/checkpoint-02.md)
 - [Checkpoint 03 — Diagnóstico que falla de forma útil](exercises/checkpoint-03.md) · [solución](solutions/checkpoint-03.md)
+- [Checkpoint 04 — Rechazo temprano sin mutación](exercises/checkpoint-04.md) · [solución](solutions/checkpoint-04.md)
 
 ## Arquitectura actual
 
 ```text
-HTTP + JSON + bounded ExecutorService
-               ↓
-         TicketService
-        ↙      ↓       ↘
- TicketQuery  Summary  reglas
-               ↓
-           TicketStore
-          ↙           ↘
-       Memory        JSON file
+HTTP/JSON + límites + headers + bounded ExecutorService
+                         ↓
+                   TicketService
+                   ↙    ↓    ↘
+              queries summary reglas
+                         ↓
+                    TicketStore
+                   ↙           ↘
+                Memory        JSON file
 
-HTTP diagnostics (opt-in) → RequestMetrics
+HTTP diagnostics opt-in → RequestMetrics (conteos + duración agregada)
 ```
 
-El dominio no conoce sockets, threads HTTP, variables de entorno ni Jackson. `HelpDeskHttpServer` traduce transporte y gestiona workers; `TicketService` conserva reglas, sincroniza el estado compartido local y sólo publica una mutación después de persistir el snapshot candidato.
+El dominio no conoce sockets, headers, reloj, threads HTTP, variables de entorno ni Jackson. `HelpDeskHttpServer` posee transporte, workers, límites y métricas; `TicketService` conserva reglas y sólo publica una mutación después de persistir el snapshot candidato.
 
-## Concurrencia: qué garantiza y qué no
+## Límites y hardening
 
-Dentro de una instancia, las operaciones públicas de `TicketService` protegen IDs, snapshots y mutaciones concurrentes. Esto **no** coordina dos procesos escribiendo el mismo archivo JSON. Una aplicación multi-proceso o distribuida necesitaría trasladar parte de esas garantías a un almacenamiento apropiado.
+Las mutaciones que leen JSON exigen `Content-Type: application/json` y aceptan como máximo 64 KiB. Todas las respuestas agregan `nosniff`, `no-referrer` y una CSP restrictiva. Estos controles no sustituyen TLS, autenticación, autorización, rate limiting ni gestión profesional de secretos en un despliegue real.
 
-## Diagnóstico y privacidad
+## Diagnóstico, rendimiento y privacidad
 
-`RequestMetrics` conserva sólo conteos agregados de respuestas y 5xx. No recibe body, URL, título, descripción ni ID del ticket. El endpoint está desactivado por defecto para hacer explícita la decisión de exposición operativa.
+`RequestMetrics` conserva conteos agregados de respuestas/5xx y duración total monotónica. No recibe body, URL, título, descripción ni ID del ticket. La señal sirve para formular hipótesis; no se presenta como benchmark ni tracing distribuido.
 
 ## ¿Por qué no Spring todavía?
 
-Spring es un puente laboral importante en Java empresarial, pero HelpDesk primero hace visibles records, enums, colecciones, excepciones, archivos, HTTP, concurrencia, pruebas y contratos. Un framework sólo se incorpora cuando resuelve una necesidad que el alumno ya pueda reconocer.
+Spring es un puente laboral importante en Java empresarial, pero HelpDesk primero hace visibles records, enums, colecciones, excepciones, archivos, HTTP, concurrencia, pruebas, límites y contratos. Un framework sólo se incorpora cuando resuelve una necesidad que el alumno ya pueda reconocer.
 
 ## Qué sabrás hacer al terminar
 
-La meta completa es leer y modificar Java idiomático, modelar reglas con tipos, usar colecciones/concurrencia/excepciones, trabajar con HTTP/JSON y persistencia, probar con JUnit, usar Maven, depurar fallos, consultar documentación oficial y explicar arquitectura y trade-offs.
+La meta completa es leer y modificar Java idiomático, modelar reglas con tipos, usar colecciones/concurrencia/excepciones, trabajar con HTTP/JSON y persistencia, probar con JUnit, usar Maven, depurar fallos, medir antes de optimizar, consultar documentación oficial y explicar arquitectura y trade-offs.
 
 ## Cómo hablar de este proyecto en una entrevista
 
-Explica decisiones y límites: dominio separado del transporte; tipos en lugar de strings ambiguos; persistencia detrás de interfaz; persistir antes de publicar; por qué `synchronized` protege una instancia pero no varios procesos; y por qué el diagnóstico agrega señal sin retener PII.
+Explica decisiones y límites: dominio separado del transporte; tipos en lugar de strings ambiguos; persistencia detrás de interfaz; persistir antes de publicar; por qué `synchronized` protege una instancia pero no varios procesos; límites de entrada en la frontera; diagnóstico agregado sin PII; y por qué una métrica local no sustituye un benchmark de producción.
 
 Preguntas probables:
 
@@ -134,9 +129,10 @@ Preguntas probables:
 - ¿Cómo evitas estado fantasma si falla el disco?
 - ¿Qué garantiza `synchronized` aquí?
 - ¿Por qué el servidor tiene un executor acotado?
-- ¿Qué datos deliberadamente no guarda `RequestMetrics`?
-- ¿Cuándo cambiarías JSON por una base de datos?
-- ¿Cuándo introducirías Spring Boot?
+- ¿Por qué usas `System.nanoTime` para duración?
+- ¿Qué diferencia hay entre `400`, `409`, `413`, `415` y `503` en esta API?
+- ¿Qué seguridad aportan los headers y qué queda fuera de alcance?
+- ¿Cuándo introducirías Spring Boot o una base de datos?
 
 ## FAQ
 
@@ -150,7 +146,7 @@ No. HelpDesk funciona localmente y evita servicios comerciales obligatorios.
 No necesariamente. Es una persistencia local de un proceso; concurrencia multi-proceso y operación distribuida requieren otra estrategia.
 
 ### ¿El diagnóstico guarda los tickets?
-No. Los contadores agregados no reciben contenido de request ni identificadores.
+No. Las métricas agregadas no reciben contenido de request ni identificadores.
 
 ### ¿Esto me convierte automáticamente en desarrollador Java contratado?
 No. Produce práctica y evidencia inicial; contratación depende además de experiencia, mercado, entrevistas y necesidades de cada empresa.
@@ -164,8 +160,10 @@ No. Produce práctica y evidencia inicial; contratación depende además de expe
 - **snapshot:** estado completo en un momento determinado.
 - **ExecutorService:** contrato para ejecutar trabajo concurrente.
 - **synchronized:** exclusión mutua mediante el monitor intrínseco de Java.
+- **media type:** formato declarado de un mensaje HTTP, por ejemplo `application/json`.
+- **reloj monotónico:** reloj útil para intervalos que no retrocede por ajustes de hora civil.
+- **hardening:** reducción deliberada de superficie y ambigüedad operativa.
 - **PII:** información personalmente identificable.
-- **métrica agregada:** señal resumida que no conserva cada evento individual.
 
 ## Referencias oficiales
 
@@ -177,4 +175,4 @@ No. Produce práctica y evidencia inicial; contratación depende además de expe
 
 ## Siguiente paso
 
-Completa las doce lecciones y Checkpoint 03. El siguiente bloque 13–16 cubrirá tooling profesional, debugging, medición antes de optimizar y hardening antes de la evaluación final.
+Completa las dieciséis lecciones y Checkpoint 04. La Lección 17 cerrará el curso con una evaluación Junior autónoma sin receta, rúbrica y solución de referencia.

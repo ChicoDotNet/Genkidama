@@ -89,7 +89,7 @@ Propón una estrategia para mover persistencia a una base de datos sin cambiar `
 
 ## Siguiente paso
 
-El próximo bloque 13–16 tratará tooling profesional, debugging, medición/rendimiento y hardening antes de la evaluación final.
+Continúa con [Lección 13 — Gate profesional y contratos HTTP](13-gate-profesional-y-contratos-http.md).
 
 ## Referencias
 

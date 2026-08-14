@@ -9,6 +9,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -17,11 +18,15 @@ class HelpDeskHttpServerTest {
     private final HttpClient client = HttpClient.newHttpClient();
 
     @Test
-    void healthEndpointProvesTheApplicationCanServeHttp() throws Exception {
+    void healthEndpointProvesTheApplicationCanServeHttpWithDefensiveHeaders() throws Exception {
         try (var server = startedServer(false)) {
             HttpResponse<String> response = get(server, "/health");
             assertEquals(200, response.statusCode());
             assertEquals("ok", json.readTree(response.body()).get("status").asText());
+            assertEquals("nosniff", response.headers().firstValue("X-Content-Type-Options").orElseThrow());
+            assertEquals("no-referrer", response.headers().firstValue("Referrer-Policy").orElseThrow());
+            assertEquals("default-src 'none'; frame-ancestors 'none'; base-uri 'none'",
+                    response.headers().firstValue("Content-Security-Policy").orElseThrow());
         }
     }
 
@@ -59,15 +64,31 @@ class HelpDeskHttpServerTest {
     }
 
     @Test
-    void diagnosticsAreOptInAndExposeOnlyAggregateCounters() throws Exception {
-        try (var server = startedServer(true)) {
+    void diagnosticsAreOptInAggregateAndUseMonotonicTiming() throws Exception {
+        AtomicLong clock = new AtomicLong();
+        try (var server = startedServer(true, () -> clock.getAndAdd(1_000_000L))) {
             assertEquals(200, get(server, "/health").statusCode());
-            assertEquals(404, get(server, "/api/tickets/not-a-route").statusCode());
 
             JsonNode diagnostics = json.readTree(get(server, "/api/diagnostics").body());
-            assertEquals(2, diagnostics.get("requests").get("requests").asLong());
+            assertEquals(1, diagnostics.get("requests").get("requests").asLong());
             assertEquals(0, diagnostics.get("requests").get("failures").asLong());
+            assertEquals(1_000_000L, diagnostics.get("requests").get("totalDurationNanos").asLong());
             assertEquals(0, diagnostics.get("tickets").get("total").asLong());
+        }
+    }
+
+    @Test
+    void rejectsWrongMediaTypeAndOversizedJsonBeforeMutatingState() throws Exception {
+        try (var server = startedServer(false)) {
+            HttpResponse<String> wrongType = send(server, "POST", "/api/tickets",
+                    "text/plain", "{\"title\":\"No debe entrar\",\"priority\":\"NORMAL\"}");
+            assertEquals(415, wrongType.statusCode());
+
+            String oversized = "{\"title\":\"" + "x".repeat(70_000) + "\",\"priority\":\"NORMAL\"}";
+            HttpResponse<String> tooLarge = send(server, "POST", "/api/tickets", "application/json", oversized);
+            assertEquals(413, tooLarge.statusCode());
+
+            assertEquals(0, json.readTree(get(server, "/api/tickets").body()).size());
         }
     }
 
@@ -90,14 +111,25 @@ class HelpDeskHttpServerTest {
         return server;
     }
 
+    private HelpDeskHttpServer startedServer(boolean diagnostics, java.util.function.LongSupplier clock) throws Exception {
+        var server = new HelpDeskHttpServer(new TicketService(), json, 0, diagnostics, clock);
+        server.start();
+        return server;
+    }
+
     private HttpResponse<String> get(HelpDeskHttpServer server, String path) throws Exception {
         return client.send(HttpRequest.newBuilder(uri(server, path)).GET().build(), HttpResponse.BodyHandlers.ofString());
     }
 
     private HttpResponse<String> sendJson(HelpDeskHttpServer server, String method, String path, String body) throws Exception {
+        return send(server, method, path, "application/json", body);
+    }
+
+    private HttpResponse<String> send(
+            HelpDeskHttpServer server, String method, String path, String contentType, String body) throws Exception {
         return client.send(
                 HttpRequest.newBuilder(uri(server, path))
-                        .header("Content-Type", "application/json")
+                        .header("Content-Type", contentType)
                         .method(method, HttpRequest.BodyPublishers.ofString(body))
                         .build(),
                 HttpResponse.BodyHandlers.ofString());
