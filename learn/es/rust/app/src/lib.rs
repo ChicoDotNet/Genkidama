@@ -139,8 +139,7 @@ pub fn create_backup(source: &Path, destination: &Path) -> Result<Manifest, Back
 
 /// Carga un manifest y rechaza versiones desconocidas o rutas inseguras.
 pub fn load_manifest(backup: &Path) -> Result<Manifest, BackupError> {
-    let manifest: Manifest =
-        serde_json::from_slice(&fs::read(backup.join("manifest.json"))?)?;
+    let manifest: Manifest = serde_json::from_slice(&fs::read(backup.join("manifest.json"))?)?;
 
     if manifest.format_version != 1 {
         return Err(BackupError::InvalidManifest(format!(

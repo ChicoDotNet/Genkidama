@@ -32,20 +32,9 @@ jobs:
         working-directory: learn/es/rust/app
         run: rustc --version && cargo --version
 
-      - name: Diagnose formatting delta
+      - name: Format
         working-directory: learn/es/rust/app
-        shell: bash
-        run: |
-          set -euo pipefail
-          cargo fmt
-          if ! git diff --quiet -- .; then
-            diff="$(git diff -- .)"
-            diff="${diff//'%'/'%25'}"
-            diff="${diff//$'\r'/'%0D'}"
-            diff="${diff//$'\n'/'%0A'}"
-            echo "::error file=learn/es/rust/app/src/lib.rs::rustfmt delta%0A${diff}"
-            exit 1
-          fi
+        run: cargo fmt --check
 
       - name: Clippy
         working-directory: learn/es/rust/app
