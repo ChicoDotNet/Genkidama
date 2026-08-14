@@ -62,7 +62,7 @@ Explica por qué este backup incremental no es todavía un sistema de snapshots 
 Ya puedes razonar sobre ownership, errores, checksums, manifests, incrementalidad y restore como un solo contrato verificable.
 
 ## Siguiente paso
-El siguiente bloque añadirá snapshots/historial sólo si puede preservar estas garantías y producir evidencia útil para diagnóstico.
+Continúa con la [Lección 09](09-snapshots-historicos-inmutables.md), donde añadiremos historial sin relajar estas garantías.
 
 ## Referencias
 - https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html

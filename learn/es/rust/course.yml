@@ -7,10 +7,10 @@ title: Curso de Rust desde cero — Construye un backup incremental verificable
 status: in_progress
 canonical_app:
   name: BackupForge
-  summary: Herramienta local de backup incremental verificable por checksums SHA-256, con manifest, validación y restauración segura progresiva.
+  summary: Herramienta local de backup incremental verificable por checksums SHA-256, con manifest, restauración segura y snapshots históricos inmutables.
 audience: beginner
 prerequisites: []
-lesson_count: 8
+lesson_count: 12
 toolchain:
   verified_on: '2026-08-14'
   version_tested: 1.97.1
