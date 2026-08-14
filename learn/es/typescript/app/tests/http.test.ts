@@ -15,6 +15,14 @@ async function withServer(run: (baseUrl: string) => Promise<void>): Promise<void
   }
 }
 
+test("servidor entrega la interfaz web compilada", async () => {
+  await withServer(async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/`);
+    assert.equal(response.status, 200);
+    assert.match(await response.text(), /FreelanceDesk/);
+  });
+});
+
 test("API crea cliente y cotización conectados", async () => {
   await withServer(async (baseUrl) => {
     const clientResponse = await fetch(`${baseUrl}/api/clients`, {

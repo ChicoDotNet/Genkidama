@@ -70,7 +70,7 @@ export function createRequestHandler(state: AppState) {
         return;
       }
       if (method === "GET" && url.pathname === "/") {
-        await sendFile(response, new URL("../../public/index.html", import.meta.url), "text/html; charset=utf-8");
+        await sendFile(response, new URL("../../../public/index.html", import.meta.url), "text/html; charset=utf-8");
         return;
       }
       if (method === "GET" && url.pathname === "/assets/main.js") {
