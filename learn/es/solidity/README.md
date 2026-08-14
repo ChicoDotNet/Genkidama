@@ -18,11 +18,11 @@ Cliente deposita -> Freelancer entrega -> Cliente libera -> Freelancer cobra
        +-------------------------------> Reembolso antes de entrega
 ```
 
-La misma aplicación crece para enseñar tipos, estado, funciones, visibilidad, errores, eventos, Ether, ABI, pruebas, tooling, seguridad y diseño de contratos.
+La misma aplicación crece para enseñar tipos, estado, funciones, visibilidad, errores, eventos, Ether, ABI, pruebas, tooling, diagnóstico, gas, seguridad y diseño de contratos.
 
 ## Estado del curso
 
-**12/17 lecciones están publicadas.** El último corte ejecutable confirmado permanece en **8/17** mientras el bloque 09–12 corrige un fallo de `forge fmt --check` introducido por las nuevas pruebas fuzz. `Genkidama Learn` valida estructura y enlaces del bloque; `progress.yml` no avanzará hasta que formato, build y tests de `Learn Solidity` vuelvan a verde.
+**16/17 lecciones están publicadas.** El bloque 09–12 ya volvió a verde después de corregir exactamente el formato exigido por Foundry, y el bloque 13–16 añade tooling profesional, diagnóstico con traces, razonamiento de gas y una regresión de reentrada. `progress.yml` se reconcilia sólo después de observar el gate ejecutable del nuevo bloque.
 
 ## Qué necesitas instalar
 
@@ -48,10 +48,13 @@ bash tools/verify.sh
 
 `tools/verify.sh` es el gate local: comprueba formato, compilación y pruebas usando la misma configuración de proyecto que CI.
 
-Para inspeccionar la superficie pública:
+Para inspeccionar o diagnosticar:
 
 ```bash
 forge inspect FreelanceEscrow abi
+forge test --match-test testCannotRefundAfterDelivery -vvvv
+forge test --gas-report
+forge build --sizes
 ```
 
 ## Lecciones
@@ -68,6 +71,10 @@ forge inspect FreelanceEscrow abi
 10. [Invariantes de estado y autorización](lessons/10-invariantes-de-estado-y-autorizacion.md)
 11. [Composición y colaboradores hostiles](lessons/11-composicion-y-colaboradores-hostiles.md)
 12. [Estrategia de pruebas y checkpoint 03](lessons/12-estrategia-de-pruebas-y-checkpoint-03.md)
+13. [Tooling y superficie profesional](lessons/13-tooling-y-superficie-profesional.md)
+14. [Diagnóstico con traces](lessons/14-diagnostico-con-traces.md)
+15. [Gas y rendimiento con evidencia](lessons/15-gas-y-rendimiento-con-evidencia.md)
+16. [Hardening, reentrada y checkpoint 04](lessons/16-hardening-reentrada-y-checkpoint-04.md)
 
 ### Checkpoint 01
 - [Ejercicio — Constructor seguro](exercises/checkpoint-01.md)
@@ -81,9 +88,13 @@ forge inspect FreelanceEscrow abi
 - [Ejercicio — Propiedades de reembolso](exercises/checkpoint-03.md)
 - [Solución de referencia](solutions/checkpoint-03.md) — ábrela sólo después de tu intento.
 
+### Checkpoint 04
+- [Ejercicio — Reembolso frente a un receptor hostil](exercises/checkpoint-04.md)
+- [Solución de referencia](solutions/checkpoint-04.md) — ábrela sólo después de tu intento.
+
 ## Qué sabrás hacer al terminar
 
-La meta 0 → Junior es que puedas leer un contrato sencillo, implementar y probar cambios sin una receta línea por línea, razonar sobre estado y autorización, manejar Ether y errores, usar Foundry, consultar documentación oficial, reconocer riesgos comunes y explicar las decisiones de FreelanceEscrow en una entrevista.
+La meta 0 → Junior es que puedas leer un contrato sencillo, implementar y probar cambios sin una receta línea por línea, razonar sobre estado y autorización, manejar Ether y errores, usar Foundry, consultar documentación oficial, reconocer riesgos comunes, diagnosticar un revert y explicar las decisiones de FreelanceEscrow en una entrevista.
 
 ## Seguridad
 
@@ -106,6 +117,9 @@ No. La ABI describe la frontera codificable que consumen herramientas e integrac
 ### ¿Qué aporta fuzzing si ya tengo pruebas normales?
 Permite expresar una propiedad y comprobarla sobre muchas entradas generadas, mientras las pruebas deterministas siguen documentando historias concretas.
 
+### ¿Una prueba de reentrada demuestra que el contrato es seguro?
+No. Protege una propiedad concreta frente a un receptor hostil. No sustituye threat modeling ni auditoría.
+
 ### ¿Este proyecto está listo para producción?
 No. Es una aplicación educativa; pruebas verdes no equivalen a auditoría de seguridad.
 
@@ -122,6 +136,8 @@ No. Es una aplicación educativa; pruebas verdes no equivalen a auditoría de se
 - **atomicidad:** una transacción confirma todos sus efectos o, si revierte, no confirma un estado parcial.
 - **fuzzing:** ejecución repetida de una propiedad con entradas generadas por el framework de pruebas.
 - **invariante:** afirmación que debe conservarse para una región o secuencia válida del sistema.
+- **trace:** secuencia detallada de llamadas y efectos usada para diagnosticar una ejecución.
+- **reentrada:** nueva entrada a un contrato durante una interacción externa antes de que termine la llamada original.
 
 ## Referencias oficiales
 
@@ -132,7 +148,9 @@ No. Es una aplicación educativa; pruebas verdes no equivalen a auditoría de se
 - [Foundry Book](https://getfoundry.sh/)
 - [Foundry — Writing Tests](https://getfoundry.sh/forge/writing-tests)
 - [Foundry — Fuzz Testing](https://getfoundry.sh/forge/advanced-testing/fuzz-testing)
+- [Foundry — Traces](https://getfoundry.sh/forge/traces)
+- [Foundry — Gas Reports](https://getfoundry.sh/forge/gas-reports)
 
 ## Siguiente paso
 
-Empieza en la [Lección 01](lessons/01-primer-deposito-y-estado.md). Después de la Lección 12, el bloque final previo a evaluación cubrirá tooling, diagnóstico, gas y hardening del contrato.
+Empieza en la [Lección 01](lessons/01-primer-deposito-y-estado.md). Después de la Lección 16 queda una evaluación final sin receta que debe demostrar modificación, bugfix, pruebas, documentación y criterio de seguridad antes de marcar el curso completo.
