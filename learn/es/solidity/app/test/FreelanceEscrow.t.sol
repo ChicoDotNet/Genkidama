@@ -148,9 +148,7 @@ contract FreelanceEscrowTest {
         vm.prank(caller);
         escrow.markDelivered();
 
-        require(
-            uint256(escrow.state()) == uint256(FreelanceEscrow.State.Funded), "state unchanged"
-        );
+        require(uint256(escrow.state()) == uint256(FreelanceEscrow.State.Funded), "state unchanged");
     }
 
     function testOnlyClientCanRelease() public {
