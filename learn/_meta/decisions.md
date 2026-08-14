@@ -64,12 +64,12 @@ No se crean 45 esqueletos antes de demostrar que el formato funciona.
 
 El estado se actualiza por capacidad real, no para aparentar actividad.
 
-## GL-007 — Git no es materia sustancial de los cursos
+## GL-007 — Git no es materia sustancial de los cursos de lenguaje
 
 **Fecha:** 2026-08-12  
-**Estado:** aceptada
+**Estado:** aceptada, actualizada 2026-08-13
 
-Sólo se mencionan comandos inevitables para obtener o ejecutar el proyecto. Git tendrá un curso independiente.
+Sólo se mencionan dentro de cada curso de lenguaje los comandos inevitables para obtener o ejecutar el proyecto. Git se enseña en el curso transversal **ReleaseDesk**, ya completado, y no se duplica como materia sustancial en cada lenguaje.
 
 ## GL-008 — Skills ASBN como referencia preferente
 
@@ -152,7 +152,7 @@ Reglas:
 4. Una advertencia de CI sobre runtime, action, SDK, compiler, package manager o dependencia deprecada se considera trabajo de mantenimiento accionable; debe corregirse en el mismo frente o en el siguiente incremento razonable.
 5. No ocultar deprecaciones con flags o variables de compatibilidad insegura como solución permanente. Un escape temporal sólo se acepta ante una emergencia concreta, con razón y plan de retiro documentados.
 6. Antes de subir el major de una action o toolchain se consulta su documentación/release oficial para detectar requisitos de runner, breaking changes o sintaxis nueva.
-7. La modernización debe conservar reproducibilidad: `course.yml` registra la versión probada y fecha de verificación, aunque el workflow pueda usar un canal estable/LTS cuando eso sea intencional.
+7. La modernización debe conservar reproducibilidad: `course.yml` registra la versión probada y fecha real de verificación, aunque el workflow pueda usar un canal estable/LTS cuando eso sea intencional.
 8. Los warnings de CI forman parte de la señal de calidad. Un gate verde con advertencias de deprecación conocidas no se considera estado ideal si existe una actualización soportada y razonable.
 
 Aplicación inicial de esta decisión: `actions/checkout@v7` y `actions/setup-dotnet@v6` reemplazan generaciones basadas en Node 20 donde correspondía, sin cambiar el objetivo .NET 10 LTS/C# 14 del curso.
