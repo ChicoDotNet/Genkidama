@@ -22,7 +22,7 @@ La misma aplicación crece para enseñar tipos, estado, funciones, visibilidad, 
 
 ## Estado del curso
 
-**16/17 lecciones están publicadas.** El bloque 09–12 ya volvió a verde después de corregir exactamente el formato exigido por Foundry, y el bloque 13–16 añade tooling profesional, diagnóstico con traces, razonamiento de gas y una regresión de reentrada. `progress.yml` se reconcilia sólo después de observar el gate ejecutable del nuevo bloque.
+**Completo: 17/17 lecciones.** El paquete final incluye cuatro checkpoints, evaluación autónoma sin receta, rúbrica de 100 puntos, solución de referencia, narrativa de entrevista y un gate CI que exige el paquete final, formato, build y suite Forge completa. El SHA funcional `023b6a95b98e7d0e16eec326175b4b1f7a436c35` pasó **Learn Solidity** y **Genkidama Learn**.
 
 ## Qué necesitas instalar
 
@@ -75,6 +75,7 @@ forge build --sizes
 14. [Diagnóstico con traces](lessons/14-diagnostico-con-traces.md)
 15. [Gas y rendimiento con evidencia](lessons/15-gas-y-rendimiento-con-evidencia.md)
 16. [Hardening, reentrada y checkpoint 04](lessons/16-hardening-reentrada-y-checkpoint-04.md)
+17. [Evaluación final sin receta](lessons/17-evaluacion-final.md)
 
 ### Checkpoint 01
 - [Ejercicio — Constructor seguro](exercises/checkpoint-01.md)
@@ -91,6 +92,11 @@ forge build --sizes
 ### Checkpoint 04
 - [Ejercicio — Reembolso frente a un receptor hostil](exercises/checkpoint-04.md)
 - [Solución de referencia](solutions/checkpoint-04.md) — ábrela sólo después de tu intento.
+
+### Evaluación final
+- [Evaluación — Evoluciona FreelanceEscrow sin receta](exercises/evaluacion-final.md)
+- [Rúbrica final — 100 puntos](exercises/rubrica-final.md)
+- [Solución de referencia](solutions/evaluacion-final.md) — sólo después de tu intento.
 
 ## Qué sabrás hacer al terminar
 
@@ -139,6 +145,10 @@ No. Es una aplicación educativa; pruebas verdes no equivalen a auditoría de se
 - **trace:** secuencia detallada de llamadas y efectos usada para diagnosticar una ejecución.
 - **reentrada:** nueva entrada a un contrato durante una interacción externa antes de que termine la llamada original.
 
+## Cómo hablar de este proyecto en una entrevista
+
+Explica FreelanceEscrow como una máquina de estados pequeña: el cliente deposita, el freelancer declara entrega y el cliente libera o reembolsa antes de la entrega. Describe cómo custom errors, eventos y roles inmutables hacen explícitos los contratos; cómo Foundry protege historias, fuzzing y colaboradores hostiles; y cómo `checks → effects → interactions` protege el reembolso probado contra una segunda entrada. Cierra declarando límites: pruebas locales no equivalen a auditoría y el proyecto no implementa disputas, upgrades ni oráculos.
+
 ## Referencias oficiales
 
 - [Solidity documentation](https://docs.soliditylang.org/en/v0.8.35/)
@@ -153,4 +163,4 @@ No. Es una aplicación educativa; pruebas verdes no equivalen a auditoría de se
 
 ## Siguiente paso
 
-Empieza en la [Lección 01](lessons/01-primer-deposito-y-estado.md). Después de la Lección 16 queda una evaluación final sin receta que debe demostrar modificación, bugfix, pruebas, documentación y criterio de seguridad antes de marcar el curso completo.
+Completa la [evaluación final](exercises/evaluacion-final.md), revisa la [rúbrica](exercises/rubrica-final.md) y refuerza las áreas débiles. Después construye una variante local propia antes de explorar frameworks o despliegues públicos.
