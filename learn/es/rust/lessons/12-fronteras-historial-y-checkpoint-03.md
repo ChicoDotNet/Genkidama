@@ -60,7 +60,7 @@ Propón una política de retención “conservar últimas 7 versiones” y enume
 BackupForge ya conserva historial verificable con identidad inmutable, publicación defensiva, inspección determinista y restore seguro.
 
 ## Siguiente paso
-El siguiente bloque 13–16 tratará tooling profesional, diagnóstico, medición/rendimiento y hardening antes de la evaluación final.
+Continúa con la [Lección 13 — Un gate profesional y repetible](13-gate-profesional-y-repetible.md).
 
 ## Referencias
 - https://doc.rust-lang.org/book/ch12-03-improving-error-handling-and-modularity.html
