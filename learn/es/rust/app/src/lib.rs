@@ -1,4 +1,4 @@
-//! Núcleo de BackupForge: inventario, copia incremental, restauración y verificación determinista.
+//! Núcleo de BackupForge: inventario, copia incremental, snapshots, restauración y verificación determinista.
 
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -13,6 +13,7 @@ pub enum BackupError {
     Io(io::Error),
     Json(serde_json::Error),
     InvalidManifest(String),
+    InvalidSnapshot(String),
     Integrity(Vec<String>),
 }
 
@@ -22,6 +23,7 @@ impl std::fmt::Display for BackupError {
             Self::Io(error) => write!(f, "error de I/O: {error}"),
             Self::Json(error) => write!(f, "manifest inválido: {error}"),
             Self::InvalidManifest(message) => write!(f, "manifest inconsistente: {message}"),
+            Self::InvalidSnapshot(message) => write!(f, "snapshot inválido: {message}"),
             Self::Integrity(paths) => write!(
                 f,
                 "backup no íntegro: {} archivo(s) no coinciden",
@@ -81,6 +83,14 @@ pub struct IncrementalReport {
     pub reused: usize,
     pub copied: usize,
     pub removed: usize,
+}
+
+/// Resumen determinista de un snapshot histórico.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SnapshotSummary {
+    pub name: String,
+    pub files: usize,
+    pub bytes: u64,
 }
 
 /// Calcula SHA-256 leyendo el archivo por streaming.
@@ -186,6 +196,41 @@ fn can_reuse_entry(
         && sha256_file(destination_file)? == current.sha256)
 }
 
+fn validate_snapshot_name(name: &str) -> Result<(), BackupError> {
+    let valid = !name.is_empty()
+        && name.len() <= 80
+        && name
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'_' | b'.'))
+        && name != "."
+        && name != "..";
+
+    if valid {
+        Ok(())
+    } else {
+        Err(BackupError::InvalidSnapshot(
+            "usa 1–80 caracteres ASCII: letras, números, '-', '_' o '.'".into(),
+        ))
+    }
+}
+
+fn snapshots_root(repository: &Path) -> PathBuf {
+    repository.join("snapshots")
+}
+
+fn snapshot_path(repository: &Path, name: &str) -> Result<PathBuf, BackupError> {
+    validate_snapshot_name(name)?;
+    Ok(snapshots_root(repository).join(name))
+}
+
+fn manifest_summary(name: String, manifest: &Manifest) -> SnapshotSummary {
+    SnapshotSummary {
+        name,
+        files: manifest.files.len(),
+        bytes: manifest.files.iter().map(|entry| entry.bytes).sum(),
+    }
+}
+
 /// Crea un backup completo determinista y escribe `manifest.json` al final.
 pub fn create_backup(source: &Path, destination: &Path) -> Result<Manifest, BackupError> {
     let mut relative_files = Vec::new();
@@ -212,9 +257,6 @@ pub fn create_backup(source: &Path, destination: &Path) -> Result<Manifest, Back
 }
 
 /// Actualiza un backup existente y evita reescribir archivos cuyo contenido ya coincide.
-///
-/// La reutilización sólo ocurre después de comprobar tamaño y SHA-256 tanto en origen como
-/// en el backup actual. Un archivo de destino corrupto se vuelve a copiar desde el origen.
 pub fn update_backup(source: &Path, destination: &Path) -> Result<IncrementalReport, BackupError> {
     let previous = if destination.join("manifest.json").is_file() {
         load_manifest(destination)?
@@ -286,6 +328,97 @@ pub fn update_backup(source: &Path, destination: &Path) -> Result<IncrementalRep
     })
 }
 
+/// Crea un snapshot histórico inmutable bajo `repository/snapshots/<name>`.
+///
+/// El snapshot se construye en un directorio parcial y sólo se publica mediante `rename`
+/// después de crear y verificar su manifest. Un nombre ya existente nunca se sobrescribe.
+pub fn create_snapshot(
+    source: &Path,
+    repository: &Path,
+    name: &str,
+) -> Result<SnapshotSummary, BackupError> {
+    let final_path = snapshot_path(repository, name)?;
+    if final_path.exists() {
+        return Err(BackupError::InvalidSnapshot(format!("ya existe: {name}")));
+    }
+
+    let root = snapshots_root(repository);
+    fs::create_dir_all(&root)?;
+    let partial = root.join(format!(".{name}.partial"));
+    if partial.exists() {
+        return Err(BackupError::InvalidSnapshot(format!(
+            "quedó un snapshot parcial: {}",
+            partial.display()
+        )));
+    }
+
+    let result = (|| {
+        let manifest = create_backup(source, &partial)?;
+        let verification = verify_backup(&partial, &manifest)?;
+        if !verification.is_valid() {
+            return Err(BackupError::Integrity(verification.mismatches));
+        }
+        fs::rename(&partial, &final_path)?;
+        Ok(manifest_summary(name.to_owned(), &manifest))
+    })();
+
+    if result.is_err() && partial.exists() {
+        let _ = fs::remove_dir_all(&partial);
+    }
+
+    result
+}
+
+/// Lista snapshots válidos ordenados por nombre e incluye conteo de archivos y bytes.
+pub fn list_snapshots(repository: &Path) -> Result<Vec<SnapshotSummary>, BackupError> {
+    let root = snapshots_root(repository);
+    if !root.exists() {
+        return Ok(Vec::new());
+    }
+
+    let mut summaries = Vec::new();
+    let mut entries = fs::read_dir(root)?.collect::<Result<Vec<_>, _>>()?;
+    entries.sort_by_key(|entry| entry.file_name());
+
+    for entry in entries {
+        if !entry.file_type()?.is_dir() {
+            continue;
+        }
+        let name = entry.file_name().to_string_lossy().into_owned();
+        if name.starts_with('.') {
+            continue;
+        }
+        validate_snapshot_name(&name)?;
+        let manifest = load_manifest(&entry.path())?;
+        summaries.push(manifest_summary(name, &manifest));
+    }
+
+    Ok(summaries)
+}
+
+/// Carga el manifest de un snapshot histórico por nombre seguro.
+pub fn load_snapshot_manifest(repository: &Path, name: &str) -> Result<Manifest, BackupError> {
+    load_manifest(&snapshot_path(repository, name)?)
+}
+
+/// Verifica un snapshot histórico por nombre.
+pub fn verify_snapshot(repository: &Path, name: &str) -> Result<Verification, BackupError> {
+    let root = snapshot_path(repository, name)?;
+    let manifest = load_manifest(&root)?;
+    verify_backup(&root, &manifest)
+}
+
+/// Restaura un snapshot histórico sólo después de verificarlo por completo.
+pub fn restore_snapshot(
+    repository: &Path,
+    name: &str,
+    destination: &Path,
+) -> Result<usize, BackupError> {
+    let root = snapshot_path(repository, name)?;
+    let manifest = load_manifest(&root)?;
+    restore_backup(&root, destination, &manifest)
+}
+
 /// Carga un manifest y rechaza versiones desconocidas, rutas inseguras o duplicadas.
 pub fn load_manifest(backup: &Path) -> Result<Manifest, BackupError> {
     let manifest: Manifest = serde_json::from_slice(&fs::read(backup.join("manifest.json"))?)?;
@@ -317,9 +450,6 @@ pub fn verify_backup(backup: &Path, manifest: &Manifest) -> Result<Verification,
 }
 
 /// Restaura únicamente archivos de un backup previamente verificado.
-///
-/// La función no borra archivos ajenos que ya existan en `destination`. Si el backup no
-/// coincide con su manifest, devuelve `BackupError::Integrity` antes de escribir la salida.
 pub fn restore_backup(
     backup: &Path,
     destination: &Path,
