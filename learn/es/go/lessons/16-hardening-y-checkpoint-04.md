@@ -78,7 +78,7 @@ UptimeLab ya cubre tooling, debugging, medición y hardening con pruebas reprodu
 
 ## Siguiente paso
 
-La siguiente lección será la evaluación Junior autónoma sin receta.
+Continúa con la [Lección 17 — Evaluación final sin receta](17-evaluacion-final.md).
 
 ## Referencias
 
