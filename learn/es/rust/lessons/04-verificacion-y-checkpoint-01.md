@@ -49,7 +49,7 @@ Explica por qué checksum no equivale a autenticidad criptográfica.
 Ya puedes crear y verificar una copia local con paths defensivos.
 
 ## Siguiente paso
-El próximo incremento introducirá incrementalidad sin falsear evidencia.
+Continúa con la [Lección 05 — De copia completa a actualización incremental](05-actualizacion-incremental.md).
 
 ## Referencias
 - https://doc.rust-lang.org/std/path/
