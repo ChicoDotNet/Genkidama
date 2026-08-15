@@ -4,7 +4,7 @@ language: Swift
 locale: es
 source_locale: es
 title: Curso de Swift desde cero — Construye TimeQuote para horas, clientes y cotizaciones
-status: in_progress
+status: complete
 canonical_app:
   name: TimeQuote
   summary: Aplicación para registrar clientes y horas, calcular importes y preparar cotizaciones
