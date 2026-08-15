@@ -29,6 +29,14 @@ jobs:
         with:
           otp-version: '28.5.0.4'
 
+      - name: Setup additional pattern runtimes
+        if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'patterns/')
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y fp-compiler octave r-base lua5.4
+
       - name: Restore
         run: dotnet restore Genkidama.slnx
 
@@ -71,6 +79,16 @@ jobs:
           erlang_out="$(mktemp -d)"
           erlc -Werror -o "$erlang_out" src/Functional/Erlang/example1.erl
           erl -noshell -pa "$erlang_out" -eval 'example1:main(), halt().'
+
+          pascal_out="$(mktemp -d)"
+          fpc -Mobjfpc -O2 -Sew -FE"$pascal_out" src/Historical/Pascal/example1.pas
+          "$pascal_out/example1"
+
+          octave --no-gui --quiet --eval "addpath('src/DataScience/Octave'); example1();"
+
+          Rscript --vanilla src/DataScience/R/example1.R
+
+          lua5.4 src/Scripting/Lua/example1.lua
 
       - name: Pack CLI Tool
         run: dotnet pack src/Genkidama.Cli/Genkidama.Cli.csproj --configuration Release --no-build --output artifacts/packages
