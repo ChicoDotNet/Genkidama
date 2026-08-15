@@ -15,7 +15,7 @@ toolchain:
   verified_on: 2026-08-14
   version_tested: 2.4.10
   runtime_or_compiler: Kotlin/JVM 2.4.10 + JDK 17
-  package_or_build_tool: Gradle 9.5 planned for Android module; JVM slice uses Gradle
+  package_or_build_tool: Gradle 9.6.1; AGP 9.3 planned for Android module
   operating_systems_tested:
     - github-actions-linux
 ci:
@@ -30,5 +30,7 @@ career_context:
 official_references:
   - https://kotlinlang.org/docs/home.html
   - https://kotlinlang.org/docs/releases.html
+  - https://kotlinlang.org/docs/serialization.html
   - https://developer.android.com/kotlin
   - https://developer.android.com/build/releases/agp-9-3-0-release-notes
+  - https://developer.android.com/training/data-storage/room
