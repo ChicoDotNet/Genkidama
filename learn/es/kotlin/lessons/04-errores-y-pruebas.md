@@ -39,7 +39,7 @@ Discute por escrito si `complete` debería ser idempotente o rechazar una segund
 Ya validas reglas, errores y cambios con tests pequeños y útiles.
 
 ## Siguiente paso
-La siguiente lección incorporará sealed types y un caso de uso para que la futura UI Android no dependa de excepciones.
+Continúa con [Sealed types para resultados explícitos](05-sealed-results.md) para que la futura UI Android no dependa de excepciones.
 
 ## Referencias
 - https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/require.html
