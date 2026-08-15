@@ -8,7 +8,7 @@ FieldFlow comienza con un núcleo Kotlin puro que modela órdenes y reglas de ne
 
 ## Estado
 
-Curso en construcción: **12/17 lecciones**.
+Curso en construcción: **16/17 lecciones**.
 
 ## Tooling verificado
 
@@ -16,7 +16,7 @@ Curso en construcción: **12/17 lecciones**.
 - JDK 17 como baseline compatible con Android Gradle Plugin actual.
 - Gradle 9.6.1 para el slice Kotlin/JVM; AGP 9.3 requiere Gradle 9.5.0 como mínimo cuando se incorpore el módulo Android.
 - Kotlinx Serialization 1.11.0 para el primer adaptador durable.
-- Slice actual: Kotlin/JVM + Gradle para mantener dominio, casos de uso y persistencia con feedback rápido y CI ligero.
+- Slice ejecutable actual: Kotlin/JVM + Gradle; las lecciones 13–16 diseñan la frontera Android/Room/Compose manteniendo el núcleo verificable en JVM.
 
 ## Lecciones
 
@@ -32,22 +32,27 @@ Curso en construcción: **12/17 lecciones**.
 10. [Persistencia durable detrás del repositorio](lessons/10-persistencia-durable.md)
 11. [Escrituras seguras y fallos de almacenamiento](lessons/11-escrituras-seguras.md)
 12. [Diseña el salto a Room sin romper el núcleo](lessons/12-prepara-room.md)
+13. [Implementa Room como adaptador Android](lessons/13-room-adapter.md)
+14. [Modela estado observable para la UI](lessons/14-estado-ui.md)
+15. [Construye una pantalla Compose desde el estado](lessons/15-compose.md)
+16. [Diseña FieldFlow offline first](lessons/16-offline-first.md)
 
 ### Checkpoints
 
 - [Checkpoint 02 — Fronteras y resultados](lessons/checkpoint-02.md)
 - [Checkpoint 03 — Persistencia offline](lessons/checkpoint-03.md)
+- [Checkpoint 04 — Android offline first](lessons/checkpoint-04.md)
 
 ## Instalar, build, test y run
 
-Necesitas JDK 17+. En el slice actual:
+Necesitas JDK 17+. En el slice ejecutable actual:
 
 ```bash
 gradle test
 gradle run
 ```
 
-Android Studio será necesario cuando el curso incorpore el módulo Android; no es requisito para dominar primero el lenguaje, el dominio y las fronteras que ese módulo consumirá.
+Android Studio será necesario para materializar el módulo Android; el curso conserva el núcleo Kotlin/JVM como referencia ejecutable y separa las pruebas Android para comportamiento realmente dependiente de Room/Compose.
 
 ## Qué sabrás hacer al terminar
 
@@ -65,6 +70,8 @@ Kotlin es la opción recomendada por Google para desarrollo Android moderno. El 
 - https://developer.android.com/kotlin
 - https://developer.android.com/build/releases/agp-9-3-0-release-notes
 - https://developer.android.com/training/data-storage/room
+- https://developer.android.com/topic/architecture/data-layer/offline-first
+- https://developer.android.com/develop/ui/compose
 
 ## Siguiente paso
 
