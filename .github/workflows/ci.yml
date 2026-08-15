@@ -35,13 +35,25 @@ jobs:
         with:
           version: '1'
 
+      - name: Setup Zig for pattern validation
+        if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'patterns/')
+        uses: mlugg/setup-zig@v2
+
+      - name: Setup Dart for pattern validation
+        if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'patterns/')
+        uses: dart-lang/setup-dart@v1
+
+      - name: Setup Crystal for pattern validation
+        if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'patterns/')
+        uses: crystal-lang/install-crystal@v1
+
       - name: Setup additional pattern runtimes
         if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'patterns/')
         shell: bash
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y fp-compiler octave r-base lua5.4 ghc gfortran ocaml sbcl scala clojure elixir swi-prolog-nox gnat gnucobol3 nasm
+          sudo apt-get install --no-install-recommends -y fp-compiler octave r-base lua5.4 ghc gfortran ocaml sbcl scala clojure elixir swi-prolog-nox gnat gnucobol3 nasm nim groovy
 
       - name: Restore
         run: dotnet restore Genkidama.slnx
@@ -57,6 +69,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          expected="$(printf 'Dark Button\nDark Checkbox\nLight Button\nLight Checkbox')"
 
           gcc -std=c17 -Wall -Wextra -Werror src/Systems/C/example1.c -o /tmp/abstract-factory-c
           /tmp/abstract-factory-c
@@ -141,7 +154,29 @@ jobs:
           nasm -f elf64 -Wall src/LowLevel/Assembly/example1.asm -o /tmp/abstract-factory-assembly.o
           ld /tmp/abstract-factory-assembly.o -o /tmp/abstract-factory-assembly
           assembly_output="$(/tmp/abstract-factory-assembly)"
-          test "$assembly_output" = "$(printf 'Dark Button\nDark Checkbox\nLight Button\nLight Checkbox')"
+          test "$assembly_output" = "$expected"
+
+          zig fmt --check src/Systems/Zig/example1.zig
+          zig_output="$(zig run src/Systems/Zig/example1.zig 2>&1)"
+          test "$zig_output" = "$expected"
+
+          nim c --hints:off --warnings:on -o:/tmp/abstract-factory-nim src/Niche/Nim/example1.nim
+          nim_output="$(/tmp/abstract-factory-nim)"
+          test "$nim_output" = "$expected"
+
+          dart format --output=none --set-exit-if-changed src/Web/Dart/example1.dart
+          dart analyze --fatal-infos --fatal-warnings src/Web/Dart/example1.dart
+          dart_output="$(dart run src/Web/Dart/example1.dart)"
+          test "$dart_output" = "$expected"
+
+          crystal tool format --check src/Niche/Crystal/example1.cr
+          crystal build --error-on-warnings src/Niche/Crystal/example1.cr -o /tmp/abstract-factory-crystal
+          crystal_output="$(/tmp/abstract-factory-crystal)"
+          test "$crystal_output" = "$expected"
+
+          groovyc -d /tmp/abstract-factory-groovy src/Scripting/Groovy/example1.groovy
+          groovy_output="$(groovy src/Scripting/Groovy/example1.groovy)"
+          test "$groovy_output" = "$expected"
 
       - name: Pack CLI Tool
         run: dotnet pack src/Genkidama.Cli/Genkidama.Cli.csproj --configuration Release --no-build --output artifacts/packages
