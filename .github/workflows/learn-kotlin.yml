@@ -42,7 +42,7 @@ jobs:
         with:
           gradle-version: '9.6.1'
       - name: Install Android 37 platform
-        run: sdkmanager 'platforms;android-37' 'build-tools;36.0.0'
+        run: "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37' 'build-tools;36.0.0'
       - name: Compile Room and Compose Android app
         working-directory: learn/es/kotlin/android
         run: gradle :app:assembleDebug :app:testDebugUnitTest
