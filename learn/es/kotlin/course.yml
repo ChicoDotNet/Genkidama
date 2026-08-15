@@ -1,0 +1,34 @@
+schema_version: 1
+slug: kotlin
+language: Kotlin
+locale: es
+source_locale: es
+title: Curso de Kotlin desde cero — Construye una app Android offline de órdenes de trabajo
+status: in_progress
+canonical_app:
+  name: FieldFlow
+  summary: Aplicación Android offline para registrar, priorizar y completar órdenes de trabajo en campo
+audience: beginner
+prerequisites: []
+lesson_count: 17
+toolchain:
+  verified_on: 2026-08-14
+  version_tested: 2.4.10
+  runtime_or_compiler: Kotlin/JVM 2.4.10 + JDK 17
+  package_or_build_tool: Gradle 9.5 planned for Android module; JVM slice uses Gradle
+  operating_systems_tested:
+    - github-actions-linux
+ci:
+  supported: true
+  workflow: learn-kotlin.yml
+career_context:
+  uses:
+    - desarrollo Android
+    - aplicaciones JVM
+    - Kotlin Multiplatform
+  market_note: Kotlin tiene un ecosistema profesional fuerte alrededor de Android; el curso prepara una base junior práctica sin prometer colocación laboral.
+official_references:
+  - https://kotlinlang.org/docs/home.html
+  - https://kotlinlang.org/docs/releases.html
+  - https://developer.android.com/kotlin
+  - https://developer.android.com/build/releases/agp-9-3-0-release-notes

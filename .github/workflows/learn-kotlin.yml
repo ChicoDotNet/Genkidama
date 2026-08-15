@@ -1,0 +1,31 @@
+name: Learn Kotlin
+
+on:
+  pull_request:
+    paths:
+      - 'learn/es/kotlin/**'
+      - '.github/workflows/learn-kotlin.yml'
+  push:
+    branches: [dev]
+    paths:
+      - 'learn/es/kotlin/**'
+      - '.github/workflows/learn-kotlin.yml'
+
+jobs:
+  kotlin-jvm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.5.0'
+      - name: Test FieldFlow core
+        working-directory: learn/es/kotlin/app
+        run: gradle test
+      - name: Run FieldFlow core
+        working-directory: learn/es/kotlin/app
+        run: gradle run
