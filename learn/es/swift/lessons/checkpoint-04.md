@@ -46,4 +46,4 @@ Revisa:
 
 ## Siguiente paso
 
-La siguiente lección será la evaluación final. Tendrás que modificar TimeQuote sin receta y justificar tanto decisiones de lenguaje como fronteras de arquitectura.
+Continúa con [la evaluación final de TimeQuote](17-evaluacion-final.md). Tendrás que modificar la base sin receta y justificar tanto decisiones de lenguaje como fronteras de arquitectura.
