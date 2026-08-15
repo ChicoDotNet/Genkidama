@@ -39,7 +39,7 @@ Propón una operación `reopen` sin implementarla y define su contrato.
 El caso de uso desacopla intención de usuario de detalles de interfaz.
 
 ## Siguiente paso
-Ahora separaremos también el lugar donde viven las órdenes.
+Continúa con [Una frontera para persistencia](07-frontera-persistencia.md).
 
 ## Referencias
 - https://kotlinlang.org/docs/functions.html
