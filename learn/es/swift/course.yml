@@ -1,0 +1,34 @@
+schema_version: 1
+slug: swift
+language: Swift
+locale: es
+source_locale: es
+title: Curso de Swift desde cero — Construye TimeQuote para horas, clientes y cotizaciones
+status: complete
+canonical_app:
+  name: TimeQuote
+  summary: Aplicación para registrar clientes y horas, calcular importes y preparar cotizaciones
+audience: beginner
+prerequisites: []
+lesson_count: 17
+toolchain:
+  verified_on: 2026-08-15
+  version_tested: 6.3
+  runtime_or_compiler: Swift 6.3
+  package_or_build_tool: Swift Package Manager
+  operating_systems_tested:
+    - github-actions-linux
+ci:
+  supported: true
+  workflow: learn-swift.yml
+career_context:
+  uses:
+    - desarrollo iOS y macOS
+    - aplicaciones multiplataforma y servicios con Swift
+    - mantenimiento de bases de código Apple
+  market_note: Swift mantiene una relación especialmente fuerte con el ecosistema Apple. El curso construye fundamentos junior transferibles sin prometer colocación laboral.
+official_references:
+  - https://www.swift.org/getting-started/
+  - https://www.swift.org/blog/swift-6.3-released/
+  - https://docs.swift.org/swift-book/documentation/the-swift-programming-language/
+  - https://developer.apple.com/xcode/system-requirements

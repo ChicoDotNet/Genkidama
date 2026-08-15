@@ -50,7 +50,7 @@ Los pilotos estabilizaron:
 - CI;
 - experiencia Windows/Linux cuando corresponde.
 
-TypeScript, Java, Go, Rust, PHP y Kotlin ya completaron también su Course DoD como cursos posteriores a los pilotos. Kotlin cerró la evidencia Android prometida con un módulo compilable Room/Compose sobre AGP 9.3 y Built-in Kotlin. El siguiente frente de producción v1 es **Swift**, sujeto a la revalidación breve de demanda, tooling y aplicación canónica que exige este roadmap antes de iniciar cada curso.
+TypeScript, Java, Go, Rust, PHP, Kotlin y Swift ya completaron también su Course DoD como cursos posteriores a los pilotos. Kotlin cerró la evidencia Android prometida con un módulo compilable Room/Compose sobre AGP 9.3 y Built-in Kotlin. **Swift quedó completo en 17/17 lecciones** con TimeQuote como aplicación canónica: el núcleo SwiftPM portable cubre dominio, protocolos, persistencia JSON durable, concurrencia `async/await`, estado de aplicación aislado con `MainActor`, cuatro checkpoints y una evaluación final autónoma. El curso mantiene explícita la frontera de evidencia: no presenta una UI SwiftUI como compilada sin macOS/Xcode. **C++ es el siguiente curso a iniciar**, después de reconciliar cualquier avance concurrente en `dev`.
 
 ## Orden v1 provisional
 
