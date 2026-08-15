@@ -79,89 +79,9 @@ The Example App should eventually expose a UI that lets users explore classic de
 
 It should cover patterns commonly associated with the Gang of Four catalog and Head First Design Patterns, without forcing patterns where they do not improve the architecture.
 
-## Pattern categories
+Design patterns rarely appear in isolation. The navigable catalog now lives in the [Design Patterns wiki index](wiki/README.md), which groups every current pattern page by family and adds a Mermaid relationship map showing common collaborations, alternatives, and conceptual relatives.
 
-### Creational patterns
-
-- Abstract Factory
-- Builder
-- Factory Method
-- Prototype
-- Singleton
-
-### Structural patterns
-
-- Adapter
-- Bridge
-- Composite
-- Decorator
-- Facade
-- Flyweight
-- Proxy
-
-### Behavioral patterns
-
-- Chain of Responsibility
-- Command
-- Interpreter
-- Iterator
-- Mediator
-- Memento
-- Observer
-- State
-- Strategy
-- Template Method
-- Visitor
-
-### Architectural patterns
-
-- MVC
-- MVVM
-- Microkernel
-- Microservices
-
-### Integration patterns
-
-- Adapter for enterprise integration
-- Bridge for enterprise integration
-- Facade for enterprise integration
-- Broker
-- Message Bus
-- Service Locator
-
-### Concurrency patterns
-
-- Active Object
-- Monitor Object
-- Half-Sync/Half-Async
-- Leader/Followers
-
-### Distribution patterns
-
-- Client-Server
-- Peer-to-Peer
-- Publish-Subscribe
-- Distributed Proxy
-
-### Presentation patterns
-
-- Presentation-Abstraction-Control
-- Model-View-Presenter
-- Document-View
-
-### Persistence patterns
-
-- Active Record
-- Data Mapper
-- Unit of Work
-- Repository
-
-### Additional patterns
-
-- Dependency Injection
-- Lazy Initialization
-- Object Pool
-- Null Object
+Use that index when choosing, comparing, or combining patterns; use each individual page for pattern-specific explanations and examples.
 
 ## Example language targets
 
@@ -188,13 +108,14 @@ The canonical source is initially Spanish, with 45 current language courses plan
 
 ## Documentation
 
-Important project documents live under `docs/`.
+Important project documents live under `docs/` and the pattern catalog under `wiki/`.
 
+- [Design Patterns catalog and relationship map](wiki/README.md)
 - `docs/engineering-standards.md`
 - `docs/roadmap.md`
 - `docs/philosophy/001-patterns-as-living-examples.md`
 
-The legacy wiki placeholders should evolve into real pattern explanations and cross-links to the Example App.
+Pattern pages under `wiki/` are progressively evolving from placeholders into full explanations and cross-links to the Example App. The wiki index provides stable navigation while that content matures.
 
 ## Quality gates
 
