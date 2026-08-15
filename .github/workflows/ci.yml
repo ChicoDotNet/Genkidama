@@ -41,7 +41,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y fp-compiler octave r-base lua5.4 ghc gfortran ocaml sbcl scala clojure elixir swi-prolog-nox gnat
+          sudo apt-get install --no-install-recommends -y fp-compiler octave r-base lua5.4 ghc gfortran ocaml sbcl scala clojure elixir swi-prolog-nox gnat gnucobol3 nasm
 
       - name: Restore
         run: dotnet restore Genkidama.slnx
@@ -134,6 +134,14 @@ jobs:
           solidity_out="$(mktemp -d)"
           npx --yes solc@0.8.30 --bin --abi src/Niche/Solidity/Example1.sol -o "$solidity_out"
           test -n "$(find "$solidity_out" -type f -name '*_Example1.bin' -size +0c -print -quit)"
+
+          cobc -x -Wall src/Historical/Cobol/example1.cbl -o /tmp/abstract-factory-cobol
+          /tmp/abstract-factory-cobol
+
+          nasm -f elf64 -Wall src/LowLevel/Assembly/example1.asm -o /tmp/abstract-factory-assembly.o
+          ld /tmp/abstract-factory-assembly.o -o /tmp/abstract-factory-assembly
+          assembly_output="$(/tmp/abstract-factory-assembly)"
+          test "$assembly_output" = "$(printf 'Dark Button\nDark Checkbox\nLight Button\nLight Checkbox')"
 
       - name: Pack CLI Tool
         run: dotnet pack src/Genkidama.Cli/Genkidama.Cli.csproj --configuration Release --no-build --output artifacts/packages
