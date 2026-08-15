@@ -3,7 +3,7 @@
 > **Familia:** Creational  
 > **Intención:** Proporcionar una abstracción para crear familias de productos relacionados o dependientes sin acoplar al cliente a sus tipos concretos.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `36/48`  
+> **Implementaciones de lenguaje:** `41/48`  
 > **Cobertura de pruebas:** `N/A` — este catálogo valida ejemplos por compilación/ejecución cuando es práctico; no existe una métrica homogénea de line coverage entre 48 ecosistemas.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -185,7 +185,8 @@ La evidencia ejecutable se obtiene de gates históricos y del CI general condici
 - el gate ampliado en `893cd4ac2b056aa3e7bbaff41a95f059e0d9f567` ejecutó además Scala, Fortran, OCaml y Common Lisp. El primer intento reveló únicamente que `missing-mli` de OCaml no es apropiado como error para un ejemplo standalone; todos los demás warnings siguen siendo estrictos y el segundo intento quedó verde;
 - el gate en `ed56a2aa4c51df75e0f38e5795d9c07a3d180e0a` ejecutó Clojure, compiló Elixir con `elixirc --warnings-as-errors` y ejecutó Prolog con SWI-Prolog. Ese corte también corrigió una deuda de indentación Ruby detectada por el propio runner;
 - el gate en `c0dea39a6660b3195677c10f150710a9901e1a7e` compiló y ejecutó Ada con GNAT 2022 y warnings como errores, y compiló Solidity 0.8.30 verificando bytecode no vacío para `Example1`;
-- el head verde `a090d299908dc9f5338dadf6b468f25458218bd9` compiló/ejecutó COBOL con GnuCOBOL y Assembly x86-64 con NASM + `ld`, comprobando además la salida exacta de las cuatro variantes.
+- el head verde `a090d299908dc9f5338dadf6b468f25458218bd9` compiló/ejecutó COBOL con GnuCOBOL y Assembly x86-64 con NASM + `ld`, comprobando además la salida exacta de las cuatro variantes;
+- el head verde `18999b8b9c58ca68b5e2497e8e05948c941a7de6` ejecutó Zig, Nim, Dart, Crystal y Groovy con formato/análisis/compilación proporcional y comprobó la salida exacta de las familias Dark/Light.
 
 Esto es evidencia de ejecución, no line coverage. La política >=44% se aplica cuando un ecosistema tenga medición de coverage significativa; no se inventa un porcentaje transversal para ejemplos heterogéneos.
 
@@ -207,20 +208,20 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Objective-C | Applicable | — | Pendiente | [`example1.m`](../src/Systems/Objective-C/example1.m) preserva la familia; falta evidencia ejecutable proporcional. |
 | Java | Applicable | [`Example1.java`](../src/Enterprise/Java/Example1.java) | Java 25 compile/run ✅ | `UIFactory` conserva Button + Checkbox. |
 | Rust | Applicable | [`example1.rs`](../src/Systems/Rust/example1.rs) | `rustc` compile/run ✅ | Traits + factories concretas. |
-| Zig | Applicable | — | Pendiente | Revisar implementación histórica. |
+| Zig | Applicable | [`example1.zig`](../src/Systems/Zig/example1.zig) | Zig 0.16.0 `fmt --check` + run + exact output ✅ | Struct de function pointers selecciona una familia una sola vez. |
 | Go | Applicable | [`example1.go`](../src/Systems/Go/example1.go) | Go 1.26.5 run ✅ | Interfaz + dos factories concretas. |
 | PHP | Applicable | [`example1.php`](../src/Scripting/PHP/example1.php) | PHP 8.5 lint/run ✅ | Interfaces + familias coherentes. |
-| Nim | Applicable | — | Pendiente | Revisar implementación histórica. |
-| Dart | Applicable | — | Pendiente | Revisar implementación histórica. |
+| Nim | Applicable | [`example1.nim`](../src/Niche/Nim/example1.nim) | Nim compile/run + exact output ✅ | Objeto `UIFactory` agrupa ambos constructores. |
+| Dart | Applicable | [`example1.dart`](../src/Web/Dart/example1.dart) | Dart format + analyze + run + exact output ✅ | Interfaz + factories concretas conservan la familia. |
 | Kotlin | Applicable | [`Example1.kt`](../src/Enterprise/Kotlin/Example1.kt) | `kotlinc` compile + JVM run ✅ | `UIFactory` conserva Button + Checkbox. |
 | Swift | Applicable | [`example1.swift`](../src/Systems/Swift/example1.swift) | `swiftc` compile/run ✅ | Protocols + factories concretas conservan la familia. |
 | F# | Applicable | [`example1.fsx`](../src/Functional/F%23/example1.fsx) | `dotnet fsi` run ✅ | Record de constructores conserva la familia completa. |
-| Crystal | Applicable | — | Pendiente | Revisar implementación histórica. |
+| Crystal | Applicable | [`example1.cr`](../src/Niche/Crystal/example1.cr) | Crystal format + `--error-on-warnings` build + run + exact output ✅ | NamedTuple de closures representa una familia completa. |
 | Lua | Applicable | [`example1.lua`](../src/Scripting/Lua/example1.lua) | Lua 5.4 run ✅ | Table de closures representa una familia completa. |
 | Haskell | Applicable | [`Example1.hs`](../src/Functional/Haskell/Example1.hs) | `runghc -Wall -Werror` ✅ | Record `UIFactory` de operaciones conserva una familia completa. |
 | COBOL | Applicable | [`example1.cbl`](../src/Historical/Cobol/example1.cbl) | GnuCOBOL `-Wall` compile/run ✅ | Una sola familia seleccionada produce Button + Checkbox coherentes. |
 | Scala | Applicable | [`Example1.scala`](../src/Functional/Scala/Example1.scala) | `scalac` compile + `scala` run ✅ | `UIFactory` conserva Button + Checkbox dentro de una familia seleccionada. |
-| Groovy | Applicable | — | Pendiente | Revisar implementación histórica. |
+| Groovy | Applicable | [`example1.groovy`](../src/Scripting/Groovy/example1.groovy) | `groovyc` compile + Groovy run + exact output ✅ | `UIFactory` + factories concretas preservan la familia. |
 | Ruby | Applicable | [`example1.rb`](../src/Scripting/RubyRB/example1.rb) | syntax check + run ✅ | Factory concreta preserva la familia. |
 | C | Applicable | [`example1.c`](../src/Systems/C/example1.c) | C17 `-Werror` compile/run ✅ | Struct de function pointers representa una familia. |
 | OCaml | Applicable | [`example1.ml`](../src/Functional/OCaml/example1.ml) | `ocamlc` strict compile/run ✅ | First-class module `UIFactory` agrupa ambos constructores; `missing-mli` se excluye por ser ejemplo standalone. |
@@ -247,7 +248,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | MicroPython | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Rockstar | Applicable | — | Pendiente | Variables, funciones y control de flujo permiten representar selección de familia; requiere revisión idiomática. |
 
-**Cobertura actual verificada: 36 / 48 lenguajes Applicable (75.0%).**
+**Cobertura actual verificada: 41 / 48 lenguajes Applicable (85.4%).**
 
 La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe conservar la intención, resolver su enlace y tener evidencia proporcional.
 
@@ -263,7 +264,7 @@ La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe 
 - El movimiento de diseño es seleccionar una fábrica/familia una vez y pedirle productos relacionados.
 - El principal trade-off es facilitar nuevas familias a costa de encarecer nuevos tipos de producto.
 - Factory Method puede colaborar con Abstract Factory, pero no define su intención.
-- La evidencia asciende a 36/48; la página permanece `in-progress` hasta `48/48`.
+- La evidencia asciende a 41/48; la página permanece `in-progress` hasta `48/48`.
 
 ## Referencias
 
