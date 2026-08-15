@@ -2,21 +2,61 @@
 
 ## Principio de planificación
 
-Calidad antes de cantidad. Un curso incompleto se retoma antes de iniciar otro salvo razón técnica o independencia documentada. Antes de iniciar cada curso se revalida brevemente demanda, tooling, oportunidad de contenido y aplicación canónica.
+Calidad antes de cantidad. No se abren muchos cursos para mostrar actividad.
+
+Un curso incompleto se retoma antes de iniciar otro salvo que exista una razón técnica o de independencia claramente documentada.
 
 ## Fase 0 — Fundación compartida
 
-**Estado: completa.** Pedagogía, especificación, guía de autoría, catálogo, progreso persistente, decisiones, validación automática y navegación están materializados.
+Objetivo:
+
+- pedagogía;
+- especificación;
+- guía de autoría;
+- catálogo;
+- progreso persistente;
+- decisiones;
+- validación automática;
+- navegación desde el README raíz.
+
+No se crean esqueletos vacíos de cursos.
+
+## Curso transversal — Git
+
+Git se enseña como curso transversal independiente de los 45 lenguajes V1. **ReleaseDesk está completo en 17/17 lecciones** y funciona como infraestructura pedagógica compartida: los cursos de lenguaje lo recomiendan cuando necesitan control de versiones, ramas, colaboración, diagnóstico o recuperación en vez de duplicar mini-cursos de Git.
+
+Su estado se conserva en `progress.yml` bajo `transversal_courses` y no altera el denominador de 45 lenguajes.
 
 ## Fase 1 — Pilotos
 
-**Estado: completa.** C#, Python, JavaScript, COBOL y Solidity terminaron su Course DoD en español y estabilizaron longitud, formato escrito/video, ejercicios, soluciones, checkpoints, evaluación, metadata y CI.
+**Estado: completa.** Los cinco pilotos terminaron su Course DoD en español y ya probaron la plantilla sobre ecosistemas deliberadamente distintos:
 
-TypeScript y Java completaron también su Course DoD como primeros cursos posteriores a pilotos. El siguiente frente de producción v1 es **Go**, sujeto a la revalidación breve previa.
+1. C#
+2. Python
+3. JavaScript
+4. COBOL
+5. Solidity
+
+Los pilotos estabilizaron:
+
+- longitud real de lecciones;
+- densidad de contenido;
+- formato escrito/video;
+- ejercicios;
+- soluciones;
+- checkpoints;
+- evaluación;
+- metadata;
+- CI;
+- experiencia Windows/Linux cuando corresponde.
+
+TypeScript y Java ya completaron también su Course DoD como primeros cursos posteriores a los pilotos. El siguiente frente de producción v1 es **Go**, sujeto a la revalidación breve de demanda, tooling y aplicación canónica que exige este roadmap antes de iniciar cada curso.
 
 ## Orden v1 provisional
 
-Este orden es una hipótesis de producción, no un ranking universal de empleabilidad. Puede moverse por impacto laboral, demanda de búsqueda, oportunidad de contenido, diversidad de paradigma, facilidad/limitación de CI, interés educativo o aprendizaje acumulado.
+Este orden es una hipótesis de producción, no un ranking universal de empleabilidad.
+
+Antes de iniciar cada curso se revalida brevemente demanda, tooling, oportunidad de contenido y aplicación canónica. El orden puede cambiar y la decisión se registra.
 
 1. **C#** (`csharp`)
 2. **Python** (`python`)
@@ -64,16 +104,57 @@ Este orden es una hipótesis de producción, no un ranking universal de empleabi
 44. **Prolog** (`prolog`)
 45. **VBA** (`vba`)
 
+## Criterios para mover el orden
+
+Se puede adelantar o retrasar un curso por:
+
+- impacto laboral;
+- demanda de búsqueda;
+- oportunidad de contenido útil;
+- diversidad de paradigma;
+- facilidad o limitación de CI;
+- interés educativo;
+- ausencia de buenos recursos actuales;
+- aprendizaje obtenido en pilotos.
+
 No se altera el concepto central de Solidity: `FreelanceEscrow`.
 
 ## Expansión posterior a v1
 
-Planeados: Delphi, GNU Octave, SQL, CSS, MicroPython y Rockstar. Rockstar se presenta como ejercicio pedagógico/esotérico, no como ruta de empleo con demanda significativa.
+Registrados, no comprometidos como parte de los 45 actuales:
+
+- Delphi
+- GNU Octave
+- SQL
+- CSS
+- MicroPython
+- Rockstar
+
+Rockstar se presenta como ejercicio pedagógico/esotérico, no como una ruta de empleo con demanda significativa.
 
 ## Traducciones
 
-Después de madurez suficiente en español: `en`, `zh-Hans`, `ja`, `fr`, `it`, `pt-BR`, `ru`, `de`. Español (`es`) permanece como fuente de verdad inicial.
+Sólo después de que la estructura y varios cursos en español estén maduros:
+
+1. `en`
+2. `zh-Hans`
+3. `ja`
+4. `fr`
+5. `it`
+6. `pt-BR`
+7. `ru`
+8. `de`
+
+Español (`es`) permanece como fuente de verdad inicial.
 
 ## Después de v1
 
-Traducciones, actualización periódica, nuevos lenguajes, mejoras SEO/AEO/GEO, posible sitio estático y cursos complementarios adicionales. El curso transversal de Git (`ReleaseDesk`) ya forma parte de la infraestructura educativa compartida.
+Fase separada:
+
+- traducciones;
+- actualización periódica;
+- nuevos lenguajes;
+- mejoras SEO/AEO/GEO;
+- posible sitio estático;
+- cursos complementarios;
+- mantenimiento y evolución del curso transversal de Git.
