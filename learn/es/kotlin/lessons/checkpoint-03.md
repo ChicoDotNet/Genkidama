@@ -20,4 +20,4 @@ Demuestra que puedes extender la durabilidad de FieldFlow sin acoplar dominio e 
 Si mañana la aplicación necesitara sincronizar con un servidor, ¿qué contrato actual reutilizarías y qué nueva frontera necesitarías?
 
 ## Siguiente paso
-El siguiente bloque incorporará Android/Room de forma deliberada, conservando las pruebas rápidas del núcleo Kotlin/JVM.
+Continúa con [13 — Implementa Room como adaptador Android](13-room-adapter.md), conservando las pruebas rápidas del núcleo Kotlin/JVM.
