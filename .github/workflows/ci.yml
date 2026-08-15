@@ -55,6 +55,8 @@ jobs:
           cp src/Enterprise/VisualBasic/Example1.vb "$work/Program.vb"
           dotnet run --project "$work" --configuration Release
 
+          dotnet fsi 'src/Functional/F#/example1.fsx'
+
           ruby -cw src/Scripting/RubyRB/example1.rb
           ruby src/Scripting/RubyRB/example1.rb
 
@@ -63,6 +65,8 @@ jobs:
 
           bash -n src/Shell/Bash/example1.sh
           bash src/Shell/Bash/example1.sh
+
+          pwsh -NoLogo -NoProfile -NonInteractive -File src/Shell/PowerShell/example1.ps1
 
           erlang_out="$(mktemp -d)"
           erlc -Werror -o "$erlang_out" src/Functional/Erlang/example1.erl
