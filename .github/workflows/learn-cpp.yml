@@ -1,0 +1,36 @@
+name: Learn C++
+
+on:
+  pull_request:
+    paths:
+      - 'learn/es/cpp/**'
+      - '.github/workflows/learn-cpp.yml'
+  workflow_dispatch:
+
+jobs:
+  build-test-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show toolchain
+        run: |
+          g++ --version
+          cmake --version
+
+      - name: Configure
+        run: cmake -S learn/es/cpp/app -B learn/es/cpp/app/build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build learn/es/cpp/app/build --parallel
+
+      - name: Test
+        run: ctest --test-dir learn/es/cpp/app/build --output-on-failure
+
+      - name: Smoke test CLI
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/threadseek-smoke/docs"
+          printf 'hola\n' > "$RUNNER_TEMP/threadseek-smoke/README.md"
+          printf 'manual\n' > "$RUNNER_TEMP/threadseek-smoke/docs/manual.txt"
+          learn/es/cpp/app/build/threadseek "$RUNNER_TEMP/threadseek-smoke" txt
