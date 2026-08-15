@@ -26,3 +26,4 @@ Generated code should follow the Knowledge Base. The CLI and blueprints should n
 - KB-003: Architecture decision records.
 - KB-004: Design principles and philosophy.
 - KB-005: Design Patterns catalog navigation and relationship map.
+- KB-006: Proposed canonical Design Pattern authoring standard.
