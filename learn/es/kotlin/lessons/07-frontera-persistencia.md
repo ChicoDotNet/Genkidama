@@ -39,7 +39,7 @@ Escribe qué deberá resolver una futura implementación Room además de `save` 
 Ya existe un punto de sustitución claro entre aplicación y persistencia.
 
 ## Siguiente paso
-Cerraremos el bloque ejercitando la integración de resultados, servicio y repositorio.
+Continúa con [Integra el flujo y protege comportamiento](08-integra-y-protege.md).
 
 ## Referencias
 - https://kotlinlang.org/docs/interfaces.html
