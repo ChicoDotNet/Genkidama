@@ -4,7 +4,7 @@ language: PHP
 locale: es
 source_locale: es
 title: Curso de PHP desde cero — Construye una agenda web de citas
-status: in_progress
+status: complete
 canonical_app:
   name: AgendaPHP
   summary: Aplicación web server-rendered para registrar, editar, consultar, exportar y cancelar citas, evitar cruces de horario, conservar el calendario localmente y proteger mutaciones con contratos HTTP explícitos y CSRF.
