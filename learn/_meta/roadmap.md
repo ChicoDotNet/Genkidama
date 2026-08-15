@@ -50,7 +50,9 @@ Los pilotos estabilizaron:
 - CI;
 - experiencia Windows/Linux cuando corresponde.
 
-TypeScript, Java, Go, Rust, PHP, Kotlin y Swift ya completaron también su Course DoD como cursos posteriores a los pilotos. Kotlin cerró la evidencia Android prometida con un módulo compilable Room/Compose sobre AGP 9.3 y Built-in Kotlin. **Swift quedó completo en 17/17 lecciones** con TimeQuote como aplicación canónica: el núcleo SwiftPM portable cubre dominio, protocolos, persistencia JSON durable, concurrencia `async/await`, estado de aplicación aislado con `MainActor`, cuatro checkpoints y una evaluación final autónoma. El curso mantiene explícita la frontera de evidencia: no presenta una UI SwiftUI como compilada sin macOS/Xcode. **C++ es el siguiente curso a iniciar**, después de reconciliar cualquier avance concurrente en `dev`.
+TypeScript, Java, Go, Rust, PHP, Kotlin y Swift ya completaron también su Course DoD como cursos posteriores a los pilotos. Kotlin cerró la evidencia Android prometida con un módulo compilable Room/Compose sobre AGP 9.3 y Built-in Kotlin. **Swift quedó completo en 17/17 lecciones** con TimeQuote como aplicación canónica: el núcleo SwiftPM portable cubre dominio, protocolos, persistencia JSON durable, concurrencia `async/await`, estado de aplicación aislado con `MainActor`, cuatro checkpoints y una evaluación final autónoma. El curso mantiene explícita la frontera de evidencia: no presenta una UI SwiftUI como compilada sin macOS/Xcode.
+
+**C++ está ahora en progreso con 4/17 lecciones** en PR #58. ThreadSeek ya compila como C++23, recorre directorios con `std::filesystem`, mantiene un índice determinista en memoria, busca por nombre, maneja errores de raíz y tiene pruebas CTest. El curso conserva una baseline secuencial correcta antes de introducir multihilo; las lecciones 5–8 deben separar nuevas fronteras y persistencia antes de medir y paralelizar. No se abre PowerShell mientras C++ siga incompleto salvo motivo documentado.
 
 ## Orden v1 provisional
 
