@@ -39,7 +39,7 @@ Explica cuándo seguirías prefiriendo una excepción.
 Los sealed types hacen explícito el conjunto de resultados esperables.
 
 ## Siguiente paso
-Usaremos ese contrato desde un caso de uso independiente de la interfaz.
+Continúa con [Casos de uso sin depender de Android](06-casos-de-uso.md).
 
 ## Referencias
 - https://kotlinlang.org/docs/sealed-classes.html
