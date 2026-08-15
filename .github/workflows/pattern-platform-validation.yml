@@ -58,7 +58,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          output="$(matlab -batch "run('src/DataScience/MATLAB/example1.m')" 2>&1)"
+          output="$(matlab -batch \"addpath('src/DataScience/MATLAB'); example1\" 2>&1)"
           printf '%s\n' "$output"
           grep -Fxq 'Dark Button' <<<"$output"
           grep -Fxq 'Dark Checkbox' <<<"$output"
