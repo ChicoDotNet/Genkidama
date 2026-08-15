@@ -3,7 +3,7 @@
 > **Familia:** Creational  
 > **Intención:** Proporcionar una abstracción para crear familias de productos relacionados o dependientes sin acoplar al cliente a sus tipos concretos.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `15/48`  
+> **Implementaciones de lenguaje:** `16/48`  
 > **Cobertura de pruebas:** `N/A` — este catálogo valida ejemplos por compilación/ejecución cuando es práctico; no existe una métrica homogénea de line coverage entre 48 ecosistemas.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -161,7 +161,7 @@ Una operación `createX()` no convierte automáticamente una solución en Abstra
 
 ### Separar los selectores hasta perder la familia
 
-Dos funciones independientes `createButton(theme)` y `createCheckbox(theme)` permiten elegir temas distintos y rompen la garantía central. Ese defecto histórico ya fue corregido en JavaScript, Perl y Shell dentro de este PR; Erlang también fue reestructurado y está pendiente de evidencia ejecutable antes de promoverse a `Verified`.
+Dos funciones independientes `createButton(theme)` y `createCheckbox(theme)` permiten elegir temas distintos y rompen la garantía central. Ese defecto histórico ya fue corregido en JavaScript, Perl, Shell y Erlang dentro de este PR.
 
 ### Traducir mecánicamente una jerarquía OO
 
@@ -180,9 +180,7 @@ En lenguajes funcionales o dinámicos, simular interfaces y clases de otro ecosi
 La evidencia ejecutable se obtiene por dos vías complementarias:
 
 - el gate de patrón cubre C#, Java, Go, PHP, Python, Rust, JavaScript y TypeScript;
-- el CI general, limitado a ramas `patterns/*`, ejecuta además C, C++, Visual Basic .NET, Ruby, Perl y Bash. El lote quedó verde en `ce60820126eb3eff97dea5b01f445d560897c760` después de corregir ownership polimórfico en C++ con destructores virtuales y `std::unique_ptr`.
-
-Erlang ya está conectado al mismo CI con Erlang/OTP 28.5.0.4, pero no se promoverá hasta observar un run verde sobre su nueva representación de familia.
+- el CI general, limitado a ramas `patterns/*`, ejecuta además C, C++, Visual Basic .NET, Ruby, Perl, Bash y Erlang. El lote C/C++/VB/Ruby/Perl/Bash quedó verde en `ce60820126eb3eff97dea5b01f445d560897c760`; Erlang/OTP 28.5.0.4 quedó verde después de reestructurar la selección familiar como un único map de constructores.
 
 Esto es evidencia de ejecución, no line coverage. La política >=44% se aplica cuando un ecosistema tenga medición de coverage significativa; no se inventa un porcentaje transversal para ejemplos heterogéneos.
 
@@ -197,7 +195,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Ada | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Solidity | Applicable | — | Pendiente | Contratos/interfaces pueden representar la familia. |
 | Fortran | Applicable | — | Pendiente | Módulos/procedimientos/tipos derivados pueden representar la familia. |
-| Pascal | Applicable | — | Missing | Requiere ejemplo verificado. |
+| Pascal | Applicable | [`example1.pas`](../src/Historical/Pascal/example1.pas) | Ejemplo añadido; ejecución pendiente | Record de function pointers selecciona la familia una sola vez. |
 | Python | Applicable | [`example1.py`](../src/Scripting/PythonPY/example1.py) | Python 3.14 run ✅ | Fábricas dinámicas Dark/Light. |
 | Visual Basic .NET | Applicable | [`Example1.vb`](../src/Enterprise/VisualBasic/Example1.vb) | .NET 10 compile/run ✅ | Dos familias concretas verificadas en CI. |
 | C++ | Applicable | [`example1.cpp`](../src/Systems/C%2B%2B/example1.cpp) | C++20 `-Werror` compile/run ✅ | RAII, destructores virtuales y `std::unique_ptr`. |
@@ -233,18 +231,18 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Assembly | Applicable | — | Pendiente | Puede expresarse con tablas de direcciones/rutinas. |
 | Elixir | Applicable | — | Pendiente | Módulos/funciones/datos pueden representar la familia. |
 | Shell | Applicable | [`example1.sh`](../src/Shell/Bash/example1.sh) | `bash -n` + run ✅ | Reparado: associative array + nameref seleccionan una familia una sola vez. |
-| Erlang | Applicable | — | Reworked, CI pending | [`example1.erl`](../src/Functional/Erlang/example1.erl) ahora usa un único map de funciones por familia. |
+| Erlang | Applicable | [`example1.erl`](../src/Functional/Erlang/example1.erl) | OTP 28.5.0.4 compile/run ✅ | Map de funciones encapsula una familia completa. |
 | Clojure | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Common Lisp | Applicable | — | Pendiente | Revisar implementación histórica y ruta real. |
 | Prolog | Applicable | — | Pendiente | Hechos/reglas con identificador común pueden representar familias. |
 | Delphi | Applicable | — | Pendiente | [`Example1.pas`](../src/Enterprise/Delphi/Example1.pas) tiene semántica compatible; falta gate ejecutable. |
-| GNU Octave | Applicable | — | Missing | Puede expresarse mediante funciones/structs; requiere ejemplo. |
+| GNU Octave | Applicable | [`example1.m`](../src/DataScience/Octave/example1.m) | Ejemplo añadido; ejecución pendiente | Struct de function handles representa una familia completa. |
 | SQL | N/A | — | — | SQL declarativo modela/consulta datos, pero no ofrece por sí solo una frontera idiomática de creación de familias runtime. |
 | CSS | N/A | — | — | CSS selecciona estilos; no crea familias de objetos runtime. |
 | MicroPython | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Rockstar | Applicable | — | Pendiente | Variables, funciones y control de flujo permiten representar selección de familia; requiere revisión idiomática. |
 
-**Cobertura actual verificada: 15 / 48 lenguajes Applicable (31.25%).**
+**Cobertura actual verificada: 16 / 48 lenguajes Applicable (33.3%).**
 
 La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe conservar la intención, resolver su enlace y tener evidencia proporcional.
 
@@ -260,7 +258,7 @@ La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe 
 - El movimiento de diseño es seleccionar una fábrica/familia una vez y pedirle productos relacionados.
 - El principal trade-off es facilitar nuevas familias a costa de encarecer nuevos tipos de producto.
 - Factory Method puede colaborar con Abstract Factory, pero no define su intención.
-- La evidencia asciende a 15/48; la página permanece `in-progress` hasta `48/48`.
+- La evidencia asciende a 16/48; la página permanece `in-progress` hasta `48/48`.
 
 ## Referencias
 
