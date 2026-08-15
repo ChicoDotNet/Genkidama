@@ -3,9 +3,9 @@ initiative:
   status: pilots_complete
   source_locale: es
   last_updated: '2026-08-14'
-  active_work: java_course
+  active_work: go_course
   v1_courses_total: 45
-  v1_courses_complete: 6
+  v1_courses_complete: 7
 foundation:
   status: complete
   catalog: complete
@@ -62,7 +62,13 @@ courses:
   vbnet: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   cpp: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   objective-c: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
-  java: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  java:
+    status: complete
+    lessons_complete: 17
+    lessons_total: 17
+    ci: green
+    last_green_executable_sha: 864affe5d606ad445342c3c12a5d1b2fb171d2aa
+    pr: 43
   rust: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   zig: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   go: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
