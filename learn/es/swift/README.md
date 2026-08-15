@@ -4,11 +4,11 @@ Swift es un lenguaje moderno, seguro y expresivo creado para construir software 
 
 ## Qué vas a construir
 
-TimeQuote comienza como un paquete Swift ejecutable y probado con SwiftPM. Esa base permite aprender tipos, value semantics, colecciones, errores y pruebas sin depender de una interfaz gráfica. Cuando el dominio lo justifique, el mismo modelo alimentará una interfaz SwiftUI en macOS/iOS sin duplicar reglas de negocio.
+TimeQuote comienza como un paquete Swift ejecutable y probado con SwiftPM. Esa base permite aprender tipos, value semantics, colecciones, errores, protocolos y pruebas sin depender de una interfaz gráfica. Cuando el dominio lo justifique, el mismo modelo alimentará una interfaz SwiftUI en macOS/iOS sin duplicar reglas de negocio.
 
 ## Estado
 
-**En progreso: 4/17 lecciones.** El primer slice ya ejecuta una aplicación real, modela clientes y registros de tiempo, calcula importes en centavos y protege reglas básicas con pruebas.
+**En progreso: 8/17 lecciones.** TimeQuote ya modela clientes y tiempo, calcula importes, protege reglas con pruebas y separa casos de uso de almacenamiento mediante un protocolo reemplazable.
 
 ## Tooling verificado
 
@@ -25,10 +25,15 @@ Swift también dispone de instalación oficial para Windows y Linux, por lo que 
 2. [Modela clientes y tiempo con tipos de Swift](lessons/02-modela-el-dominio.md)
 3. [Colecciones y cálculo de importes](lessons/03-colecciones-y-totales.md)
 4. [Errores explícitos y pruebas de comportamiento](lessons/04-errores-y-pruebas.md)
+5. [Protocolos como contratos reemplazables](lessons/05-protocolos-y-contratos.md)
+6. [Casos de uso sin framework](lessons/06-casos-de-uso.md)
+7. [Una implementación en memoria para aprender y probar](lessons/07-repositorio-en-memoria.md)
+8. [Integra la frontera antes de añadir disco](lessons/08-integracion-y-siguiente-persistencia.md)
 
-### Checkpoint
+### Checkpoints
 
 - [Checkpoint 01 — Un cliente, varias horas y un total verificable](lessons/checkpoint-01.md)
+- [Checkpoint 02 — Sustituye almacenamiento sin tocar el dominio](lessons/checkpoint-02.md)
 
 ## Instalar, build, test y run
 
@@ -64,4 +69,4 @@ Para ramas, historial, recuperación y colaboración utiliza el [curso transvers
 
 ## Siguiente paso
 
-Empieza por [la lección 1](lessons/01-primer-registro.md).
+Si empiezas desde cero, comienza por [la lección 1](lessons/01-primer-registro.md). Si ya completaste el primer checkpoint, continúa con [la lección 5](lessons/05-protocolos-y-contratos.md).
