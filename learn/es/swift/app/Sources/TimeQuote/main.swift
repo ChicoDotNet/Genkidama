@@ -14,6 +14,6 @@ do {
     print("Minutos registrados: \(summary.minutes)")
     print("Importe: $\(pesos)")
 } catch {
-    fputs("No fue posible calcular el resumen: \(error)\n", stderr)
+    print("No fue posible calcular el resumen: \(error)")
     exit(EXIT_FAILURE)
 }
