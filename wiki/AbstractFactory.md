@@ -3,7 +3,7 @@
 > **Familia:** Creational  
 > **Intención:** Proporcionar una abstracción para crear familias de productos relacionados o dependientes sin acoplar al cliente a sus tipos concretos.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `9/48`  
+> **Implementaciones de lenguaje:** `15/48`  
 > **Cobertura de pruebas:** `N/A` — este catálogo valida ejemplos por compilación/ejecución cuando es práctico; no existe una métrica homogénea de line coverage entre 48 ecosistemas.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -103,7 +103,7 @@ public static void CreateUIComponents(UIFactory factory)
 }
 ```
 
-La implementación completa está en [`src/Enterprise/C#/Example1.cs`](../src/Enterprise/C%23/Example1.cs) y se compila/ejecuta en el gate `Pattern Abstract Factory`.
+La implementación completa está en [`src/Enterprise/C#/Example1.cs`](../src/Enterprise/C%23/Example1.cs).
 
 ## Aplicación real
 
@@ -161,7 +161,7 @@ Una operación `createX()` no convierte automáticamente una solución en Abstra
 
 ### Separar los selectores hasta perder la familia
 
-Dos funciones independientes `createButton(theme)` y `createCheckbox(theme)` permiten elegir temas distintos y rompen la garantía central. Ese defecto existía en los ejemplos históricos de JavaScript, Shell y Erlang; JavaScript fue reparado en este PR.
+Dos funciones independientes `createButton(theme)` y `createCheckbox(theme)` permiten elegir temas distintos y rompen la garantía central. Ese defecto histórico ya fue corregido en JavaScript, Perl y Shell dentro de este PR; Erlang también fue reestructurado y está pendiente de evidencia ejecutable antes de promoverse a `Verified`.
 
 ### Traducir mecánicamente una jerarquía OO
 
@@ -177,18 +177,14 @@ En lenguajes funcionales o dinámicos, simular interfaces y clases de otro ecosi
 
 ## Validación automatizada
 
-El workflow [`pattern-abstract-factory.yml`](../.github/workflows/pattern-abstract-factory.yml) valida el primer lote ejecutable del catálogo. En su run verde inicial compila o ejecuta:
+La evidencia ejecutable se obtiene por dos vías complementarias:
 
-- C# con .NET 10;
-- Java con Java 25;
-- Go con Go 1.26.5;
-- PHP con PHP 8.5;
-- Python con Python 3.14;
-- Rust mediante `rustc` estable del runner;
-- JavaScript con Node 24;
-- TypeScript con Node 24 + TypeScript 6.0.3.
+- el gate de patrón cubre C#, Java, Go, PHP, Python, Rust, JavaScript y TypeScript;
+- el CI general, limitado a ramas `patterns/*`, ejecuta además C, C++, Visual Basic .NET, Ruby, Perl y Bash. El lote quedó verde en `ce60820126eb3eff97dea5b01f445d560897c760` después de corregir ownership polimórfico en C++ con destructores virtuales y `std::unique_ptr`.
 
-Esto es evidencia de ejecución, no line coverage. La política >=44% se aplicará cuando un ecosistema tenga medición de coverage significativa; no se inventa un porcentaje transversal para ejemplos heterogéneos.
+Erlang ya está conectado al mismo CI con Erlang/OTP 28.5.0.4, pero no se promoverá hasta observar un run verde sobre su nueva representación de familia.
+
+Esto es evidencia de ejecución, no line coverage. La política >=44% se aplica cuando un ecosistema tenga medición de coverage significativa; no se inventa un porcentaje transversal para ejemplos heterogéneos.
 
 ## Implementaciones por lenguaje
 
@@ -203,8 +199,8 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Fortran | Applicable | — | Pendiente | Módulos/procedimientos/tipos derivados pueden representar la familia. |
 | Pascal | Applicable | — | Missing | Requiere ejemplo verificado. |
 | Python | Applicable | [`example1.py`](../src/Scripting/PythonPY/example1.py) | Python 3.14 run ✅ | Fábricas dinámicas Dark/Light. |
-| Visual Basic .NET | Applicable | — | Pendiente | [`Example1.vb`](../src/Enterprise/VisualBasic/Example1.vb) tiene semántica compatible; falta gate ejecutable. |
-| C++ | Applicable | — | Pendiente | [`example1.cpp`](../src/Systems/C%2B%2B/example1.cpp) tiene semántica compatible; falta gate ejecutable. |
+| Visual Basic .NET | Applicable | [`Example1.vb`](../src/Enterprise/VisualBasic/Example1.vb) | .NET 10 compile/run ✅ | Dos familias concretas verificadas en CI. |
+| C++ | Applicable | [`example1.cpp`](../src/Systems/C%2B%2B/example1.cpp) | C++20 `-Werror` compile/run ✅ | RAII, destructores virtuales y `std::unique_ptr`. |
 | Objective-C | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Java | Applicable | [`Example1.java`](../src/Enterprise/Java/Example1.java) | Java 25 compile/run ✅ | `UIFactory` conserva Button + Checkbox. |
 | Rust | Applicable | [`example1.rs`](../src/Systems/Rust/example1.rs) | `rustc` compile/run ✅ | Traits + factories concretas. |
@@ -218,26 +214,26 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | F# | Applicable | — | Pendiente | Revisar ruta real e implementación histórica. |
 | Crystal | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Lua | Applicable | — | Pendiente | Revisar implementación histórica. |
-| Haskell | Applicable | [`Example1.hs`](../src/Functional/Haskell/Example1.hs) | Inspección semántica + ruta ✅ | Record `UIFactory` de operaciones; ejecución automatizada pendiente de ampliar gate. |
+| Haskell | Applicable | [`Example1.hs`](../src/Functional/Haskell/Example1.hs) | Inspección semántica + ruta ✅ | Record `UIFactory` de operaciones; ejecución automatizada pendiente. |
 | COBOL | Applicable | — | Pendiente | Programas/subprogramas y tablas pueden representar la selección común. |
 | Scala | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Groovy | Applicable | — | Pendiente | Revisar implementación histórica. |
-| Ruby | Applicable | — | Pendiente | [`example1.rb`](../src/Scripting/RubyRB/example1.rb) tiene semántica compatible; falta gate ejecutable. |
-| C | Applicable | — | Pendiente | [`example1.c`](../src/Systems/C/example1.c) usa una struct de function pointers; falta gate ejecutable. |
+| Ruby | Applicable | [`example1.rb`](../src/Scripting/RubyRB/example1.rb) | syntax check + run ✅ | Factory concreta preserva la familia. |
+| C | Applicable | [`example1.c`](../src/Systems/C/example1.c) | C17 `-Werror` compile/run ✅ | Struct de function pointers representa una familia. |
 | OCaml | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Julia | Applicable | — | Pendiente | Revisar implementación histórica. |
 | VBA | Applicable | — | Pendiente | Revisar implementación histórica y ruta real. |
 | GDScript | Applicable | — | Pendiente | Revisar implementación histórica. |
-| JavaScript | Applicable | [`example1.js`](../src/Web/JavaScriptJS/example1.js) | Node 24 run ✅ | Reparado: selecciona una sola factory por familia; ya no mezcla temas por producto. |
+| JavaScript | Applicable | [`example1.js`](../src/Web/JavaScriptJS/example1.js) | Node 24 run ✅ | Selecciona una sola factory por familia. |
 | MATLAB | Applicable | — | Pendiente | Revisar implementación histórica. |
-| Perl | Applicable | — | Needs rework | El ejemplo histórico elige tema por producto y permite mezclar familias. |
+| Perl | Applicable | [`example1.pl`](../src/Scripting/Perl/example1.pl) | syntax check + run ✅ | Reparado: una factory agrupa ambos constructores. |
 | R | Applicable | — | Pendiente | Revisar implementación histórica. |
 | PowerShell | Applicable | — | Pendiente | Revisar implementación histórica. |
 | HTML | N/A | — | — | HTML describe estructura; JavaScript embebido sigue siendo JavaScript. |
 | Assembly | Applicable | — | Pendiente | Puede expresarse con tablas de direcciones/rutinas. |
 | Elixir | Applicable | — | Pendiente | Módulos/funciones/datos pueden representar la familia. |
-| Shell | Applicable | — | Needs rework | [`example1.sh`](../src/Shell/Bash/example1.sh) selecciona tema por producto y permite mezclar familias. |
-| Erlang | Applicable | — | Needs rework | [`example1.erl`](../src/Functional/Erlang/example1.erl) expone selectores independientes y permite mezclar familias. |
+| Shell | Applicable | [`example1.sh`](../src/Shell/Bash/example1.sh) | `bash -n` + run ✅ | Reparado: associative array + nameref seleccionan una familia una sola vez. |
+| Erlang | Applicable | — | Reworked, CI pending | [`example1.erl`](../src/Functional/Erlang/example1.erl) ahora usa un único map de funciones por familia. |
 | Clojure | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Common Lisp | Applicable | — | Pendiente | Revisar implementación histórica y ruta real. |
 | Prolog | Applicable | — | Pendiente | Hechos/reglas con identificador común pueden representar familias. |
@@ -248,7 +244,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | MicroPython | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Rockstar | Applicable | — | Pendiente | Variables, funciones y control de flujo permiten representar selección de familia; requiere revisión idiomática. |
 
-**Cobertura actual verificada: 9 / 48 lenguajes Applicable (18.8%).**
+**Cobertura actual verificada: 15 / 48 lenguajes Applicable (31.25%).**
 
 La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe conservar la intención, resolver su enlace y tener evidencia proporcional.
 
@@ -264,7 +260,7 @@ La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe 
 - El movimiento de diseño es seleccionar una fábrica/familia una vez y pedirle productos relacionados.
 - El principal trade-off es facilitar nuevas familias a costa de encarecer nuevos tipos de producto.
 - Factory Method puede colaborar con Abstract Factory, pero no define su intención.
-- El primer gate ejecutable elevó la evidencia a 9/48; la página permanece `in-progress` hasta `48/48`.
+- La evidencia asciende a 15/48; la página permanece `in-progress` hasta `48/48`.
 
 ## Referencias
 
