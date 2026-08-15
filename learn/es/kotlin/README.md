@@ -8,14 +8,14 @@ FieldFlow comienza con un núcleo Kotlin puro que modela órdenes y reglas de ne
 
 ## Estado
 
-Curso en construcción: **4/17 lecciones**.
+Curso en construcción: **8/17 lecciones**.
 
 ## Tooling verificado
 
 - Kotlin 2.4.10.
 - JDK 17 como baseline compatible con Android Gradle Plugin actual.
 - Gradle 9.5 cuando se incorpore el módulo Android.
-- Primer slice: Kotlin/JVM + Gradle para que las reglas de negocio tengan feedback rápido y CI ligero.
+- Slice actual: Kotlin/JVM + Gradle para que dominio, casos de uso y frontera de persistencia tengan feedback rápido y CI ligero.
 
 ## Lecciones
 
@@ -23,21 +23,29 @@ Curso en construcción: **4/17 lecciones**.
 2. [Modela datos con data class y enum](lessons/02-modela-el-dominio.md)
 3. [Colecciones y reglas de prioridad](lessons/03-colecciones-y-reglas.md)
 4. [Errores explícitos y pruebas](lessons/04-errores-y-pruebas.md)
+5. [Sealed types para resultados explícitos](lessons/05-sealed-results.md)
+6. [Casos de uso sin depender de Android](lessons/06-casos-de-uso.md)
+7. [Una frontera para persistencia](lessons/07-frontera-persistencia.md)
+8. [Integra el flujo y protege comportamiento](lessons/08-integra-y-protege.md)
+
+### Checkpoints
+
+- [Checkpoint 02 — Fronteras y resultados](lessons/checkpoint-02.md)
 
 ## Instalar, build, test y run
 
-Necesitas JDK 17+. En el slice inicial:
+Necesitas JDK 17+. En el slice actual:
 
 ```bash
 gradle test
 gradle run
 ```
 
-Android Studio será necesario cuando el curso incorpore la aplicación Android; no es requisito para las primeras lecciones de lenguaje.
+Android Studio será necesario cuando el curso incorpore la aplicación Android; no es requisito para las primeras lecciones de lenguaje y arquitectura de aplicación.
 
 ## Qué sabrás hacer al terminar
 
-Leer y escribir Kotlin idiomático, modelar datos y nullability, usar colecciones, funciones y lambdas, manejar errores, probar comportamiento, estructurar una aplicación, persistir offline y construir una UI Android que consume el mismo dominio.
+Leer y escribir Kotlin idiomático, modelar datos y nullability, usar colecciones, funciones y lambdas, manejar resultados y errores, probar comportamiento, estructurar una aplicación, persistir offline y construir una UI Android que consume el mismo dominio.
 
 ## Contexto profesional
 
