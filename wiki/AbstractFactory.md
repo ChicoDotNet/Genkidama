@@ -3,7 +3,7 @@
 > **Familia:** Creational  
 > **Intención:** Proporcionar una abstracción para crear familias de productos relacionados o dependientes sin acoplar al cliente a sus tipos concretos.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `32/48`  
+> **Implementaciones de lenguaje:** `34/48`  
 > **Cobertura de pruebas:** `N/A` — este catálogo valida ejemplos por compilación/ejecución cuando es práctico; no existe una métrica homogénea de line coverage entre 48 ecosistemas.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -183,7 +183,8 @@ La evidencia ejecutable se obtiene de gates históricos y del CI general condici
 - el CI general ejecuta C, C++, Visual Basic .NET, F#, Ruby, Perl, Bash, PowerShell, Erlang, Pascal, GNU Octave, R y Lua;
 - el mismo CI ejecuta Haskell, Kotlin, Swift y Julia;
 - el gate ampliado en `893cd4ac2b056aa3e7bbaff41a95f059e0d9f567` ejecutó además Scala, Fortran, OCaml y Common Lisp. El primer intento reveló únicamente que `missing-mli` de OCaml no es apropiado como error para un ejemplo standalone; todos los demás warnings siguen siendo estrictos y el segundo intento quedó verde;
-- el gate en `ed56a2aa4c51df75e0f38e5795d9c07a3d180e0a` ejecutó Clojure, compiló Elixir con `elixirc --warnings-as-errors` y ejecutó Prolog con SWI-Prolog. Ese corte también corrigió una deuda de indentación Ruby detectada por el propio runner.
+- el gate en `ed56a2aa4c51df75e0f38e5795d9c07a3d180e0a` ejecutó Clojure, compiló Elixir con `elixirc --warnings-as-errors` y ejecutó Prolog con SWI-Prolog. Ese corte también corrigió una deuda de indentación Ruby detectada por el propio runner;
+- el gate en `c0dea39a6660b3195677c10f150710a9901e1a7e` compiló y ejecutó Ada con GNAT 2022 y warnings como errores, y compiló Solidity 0.8.30 verificando bytecode no vacío para `Example1`.
 
 Esto es evidencia de ejecución, no line coverage. La política >=44% se aplica cuando un ecosistema tenga medición de coverage significativa; no se inventa un porcentaje transversal para ejemplos heterogéneos.
 
@@ -195,8 +196,8 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 |---|---|---|---|---|
 | C# | Applicable | [`Example1.cs`](../src/Enterprise/C%23/Example1.cs) | .NET 10 compile/run ✅ | Interfaces + dos familias completas. |
 | TypeScript | Applicable | [`example1.ts`](../src/Web/TypeScriptTS/example1.ts) | TS 6.0.3 strict compile + Node 24 run ✅ | Interfaz de fábrica explícita. |
-| Ada | Applicable | — | Pendiente | Revisar implementación histórica. |
-| Solidity | Applicable | — | Pendiente | Contratos/interfaces pueden representar la familia. |
+| Ada | Applicable | [`example1.adb`](../src/Historical/Ada/example1.adb) | GNAT Ada 2022 `-gnatwa -gnatwe` compile/run ✅ | Record de access-to-function selecciona una familia una sola vez sin imponer jerarquía OO artificial. |
+| Solidity | Applicable | [`Example1.sol`](../src/Niche/Solidity/Example1.sol) | Solidity 0.8.30 compile + bytecode artifact ✅ | `UIFactory` y factories Dark/Light conservan la familia; las rutas que despliegan contratos son correctamente no-`view`. |
 | Fortran | Applicable | [`example1.f90`](../src/Historical/Fortran/example1.f90) | Fortran 2018 `-Werror` compile/run ✅ | `ui_factory` selecciona una familia una sola vez y produce ambos productos. |
 | Pascal | Applicable | [`example1.pas`](../src/Historical/Pascal/example1.pas) | Free Pascal compile/run ✅ | Record de function pointers selecciona la familia una sola vez. |
 | Python | Applicable | [`example1.py`](../src/Scripting/PythonPY/example1.py) | Python 3.14 run ✅ | Fábricas dinámicas Dark/Light. |
@@ -245,7 +246,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | MicroPython | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Rockstar | Applicable | — | Pendiente | Variables, funciones y control de flujo permiten representar selección de familia; requiere revisión idiomática. |
 
-**Cobertura actual verificada: 32 / 48 lenguajes Applicable (66.7%).**
+**Cobertura actual verificada: 34 / 48 lenguajes Applicable (70.8%).**
 
 La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe conservar la intención, resolver su enlace y tener evidencia proporcional.
 
@@ -261,7 +262,7 @@ La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe 
 - El movimiento de diseño es seleccionar una fábrica/familia una vez y pedirle productos relacionados.
 - El principal trade-off es facilitar nuevas familias a costa de encarecer nuevos tipos de producto.
 - Factory Method puede colaborar con Abstract Factory, pero no define su intención.
-- La evidencia asciende a 32/48; la página permanece `in-progress` hasta `48/48`.
+- La evidencia asciende a 34/48; la página permanece `in-progress` hasta `48/48`.
 
 ## Referencias
 
