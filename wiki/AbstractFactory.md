@@ -3,7 +3,7 @@
 > **Familia:** Creational  
 > **Intención:** Proporcionar una abstracción para crear familias de productos relacionados o dependientes sin acoplar al cliente a sus tipos concretos.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `41/48`  
+> **Implementaciones de lenguaje:** `42/48`  
 > **Cobertura de pruebas:** `N/A` — este catálogo valida ejemplos por compilación/ejecución cuando es práctico; no existe una métrica homogénea de line coverage entre 48 ecosistemas.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -186,7 +186,8 @@ La evidencia ejecutable se obtiene de gates históricos y del CI general condici
 - el gate en `ed56a2aa4c51df75e0f38e5795d9c07a3d180e0a` ejecutó Clojure, compiló Elixir con `elixirc --warnings-as-errors` y ejecutó Prolog con SWI-Prolog. Ese corte también corrigió una deuda de indentación Ruby detectada por el propio runner;
 - el gate en `c0dea39a6660b3195677c10f150710a9901e1a7e` compiló y ejecutó Ada con GNAT 2022 y warnings como errores, y compiló Solidity 0.8.30 verificando bytecode no vacío para `Example1`;
 - el head verde `a090d299908dc9f5338dadf6b468f25458218bd9` compiló/ejecutó COBOL con GnuCOBOL y Assembly x86-64 con NASM + `ld`, comprobando además la salida exacta de las cuatro variantes;
-- el head verde `18999b8b9c58ca68b5e2497e8e05948c941a7de6` ejecutó Zig, Nim, Dart, Crystal y Groovy con formato/análisis/compilación proporcional y comprobó la salida exacta de las familias Dark/Light.
+- el head verde `18999b8b9c58ca68b5e2497e8e05948c941a7de6` ejecutó Zig, Nim, Dart, Crystal y Groovy con formato/análisis/compilación proporcional y comprobó la salida exacta de las familias Dark/Light;
+- el job macOS del head `72daa2efb7aa34645c0ab026bba99c8d8769b45c` compiló Objective-C con ARC, Foundation y warnings como errores, ejecutó el binario y comprobó las cuatro variantes Dark/Light.
 
 Esto es evidencia de ejecución, no line coverage. La política >=44% se aplica cuando un ecosistema tenga medición de coverage significativa; no se inventa un porcentaje transversal para ejemplos heterogéneos.
 
@@ -205,7 +206,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Python | Applicable | [`example1.py`](../src/Scripting/PythonPY/example1.py) | Python 3.14 run ✅ | Fábricas dinámicas Dark/Light. |
 | Visual Basic .NET | Applicable | [`Example1.vb`](../src/Enterprise/VisualBasic/Example1.vb) | .NET 10 compile/run ✅ | Dos familias concretas verificadas en CI. |
 | C++ | Applicable | [`example1.cpp`](../src/Systems/C%2B%2B/example1.cpp) | C++20 `-Werror` compile/run ✅ | RAII, destructores virtuales y `std::unique_ptr`. |
-| Objective-C | Applicable | — | Pendiente | [`example1.m`](../src/Systems/Objective-C/example1.m) preserva la familia; falta evidencia ejecutable proporcional. |
+| Objective-C | Applicable | [`example1.m`](../src/Systems/Objective-C/example1.m) | macOS + Clang `-fobjc-arc -Wall -Wextra -Werror` + Foundation compile/run ✅ | Protocols + factories concretas conservan la familia; el gate comprueba las cuatro variantes. |
 | Java | Applicable | [`Example1.java`](../src/Enterprise/Java/Example1.java) | Java 25 compile/run ✅ | `UIFactory` conserva Button + Checkbox. |
 | Rust | Applicable | [`example1.rs`](../src/Systems/Rust/example1.rs) | `rustc` compile/run ✅ | Traits + factories concretas. |
 | Zig | Applicable | [`example1.zig`](../src/Systems/Zig/example1.zig) | Zig 0.16.0 `fmt --check` + run + exact output ✅ | Struct de function pointers selecciona una familia una sola vez. |
@@ -248,7 +249,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | MicroPython | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Rockstar | Applicable | — | Pendiente | Variables, funciones y control de flujo permiten representar selección de familia; requiere revisión idiomática. |
 
-**Cobertura actual verificada: 41 / 48 lenguajes Applicable (85.4%).**
+**Cobertura actual verificada: 42 / 48 lenguajes Applicable (87.5%).**
 
 La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe conservar la intención, resolver su enlace y tener evidencia proporcional.
 
@@ -264,7 +265,7 @@ La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe 
 - El movimiento de diseño es seleccionar una fábrica/familia una vez y pedirle productos relacionados.
 - El principal trade-off es facilitar nuevas familias a costa de encarecer nuevos tipos de producto.
 - Factory Method puede colaborar con Abstract Factory, pero no define su intención.
-- La evidencia asciende a 41/48; la página permanece `in-progress` hasta `48/48`.
+- La evidencia asciende a 42/48; la página permanece `in-progress` hasta `48/48`.
 
 ## Referencias
 
