@@ -8,7 +8,7 @@ FieldFlow comienza con un núcleo Kotlin puro que modela órdenes y reglas de ne
 
 ## Estado
 
-Curso en construcción: **16/17 lecciones**.
+Temario completo: **17/17 lecciones**. El curso permanece `in_progress` hasta materializar y validar evidencia Android/Room/Compose proporcional al alcance prometido por la aplicación canónica.
 
 ## Tooling verificado
 
@@ -36,6 +36,7 @@ Curso en construcción: **16/17 lecciones**.
 14. [Modela estado observable para la UI](lessons/14-estado-ui.md)
 15. [Construye una pantalla Compose desde el estado](lessons/15-compose.md)
 16. [Diseña FieldFlow offline first](lessons/16-offline-first.md)
+17. [Evaluación final: entrega FieldFlow](lessons/17-evaluacion-final.md)
 
 ### Checkpoints
 
