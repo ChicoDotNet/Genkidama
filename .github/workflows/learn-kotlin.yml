@@ -41,9 +41,9 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.6.1'
-      - name: Install Android 37 platform
+      - name: Install stable Android 36 platform
         run: |
-          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37' 'build-tools;36.0.0'
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-36' 'build-tools;36.0.0'
       - name: Compile Room and Compose Android app
         working-directory: learn/es/kotlin/android
         run: gradle :app:assembleDebug :app:testDebugUnitTest
