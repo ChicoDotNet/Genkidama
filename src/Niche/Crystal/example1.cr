@@ -1,15 +1,14 @@
 alias UIFactory = NamedTuple(
   button: Proc(String),
-  checkbox: Proc(String)
-)
+  checkbox: Proc(String))
 
 DARK_FACTORY = {
-  button: -> { "Dark Button" },
+  button:   -> { "Dark Button" },
   checkbox: -> { "Dark Checkbox" },
 }
 
 LIGHT_FACTORY = {
-  button: -> { "Light Button" },
+  button:   -> { "Light Button" },
   checkbox: -> { "Light Checkbox" },
 }
 
