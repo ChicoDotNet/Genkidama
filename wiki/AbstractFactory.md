@@ -3,7 +3,7 @@
 > **Familia:** Creational  
 > **Intención:** Proporcionar una abstracción para crear familias de productos relacionados o dependientes sin acoplar al cliente a sus tipos concretos.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `29/48`  
+> **Implementaciones de lenguaje:** `32/48`  
 > **Cobertura de pruebas:** `N/A` — este catálogo valida ejemplos por compilación/ejecución cuando es práctico; no existe una métrica homogénea de line coverage entre 48 ecosistemas.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -182,7 +182,8 @@ La evidencia ejecutable se obtiene de gates históricos y del CI general condici
 - el lote inicial certificó C#, Java, Go, PHP, Python, Rust, JavaScript y TypeScript;
 - el CI general ejecuta C, C++, Visual Basic .NET, F#, Ruby, Perl, Bash, PowerShell, Erlang, Pascal, GNU Octave, R y Lua;
 - el mismo CI ejecuta Haskell, Kotlin, Swift y Julia;
-- el gate ampliado en `893cd4ac2b056aa3e7bbaff41a95f059e0d9f567` ejecutó además Scala, Fortran, OCaml y Common Lisp. El primer intento reveló únicamente que `missing-mli` de OCaml no es apropiado como error para un ejemplo standalone; todos los demás warnings siguen siendo estrictos y el segundo intento quedó verde.
+- el gate ampliado en `893cd4ac2b056aa3e7bbaff41a95f059e0d9f567` ejecutó además Scala, Fortran, OCaml y Common Lisp. El primer intento reveló únicamente que `missing-mli` de OCaml no es apropiado como error para un ejemplo standalone; todos los demás warnings siguen siendo estrictos y el segundo intento quedó verde;
+- el gate en `ed56a2aa4c51df75e0f38e5795d9c07a3d180e0a` ejecutó Clojure, compiló Elixir con `elixirc --warnings-as-errors` y ejecutó Prolog con SWI-Prolog. Ese corte también corrigió una deuda de indentación Ruby detectada por el propio runner.
 
 Esto es evidencia de ejecución, no line coverage. La política >=44% se aplica cuando un ecosistema tenga medición de coverage significativa; no se inventa un porcentaje transversal para ejemplos heterogéneos.
 
@@ -231,12 +232,12 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | PowerShell | Applicable | [`example1.ps1`](../src/Shell/PowerShell/example1.ps1) | `pwsh` strict run ✅ | Hashtable de scriptblocks representa una familia seleccionada una vez. |
 | HTML | N/A | — | — | HTML describe estructura; JavaScript embebido sigue siendo JavaScript. |
 | Assembly | Applicable | — | Pendiente | Puede expresarse con tablas de direcciones/rutinas. |
-| Elixir | Applicable | — | Pendiente | Módulos/funciones/datos pueden representar la familia. |
+| Elixir | Applicable | [`example1.exs`](../src/Functional/Elixir/example1.exs) | `elixirc --warnings-as-errors` ✅ | Map de closures representa una familia coherente y se selecciona una sola vez. |
 | Shell | Applicable | [`example1.sh`](../src/Shell/Bash/example1.sh) | `bash -n` + run ✅ | Reparado: associative array + nameref seleccionan una familia una sola vez. |
 | Erlang | Applicable | [`example1.erl`](../src/Functional/Erlang/example1.erl) | OTP compile/run ✅ | Map de funciones encapsula una familia completa. |
-| Clojure | Applicable | — | Pendiente | Revisar implementación histórica. |
+| Clojure | Applicable | [`example1.clj`](../src/Functional/Clojure/example1.clj) | Clojure run ✅ | Protocol + records concretos conservan Button y Checkbox bajo una sola factory. |
 | Common Lisp | Applicable | [`example1.lisp`](../src/Functional/Lisp/example1.lisp) | SBCL run ✅ | `ui-factory` agrupa dos closures de construcción bajo una sola familia. |
-| Prolog | Applicable | — | Pendiente | Hechos/reglas con identificador común pueden representar familias. |
+| Prolog | Applicable | [`example1.pl`](../src/Niche/Prolog/example1.pl) | SWI-Prolog run ✅ | Un término `factory(Button, Checkbox)` representa la familia completa seleccionada una sola vez. |
 | Delphi | Applicable | — | Pendiente | [`Example1.pas`](../src/Enterprise/Delphi/Example1.pas) tiene semántica compatible; falta gate ejecutable. |
 | GNU Octave | Applicable | [`example1.m`](../src/DataScience/Octave/example1.m) | GNU Octave run ✅ | Struct de function handles representa una familia completa. |
 | SQL | N/A | — | — | SQL declarativo modela/consulta datos, pero no ofrece por sí solo una frontera idiomática de creación de familias runtime. |
@@ -244,7 +245,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | MicroPython | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Rockstar | Applicable | — | Pendiente | Variables, funciones y control de flujo permiten representar selección de familia; requiere revisión idiomática. |
 
-**Cobertura actual verificada: 29 / 48 lenguajes Applicable (60.4%).**
+**Cobertura actual verificada: 32 / 48 lenguajes Applicable (66.7%).**
 
 La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe conservar la intención, resolver su enlace y tener evidencia proporcional.
 
@@ -260,7 +261,7 @@ La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe 
 - El movimiento de diseño es seleccionar una fábrica/familia una vez y pedirle productos relacionados.
 - El principal trade-off es facilitar nuevas familias a costa de encarecer nuevos tipos de producto.
 - Factory Method puede colaborar con Abstract Factory, pero no define su intención.
-- La evidencia asciende a 29/48; la página permanece `in-progress` hasta `48/48`.
+- La evidencia asciende a 32/48; la página permanece `in-progress` hasta `48/48`.
 
 ## Referencias
 
