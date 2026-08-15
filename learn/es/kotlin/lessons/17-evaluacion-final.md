@@ -10,7 +10,10 @@ Completa las lecciones 1–16 y los cuatro checkpoints. Esta evaluación no intr
 Un curso 0 → Junior no termina cuando puedes repetir los ejemplos. Termina cuando puedes recibir una base existente, entender sus fronteras, corregir un defecto, añadir comportamiento, protegerlo con pruebas y justificar tus decisiones.
 
 ## Encargo final
-Trabaja sobre FieldFlow como si recibieras una historia de mantenimiento real. Debes entregar las siguientes seis historias sin instrucciones de implementación detalladas.
+
+Trabaja primero con el [ejercicio final versionado](../exercises/final-fieldflow.md). No abras la solución de referencia hasta haber intentado las seis historias.
+
+Debes entregar las siguientes seis historias sin instrucciones de implementación detalladas.
 
 ### Historia 1 — Nueva prioridad operativa
 Añade una prioridad `CRITICAL` que aparezca antes que `HIGH`. Conserva compatibilidad con las órdenes ya persistidas y demuestra con pruebas el orden esperado.
@@ -50,7 +53,13 @@ gradle test
 gradle run
 ```
 
-Para el módulo Android, usa sus tareas de build/test cuando exista en tu copia. No sustituyas una validación Android faltante por una afirmación de que “debería funcionar”.
+Para el módulo Android:
+
+```bash
+gradle :app:assembleDebug :app:testDebugUnitTest
+```
+
+No sustituyas una validación Android faltante por una afirmación de que “debería funcionar”.
 
 La política del repositorio no exige perseguir 100% de code coverage: cuando sea medible, 44% es piso suficiente si los contratos, failure modes y regresiones relevantes están protegidos; 44%–72.8% es plenamente aceptable y una cifra superior es bienvenida.
 
@@ -87,6 +96,10 @@ Prepárate para responder con ejemplos concretos:
 7. ¿Qué cambiarías si FieldFlow tuviera 100,000 órdenes?
 
 No memorices respuestas. Usa decisiones que realmente puedas señalar en el código.
+
+## Solución de referencia
+
+Sólo después de intentar el ejercicio, compara tus decisiones con la [solución de referencia](../solutions/final-fieldflow.md). No necesitas coincidir con ella si puedes demostrar que tu alternativa conserva los contratos y explicar sus trade-offs.
 
 ## Referencias
 
