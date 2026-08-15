@@ -105,7 +105,7 @@ courses:
     lessons_complete: 4
     lessons_total: 17
     ci: pending
-    pr: null
+    pr: 57
   fsharp: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   crystal: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   lua: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
