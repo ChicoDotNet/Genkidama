@@ -1,40 +1,24 @@
-# Abstract Factory
-create_button <- function(theme) {
-  if (theme == "dark") {
-    return(dark_button)
-  } else if (theme == "light") {
-    return(light_button)
-  }
+make_factory <- function(create_button, create_checkbox) {
+  list(
+    create_button = create_button,
+    create_checkbox = create_checkbox
+  )
 }
 
-create_checkbox <- function(theme) {
-  if (theme == "dark") {
-    return(dark_checkbox)
-  } else if (theme == "light") {
-    return(light_checkbox)
-  }
+dark_factory <- make_factory(
+  function() "Dark Button",
+  function() "Dark Checkbox"
+)
+
+light_factory <- make_factory(
+  function() "Light Button",
+  function() "Light Checkbox"
+)
+
+render_ui <- function(factory) {
+  cat(factory$create_button(), "\n", sep = "")
+  cat(factory$create_checkbox(), "\n", sep = "")
 }
 
-# Concrete Products
-dark_button <- function() {
-  cat("Dark Button\n")
-}
-
-light_button <- function() {
-  cat("Light Button\n")
-}
-
-dark_checkbox <- function() {
-  cat("Dark Checkbox\n")
-}
-
-light_checkbox <- function() {
-  cat("Light Checkbox\n")
-}
-
-# Usage
-button <- create_button("dark")
-button()
-
-checkbox <- create_checkbox("light")
-checkbox()
+render_ui(dark_factory)
+render_ui(light_factory)
