@@ -23,6 +23,12 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
+      - name: Setup Erlang for pattern validation
+        if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'patterns/')
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '28.5.0.4'
+
       - name: Restore
         run: dotnet restore Genkidama.slnx
 
@@ -57,6 +63,10 @@ jobs:
 
           bash -n src/Shell/Bash/example1.sh
           bash src/Shell/Bash/example1.sh
+
+          erlang_out="$(mktemp -d)"
+          erlc -Werror -o "$erlang_out" src/Functional/Erlang/example1.erl
+          erl -noshell -pa "$erlang_out" -eval 'example1:main(), halt().'
 
       - name: Pack CLI Tool
         run: dotnet pack src/Genkidama.Cli/Genkidama.Cli.csproj --configuration Release --no-build --output artifacts/packages
