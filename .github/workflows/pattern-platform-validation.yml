@@ -55,11 +55,13 @@ jobs:
           release: latest
 
       - name: Validate MATLAB Abstract Factory
-        shell: bash
-        run: |
-          set -euo pipefail
-          matlab -batch "addpath('src/DataScience/MATLAB'); example1" 2>&1 | tee /tmp/matlab-output.txt
-          grep -Fxq 'Dark Button' /tmp/matlab-output.txt
-          grep -Fxq 'Dark Checkbox' /tmp/matlab-output.txt
-          grep -Fxq 'Light Button' /tmp/matlab-output.txt
-          grep -Fxq 'Light Checkbox' /tmp/matlab-output.txt
+        uses: matlab-actions/run-command@v3
+        with:
+          command: >-
+            addpath('src/DataScience/MATLAB');
+            output = evalc('example1');
+            disp(output);
+            assert(contains(output, "Dark Button"));
+            assert(contains(output, "Dark Checkbox"));
+            assert(contains(output, "Light Button"));
+            assert(contains(output, "Light Checkbox"));
