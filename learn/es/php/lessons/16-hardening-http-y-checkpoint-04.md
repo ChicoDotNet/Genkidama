@@ -83,7 +83,7 @@ Diseña cómo rotarías el token después de una autenticación futura sin rompe
 
 ## Siguiente paso
 
-La lección 17 será la evaluación Junior autónoma una vez que este bloque esté verde.
+Continúa con la [Lección 17 — Evaluación final sin receta](17-evaluacion-final.md) para demostrar que puedes mantener AgendaPHP sin instrucciones paso a paso.
 
 ## Referencias
 
