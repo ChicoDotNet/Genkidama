@@ -3,7 +3,7 @@
 > **Familia:** Creational  
 > **Intención:** Proporcionar una abstracción para crear familias de productos relacionados o dependientes sin acoplar al cliente a sus tipos concretos.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `25/48`  
+> **Implementaciones de lenguaje:** `29/48`  
 > **Cobertura de pruebas:** `N/A` — este catálogo valida ejemplos por compilación/ejecución cuando es práctico; no existe una métrica homogénea de line coverage entre 48 ecosistemas.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -161,7 +161,7 @@ Una operación `createX()` no convierte automáticamente una solución en Abstra
 
 ### Separar los selectores hasta perder la familia
 
-Dos funciones independientes `createButton(theme)` y `createCheckbox(theme)` permiten elegir temas distintos y rompen la garantía central. Ese defecto histórico ya fue corregido en JavaScript, Perl, Shell, Erlang, PowerShell y R dentro de este PR.
+Dos funciones independientes `createButton(theme)` y `createCheckbox(theme)` permiten elegir temas distintos y rompen la garantía central. Ese defecto histórico ya fue corregido en JavaScript, Perl, Shell, Erlang, PowerShell, R, Fortran y Common Lisp dentro de este PR.
 
 ### Traducir mecánicamente una jerarquía OO
 
@@ -181,7 +181,8 @@ La evidencia ejecutable se obtiene de gates históricos y del CI general condici
 
 - el lote inicial certificó C#, Java, Go, PHP, Python, Rust, JavaScript y TypeScript;
 - el CI general ejecuta C, C++, Visual Basic .NET, F#, Ruby, Perl, Bash, PowerShell, Erlang, Pascal, GNU Octave, R y Lua;
-- el mismo CI ejecuta ahora Haskell, Kotlin, Swift y Julia. El lote Haskell/Kotlin/Swift quedó verde en `b02a62e2b6674c14e5dd973241fec72c40c80d43`; Julia quedó verde junto con todo el gate en `3bf7d56b383cd1705e151935bc2edd10874587ac`.
+- el mismo CI ejecuta Haskell, Kotlin, Swift y Julia;
+- el gate ampliado en `893cd4ac2b056aa3e7bbaff41a95f059e0d9f567` ejecutó además Scala, Fortran, OCaml y Common Lisp. El primer intento reveló únicamente que `missing-mli` de OCaml no es apropiado como error para un ejemplo standalone; todos los demás warnings siguen siendo estrictos y el segundo intento quedó verde.
 
 Esto es evidencia de ejecución, no line coverage. La política >=44% se aplica cuando un ecosistema tenga medición de coverage significativa; no se inventa un porcentaje transversal para ejemplos heterogéneos.
 
@@ -195,7 +196,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | TypeScript | Applicable | [`example1.ts`](../src/Web/TypeScriptTS/example1.ts) | TS 6.0.3 strict compile + Node 24 run ✅ | Interfaz de fábrica explícita. |
 | Ada | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Solidity | Applicable | — | Pendiente | Contratos/interfaces pueden representar la familia. |
-| Fortran | Applicable | — | Pendiente | Módulos/procedimientos/tipos derivados pueden representar la familia. |
+| Fortran | Applicable | [`example1.f90`](../src/Historical/Fortran/example1.f90) | Fortran 2018 `-Werror` compile/run ✅ | `ui_factory` selecciona una familia una sola vez y produce ambos productos. |
 | Pascal | Applicable | [`example1.pas`](../src/Historical/Pascal/example1.pas) | Free Pascal compile/run ✅ | Record de function pointers selecciona la familia una sola vez. |
 | Python | Applicable | [`example1.py`](../src/Scripting/PythonPY/example1.py) | Python 3.14 run ✅ | Fábricas dinámicas Dark/Light. |
 | Visual Basic .NET | Applicable | [`Example1.vb`](../src/Enterprise/VisualBasic/Example1.vb) | .NET 10 compile/run ✅ | Dos familias concretas verificadas en CI. |
@@ -215,11 +216,11 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Lua | Applicable | [`example1.lua`](../src/Scripting/Lua/example1.lua) | Lua 5.4 run ✅ | Table de closures representa una familia completa. |
 | Haskell | Applicable | [`Example1.hs`](../src/Functional/Haskell/Example1.hs) | `runghc -Wall -Werror` ✅ | Record `UIFactory` de operaciones conserva una familia completa. |
 | COBOL | Applicable | — | Pendiente | Programas/subprogramas y tablas pueden representar la selección común. |
-| Scala | Applicable | — | Pendiente | [`Example1.scala`](../src/Functional/Scala/Example1.scala) preserva la familia; falta gate ejecutable. |
+| Scala | Applicable | [`Example1.scala`](../src/Functional/Scala/Example1.scala) | `scalac` compile + `scala` run ✅ | `UIFactory` conserva Button + Checkbox dentro de una familia seleccionada. |
 | Groovy | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Ruby | Applicable | [`example1.rb`](../src/Scripting/RubyRB/example1.rb) | syntax check + run ✅ | Factory concreta preserva la familia. |
 | C | Applicable | [`example1.c`](../src/Systems/C/example1.c) | C17 `-Werror` compile/run ✅ | Struct de function pointers representa una familia. |
-| OCaml | Applicable | — | Pendiente | Revisar implementación histórica. |
+| OCaml | Applicable | [`example1.ml`](../src/Functional/OCaml/example1.ml) | `ocamlc` strict compile/run ✅ | First-class module `UIFactory` agrupa ambos constructores; `missing-mli` se excluye por ser ejemplo standalone. |
 | Julia | Applicable | [`example1.jl`](../src/DataScience/Julia/example1.jl) | Julia run ✅ | Multiple dispatch + factories concretas conservan la familia. |
 | VBA | Applicable | — | Pendiente | Revisar implementación histórica y ruta real. |
 | GDScript | Applicable | — | Pendiente | Revisar implementación histórica. |
@@ -234,7 +235,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Shell | Applicable | [`example1.sh`](../src/Shell/Bash/example1.sh) | `bash -n` + run ✅ | Reparado: associative array + nameref seleccionan una familia una sola vez. |
 | Erlang | Applicable | [`example1.erl`](../src/Functional/Erlang/example1.erl) | OTP compile/run ✅ | Map de funciones encapsula una familia completa. |
 | Clojure | Applicable | — | Pendiente | Revisar implementación histórica. |
-| Common Lisp | Applicable | — | Pendiente | Revisar implementación histórica y ruta real. |
+| Common Lisp | Applicable | [`example1.lisp`](../src/Functional/Lisp/example1.lisp) | SBCL run ✅ | `ui-factory` agrupa dos closures de construcción bajo una sola familia. |
 | Prolog | Applicable | — | Pendiente | Hechos/reglas con identificador común pueden representar familias. |
 | Delphi | Applicable | — | Pendiente | [`Example1.pas`](../src/Enterprise/Delphi/Example1.pas) tiene semántica compatible; falta gate ejecutable. |
 | GNU Octave | Applicable | [`example1.m`](../src/DataScience/Octave/example1.m) | GNU Octave run ✅ | Struct de function handles representa una familia completa. |
@@ -243,7 +244,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | MicroPython | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Rockstar | Applicable | — | Pendiente | Variables, funciones y control de flujo permiten representar selección de familia; requiere revisión idiomática. |
 
-**Cobertura actual verificada: 25 / 48 lenguajes Applicable (52.1%).**
+**Cobertura actual verificada: 29 / 48 lenguajes Applicable (60.4%).**
 
 La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe conservar la intención, resolver su enlace y tener evidencia proporcional.
 
@@ -259,7 +260,7 @@ La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe 
 - El movimiento de diseño es seleccionar una fábrica/familia una vez y pedirle productos relacionados.
 - El principal trade-off es facilitar nuevas familias a costa de encarecer nuevos tipos de producto.
 - Factory Method puede colaborar con Abstract Factory, pero no define su intención.
-- La evidencia asciende a 25/48; la página permanece `in-progress` hasta `48/48`.
+- La evidencia asciende a 29/48; la página permanece `in-progress` hasta `48/48`.
 
 ## Referencias
 
