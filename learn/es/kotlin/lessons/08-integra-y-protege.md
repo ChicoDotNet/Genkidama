@@ -39,7 +39,7 @@ Describe el estado de UI apropiado para cada variante de `WorkOrderResult`.
 FieldFlow ya tiene una frontera de aplicación testeable y preparada para persistencia offline.
 
 ## Siguiente paso
-Realiza el checkpoint antes de introducir persistencia durable.
+Realiza [Checkpoint 02 — Fronteras y resultados](checkpoint-02.md) y continúa con [09 — Serializa datos sin contaminar el dominio](09-serializa-datos.md).
 
 ## Referencias
 - https://kotlinlang.org/api/core/kotlin-test/
