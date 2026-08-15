@@ -34,8 +34,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          set +e
           output="$(godot --headless --quiet --script src/Niche/GDScript/example1.gd 2>&1)"
+          status=$?
+          set -e
           printf '%s\n' "$output"
+          test "$status" -eq 0
           test "$output" = "$(printf 'Dark Button\nDark Checkbox\nLight Button\nLight Checkbox')"
 
   matlab-abstract-factory:
