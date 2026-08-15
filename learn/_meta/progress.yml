@@ -104,7 +104,7 @@ courses:
     status: complete
     lessons_complete: 17
     lessons_total: 17
-    ci: pending
+    ci: green
     last_green_executable_sha: fbe0993b0d1f9332d16b706a53aa65735c586105
     pr: 57
   fsharp: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
