@@ -3,9 +3,9 @@ initiative:
   status: pilots_complete
   source_locale: es
   last_updated: '2026-08-14'
-  active_work: rust_course
+  active_work: php_course
   v1_courses_total: 45
-  v1_courses_complete: 8
+  v1_courses_complete: 9
 foundation:
   status: complete
   catalog: complete
@@ -69,7 +69,13 @@ courses:
     ci: green
     last_green_executable_sha: 864affe5d606ad445342c3c12a5d1b2fb171d2aa
     pr: 43
-  rust: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  rust:
+    status: complete
+    lessons_complete: 17
+    lessons_total: 17
+    ci: green
+    last_green_executable_sha: c1f03ee17261f71752e4b6313c93d2c8233413ca
+    pr: 46
   zig: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   go:
     status: complete

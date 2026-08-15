@@ -50,7 +50,7 @@ Los pilotos estabilizaron:
 - CI;
 - experiencia Windows/Linux cuando corresponde.
 
-TypeScript, Java y Go ya completaron también su Course DoD como primeros cursos posteriores a los pilotos. El siguiente frente de producción v1 es **Rust**, sujeto a la revalidación breve de demanda, tooling y aplicación canónica que exige este roadmap antes de iniciar cada curso.
+TypeScript, Java, Go y Rust ya completaron también su Course DoD como primeros cursos posteriores a los pilotos. El siguiente frente de producción v1 es **PHP**, sujeto a la revalidación breve de demanda, tooling y aplicación canónica que exige este roadmap antes de iniciar cada curso.
 
 ## Orden v1 provisional
 
