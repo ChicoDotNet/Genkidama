@@ -122,7 +122,7 @@ jobs:
 
           clojure src/Functional/Clojure/example1.clj
 
-          elixir --warnings-as-errors src/Functional/Elixir/example1.exs
+          PATH="/usr/bin:$PATH" elixir --warnings-as-errors src/Functional/Elixir/example1.exs
 
           swipl -q -s src/Niche/Prolog/example1.pl -g run -t halt
 
