@@ -1,33 +1,34 @@
 # Canonical Design Pattern Authoring Standard
 
-> **Status:** Proposed — pending owner approval  
-> **Applies to:** pattern pages under `wiki/`  
+> **Status:** Approved by the owner on 2026-08-14  
+> **Applies to:** pattern pages under `wiki/` and their executable examples  
 > **Catalog:** [`wiki/README.md`](../../../wiki/README.md)  
 > **Guiding principle:** architecture comes first; a pattern exists in the catalog to explain a real design force, not to force the pattern into production code.
 
 ## Purpose
 
-This standard defines the canonical structure and quality bar for every Genkidama Design Pattern page.
+This standard defines the canonical structure and Definition of Done for every Genkidama Design Pattern.
 
-A finished page should help a reader answer five questions without memorizing a recipe:
+A completed pattern must let a reader answer:
 
-1. **What problem creates pressure for this pattern?**
-2. **What trade-off does the pattern make?**
-3. **How does it work and how can I recognize it?**
-4. **When should I choose something simpler or different?**
-5. **Which other patterns commonly appear around it?**
+1. What problem creates pressure for this pattern?
+2. What trade-off does it make?
+3. How does it work and how can I recognize it?
+4. When should I choose something simpler or different?
+5. Which patterns commonly appear around it?
+6. How does the same intent translate idiomatically across every language where the pattern can be implemented?
 
-The catalog is a connected design vocabulary. Pattern pages must therefore explain relationships, alternatives and combinations instead of presenting each pattern as an isolated trick.
+The catalog is a connected, executable design vocabulary rather than a collection of isolated definitions.
 
 ## Authoring principles
 
 ### 1. Problem before pattern
 
-Describe the concrete design problem before naming implementation mechanics. The reader should understand why pressure for the pattern exists before seeing its structure.
+Describe the concrete design problem before implementation mechanics. The reader should understand why the pattern is useful before seeing its structure.
 
 ### 2. Intent over ceremony
 
-Explain the pattern's intent accurately. Do not define a pattern using the mechanics of a related pattern. For example, Abstract Factory and Factory Method may collaborate, but they are not interchangeable definitions.
+Explain the pattern's intent accurately. Related patterns may collaborate without being interchangeable definitions.
 
 ### 3. Forces and trade-offs are mandatory
 
@@ -35,137 +36,145 @@ Every pattern resolves competing forces. A page that lists benefits without cost
 
 ### 4. Patterns are not prescriptions
 
-Include explicit guidance for **when not to use the pattern**. Prefer a simpler design when it resolves the problem equally well.
+Every page explains when **not** to use the pattern and points to a simpler or more appropriate alternative where possible.
 
-### 5. Relationships are first-class content
+### 5. Relationships are first-class
 
-Every page links back to the global relationship map and explains its most important related patterns. Relationships are described by intent, not just by drawing arrows.
+Every page links to the global relationship map and explains important relationships using these labels:
 
-Use these relationship labels consistently:
-
-- **collaborates with** — the patterns commonly solve different parts of the same design;
-- **often implemented with** — one pattern commonly supplies a mechanism used by the other;
-- **alternative to** — both may address similar pressure with different trade-offs;
-- **specializes / generalizes** — one is a more specific or broader expression of the design idea;
+- **collaborates with** — patterns solve different parts of the same design;
+- **often implemented with** — one commonly supplies a mechanism used by another;
+- **alternative to** — similar pressure, different trade-offs;
+- **specializes / generalizes** — more specific or broader expression of the idea;
 - **often confused with** — similar surface structure, different intent.
 
 ### 6. Diagrams serve the idea
 
-Every completed page contains at least one Mermaid diagram, but the diagram type must fit the pattern:
-
-- `classDiagram` for participant structure;
-- `sequenceDiagram` for collaboration over time;
-- `stateDiagram-v2` for state transitions;
-- `flowchart` when flow or topology communicates the idea better.
+Every completed page contains at least one Mermaid diagram using the type that explains the pattern best: `classDiagram`, `sequenceDiagram`, `stateDiagram-v2`, `flowchart`, or another GitHub-supported Mermaid form when justified.
 
 Do not force every pattern into a class diagram.
 
-### 7. Examples must be honest and verifiable
+### 7. Examples are executable evidence
 
-Use one small reference example to make the mechanism concrete, followed by at least one realistic application.
+A pattern is not complete merely because its prose is complete. It must have an example in **every language in which the pattern can be implemented meaningfully**.
 
-If the repository already contains an implementation, link only to a path that has been verified to exist. Never use `#`, invented paths, or "coming soon" links as implementation links.
+The example does not need to mimic class-oriented syntax. Functional modules, closures, algebraic data types, message passing, predicates, macros, prototypes, records, traits, interfaces, processes or other native language mechanisms are valid when they preserve the pattern's intent.
 
-A missing implementation is valid information. State that no verified implementation is currently linked instead of pretending one exists.
+A language is **not** `N/A` merely because it lacks classes, inheritance, interfaces or another mechanism used by a textbook example.
 
-### 8. Genkidama usage must be factual
+For each target language the author must classify applicability as:
 
-The **En Genkidama** section must do one of two things:
+- **Applicable** — the pattern's intent can be represented meaningfully and therefore requires a verified example;
+- **N/A** — the pattern is genuinely meaningless or impossible in that language/runtime/paradigm, with a concise technical justification.
 
-- point to a real place where Genkidama deliberately uses the pattern and explain why; or
-- state that Genkidama does not currently use it deliberately and explain where it could be appropriate without claiming that it already exists.
+`N/A` is an exception, not a shortcut. It must survive review.
 
-The catalog must never distort the production architecture merely to showcase a pattern.
+### 8. Examples are idiomatic, not transliterations
 
-### 9. Tests describe behavior, not class names
+Each language example should express the same design intent using reasonable idioms for that language. Avoid mechanical ports whose only purpose is reproducing the shape of another implementation.
 
-Explain how to verify the behavior the pattern promises. Prefer observable contracts, substitutions, state transitions, isolation or collaboration effects over tests that merely assert a particular class hierarchy.
+Where tooling permits, examples must build, compile, parse, run or otherwise pass the strongest lightweight automated validation reasonably available.
 
-### 10. Teach distinction, not just recognition
+### 9. Repository links must be real
 
-The page must identify at least one common misuse, confusion or over-engineering risk. A learner should finish knowing not only what the pattern is, but also what it is **not**.
+Never use `#`, invented paths, fake availability or "coming soon" as implementation links. If an applicable language lacks its required example, the pattern remains **in progress**.
+
+### 10. Genkidama usage must be factual
+
+The **En Genkidama** section must either link to a real deliberate use of the pattern and explain why it fits, or state that Genkidama does not currently use it deliberately.
+
+Never distort production architecture to showcase a pattern.
+
+### 11. Tests describe behavior
+
+Verification should test the behavior or variation promised by the pattern, not merely assert class names or inheritance trees.
+
+### 12. Teach distinction
+
+Every page addresses at least one misuse, confusion or over-engineering risk.
 
 ## Canonical page structure
 
-Use the following headings in this order. A section may be concise, but a completed page must not leave an obligatory heading empty.
+Use these headings in this order. A completed page must not leave a required section empty.
 
 ~~~markdown
 # {Pattern Name}
 
 > **Familia:** {Creational | Structural | Behavioral | Architectural | Integration | Concurrency | Distribution | Presentation | Persistence | Additional}  
 > **Intención:** {one-sentence intent}  
-> **Estado:** `validated`  
+> **Estado:** `{in-progress | validated}`  
+> **Cobertura de lenguajes:** `{implemented}/{applicable} = {percentage}%`  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
 ## En una frase
 
-{Explain the pattern in plain language in one short paragraph.}
+{Plain-language explanation.}
 
 ## El problema
 
-{Describe a concrete situation before introducing the solution. Show what becomes coupled, duplicated, fragile, difficult to vary, difficult to coordinate, or otherwise costly.}
+{Concrete situation and design pressure before the solution.}
 
 ## Fuerzas que compiten
 
-- {Force or constraint 1}
-- {Force or constraint 2}
-- {Force or constraint 3}
+- {Force 1}
+- {Force 2}
+- {Force 3}
 
 ## La solución
 
-{Explain the pattern's intent and the key idea that balances those forces. Do not start with framework-specific code.}
+{Intent and core design move.}
 
 ## Participantes y responsabilidades
 
 | Participante | Responsabilidad |
 |---|---|
-| `{Role}` | {What this role knows or does} |
+| `{Role}` | {Responsibility} |
 
 ## Cómo funciona
 
-1. {Interaction or decision step 1}
-2. {Interaction or decision step 2}
-3. {Interaction or decision step 3}
+1. {Step 1}
+2. {Step 2}
+3. {Step 3}
 
 ## Diagrama
 
 ```mermaid
-{Use the Mermaid diagram type that best explains this pattern.}
+{Fit-for-purpose Mermaid diagram.}
 ```
 
-{Explain what the reader should notice in the diagram.}
+{Explain what matters in the diagram.}
 
 ## Ejemplo mínimo
 
-{Use the smallest example that preserves the pattern's intent. Code may be a verified repository example or clearly marked language-neutral pseudocode. Explain the important lines instead of dumping code.}
+{Smallest example that preserves intent.}
 
 ## Aplicación real
 
-### {Scenario name}
+### {Scenario}
 
-{Explain the context, why the pattern fits, what it buys, and what a simpler alternative would look like.}
+{Why the pattern fits, what it buys, and what a simpler alternative would look like.}
 
 ## En Genkidama
 
-{Link to verified Genkidama usage and explain why it is deliberate, OR state honestly that the pattern is not currently used deliberately.}
+{Verified deliberate usage, or an honest statement that there is no deliberate production use yet.}
 
 ## Cuándo usarlo
 
-- {Decision signal 1}
-- {Decision signal 2}
-- {Decision signal 3}
+- {Signal 1}
+- {Signal 2}
+- {Signal 3}
 
 ## Cuándo no usarlo
 
-- {Simpler alternative or missing prerequisite 1}
+- {Simpler alternative 1}
 - {Over-engineering risk 2}
-- {Context where another pattern is a better fit 3}
+- {Better-fit context 3}
 
 ## Consecuencias y trade-offs
 
 | A favor | Costo / riesgo |
 |---|---|
-| {Benefit} | {Cost introduced by the same decision} |
+| {Benefit} | {Cost} |
 
 ## Patrones relacionados
 
@@ -173,44 +182,42 @@ Use the following headings in this order. A section may be concise, but a comple
 
 | Patrón | Relación | Por qué importa |
 |---|---|---|
-| [{Related Pattern}]({RelatedPattern}.md) | {collaborates with / often implemented with / alternative to / specializes / often confused with} | {Intent-level explanation} |
+| [{Related Pattern}]({RelatedPattern}.md) | {relationship label} | {Intent-level explanation} |
 
 ## Errores comunes y confusiones
 
 ### {Confusion or misuse}
 
-{Explain why it is tempting, how its intent differs, and how to decide correctly.}
+{Why it is tempting and how to distinguish it.}
 
 ## Cómo comprobar una implementación
 
-- {Observable behavior or contract to test}
-- {Substitution or variation that should remain possible}
-- {Failure mode or edge case worth testing}
+- {Observable behavior}
+- {Substitution or variation}
+- {Failure mode or edge case}
 
-Avoid tests whose only purpose is proving that a particular class name or inheritance tree exists.
+## Cobertura por lenguaje
 
-## Implementaciones disponibles
+The table is authoritative for completion.
 
-List only repository paths that have been verified to exist.
-
-| Lenguaje | Ejemplo | Qué demuestra |
-|---|---|---|
-| {Language} | [{file name}]({verified relative path}) | {Scenario or mechanism} |
-
-If none are verified, write: **No hay una implementación enlazada y verificada todavía.**
+| Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
+|---|---|---|---|---|
+| {Language} | Applicable | [{file}]({verified relative path}) | {build/test/run/parse evidence} | {idiomatic mechanism} |
+| {Language} | N/A | — | — | {technical justification} |
 
 ## Comprueba que lo entendiste
 
-1. {Question that requires choosing the pattern from a problem, not recalling a definition}
-2. {Question comparing it with a related pattern}
-3. {Question about a trade-off or a reason not to use it}
+1. {Problem-based selection question}
+2. {Comparison with related pattern}
+3. {Trade-off or rejection question}
 
 ## Resumen
 
 - {Problem pressure}
-- {Core design move}
+- {Core move}
 - {Main trade-off}
-- {Most important relationship}
+- {Important relationship}
+- {Language portability insight}
 
 ## Referencias
 
@@ -218,101 +225,122 @@ If none are verified, write: **No hay una implementación enlazada y verificada 
 - {Repository architecture/philosophy reference when relevant}
 ~~~
 
+## Language applicability and coverage rules
+
+### Coverage denominator
+
+For each pattern, build an explicit applicability inventory from the language targets currently maintained by Genkidama. Every target must be classified `Applicable` or `N/A`.
+
+The denominator is the count of languages classified **Applicable**. The numerator is the count of those languages with a verified example satisfying this standard.
+
+A pattern reaches `validated` only when:
+
+```text
+implemented_applicable_languages == applicable_languages
+coverage == 100%
+```
+
+### What counts as an implementation
+
+A language example must:
+
+1. preserve the pattern's intent rather than merely its class diagram;
+2. use a reasonable native idiom for that language;
+3. live at a stable repository path;
+4. be linked from the pattern page;
+5. have the strongest practical lightweight validation available for that ecosystem;
+6. avoid dependencies or infrastructure that are disproportionate to the teaching goal.
+
+Several languages may use different scenarios if that makes the pattern more natural. Conceptual equivalence matters more than identical examples.
+
+### What counts as `N/A`
+
+`N/A` requires a technical explanation of why the intent itself cannot be represented meaningfully in that language/runtime, not merely why a textbook implementation shape is unavailable.
+
+If the intent can be expressed with functions, modules, messages, closures, prototypes, algebraic types, traits, predicates, macros or other native mechanisms, the language remains **Applicable**.
+
+When uncertain, classify the language as Applicable until review demonstrates otherwise.
+
+### Validation
+
+Do not claim validation that was not executed. When a compiler/runtime cannot reasonably run in CI, document the best available static or structural evidence and the limitation. Missing tooling does not erase the requirement for the example.
+
 ## Content rules
 
-### Language
+Pattern explanations are authored in Spanish. Code identifiers and canonical pattern names remain in their conventional form.
 
-Pattern explanations are currently authored in Spanish. Code identifiers, API names and repository identifiers remain in their native/English form.
+There is no word-count quota. Prefer the shortest page that completely satisfies the DoD.
 
-Avoid translating established pattern names when doing so would make them harder to search or compare with standard literature. A Spanish explanation may clarify the meaning while retaining the canonical name.
+Summarize references in original wording; do not reproduce substantial copyrighted passages.
 
-### Length
+The page and [`wiki/README.md`](../../../wiki/README.md) must not contradict each other. Update the global map in the same increment when a newly verified relationship materially improves it.
 
-There is no word-count quota. Prefer the shortest page that fully satisfies the Definition of Done. Repetition added only to make a page look comprehensive is a defect.
+## Definition of Done for one pattern
 
-### Examples across languages
+A pattern is complete only when **all** of the following are true:
 
-The historical catalog contains implementations in many languages. The canonical page is **not required to reproduce the same example in every language**.
-
-Instead:
-
-1. keep the conceptual explanation language-neutral;
-2. link to existing implementations only after verifying them;
-3. prefer a small set of examples that reveal meaningful language differences;
-4. treat additional language implementations as expandable evidence, not as a 52 × N mandatory matrix.
-
-### References and attribution
-
-Summarize ideas in original wording. Do not reproduce substantial copyrighted text from books or articles. Prefer primary or authoritative sources when a factual distinction needs support.
-
-### Relationship-map consistency
-
-The page and [`wiki/README.md`](../../../wiki/README.md) must not contradict each other.
-
-When work on a pattern discovers a relationship that materially improves the global map, update the map in the same increment. Do not add every theoretically possible connection: the global graph remains intentionally selective.
-
-## Definition of Done for one pattern page
-
-A pattern page is complete only when **all** of the following are true:
-
-- [ ] The canonical pattern name and family are correct.
-- [ ] The one-sentence intent is accurate and not borrowed from a neighboring pattern.
+- [ ] Canonical name and family are correct.
+- [ ] One-sentence intent is accurate and distinct from neighboring patterns.
 - [ ] The problem is explained before implementation mechanics.
 - [ ] At least three meaningful design forces are named.
 - [ ] The solution explains intent, not merely class structure.
-- [ ] Participants/responsibilities are present when the pattern has identifiable roles; for topology/process patterns, an equivalent responsibility model is used.
-- [ ] The interaction or decision flow is explained.
-- [ ] At least one Mermaid diagram renders with a diagram type appropriate to the pattern.
-- [ ] A minimal example is present and clearly explained.
-- [ ] At least one realistic application includes why the pattern fits.
-- [ ] Genkidama usage is either verified with a real link or explicitly described as not currently used.
-- [ ] `Cuándo usarlo` and `Cuándo no usarlo` are both substantive.
+- [ ] Participants or an equivalent responsibility model are documented.
+- [ ] Interaction or decision flow is explained.
+- [ ] At least one fit-for-purpose Mermaid diagram renders.
+- [ ] A minimal conceptual example is clearly explained.
+- [ ] At least one realistic application explains why the pattern fits.
+- [ ] Genkidama usage is verified or explicitly stated as not currently deliberate.
+- [ ] `Cuándo usarlo` and `Cuándo no usarlo` are substantive.
 - [ ] Benefits and costs are paired as trade-offs.
-- [ ] Important related patterns are linked and their relationship is explained by intent.
-- [ ] At least one common confusion, misuse or over-engineering risk is addressed.
-- [ ] The testing section describes observable behavior.
-- [ ] Every implementation link resolves to an existing repository path; there are no `#` placeholder links.
-- [ ] The page includes three comprehension questions that require reasoning.
-- [ ] References are present where appropriate and no substantial copyrighted passage is copied.
-- [ ] There are no `TODO`, `TBD`, `PLACEHOLDER`, empty headings or knowingly speculative claims.
-- [ ] Markdown links and Mermaid syntax have been reviewed.
+- [ ] Important related patterns are linked and distinguished by intent.
+- [ ] At least one misuse, confusion or over-engineering risk is addressed.
+- [ ] Verification guidance describes observable behavior.
+- [ ] Every current Genkidama language target is classified `Applicable` or `N/A` for this pattern.
+- [ ] Every `N/A` classification has a defensible technical justification.
+- [ ] **Every Applicable language has at least one verified repository example.**
+- [ ] Applicable-language coverage is **100%**.
+- [ ] Every implementation link resolves to an existing repository path; no `#` placeholders exist.
+- [ ] Each applicable-language example has the strongest reasonable validation evidence available.
+- [ ] Three comprehension questions require reasoning.
+- [ ] References are present where appropriate and copyright constraints are respected.
+- [ ] No `TODO`, `TBD`, `PLACEHOLDER`, empty heading or knowingly speculative claim remains.
+- [ ] Markdown links, Mermaid syntax and the coverage table have been reviewed.
 
-A page with one failed mandatory item remains **in progress**, regardless of how polished the rest appears.
+A pattern with one failed mandatory item remains **in progress**, regardless of prose quality or how many languages are already implemented.
 
 ## Review rubric
 
-The Definition of Done is the gate. This rubric helps reviewers compare quality after the gate passes.
+The Definition of Done is the gate. After the gate passes:
 
 | Dimension | Weight | Review question |
 |---|---:|---|
-| Correctness of intent and distinctions | 30% | Would an experienced engineer recognize the pattern and its boundaries? |
-| Decision usefulness | 20% | Can the reader decide when to use or reject it? |
-| Relationships and composition | 15% | Does it connect the pattern to the surrounding vocabulary accurately? |
-| Examples and evidence | 15% | Do examples make the mechanism concrete without inventing repository state? |
-| Testability and operational consequences | 10% | Does it explain how behavior can be verified? |
-| Navigation and references | 10% | Are links real, useful and easy to follow? |
+| Correctness of intent and distinctions | 25% | Would an experienced engineer recognize the pattern and its boundaries? |
+| Cross-language correctness and idiomaticity | 25% | Do implementations preserve intent without forcing one paradigm onto every language? |
+| Decision usefulness | 15% | Can the reader decide when to use or reject it? |
+| Relationships and composition | 10% | Does it connect accurately to the surrounding vocabulary? |
+| Examples and verification evidence | 15% | Are examples real, linked and proportionately validated? |
+| Navigation and references | 10% | Is the page easy to navigate and substantiate? |
 
-Correctness is non-compensable: a page with a materially wrong definition does not pass even if its total presentation quality is high.
+Correctness is non-compensable. A materially wrong pattern definition or a non-idiomatic example presented as canonical fails review even if all files exist.
 
-## Recommended agent workflow after approval
+## Agent workflow
 
-This section is intentionally inactive until the owner approves the standard.
+This workflow is active after owner approval.
 
-For each scheduled increment:
+1. Read this standard, `docs/roadmap.md`, the target page, actual example files and the relevant neighborhood of the relationship map.
+2. Repay bounded debt in the target pattern before adding breadth.
+3. Work on **one pattern at a time** until its applicable-language coverage reaches 100%.
+4. Use **one PR per pattern**. Multiple coherent commits are expected when the cross-language implementation is large; commits may be grouped by language family or validation boundary.
+5. Do not start the next pattern while the current pattern is incomplete unless an external technical blocker is documented and no safe work remains on it.
+6. Verify paths and applicability; never infer completion from naming conventions.
+7. Keep the coverage table current after every increment.
+8. Update the global relationship map only when a relationship is useful and defensible.
+9. Run applicable repository checks and inspect the final diff.
+10. Do not mix course implementation, runtime refactors or unrelated documentation in a pattern PR.
 
-1. Read this standard, the target page, its actual linked source files, and the relevant neighborhood of the relationship map.
-2. Repay bounded debt found in the target page before adding breadth.
-3. Complete **one pattern per commit**. An increment may complete more than one pattern only if each independently satisfies the Definition of Done.
-4. Verify every repository link rather than inferring paths from naming conventions.
-5. Update the global relationship map only when the new relationship is both useful and defensible.
-6. Run applicable repository checks and inspect the final diff.
-7. Keep a family-level PR reviewable; do not mix course work, runtime refactors or unrelated documentation changes.
+## Approved rollout
 
-## Proposed rollout after approval
-
-1. Retrofit [`AbstractFactory.md`](../../../wiki/AbstractFactory.md) first and use it as the **golden reference page**. Its current material is valuable, but its definition and implementation-link presentation should be brought under this standard before copying its shape anywhere else.
-2. Complete the rest of the **Creational** family: Builder, Factory Method, Prototype and Singleton.
-3. Continue family by family so neighboring patterns can be reviewed together and the relationship map can evolve coherently.
-4. Keep the second Genkidama agent focused on the 0 → Junior course program; do not split one scheduled run across both initiatives.
-
-Agent reassignment itself is outside this proposal and requires the owner's explicit go-ahead after the template is approved.
+1. Retrofit [`AbstractFactory.md`](../../../wiki/AbstractFactory.md) first and make it the golden reference, including 100% Applicable-language coverage.
+2. Complete Builder, Factory Method, Prototype and Singleton under the same DoD.
+3. Continue family by family so neighboring patterns and their relationships can be reviewed coherently.
+4. Coordinate with the Genkidama Learn lane through the unified repository roadmap: each lane spends roughly 80% of effort on its own delivery and 20% checking that its changes remain compatible with the other lane.
