@@ -41,7 +41,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y fp-compiler octave r-base lua5.4 ghc gfortran ocaml sbcl scala clojure elixir swi-prolog-nox
+          sudo apt-get install --no-install-recommends -y fp-compiler octave r-base lua5.4 ghc gfortran ocaml sbcl scala clojure elixir swi-prolog-nox gnat
 
       - name: Restore
         run: dotnet restore Genkidama.slnx
@@ -126,6 +126,14 @@ jobs:
           PATH="/usr/bin:$PATH" elixirc --warnings-as-errors -o "$elixir_out" src/Functional/Elixir/example1.exs
 
           swipl -q -s src/Niche/Prolog/example1.pl -g run -t halt
+
+          ada_out="$(mktemp -d)"
+          gnatmake -q -gnat2022 -gnatwa -gnatwe -D "$ada_out" src/Historical/Ada/example1.adb -o /tmp/abstract-factory-ada
+          /tmp/abstract-factory-ada
+
+          solidity_out="$(mktemp -d)"
+          npx --yes solc@0.8.30 --bin --abi src/Niche/Solidity/Example1.sol -o "$solidity_out"
+          test -s "$solidity_out/Example1_sol_AbstractFactoryExample.bin"
 
       - name: Pack CLI Tool
         run: dotnet pack src/Genkidama.Cli/Genkidama.Cli.csproj --configuration Release --no-build --output artifacts/packages
