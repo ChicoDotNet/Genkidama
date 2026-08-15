@@ -1,0 +1,63 @@
+name: Pattern Platform Validation
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-platform-validation.yml'
+      - 'src/Niche/GDScript/**'
+      - 'src/DataScience/MATLAB/**'
+      - 'wiki/AbstractFactory.md'
+
+jobs:
+  gdscript-abstract-factory:
+    if: startsWith(github.head_ref, 'patterns/')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Godot 4.6.3
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 \
+            'https://github.com/godotengine/godot-builds/releases/download/4.6.3-stable/Godot_v4.6.3-stable_linux.x86_64.zip' \
+            --output /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          sudo install -m 0755 /tmp/godot/Godot_v4.6.3-stable_linux.x86_64 /usr/local/bin/godot
+          godot --version
+
+      - name: Validate GDScript Abstract Factory with Godot
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(godot --headless --quiet --script src/Niche/GDScript/example1.gd 2>&1)"
+          printf '%s\n' "$output"
+          test "$output" = "$(printf 'Dark Button\nDark Checkbox\nLight Button\nLight Checkbox')"
+
+  matlab-abstract-factory:
+    if: startsWith(github.head_ref, 'patterns/')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup MATLAB
+        uses: matlab-actions/setup-matlab@v3
+        with:
+          release: latest
+
+      - name: Validate MATLAB Abstract Factory
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(matlab -batch "run('src/DataScience/MATLAB/example1.m')" 2>&1)"
+          printf '%s\n' "$output"
+          grep -Fxq 'Dark Button' <<<"$output"
+          grep -Fxq 'Dark Checkbox' <<<"$output"
+          grep -Fxq 'Light Button' <<<"$output"
+          grep -Fxq 'Light Checkbox' <<<"$output"
