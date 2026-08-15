@@ -1,34 +1,52 @@
+# Abstract Factory
+#
+# The selected factory represents one coherent product family. Consumers receive
+# both constructors together, so they cannot accidentally mix Dark and Light
+# products while using the Abstract Factory boundary.
+
 defmodule UIFactory do
-  def create_button(:dark), do: DarkButton.new()
-  def create_button(:light), do: LightButton.new()
-  def create_checkbox(:dark), do: DarkCheckbox.new()
-  def create_checkbox(:light), do: LightCheckbox.new()
-end
+  @moduledoc "A coherent family of UI-product constructors."
 
-defmodule DarkButton do
-  def new() do
-    IO.puts "Dark Button"
+  @type factory :: %{
+          create_button: (-> String.t()),
+          create_checkbox: (-> String.t())
+        }
+
+  @spec dark() :: factory()
+  def dark do
+    %{
+      create_button: fn -> "Dark Button" end,
+      create_checkbox: fn -> "Dark Checkbox" end
+    }
+  end
+
+  @spec light() :: factory()
+  def light do
+    %{
+      create_button: fn -> "Light Button" end,
+      create_checkbox: fn -> "Light Checkbox" end
+    }
   end
 end
 
-defmodule LightButton do
-  def new() do
-    IO.puts "Light Button"
+defmodule Example1 do
+  @moduledoc false
+
+  @spec create_ui_components(UIFactory.factory()) :: {String.t(), String.t()}
+  def create_ui_components(factory) do
+    button = factory.create_button.()
+    checkbox = factory.create_checkbox.()
+    {button, checkbox}
+  end
+
+  @spec main() :: :ok
+  def main do
+    factory = UIFactory.dark()
+    {button, checkbox} = create_ui_components(factory)
+
+    IO.puts(button)
+    IO.puts(checkbox)
   end
 end
 
-defmodule DarkCheckbox do
-  def new() do
-    IO.puts "Dark Checkbox"
-  end
-end
-
-defmodule LightCheckbox do
-  def new() do
-    IO.puts "Light Checkbox"
-  end
-end
-
-# Usage
-UIFactory.create_button(:dark)
-UIFactory.create_checkbox(:light)
+Example1.main()
