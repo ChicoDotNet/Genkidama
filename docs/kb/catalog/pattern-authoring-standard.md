@@ -20,6 +20,28 @@ A completed pattern must let a reader answer:
 
 The catalog is a connected, executable design vocabulary rather than a collection of isolated definitions.
 
+## Two different kinds of completeness
+
+Do not confuse **language implementation completeness** with **test/code coverage**.
+
+### Language implementation completeness
+
+For a pattern to be considered implemented, every current Genkidama language target must be classified as `Applicable` or `N/A`, and **every Applicable language must have at least one real, linked and verified example**.
+
+This is a completeness requirement for the educational catalog. It is not a demand for 100% line, branch or method coverage.
+
+### Test/code coverage
+
+When meaningful coverage tooling exists, the project-wide approval policy applies:
+
+- **44% is a sufficient minimum floor** for approval;
+- **44%–72.8% is a fully acceptable coverage range**;
+- coverage above **72.8% is welcome and must never be penalized**;
+- **100% test/code coverage is not required**;
+- do not delay the next valuable increment merely to chase a higher percentage once the relevant behavior is adequately tested and the applicable quality gates pass.
+
+Coverage percentage is evidence, not the product goal. Behavioral confidence, important paths, failure modes and regression protection matter more than maximizing the number.
+
 ## Authoring principles
 
 ### 1. Problem before pattern
@@ -89,6 +111,8 @@ Never distort production architecture to showcase a pattern.
 
 Verification should test the behavior or variation promised by the pattern, not merely assert class names or inheritance trees.
 
+Do not chase 100% coverage as a proxy for correctness. Once coverage is at least 44% and the important behavioral risks are protected, additional coverage should be added only when it provides meaningful confidence.
+
 ### 12. Teach distinction
 
 Every page addresses at least one misuse, confusion or over-engineering risk.
@@ -103,7 +127,8 @@ Use these headings in this order. A completed page must not leave a required sec
 > **Familia:** {Creational | Structural | Behavioral | Architectural | Integration | Concurrency | Distribution | Presentation | Persistence | Additional}  
 > **Intención:** {one-sentence intent}  
 > **Estado:** `{in-progress | validated}`  
-> **Cobertura de lenguajes:** `{implemented}/{applicable} = {percentage}%`  
+> **Implementaciones de lenguaje:** `{implemented}/{applicable}`  
+> **Cobertura de pruebas:** `{percentage when meaningful, or N/A with reason}`  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
 ## En una frase
@@ -196,9 +221,9 @@ Use these headings in this order. A completed page must not leave a required sec
 - {Substitution or variation}
 - {Failure mode or edge case}
 
-## Cobertura por lenguaje
+## Implementaciones por lenguaje
 
-The table is authoritative for completion.
+The table is authoritative for language completeness.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -225,20 +250,11 @@ The table is authoritative for completion.
 - {Repository architecture/philosophy reference when relevant}
 ~~~
 
-## Language applicability and coverage rules
-
-### Coverage denominator
+## Language applicability rules
 
 For each pattern, build an explicit applicability inventory from the language targets currently maintained by Genkidama. Every target must be classified `Applicable` or `N/A`.
 
-The denominator is the count of languages classified **Applicable**. The numerator is the count of those languages with a verified example satisfying this standard.
-
-A pattern reaches `validated` only when:
-
-```text
-implemented_applicable_languages == applicable_languages
-coverage == 100%
-```
+A pattern reaches `validated` only when every language classified **Applicable** has a verified example satisfying this standard. Express this as a complete set (`implemented == applicable`), not as "100% test coverage".
 
 ### What counts as an implementation
 
@@ -249,7 +265,7 @@ A language example must:
 3. live at a stable repository path;
 4. be linked from the pattern page;
 5. have the strongest practical lightweight validation available for that ecosystem;
-6. avoid dependencies or infrastructure that are disproportionate to the teaching goal.
+6. avoid dependencies or infrastructure disproportionate to the teaching goal.
 
 Several languages may use different scenarios if that makes the pattern more natural. Conceptual equivalence matters more than identical examples.
 
@@ -261,9 +277,17 @@ If the intent can be expressed with functions, modules, messages, closures, prot
 
 When uncertain, classify the language as Applicable until review demonstrates otherwise.
 
-### Validation
+## Validation and test coverage policy
 
 Do not claim validation that was not executed. When a compiler/runtime cannot reasonably run in CI, document the best available static or structural evidence and the limitation. Missing tooling does not erase the requirement for the example.
+
+When code coverage can be measured meaningfully:
+
+- 44% or more is sufficient for approval when the relevant behavior, failure modes and contracts are tested;
+- 44%–72.8% is a healthy and fully acceptable range;
+- more than 72.8% is welcome, especially when it comes naturally from useful tests;
+- never add low-value tests merely to increase a percentage;
+- never block the next pattern because coverage is below 100%; 100% is not a requirement.
 
 ## Content rules
 
@@ -298,15 +322,16 @@ A pattern is complete only when **all** of the following are true:
 - [ ] Every current Genkidama language target is classified `Applicable` or `N/A` for this pattern.
 - [ ] Every `N/A` classification has a defensible technical justification.
 - [ ] **Every Applicable language has at least one verified repository example.**
-- [ ] Applicable-language coverage is **100%**.
 - [ ] Every implementation link resolves to an existing repository path; no `#` placeholders exist.
 - [ ] Each applicable-language example has the strongest reasonable validation evidence available.
+- [ ] Where meaningful code-coverage tooling exists, coverage is at least **44%** or a concrete repository-wide exception is documented.
+- [ ] Coverage above 72.8% is accepted without penalty; 100% is not required.
 - [ ] Three comprehension questions require reasoning.
 - [ ] References are present where appropriate and copyright constraints are respected.
 - [ ] No `TODO`, `TBD`, `PLACEHOLDER`, empty heading or knowingly speculative claim remains.
-- [ ] Markdown links, Mermaid syntax and the coverage table have been reviewed.
+- [ ] Markdown links, Mermaid syntax and the language implementation table have been reviewed.
 
-A pattern with one failed mandatory item remains **in progress**, regardless of prose quality or how many languages are already implemented.
+A pattern with one failed mandatory item remains **in progress**. Do not manufacture low-value tests merely to optimize a metric.
 
 ## Review rubric
 
@@ -325,22 +350,21 @@ Correctness is non-compensable. A materially wrong pattern definition or a non-i
 
 ## Agent workflow
 
-This workflow is active after owner approval.
-
 1. Read this standard, `docs/roadmap.md`, the target page, actual example files and the relevant neighborhood of the relationship map.
 2. Repay bounded debt in the target pattern before adding breadth.
-3. Work on **one pattern at a time** until its applicable-language coverage reaches 100%.
+3. Work on **one pattern at a time** until every Applicable language has a verified example.
 4. Use **one PR per pattern**. Multiple coherent commits are expected when the cross-language implementation is large; commits may be grouped by language family or validation boundary.
 5. Do not start the next pattern while the current pattern is incomplete unless an external technical blocker is documented and no safe work remains on it.
 6. Verify paths and applicability; never infer completion from naming conventions.
-7. Keep the coverage table current after every increment.
+7. Keep the language implementation table current after every increment.
 8. Update the global relationship map only when a relationship is useful and defensible.
 9. Run applicable repository checks and inspect the final diff.
-10. Do not mix course implementation, runtime refactors or unrelated documentation in a pattern PR.
+10. Once relevant behavior is protected and coverage is >=44%, do not stall delivery merely to chase 72.8%, 90% or 100%.
+11. Do not mix course implementation, runtime refactors or unrelated documentation in a pattern PR.
 
 ## Approved rollout
 
-1. Retrofit [`AbstractFactory.md`](../../../wiki/AbstractFactory.md) first and make it the golden reference, including 100% Applicable-language coverage.
+1. Retrofit [`AbstractFactory.md`](../../../wiki/AbstractFactory.md) first and make it the golden reference, including all Applicable language implementations.
 2. Complete Builder, Factory Method, Prototype and Singleton under the same DoD.
 3. Continue family by family so neighboring patterns and their relationships can be reviewed coherently.
 4. Coordinate with the Genkidama Learn lane through the unified repository roadmap: each lane spends roughly 80% of effort on its own delivery and 20% checking that its changes remain compatible with the other lane.
