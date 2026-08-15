@@ -50,7 +50,7 @@ Los pilotos estabilizaron:
 - CI;
 - experiencia Windows/Linux cuando corresponde.
 
-TypeScript, Java, Go, Rust, PHP y Kotlin ya completaron también su Course DoD como cursos posteriores a los pilotos. Kotlin cerró la evidencia Android prometida con un módulo compilable Room/Compose sobre AGP 9.3 y Built-in Kotlin. **Swift está ahora en progreso en 8/17 lecciones** con TimeQuote como aplicación canónica, un núcleo SwiftPM portable, fronteras de casos de uso/persistencia y CI ejecutable sobre Swift 6.3; el siguiente incremento seguirá el mismo PR antes de abrir C++.
+TypeScript, Java, Go, Rust, PHP y Kotlin ya completaron también su Course DoD como cursos posteriores a los pilotos. Kotlin cerró la evidencia Android prometida con un módulo compilable Room/Compose sobre AGP 9.3 y Built-in Kotlin. **Swift está ahora en progreso en 12/17 lecciones** con TimeQuote como aplicación canónica: el núcleo SwiftPM portable ya tiene fronteras de casos de uso, repositorio en memoria y persistencia JSON durable probada entre instancias. El siguiente incremento seguirá el mismo PR con concurrencia/estado antes de abrir C++.
 
 ## Orden v1 provisional
 
