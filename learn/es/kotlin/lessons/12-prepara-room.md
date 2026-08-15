@@ -46,7 +46,7 @@ Revisa [`WorkOrderRepository.kt`](../app/src/main/kotlin/dev/genkidama/fieldflow
 Ya tienes una razón, una frontera y criterios para introducir Room sin reescribir el núcleo.
 
 ## Siguiente paso
-Realiza [Checkpoint 03 — Persistencia offline](checkpoint-03.md). Después entraremos al módulo Android.
+Primero realiza [Checkpoint 03 — Persistencia offline](checkpoint-03.md) y después continúa con [13 — Implementa Room como adaptador Android](13-room-adapter.md).
 
 ## Referencias
 - https://developer.android.com/training/data-storage/room
