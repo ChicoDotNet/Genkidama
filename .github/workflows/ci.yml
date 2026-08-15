@@ -41,7 +41,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y fp-compiler octave r-base lua5.4 ghc gfortran ocaml sbcl scala
+          sudo apt-get install --no-install-recommends -y fp-compiler octave r-base lua5.4 ghc gfortran ocaml sbcl scala clojure elixir swi-prolog-nox
 
       - name: Restore
         run: dotnet restore Genkidama.slnx
@@ -119,6 +119,12 @@ jobs:
           /tmp/abstract-factory-ocaml
 
           sbcl --noinform --non-interactive --load src/Functional/Lisp/example1.lisp
+
+          clojure src/Functional/Clojure/example1.clj
+
+          elixir --warnings-as-errors src/Functional/Elixir/example1.exs
+
+          swipl -q -s src/Niche/Prolog/example1.pl -g run -t halt
 
       - name: Pack CLI Tool
         run: dotnet pack src/Genkidama.Cli/Genkidama.Cli.csproj --configuration Release --no-build --output artifacts/packages
