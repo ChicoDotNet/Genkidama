@@ -46,7 +46,7 @@ class FileWorkOrderRepository(
     }
 
     private fun persist(orders: List<WorkOrder>) {
-        file.parent?.let(Files::createDirectories)
+        file.parent?.let { Files.createDirectories(it) }
         val targetDirectory = file.toAbsolutePath().parent
         val temporary = Files.createTempFile(targetDirectory, "fieldflow-", ".tmp")
 
