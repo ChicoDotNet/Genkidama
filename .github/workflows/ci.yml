@@ -133,7 +133,7 @@ jobs:
 
           solidity_out="$(mktemp -d)"
           npx --yes solc@0.8.30 --bin --abi src/Niche/Solidity/Example1.sol -o "$solidity_out"
-          test -s "$solidity_out/Example1_sol_AbstractFactoryExample.bin"
+          test -n "$(find "$solidity_out" -type f -name '*_Example1.bin' -size +0c -print -quit)"
 
       - name: Pack CLI Tool
         run: dotnet pack src/Genkidama.Cli/Genkidama.Cli.csproj --configuration Release --no-build --output artifacts/packages
