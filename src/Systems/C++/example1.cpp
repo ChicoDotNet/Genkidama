@@ -1,41 +1,44 @@
 #include <iostream>
+#include <memory>
 
 // Abstract Product
 class Button {
 public:
-    virtual void render() = 0;
+    virtual ~Button() = default;
+    virtual void render() const = 0;
 };
 
 class Checkbox {
 public:
-    virtual void render() = 0;
+    virtual ~Checkbox() = default;
+    virtual void render() const = 0;
 };
 
 // Concrete Product
-class DarkButton : public Button {
+class DarkButton final : public Button {
 public:
-    void render() override {
+    void render() const override {
         std::cout << "Dark Button" << std::endl;
     }
 };
 
-class LightButton : public Button {
+class LightButton final : public Button {
 public:
-    void render() override {
+    void render() const override {
         std::cout << "Light Button" << std::endl;
     }
 };
 
-class DarkCheckbox : public Checkbox {
+class DarkCheckbox final : public Checkbox {
 public:
-    void render() override {
+    void render() const override {
         std::cout << "Dark Checkbox" << std::endl;
     }
 };
 
-class LightCheckbox : public Checkbox {
+class LightCheckbox final : public Checkbox {
 public:
-    void render() override {
+    void render() const override {
         std::cout << "Light Checkbox" << std::endl;
     }
 };
@@ -43,47 +46,46 @@ public:
 // Abstract Factory
 class UIFactory {
 public:
-    virtual Button* createButton() = 0;
-    virtual Checkbox* createCheckbox() = 0;
+    virtual ~UIFactory() = default;
+    [[nodiscard]] virtual std::unique_ptr<Button> createButton() const = 0;
+    [[nodiscard]] virtual std::unique_ptr<Checkbox> createCheckbox() const = 0;
 };
 
 // Concrete Factory
-class DarkFactory : public UIFactory {
+class DarkFactory final : public UIFactory {
 public:
-    Button* createButton() override {
-        return new DarkButton();
+    [[nodiscard]] std::unique_ptr<Button> createButton() const override {
+        return std::make_unique<DarkButton>();
     }
-    Checkbox* createCheckbox() override {
-        return new DarkCheckbox();
+
+    [[nodiscard]] std::unique_ptr<Checkbox> createCheckbox() const override {
+        return std::make_unique<DarkCheckbox>();
     }
 };
 
-class LightFactory : public UIFactory {
+class LightFactory final : public UIFactory {
 public:
-    Button* createButton() override {
-        return new LightButton();
+    [[nodiscard]] std::unique_ptr<Button> createButton() const override {
+        return std::make_unique<LightButton>();
     }
-    Checkbox* createCheckbox() override {
-        return new LightCheckbox();
+
+    [[nodiscard]] std::unique_ptr<Checkbox> createCheckbox() const override {
+        return std::make_unique<LightCheckbox>();
     }
 };
 
 // Usage
-void createUIComponents(UIFactory* factory) {
-    Button* button = factory->createButton();
-    Checkbox* checkbox = factory->createCheckbox();
+void createUIComponents(const UIFactory& factory) {
+    const auto button = factory.createButton();
+    const auto checkbox = factory.createCheckbox();
     button->render();
     checkbox->render();
-    delete button;
-    delete checkbox;
 }
 
 int main() {
-    UIFactory* darkFactory = new DarkFactory();
-    UIFactory* lightFactory = new LightFactory();
+    const DarkFactory darkFactory;
+    const LightFactory lightFactory;
     createUIComponents(darkFactory);
     createUIComponents(lightFactory);
-    delete darkFactory;
-    delete lightFactory;
     return 0;
 }
