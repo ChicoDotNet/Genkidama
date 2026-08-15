@@ -28,7 +28,7 @@ Las pruebas viven en [`TimeQuoteBookTests.swift`](../app/Tests/TimeQuoteTests/Ti
 swift test
 ```
 
-Deberías observar cuatro pruebas verdes.
+Deberías observar las pruebas verdes.
 
 ## Tu turno
 
@@ -65,7 +65,7 @@ Realiza [Checkpoint 01](checkpoint-01.md) antes de avanzar al siguiente bloque.
 
 ## Siguiente paso
 
-Después del checkpoint, el siguiente incremento introducirá protocolos y una frontera de almacenamiento sin adelantar SwiftUI artificialmente.
+Después del checkpoint, continúa con [la lección 05](05-protocolos-y-contratos.md).
 
 ## Referencias
 
