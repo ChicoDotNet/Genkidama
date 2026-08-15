@@ -3,7 +3,7 @@
 > **Familia:** Creational  
 > **Intención:** Proporcionar una abstracción para crear familias de productos relacionados o dependientes sin acoplar al cliente a sus tipos concretos.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `18/48`  
+> **Implementaciones de lenguaje:** `22/48`  
 > **Cobertura de pruebas:** `N/A` — este catálogo valida ejemplos por compilación/ejecución cuando es práctico; no existe una métrica homogénea de line coverage entre 48 ecosistemas.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -180,7 +180,7 @@ En lenguajes funcionales o dinámicos, simular interfaces y clases de otro ecosi
 La evidencia ejecutable se obtiene por dos vías complementarias:
 
 - el gate de patrón cubre C#, Java, Go, PHP, Python, Rust, JavaScript y TypeScript;
-- el CI general, limitado a ramas `patterns/*`, ejecuta además C, C++, Visual Basic .NET, F#, Ruby, Perl, Bash, PowerShell y Erlang. El lote F#/PowerShell quedó verde en `f23c0d54fb2a4c958f2dfb9573ff0dca81ce9670` y reutiliza el mismo gate estricto sin afectar PRs de Learn.
+- el CI general, limitado a ramas `patterns/*`, ejecuta además C, C++, Visual Basic .NET, F#, Ruby, Perl, Bash, PowerShell, Erlang, Pascal, GNU Octave, R y Lua. El lote Pascal/Octave/R/Lua quedó verde en `1a9ba6fcafe64d88048f954a580c648c89206a56` sin afectar PRs de Learn.
 
 Esto es evidencia de ejecución, no line coverage. La política >=44% se aplica cuando un ecosistema tenga medición de coverage significativa; no se inventa un porcentaje transversal para ejemplos heterogéneos.
 
@@ -195,7 +195,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Ada | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Solidity | Applicable | — | Pendiente | Contratos/interfaces pueden representar la familia. |
 | Fortran | Applicable | — | Pendiente | Módulos/procedimientos/tipos derivados pueden representar la familia. |
-| Pascal | Applicable | [`example1.pas`](../src/Historical/Pascal/example1.pas) | Ejemplo añadido; ejecución pendiente | Record de function pointers selecciona la familia una sola vez. |
+| Pascal | Applicable | [`example1.pas`](../src/Historical/Pascal/example1.pas) | Free Pascal compile/run ✅ | Record de function pointers selecciona la familia una sola vez. |
 | Python | Applicable | [`example1.py`](../src/Scripting/PythonPY/example1.py) | Python 3.14 run ✅ | Fábricas dinámicas Dark/Light. |
 | Visual Basic .NET | Applicable | [`Example1.vb`](../src/Enterprise/VisualBasic/Example1.vb) | .NET 10 compile/run ✅ | Dos familias concretas verificadas en CI. |
 | C++ | Applicable | [`example1.cpp`](../src/Systems/C%2B%2B/example1.cpp) | C++20 `-Werror` compile/run ✅ | RAII, destructores virtuales y `std::unique_ptr`. |
@@ -211,7 +211,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Swift | Applicable | — | Pendiente | Revisar implementación histórica. |
 | F# | Applicable | [`example1.fsx`](../src/Functional/F%23/example1.fsx) | `dotnet fsi` run ✅ | Record de constructores conserva la familia completa. |
 | Crystal | Applicable | — | Pendiente | Revisar implementación histórica. |
-| Lua | Applicable | [`example1.lua`](../src/Scripting/Lua/example1.lua) | Ejemplo reparado; ejecución pendiente | Table de closures representa una familia completa. |
+| Lua | Applicable | [`example1.lua`](../src/Scripting/Lua/example1.lua) | Lua 5.4 run ✅ | Table de closures representa una familia completa. |
 | Haskell | Applicable | [`Example1.hs`](../src/Functional/Haskell/Example1.hs) | Inspección semántica + ruta ✅ | Record `UIFactory` de operaciones; ejecución automatizada pendiente. |
 | COBOL | Applicable | — | Pendiente | Programas/subprogramas y tablas pueden representar la selección común. |
 | Scala | Applicable | — | Pendiente | Revisar implementación histórica. |
@@ -225,7 +225,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | JavaScript | Applicable | [`example1.js`](../src/Web/JavaScriptJS/example1.js) | Node 24 run ✅ | Selecciona una sola factory por familia. |
 | MATLAB | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Perl | Applicable | [`example1.pl`](../src/Scripting/Perl/example1.pl) | syntax check + run ✅ | Reparado: una factory agrupa ambos constructores. |
-| R | Applicable | [`example1.R`](../src/DataScience/R/example1.R) | Ejemplo reparado; ejecución pendiente | List de closures representa una familia completa. |
+| R | Applicable | [`example1.R`](../src/DataScience/R/example1.R) | Rscript run ✅ | List de closures representa una familia completa. |
 | PowerShell | Applicable | [`example1.ps1`](../src/Shell/PowerShell/example1.ps1) | `pwsh` strict run ✅ | Hashtable de scriptblocks representa una familia seleccionada una vez. |
 | HTML | N/A | — | — | HTML describe estructura; JavaScript embebido sigue siendo JavaScript. |
 | Assembly | Applicable | — | Pendiente | Puede expresarse con tablas de direcciones/rutinas. |
@@ -236,13 +236,13 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Common Lisp | Applicable | — | Pendiente | Revisar implementación histórica y ruta real. |
 | Prolog | Applicable | — | Pendiente | Hechos/reglas con identificador común pueden representar familias. |
 | Delphi | Applicable | — | Pendiente | [`Example1.pas`](../src/Enterprise/Delphi/Example1.pas) tiene semántica compatible; falta gate ejecutable. |
-| GNU Octave | Applicable | [`example1.m`](../src/DataScience/Octave/example1.m) | Ejemplo añadido; ejecución pendiente | Struct de function handles representa una familia completa. |
+| GNU Octave | Applicable | [`example1.m`](../src/DataScience/Octave/example1.m) | GNU Octave run ✅ | Struct de function handles representa una familia completa. |
 | SQL | N/A | — | — | SQL declarativo modela/consulta datos, pero no ofrece por sí solo una frontera idiomática de creación de familias runtime. |
 | CSS | N/A | — | — | CSS selecciona estilos; no crea familias de objetos runtime. |
 | MicroPython | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Rockstar | Applicable | — | Pendiente | Variables, funciones y control de flujo permiten representar selección de familia; requiere revisión idiomática. |
 
-**Cobertura actual verificada: 18 / 48 lenguajes Applicable (37.5%).**
+**Cobertura actual verificada: 22 / 48 lenguajes Applicable (45.8%).**
 
 La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe conservar la intención, resolver su enlace y tener evidencia proporcional.
 
@@ -258,7 +258,7 @@ La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe 
 - El movimiento de diseño es seleccionar una fábrica/familia una vez y pedirle productos relacionados.
 - El principal trade-off es facilitar nuevas familias a costa de encarecer nuevos tipos de producto.
 - Factory Method puede colaborar con Abstract Factory, pero no define su intención.
-- La evidencia asciende a 18/48; la página permanece `in-progress` hasta `48/48`.
+- La evidencia asciende a 22/48; la página permanece `in-progress` hasta `48/48`.
 
 ## Referencias
 
