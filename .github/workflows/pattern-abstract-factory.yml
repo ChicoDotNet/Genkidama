@@ -10,6 +10,7 @@ on:
       - 'src/Scripting/PHP/example1.php'
       - 'src/Systems/Go/example1.go'
       - 'src/Systems/Rust/example1.rs'
+      - 'src/Web/JavaScriptJS/example1.js'
       - 'src/Web/TypeScriptTS/example1.ts'
       - '.github/workflows/pattern-abstract-factory.yml'
 
@@ -83,6 +84,9 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '24'
+
+      - name: Validate JavaScript
+        run: node src/Web/JavaScriptJS/example1.js
 
       - name: Validate TypeScript
         run: |
