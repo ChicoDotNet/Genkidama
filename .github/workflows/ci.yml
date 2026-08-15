@@ -41,7 +41,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y fp-compiler octave r-base lua5.4 ghc
+          sudo apt-get install --no-install-recommends -y fp-compiler octave r-base lua5.4 ghc gfortran ocaml sbcl scala
 
       - name: Restore
         run: dotnet restore Genkidama.slnx
@@ -107,6 +107,17 @@ jobs:
           /tmp/abstract-factory-swift
 
           julia --startup-file=no src/DataScience/Julia/example1.jl
+
+          scalac -deprecation -feature -unchecked src/Functional/Scala/Example1.scala -d /tmp
+          scala -cp /tmp Main
+
+          gfortran -std=f2018 -Wall -Wextra -Werror src/Historical/Fortran/example1.f90 -o /tmp/abstract-factory-fortran
+          /tmp/abstract-factory-fortran
+
+          ocamlc -w +A -warn-error +A src/Functional/OCaml/example1.ml -o /tmp/abstract-factory-ocaml
+          /tmp/abstract-factory-ocaml
+
+          sbcl --noinform --non-interactive --load src/Functional/Lisp/example1.lisp
 
       - name: Pack CLI Tool
         run: dotnet pack src/Genkidama.Cli/Genkidama.Cli.csproj --configuration Release --no-build --output artifacts/packages
