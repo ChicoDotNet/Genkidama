@@ -29,6 +29,12 @@ jobs:
         with:
           otp-version: '28.5.0.4'
 
+      - name: Setup Julia for pattern validation
+        if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'patterns/')
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: '1'
+
       - name: Setup additional pattern runtimes
         if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'patterns/')
         shell: bash
@@ -99,6 +105,8 @@ jobs:
           command -v swiftc >/dev/null
           swiftc src/Systems/Swift/example1.swift -o /tmp/abstract-factory-swift
           /tmp/abstract-factory-swift
+
+          julia --startup-file=no src/DataScience/Julia/example1.jl
 
       - name: Pack CLI Tool
         run: dotnet pack src/Genkidama.Cli/Genkidama.Cli.csproj --configuration Release --no-build --output artifacts/packages
