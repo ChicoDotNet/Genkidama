@@ -99,7 +99,7 @@ Completa [Checkpoint 04 — Estado responsivo y frontera de UI](checkpoint-04.md
 
 ## Siguiente paso
 
-Después del checkpoint sólo queda la evaluación final: extender TimeQuote sin receta paso a paso y demostrar que puedes explicar las decisiones tomadas.
+Completa [la evaluación final de TimeQuote](17-evaluacion-final.md): extenderás la base sin receta paso a paso, protegerás cambios con pruebas y defenderás tus decisiones técnicas.
 
 ## Referencias
 
