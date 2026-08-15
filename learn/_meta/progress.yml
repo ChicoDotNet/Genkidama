@@ -104,8 +104,8 @@ courses:
     status: in_progress
     lessons_complete: 12
     lessons_total: 17
-    ci: pending
-    last_green_executable_sha: 420ccc5cf08bfdd90119097fd55682d9f41cfad7
+    ci: green
+    last_green_executable_sha: d09b7724d54e34b96ef860af9f3561775c5e6684
     pr: 57
   fsharp: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   crystal: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
