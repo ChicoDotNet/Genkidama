@@ -7,10 +7,10 @@ title: Curso de PHP desde cero — Construye una agenda web de citas
 status: in_progress
 canonical_app:
   name: AgendaPHP
-  summary: Aplicación web server-rendered para registrar, editar, consultar, exportar y cancelar citas, evitar cruces de horario y conservar el calendario localmente.
+  summary: Aplicación web server-rendered para registrar, editar, consultar, exportar y cancelar citas, evitar cruces de horario, conservar el calendario localmente y proteger mutaciones con contratos HTTP explícitos y CSRF.
 audience: beginner
 prerequisites: []
-lesson_count: 12
+lesson_count: 16
 toolchain:
   verified_on: '2026-08-14'
   version_tested: 8.5.9
@@ -38,8 +38,12 @@ official_references:
   - https://www.php.net/supported-versions.php
   - https://www.php.net/manual/en/language.oop5.php
   - https://www.php.net/manual/en/book.datetime.php
+  - https://www.php.net/manual/en/book.session.php
+  - https://www.php.net/manual/en/function.random-bytes.php
+  - https://www.php.net/manual/en/function.hash-equals.php
   - https://www.php.net/manual/en/function.fputcsv.php
   - https://getcomposer.org/
   - https://phpunit.de/
   - https://www.rfc-editor.org/rfc/rfc9110.html
+  - https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html
   - https://www.w3.org/TR/WCAG22/
