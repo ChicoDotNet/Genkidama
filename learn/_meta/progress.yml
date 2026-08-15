@@ -95,10 +95,10 @@ courses:
   dart: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   kotlin:
     status: in_progress
-    lessons_complete: 4
+    lessons_complete: 8
     lessons_total: 17
-    ci: green
-    last_green_executable_sha: 302c72c3c1c6a5e3bb339fac71810e8b88b9bdd4
+    ci: pending
+    last_green_executable_sha: 81991004af8e8ce1fa3ee4b8d7c6bcf265b8927d
     pr: 54
   swift: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   fsharp: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
