@@ -42,3 +42,24 @@ import Testing
         _ = try TimeEntry(clientID: "client-1", minutes: 0)
     }
 }
+
+@Test func servicePersistsChangesThroughRepositoryBoundary() throws {
+    var service = try TimeQuoteService(repository: InMemoryTimeQuoteRepository())
+    let client = try Client(id: "client-2", name: "Cliente Dos", hourlyRateCents: 45_000)
+
+    try service.addClient(client)
+    try service.record(TimeEntry(clientID: client.id, minutes: 60, note: "Implementación"))
+
+    let summary = try service.summary(for: client.id)
+    #expect(summary.minutes == 60)
+    #expect(summary.amountCents == 45_000)
+}
+
+@Test func serviceKeepsDomainErrorsExplicit() throws {
+    var service = try TimeQuoteService(repository: InMemoryTimeQuoteRepository())
+    let entry = try TimeEntry(clientID: "missing", minutes: 15)
+
+    #expect(throws: TimeQuoteError.clientNotFound("missing")) {
+        try service.record(entry)
+    }
+}
