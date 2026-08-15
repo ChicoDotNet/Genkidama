@@ -17,9 +17,12 @@ AgendaPHP crece sobre una sola base de código. Actualmente permite:
 - mostrar cantidad de citas y minutos reservados derivados de la misma consulta;
 - descargar el subconjunto visible como CSV con escaping estándar;
 - distinguir entrada inválida (422) de almacenamiento temporalmente no disponible (503);
+- rechazar mutaciones con media type no soportado antes de tocar estado;
+- proteger toda mutación con token CSRF ligado a sesión;
+- limitar bodies POST a 16 KiB y emitir headers HTTP defensivos;
 - probar dominio, aplicación, persistencia, CSV y HTTP con PHPUnit + smoke real.
 
-La persistencia JSON sigue siendo deliberadamente local y de una sola instancia. Las nuevas consultas todavía son proyecciones pequeñas y baratas sobre el calendario cargado; `AppointmentStore` mantiene la frontera preparada para SQLite cuando consultas selectivas, volumen, transacciones o coordinación de escritores hagan visible el beneficio.
+La persistencia JSON sigue siendo deliberadamente local y de una sola instancia. Las consultas todavía son proyecciones pequeñas y baratas sobre el calendario cargado; `AppointmentStore` mantiene la frontera preparada para SQLite cuando consultas selectivas, volumen, transacciones o coordinación de escritores hagan visible el beneficio.
 
 ## ¿Puedo aprender PHP desde cero?
 
@@ -63,7 +66,7 @@ composer serve
 
 Abre `http://127.0.0.1:8080`. Por defecto AgendaPHP usa UTC y `data/appointments.json`. Puedes configurar `AGENDA_TIMEZONE` y `AGENDA_DATA_FILE` antes de ejecutar el servidor.
 
-## Contenido actual — 12/17
+## Contenido actual — 16/17
 
 1. [Tu primera agenda web con PHP](lessons/01-tu-primera-agenda-web.md)
 2. [Tipos, clases y una cita válida](lessons/02-tipos-clases-y-citas-validas.md)
@@ -77,17 +80,22 @@ Abre `http://127.0.0.1:8080`. Por defecto AgendaPHP usa UTC y `data/appointments
 10. [Resumen derivado y capacidad visible](lessons/10-resumen-derivado-y-capacidad.md)
 11. [Exportar CSV como frontera](lessons/11-exportar-csv-como-frontera.md)
 12. [Fallos operativos + Checkpoint 03](lessons/12-fallos-operativos-y-checkpoint-03.md)
+13. [Gate profesional y contratos HTTP](lessons/13-gate-profesional-y-contratos-http.md)
+14. [Debugging desde evidencia](lessons/14-debugging-desde-evidencia.md)
+15. [Medir antes de optimizar](lessons/15-medir-antes-de-optimizar.md)
+16. [Hardening HTTP + Checkpoint 04](lessons/16-hardening-http-y-checkpoint-04.md)
 
 ## Checkpoints
 
 - [Checkpoint 01](exercises/checkpoint-01.md) → [solución](solutions/checkpoint-01.md)
 - [Checkpoint 02](exercises/checkpoint-02.md) → [solución](solutions/checkpoint-02.md)
 - [Checkpoint 03](exercises/checkpoint-03.md) → [solución](solutions/checkpoint-03.md)
+- [Checkpoint 04](exercises/checkpoint-04.md) → [solución](solutions/checkpoint-04.md)
 
 ## Arquitectura actual
 
 ```text
-HTTP + HTML / CSV
+HTTP + sesión/CSRF + HTML / CSV
    ↓
 AppointmentService + proyecciones de Schedule
    ↓
@@ -98,11 +106,15 @@ AppointmentStore
 JsonAppointmentStore
 ```
 
-Create, update y cancel construyen un estado candidato y sólo lo persisten después de validar. Las consultas por fecha/servicio, el conteo y los minutos se reconstruyen desde el mismo `Schedule`; CSV sólo representa esa proyección.
+Create, update y cancel construyen un estado candidato y sólo lo persisten después de validar. Las consultas por fecha/servicio, el conteo y los minutos se reconstruyen desde el mismo `Schedule`; CSV sólo representa esa proyección. La frontera HTTP valida tamaño, media type y CSRF antes de delegar una mutación.
 
-## Experiencia y accesibilidad
+## Experiencia, accesibilidad y seguridad
 
 La interfaz usa HTML nativo, labels, foco visible, mensajes textuales, reflow para pantallas estrechas y acciones con nombres explícitos. Los filtros tienen controles nativos y el resumen visible usa `aria-live="polite"`. Editar conserva valores y “Cancelar cita” usa POST. El objetivo web del curso es WCAG 2.2 AA.
+
+Toda mutación incorpora un token CSRF de sesión y el smoke comprueba que un POST sin token devuelve 403 **sin crear estado durable**. La cookie es `HttpOnly`, `SameSite=Lax` y usa `Secure` cuando la conexión es HTTPS. Las respuestas incluyen `nosniff`, `Referrer-Policy`, CSP y `Cache-Control: no-store`.
+
+Eso no convierte AgendaPHP en un servicio listo para Internet: identidad, autorización, terminación TLS, rate limiting, secretos y operación multi-instancia siguen fuera del alcance de esta aplicación educativa local.
 
 ## ¿Qué tipo de trabajo usa estas habilidades?
 
@@ -112,7 +124,7 @@ PHP se usa principalmente en aplicaciones y servicios web. Un trabajo junior pue
 
 ### ¿Por qué no empezar directamente con Laravel?
 
-Porque estas lecciones hacen visibles PHP, HTTP, dominio, persistencia y representación. Un framework será útil cuando reduzca complejidad real sin ocultar los fundamentos que estamos aprendiendo.
+Porque estas lecciones hacen visibles PHP, HTTP, dominio, persistencia, representación y controles de seguridad básicos. Un framework será útil cuando reduzca complejidad real sin ocultar los fundamentos que estamos aprendiendo.
 
 ### ¿Por qué seguimos con JSON después de agregar filtros y CSV?
 
@@ -122,9 +134,13 @@ Porque las consultas actuales recorren una colección pequeña en una sola insta
 
 La fecha inválida pertenece a la petición y puede corregirla quien la envió. El JSON corrupto significa que la dependencia durable no puede entregar un estado confiable; fingir una agenda vacía sería peligroso.
 
+### ¿Qué protege CSRF y qué no protege?
+
+El token CSRF ayuda a impedir que otro origen provoque una mutación usando la sesión del navegador. No sustituye autenticación, autorización, TLS ni validación de datos. El curso lo trata como una defensa concreta, no como una etiqueta de “aplicación segura”.
+
 ### ¿La aplicación ya es segura para Internet?
 
-No. Es una aplicación educativa local. Escapamos salida y validamos entradas, pero autenticación, autorización, CSRF, TLS, rate limiting y hardening de producción pertenecen al bloque profesional posterior.
+No. Es una aplicación educativa local con defensas HTTP explícitas. Faltan identidad, autorización, despliegue TLS real, rate limiting, gestión de secretos y diseño multi-instancia.
 
 ## Glosario
 
@@ -134,13 +150,15 @@ No. Es una aplicación educativa local. Escapamos salida y validamos entradas, p
 - **Estado candidato:** versión que se valida antes de hacerla durable.
 - **Proyección:** vista calculada desde el estado autoritativo sin persistir una segunda copia.
 - **Rango semiabierto:** intervalo `[inicio, fin)` que incluye el comienzo y excluye el final.
+- **CSRF:** ataque que intenta provocar una acción desde otro origen aprovechando una sesión existente.
+- **CSP:** política HTTP que restringe orígenes/capacidades de contenido en el navegador.
 - **503:** respuesta HTTP usada aquí cuando el almacenamiento local no puede entregar o guardar estado confiable.
 - **PSR-4:** convención de autoloading usada por Composer.
 - **PHPDoc:** documentación estándar de APIs PHP.
 
 ## Cómo hablar de este proyecto en una entrevista
 
-Explica el problema y luego las decisiones: intervalos sin cruces, identidad estable, estados candidatos, consultas derivadas, CSV en una frontera independiente, `AppointmentStore` y fallos operativos explícitos. Señala la limitación real de JSON single-process y explica qué señal justificaría SQLite.
+Explica el problema y luego las decisiones: intervalos sin cruces, identidad estable, estados candidatos, consultas derivadas, CSV en una frontera independiente, `AppointmentStore`, fallos operativos explícitos y rechazo temprano de requests no confiables. Señala la limitación real de JSON single-process y explica qué señal justificaría SQLite.
 
 Preguntas probables:
 
@@ -149,6 +167,8 @@ Preguntas probables:
 - ¿Cómo evitas que tabla, resumen y CSV diverjan?
 - ¿Por qué `fputcsv` es preferible a concatenar columnas manualmente?
 - ¿Por qué una corrupción durable no se convierte en agenda vacía?
+- ¿Qué problema resuelve el token CSRF y por qué se verifica antes del dominio?
+- ¿Por qué `SameSite` no es la única defensa?
 - ¿Qué falla si dos procesos escriben el mismo JSON?
 - ¿Cuándo migrarías a SQLite o un framework?
 
@@ -158,8 +178,12 @@ Preguntas probables:
 - [PHP: Supported Versions](https://www.php.net/supported-versions.php)
 - [PHP manual — Classes and Objects](https://www.php.net/manual/en/language.oop5.php)
 - [PHP manual — Date and Time](https://www.php.net/manual/en/book.datetime.php)
+- [PHP manual — Sessions](https://www.php.net/manual/en/book.session.php)
+- [PHP manual — random_bytes](https://www.php.net/manual/en/function.random-bytes.php)
+- [PHP manual — hash_equals](https://www.php.net/manual/en/function.hash-equals.php)
 - [PHP manual — fputcsv](https://www.php.net/manual/en/function.fputcsv.php)
 - [Composer](https://getcomposer.org/)
 - [PHPUnit](https://phpunit.de/)
 - [HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110.html)
+- [OWASP CSRF Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html)
 - [WCAG 2.2](https://www.w3.org/TR/WCAG22/)
