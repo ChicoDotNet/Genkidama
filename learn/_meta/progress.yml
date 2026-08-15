@@ -95,7 +95,7 @@ courses:
   dart: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   kotlin:
     status: in_progress
-    lessons_complete: 16
+    lessons_complete: 17
     lessons_total: 17
     ci: pending
     last_green_executable_sha: 378e8e9e1e0a25f2b10f678459eb776afda1ebf2
