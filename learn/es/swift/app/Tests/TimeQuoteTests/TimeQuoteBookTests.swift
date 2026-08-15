@@ -97,3 +97,34 @@ import Testing
         _ = try repository.load()
     }
 }
+
+@Test @MainActor func applicationPublishesLoadedStateAfterAsyncRefresh() async throws {
+    var book = TimeQuoteBook()
+    let client = try Client(id: "async-client", name: "Cliente Async", hourlyRateCents: 36_000)
+    try book.addClient(client)
+    try book.record(TimeEntry(clientID: client.id, minutes: 30, note: "Async"))
+
+    let application = try TimeQuoteApplication(
+        repository: InMemoryTimeQuoteRepository(initialBook: book)
+    )
+
+    #expect(application.state == .idle)
+    await application.refresh()
+
+    let expected = try book.summary(for: client.id)
+    #expect(application.state == .loaded([expected]))
+}
+
+@Test @MainActor func applicationTurnsDomainFailureIntoExplicitUIState() async throws {
+    let application = try TimeQuoteApplication(repository: InMemoryTimeQuoteRepository())
+    let entry = try TimeEntry(clientID: "missing", minutes: 15)
+
+    await application.record(entry)
+
+    guard case .failed(let message) = application.state else {
+        Issue.record("Expected failed application state")
+        return
+    }
+
+    #expect(message.contains("clientNotFound"))
+}

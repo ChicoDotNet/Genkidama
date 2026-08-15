@@ -8,14 +8,14 @@ TimeQuote comienza como un paquete Swift ejecutable y probado con SwiftPM. Esa b
 
 ## Estado
 
-**En progreso: 12/17 lecciones.** TimeQuote ya modela clientes y tiempo, calcula importes, protege reglas con pruebas, separa casos de uso de almacenamiento y cuenta con persistencia JSON durable detrás del mismo protocolo.
+**En progreso: 16/17 lecciones.** TimeQuote ya modela clientes y tiempo, calcula importes, protege reglas con pruebas, separa casos de uso de almacenamiento, persiste JSON durablemente y dispone de una frontera asíncrona de estado aislada con `MainActor`, preparada para que SwiftUI renderice carga, éxito y error sin absorber reglas de negocio.
 
 ## Tooling verificado
 
 - Swift 6.3, release estable publicada el 24 de marzo de 2026.
 - Swift Package Manager incluido con Swift.
 - CI reproducible en Linux mediante la imagen `swift:6.3-noble`.
-- Para la etapa SwiftUI se requerirá macOS + Xcode estable; esa excepción de plataforma se introducirá únicamente cuando aporte una capacidad visible.
+- Para la etapa SwiftUI se requiere macOS + Xcode estable; la frontera está diseñada y probada de forma portable, pero no se afirma evidencia de compilación SwiftUI mientras el target Apple no exista.
 
 Swift también dispone de instalación oficial para Windows y Linux, por lo que las primeras competencias del lenguaje no quedan atadas a una Mac.
 
@@ -33,12 +33,17 @@ Swift también dispone de instalación oficial para Windows y Linux, por lo que 
 10. [Repositorio JSON durable](lessons/10-repositorio-json-durable.md)
 11. [Fallos de I/O explícitos](lessons/11-fallos-de-io-explicitos.md)
 12. [Prueba persistencia entre instancias](lessons/12-prueba-persistencia-entre-instancias.md)
+13. [Haz explícito el trabajo asíncrono](lessons/13-trabajo-asincrono.md)
+14. [Aísla estado de aplicación con MainActor](lessons/14-mainactor-y-estado.md)
+15. [Convierte errores en estado visible](lessons/15-errores-como-estado.md)
+16. [Prepara una frontera para SwiftUI](lessons/16-frontera-swiftui.md)
 
 ### Checkpoints
 
 - [Checkpoint 01 — Un cliente, varias horas y un total verificable](lessons/checkpoint-01.md)
 - [Checkpoint 02 — Sustituye almacenamiento sin tocar el dominio](lessons/checkpoint-02.md)
 - [Checkpoint 03 — Haz durable TimeQuote](lessons/checkpoint-03.md)
+- [Checkpoint 04 — Estado responsivo y frontera de UI](lessons/checkpoint-04.md)
 
 ## Instalar, build, test y run
 
@@ -55,7 +60,7 @@ En Windows o Linux instala Swift siguiendo las instrucciones oficiales de Swift.
 
 ## Qué aprenderás en el curso completo
 
-La ruta cubrirá progresivamente sintaxis y tipos, structs/enums, optionals, colecciones, funciones, protocolos, errores, persistencia local, concurrencia con async/await, pruebas, SwiftUI, arquitectura de estado y una evaluación final que extiende la misma aplicación sin receta paso a paso.
+La ruta cubre progresivamente sintaxis y tipos, structs/enums, optionals, colecciones, funciones, protocolos, errores, persistencia local, concurrencia con async/await, pruebas, frontera SwiftUI, arquitectura de estado y una evaluación final que extiende la misma aplicación sin receta paso a paso.
 
 ## Contexto profesional
 
@@ -70,8 +75,9 @@ Para ramas, historial, recuperación y colaboración utiliza el [curso transvers
 - https://www.swift.org/getting-started/
 - https://www.swift.org/blog/swift-6.3-released/
 - https://docs.swift.org/swift-book/documentation/the-swift-programming-language/
+- https://developer.apple.com/documentation/swiftui
 - https://developer.apple.com/xcode/system-requirements
 
 ## Siguiente paso
 
-Si empiezas desde cero, comienza por [la lección 1](lessons/01-primer-registro.md). Si ya completaste el segundo checkpoint, continúa con [la lección 9](lessons/09-serializa-el-estado.md).
+Si empiezas desde cero, comienza por [la lección 1](lessons/01-primer-registro.md). Si ya completaste persistencia, continúa con [la lección 13](lessons/13-trabajo-asincrono.md). Después de la lección 16 y Checkpoint 04 sólo queda la evaluación final.

@@ -58,4 +58,4 @@ Realiza [Checkpoint 03](checkpoint-03.md).
 
 ## Siguiente paso
 
-El siguiente bloque introducirá concurrencia y estado de aplicación sólo cuando exista una necesidad visible para mantener TimeQuote responsivo y preparado para una UI SwiftUI.
+Después del checkpoint continúa con [la lección 13 — Haz explícito el trabajo asíncrono](13-trabajo-asincrono.md).

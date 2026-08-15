@@ -45,4 +45,4 @@ Revisa la implementación y las pruebas de referencia en:
 
 ## Siguiente paso
 
-Continúa con el bloque 13–16 cuando puedas explicar qué partes de TimeQuote pertenecen al dominio y cuáles son infraestructura reemplazable.
+Continúa con [la lección 13 — Haz explícito el trabajo asíncrono](13-trabajo-asincrono.md) cuando puedas explicar qué partes de TimeQuote pertenecen al dominio y cuáles son infraestructura reemplazable.
