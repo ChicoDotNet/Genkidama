@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FreelanceDesk</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 860px; margin: 2rem auto; padding: 0 1rem; }
+    form { display: grid; gap: .75rem; padding: 1rem; border: 1px solid #bbb; margin-block: 1rem; }
+    label { display: grid; gap: .25rem; } button, input, select { font: inherit; padding: .5rem; }
+    #output { min-height: 1.5rem; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <h1>FreelanceDesk</h1>
+  <p>Administra clientes y crea cotizaciones simples desde una aplicación full-stack en TypeScript.</p>
+
+  <h2>Nuevo cliente</h2>
+  <form id="client-form">
+    <label>Nombre <input name="name" required minlength="2"></label>
+    <label>Correo <input name="email" type="email" required></label>
+    <button type="submit">Guardar cliente</button>
+  </form>
+
+  <h2>Nueva cotización</h2>
+  <form id="quote-form">
+    <label>Cliente <select id="quote-client" name="clientId" required></select></label>
+    <label>Concepto <input name="description" required></label>
+    <label>Cantidad <input name="quantity" type="number" min="0.01" step="0.01" value="1" required></label>
+    <label>Precio unitario <input name="unitPrice" type="number" min="0" step="0.01" required></label>
+    <button type="submit">Crear cotización</button>
+  </form>
+
+  <p id="output" role="status" aria-live="polite"></p>
+  <script type="module" src="/assets/main.js"></script>
+</body>
+</html>

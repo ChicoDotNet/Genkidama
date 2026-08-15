@@ -1,0 +1,42 @@
+schema_version: 1
+slug: typescript
+language: TypeScript
+locale: es
+source_locale: es
+title: Curso de TypeScript desde cero — Construye un gestor full-stack para freelancers
+status: complete
+canonical_app:
+  name: FreelanceDesk
+  summary: Aplicación full-stack local para administrar clientes, proyectos y cotizaciones de freelancers mediante TypeScript compartido entre navegador y Node.js.
+audience: beginner
+prerequisites: []
+lesson_count: 17
+toolchain:
+  verified_on: '2026-08-14'
+  version_tested: TypeScript 6.0.3 + Node.js 24.18.0
+  runtime_or_compiler: TypeScript 6.0 sobre Node.js 24 LTS + navegador moderno
+  package_or_build_tool: npm + tsc
+  test_tool: node:test
+  operating_systems_targeted:
+    - windows-11
+    - linux
+  operating_systems_tested:
+    - github-actions-ubuntu-24.04
+ci:
+  supported: true
+  workflow: .github/workflows/learn-typescript.yml
+  isolation: path-scoped
+career_context:
+  uses:
+    - aplicaciones frontend tipadas
+    - APIs y servicios Node.js
+    - aplicaciones full-stack web
+    - tooling y automatización del ecosistema JavaScript
+  market_note: TypeScript tiene un ecosistema grande y activo en desarrollo web, pero completar este curso no garantiza contratación; la preparación junior también requiere HTTP, pruebas, debugging y lectura de bases existentes.
+official_references:
+  - https://www.typescriptlang.org/docs/handbook/intro.html
+  - https://www.typescriptlang.org/docs/handbook/release-notes/typescript-6-0.html
+  - https://nodejs.org/en/about/previous-releases
+  - https://nodejs.org/api/http.html
+  - https://nodejs.org/api/fs.html
+  - https://developer.mozilla.org/docs/Web/API/Fetch_API

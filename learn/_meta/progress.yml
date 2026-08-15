@@ -2,10 +2,10 @@ schema_version: 1
 initiative:
   status: pilots_complete
   source_locale: es
-  last_updated: '2026-08-13'
-  active_work: typescript_course
+  last_updated: '2026-08-14'
+  active_work: java_course
   v1_courses_total: 45
-  v1_courses_complete: 5
+  v1_courses_complete: 6
 foundation:
   status: complete
   catalog: complete
@@ -33,7 +33,13 @@ courses:
     last_green_executable_sha: 8514359e30b06580953b46c055ae222a56a29139
     pr: 34
     pilot_order: 1
-  typescript: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  typescript:
+    status: complete
+    lessons_complete: 17
+    lessons_total: 17
+    ci: green
+    last_green_executable_sha: 5db26e0f81675c61cad606b3bd5aab815acd894d
+    pr: 42
   ada: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   solidity:
     status: complete
