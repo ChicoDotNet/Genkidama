@@ -100,7 +100,12 @@ courses:
     ci: green
     last_green_executable_sha: 9ca97103b5f79d3e6baed04827c81a8da9bdfeb3
     pr: 54
-  swift: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  swift:
+    status: in_progress
+    lessons_complete: 4
+    lessons_total: 17
+    ci: pending
+    pr: null
   fsharp: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   crystal: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   lua: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
