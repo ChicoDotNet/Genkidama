@@ -3,7 +3,7 @@
 > **Familia:** Creational  
 > **Intención:** Proporcionar una abstracción para crear familias de productos relacionados o dependientes sin acoplar al cliente a sus tipos concretos.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `22/48`  
+> **Implementaciones de lenguaje:** `25/48`  
 > **Cobertura de pruebas:** `N/A` — este catálogo valida ejemplos por compilación/ejecución cuando es práctico; no existe una métrica homogénea de line coverage entre 48 ecosistemas.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -177,10 +177,11 @@ En lenguajes funcionales o dinámicos, simular interfaces y clases de otro ecosi
 
 ## Validación automatizada
 
-La evidencia ejecutable se obtiene por dos vías complementarias:
+La evidencia ejecutable se obtiene de gates históricos y del CI general condicionado a ramas `patterns/*`:
 
-- el gate de patrón cubre C#, Java, Go, PHP, Python, Rust, JavaScript y TypeScript;
-- el CI general, limitado a ramas `patterns/*`, ejecuta además C, C++, Visual Basic .NET, F#, Ruby, Perl, Bash, PowerShell, Erlang, Pascal, GNU Octave, R y Lua. El lote Pascal/Octave/R/Lua quedó verde en `1a9ba6fcafe64d88048f954a580c648c89206a56` sin afectar PRs de Learn.
+- el lote inicial certificó C#, Java, Go, PHP, Python, Rust, JavaScript y TypeScript;
+- el CI general ejecuta C, C++, Visual Basic .NET, F#, Ruby, Perl, Bash, PowerShell, Erlang, Pascal, GNU Octave, R y Lua;
+- el mismo CI ejecuta ahora Haskell, Kotlin, Swift y Julia. El lote Haskell/Kotlin/Swift quedó verde en `b02a62e2b6674c14e5dd973241fec72c40c80d43`; Julia quedó verde junto con todo el gate en `3bf7d56b383cd1705e151935bc2edd10874587ac`.
 
 Esto es evidencia de ejecución, no line coverage. La política >=44% se aplica cuando un ecosistema tenga medición de coverage significativa; no se inventa un porcentaje transversal para ejemplos heterogéneos.
 
@@ -199,7 +200,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Python | Applicable | [`example1.py`](../src/Scripting/PythonPY/example1.py) | Python 3.14 run ✅ | Fábricas dinámicas Dark/Light. |
 | Visual Basic .NET | Applicable | [`Example1.vb`](../src/Enterprise/VisualBasic/Example1.vb) | .NET 10 compile/run ✅ | Dos familias concretas verificadas en CI. |
 | C++ | Applicable | [`example1.cpp`](../src/Systems/C%2B%2B/example1.cpp) | C++20 `-Werror` compile/run ✅ | RAII, destructores virtuales y `std::unique_ptr`. |
-| Objective-C | Applicable | — | Pendiente | Revisar implementación histórica. |
+| Objective-C | Applicable | — | Pendiente | [`example1.m`](../src/Systems/Objective-C/example1.m) preserva la familia; falta evidencia ejecutable proporcional. |
 | Java | Applicable | [`Example1.java`](../src/Enterprise/Java/Example1.java) | Java 25 compile/run ✅ | `UIFactory` conserva Button + Checkbox. |
 | Rust | Applicable | [`example1.rs`](../src/Systems/Rust/example1.rs) | `rustc` compile/run ✅ | Traits + factories concretas. |
 | Zig | Applicable | — | Pendiente | Revisar implementación histórica. |
@@ -207,19 +208,19 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | PHP | Applicable | [`example1.php`](../src/Scripting/PHP/example1.php) | PHP 8.5 lint/run ✅ | Interfaces + familias coherentes. |
 | Nim | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Dart | Applicable | — | Pendiente | Revisar implementación histórica. |
-| Kotlin | Applicable | — | Pendiente | [`Example1.kt`](../src/Enterprise/Kotlin/Example1.kt) tiene semántica compatible; falta gate ejecutable. |
-| Swift | Applicable | — | Pendiente | Revisar implementación histórica. |
+| Kotlin | Applicable | [`Example1.kt`](../src/Enterprise/Kotlin/Example1.kt) | `kotlinc` compile + JVM run ✅ | `UIFactory` conserva Button + Checkbox. |
+| Swift | Applicable | [`example1.swift`](../src/Systems/Swift/example1.swift) | `swiftc` compile/run ✅ | Protocols + factories concretas conservan la familia. |
 | F# | Applicable | [`example1.fsx`](../src/Functional/F%23/example1.fsx) | `dotnet fsi` run ✅ | Record de constructores conserva la familia completa. |
 | Crystal | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Lua | Applicable | [`example1.lua`](../src/Scripting/Lua/example1.lua) | Lua 5.4 run ✅ | Table de closures representa una familia completa. |
-| Haskell | Applicable | [`Example1.hs`](../src/Functional/Haskell/Example1.hs) | Inspección semántica + ruta ✅ | Record `UIFactory` de operaciones; ejecución automatizada pendiente. |
+| Haskell | Applicable | [`Example1.hs`](../src/Functional/Haskell/Example1.hs) | `runghc -Wall -Werror` ✅ | Record `UIFactory` de operaciones conserva una familia completa. |
 | COBOL | Applicable | — | Pendiente | Programas/subprogramas y tablas pueden representar la selección común. |
-| Scala | Applicable | — | Pendiente | Revisar implementación histórica. |
+| Scala | Applicable | — | Pendiente | [`Example1.scala`](../src/Functional/Scala/Example1.scala) preserva la familia; falta gate ejecutable. |
 | Groovy | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Ruby | Applicable | [`example1.rb`](../src/Scripting/RubyRB/example1.rb) | syntax check + run ✅ | Factory concreta preserva la familia. |
 | C | Applicable | [`example1.c`](../src/Systems/C/example1.c) | C17 `-Werror` compile/run ✅ | Struct de function pointers representa una familia. |
 | OCaml | Applicable | — | Pendiente | Revisar implementación histórica. |
-| Julia | Applicable | — | Pendiente | Revisar implementación histórica. |
+| Julia | Applicable | [`example1.jl`](../src/DataScience/Julia/example1.jl) | Julia run ✅ | Multiple dispatch + factories concretas conservan la familia. |
 | VBA | Applicable | — | Pendiente | Revisar implementación histórica y ruta real. |
 | GDScript | Applicable | — | Pendiente | Revisar implementación histórica. |
 | JavaScript | Applicable | [`example1.js`](../src/Web/JavaScriptJS/example1.js) | Node 24 run ✅ | Selecciona una sola factory por familia. |
@@ -242,7 +243,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | MicroPython | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Rockstar | Applicable | — | Pendiente | Variables, funciones y control de flujo permiten representar selección de familia; requiere revisión idiomática. |
 
-**Cobertura actual verificada: 22 / 48 lenguajes Applicable (45.8%).**
+**Cobertura actual verificada: 25 / 48 lenguajes Applicable (52.1%).**
 
 La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe conservar la intención, resolver su enlace y tener evidencia proporcional.
 
@@ -258,7 +259,7 @@ La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe 
 - El movimiento de diseño es seleccionar una fábrica/familia una vez y pedirle productos relacionados.
 - El principal trade-off es facilitar nuevas familias a costa de encarecer nuevos tipos de producto.
 - Factory Method puede colaborar con Abstract Factory, pero no define su intención.
-- La evidencia asciende a 22/48; la página permanece `in-progress` hasta `48/48`.
+- La evidencia asciende a 25/48; la página permanece `in-progress` hasta `48/48`.
 
 ## Referencias
 
