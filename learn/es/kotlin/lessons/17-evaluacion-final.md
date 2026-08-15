@@ -98,4 +98,4 @@ No memorices respuestas. Usa decisiones que realmente puedas señalar en el cód
 
 ## Siguiente paso
 
-Si tu entrega satisface la rúbrica y los gates ejecutables, conserva FieldFlow como proyecto de portafolio y practica explicarlo desde el problema de negocio hacia las decisiones técnicas. Para control de versiones continúa usando el [curso transversal de Git](../git/README.md).
+Si tu entrega satisface la rúbrica y los gates ejecutables, conserva FieldFlow como proyecto de portafolio y practica explicarlo desde el problema de negocio hacia las decisiones técnicas. Para control de versiones continúa usando el [curso transversal de Git](../../git/README.md).
