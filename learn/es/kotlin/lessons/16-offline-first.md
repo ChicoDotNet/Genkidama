@@ -49,7 +49,7 @@ Propón una clave de idempotencia para enviar una transición de estado al servi
 Una aplicación offline first confirma localmente, sincroniza después y hace visibles los conflictos importantes.
 
 ## Siguiente paso
-Realiza [Checkpoint 04 — Android offline first](checkpoint-04.md) y después enfrenta la evaluación final.
+Realiza [Checkpoint 04 — Android offline first](checkpoint-04.md) y después continúa con [17 — Evaluación final: entrega FieldFlow](17-evaluacion-final.md).
 
 ## Referencias
 - https://developer.android.com/topic/architecture/data-layer/offline-first
