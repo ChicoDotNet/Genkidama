@@ -32,5 +32,31 @@ jobs:
       - name: Test
         run: dotnet test Genkidama.slnx --configuration Release --no-build --collect:"XPlat Code Coverage" --logger trx --results-directory TestResults
 
+      - name: Validate portable Abstract Factory examples
+        if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'patterns/')
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          gcc -std=c17 -Wall -Wextra -Werror src/Systems/C/example1.c -o /tmp/abstract-factory-c
+          /tmp/abstract-factory-c
+
+          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/example1.cpp' -o /tmp/abstract-factory-cpp
+          /tmp/abstract-factory-cpp
+
+          work="$(mktemp -d)"
+          dotnet new console --language VB --framework net10.0 --output "$work" --force >/dev/null
+          cp src/Enterprise/VisualBasic/Example1.vb "$work/Program.vb"
+          dotnet run --project "$work" --configuration Release
+
+          ruby -cw src/Scripting/RubyRB/example1.rb
+          ruby src/Scripting/RubyRB/example1.rb
+
+          perl -c src/Scripting/Perl/example1.pl
+          perl src/Scripting/Perl/example1.pl
+
+          bash -n src/Shell/Bash/example1.sh
+          bash src/Shell/Bash/example1.sh
+
       - name: Pack CLI Tool
         run: dotnet pack src/Genkidama.Cli/Genkidama.Cli.csproj --configuration Release --no-build --output artifacts/packages
