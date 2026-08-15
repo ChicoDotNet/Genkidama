@@ -183,3 +183,25 @@ jobs:
 
       - name: Pack CLI Tool
         run: dotnet pack src/Genkidama.Cli/Genkidama.Cli.csproj --configuration Release --no-build --output artifacts/packages
+
+  objective-c-abstract-factory:
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'patterns/')
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Validate Objective-C Abstract Factory with Foundation
+        shell: bash
+        run: |
+          set -euo pipefail
+          clang -fobjc-arc -Wall -Wextra -Werror -framework Foundation \
+            src/Systems/Objective-C/example1.m \
+            -o /tmp/abstract-factory-objective-c
+          output="$(/tmp/abstract-factory-objective-c 2>&1)"
+          printf '%s\n' "$output"
+          grep -Fq 'Dark Button' <<<"$output"
+          grep -Fq 'Dark Checkbox' <<<"$output"
+          grep -Fq 'Light Button' <<<"$output"
+          grep -Fq 'Light Checkbox' <<<"$output"
