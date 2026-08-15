@@ -70,7 +70,7 @@ Diseña qué tendría que cambiar para dos procesos escritores. Explica por qué
 
 ## Siguiente paso
 
-El siguiente bloque abordará tooling profesional, debugging, medición y hardening antes de la evaluación final.
+Continúa con [Lección 13 — Gate profesional y contratos HTTP](13-gate-profesional-y-contratos-http.md).
 
 ## Referencias
 
