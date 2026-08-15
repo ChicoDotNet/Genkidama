@@ -97,8 +97,8 @@ courses:
     status: in_progress
     lessons_complete: 8
     lessons_total: 17
-    ci: pending
-    last_green_executable_sha: 81991004af8e8ce1fa3ee4b8d7c6bcf265b8927d
+    ci: green
+    last_green_executable_sha: fc4d72effb3517c968805321c1c2f688b21ba335
     pr: 54
   swift: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   fsharp: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
