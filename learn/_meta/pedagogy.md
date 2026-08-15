@@ -188,7 +188,11 @@ No se proporcionan respuestas grandilocuentes ni se infla la experiencia del alu
 
 ## Git
 
-Git no es una materia sustancial de estos cursos. Sólo se usan los comandos inevitables para obtener o ejecutar el material. Tendrá un curso independiente.
+Git no es una materia sustancial dentro de los cursos de lenguaje. El alumno debe aprenderlo en el [curso transversal de Git](../es/git/), que usa un laboratorio independiente y no exige conocimiento previo de programación.
+
+Los cursos de lenguaje DEBEN recomendar y enlazar esa ruta cuando hablen de control de versiones, ramas, recuperación o colaboración. Pueden mostrar únicamente comandos inevitables para obtener o ejecutar material; no deben crear mini-cursos de Git duplicados dentro de cada lenguaje.
+
+El curso de Git aplica el mismo ciclo problema → concepto → práctica → ejercicio → prueba, pero su aplicación canónica es un repositorio de trabajo y su evidencia principal son estados, historia, diffs e integraciones de Git.
 
 ## Regla de fondo
 
