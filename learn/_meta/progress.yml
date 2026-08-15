@@ -2,7 +2,7 @@ schema_version: 1
 initiative:
   status: pilots_complete
   source_locale: es
-  last_updated: '2026-08-14'
+  last_updated: '2026-08-15'
   active_work: kotlin_course
   v1_courses_total: 45
   v1_courses_complete: 10
@@ -95,10 +95,10 @@ courses:
   dart: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   kotlin:
     status: in_progress
-    lessons_complete: 12
+    lessons_complete: 16
     lessons_total: 17
-    ci: green
-    last_green_executable_sha: 5e7c3353e3ce62e51213a03ef2a039f8d9231908
+    ci: pending
+    last_green_executable_sha: 378e8e9e1e0a25f2b10f678459eb776afda1ebf2
     pr: 54
   swift: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   fsharp: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
