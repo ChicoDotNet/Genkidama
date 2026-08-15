@@ -8,7 +8,7 @@ No promete empleo. Su objetivo es dejar evidencia práctica suficiente para que 
 
 Al terminar un curso deberías poder leer y escribir código idiomático sencillo, manejar errores/I/O/persistencia cuando apliquen, usar tooling y pruebas, modificar una base existente, consultar documentación oficial, explicar arquitectura y resolver una evaluación final sin receta.
 
-Git no se repite como materia sustancial dentro de cada lenguaje. ReleaseDesk se mantiene como curso transversal independiente de los 45 lenguajes v1; mientras su PR dedicado no forme parte de esta cadena, este README evita crear un enlace relativo que todavía no exista en el árbol actual.
+Git no se repite como materia sustancial dentro de cada lenguaje. Cuando necesites control de versiones, ramas, recuperación o colaboración, usa el [curso transversal de Git](es/git/).
 
 ## Cómo se aprende
 
@@ -18,9 +18,17 @@ Todos los cursos siguen:
 
 Cada lenguaje tiene una sola aplicación canónica principal que crece durante el curso.
 
+## Curso transversal
+
+[**Git — ReleaseDesk**](es/git/) enseña control de versiones desde cero sobre un laboratorio independiente y sin exigir conocimiento previo de un lenguaje. Está **completo en 17/17 lecciones**, con cuatro checkpoints, evaluación final sin receta, rúbrica y CI reproducible.
+
+Es infraestructura pedagógica compartida: los cursos de lenguaje lo recomiendan en vez de duplicar una mini-lección de Git dentro de cada ruta.
+
+Git se sigue y valida aparte; **no altera el conteo de 45 lenguajes de Learn v1**.
+
 ## Idioma
 
-El contenido fuente canónico es español (`es`). Las traducciones se preparan para `en`, `zh-Hans`, `ja`, `fr`, `it`, `pt-BR`, `ru`, `de`, pero no comenzarán hasta que la colección en español tenga madurez suficiente.
+El contenido fuente canónico es español (`es`). Las traducciones se preparan para `en`, `zh-Hans`, `ja`, `fr`, `it`, `pt-BR`, `ru`, `de`, pero no comenzarán hasta que varios cursos en español estén maduros.
 
 ## Pilotos completados
 
@@ -42,9 +50,9 @@ Después de los pilotos continúan los cursos del roadmap, uno a la vez salvo de
 |---|---|---|
 | [TypeScript](es/typescript/) | FreelanceDesk: proyectos, clientes y cotizaciones | **Completo** |
 | [Java](es/java/) | HelpDesk API de tickets | **Completo** |
-| [Go](es/go/) | UptimeLab: monitor concurrente de uptime con API/dashboard | **En progreso — 8/17** |
+| [Go](es/go/) | UptimeLab: monitor concurrente de uptime con API/dashboard | **Completo** |
 
-El orden completo y sus criterios viven en el [roadmap](./_meta/roadmap.md).
+El siguiente frente es **Rust**. El orden completo y sus criterios viven en el [roadmap](./_meta/roadmap.md).
 
 ## Qué contiene un curso
 
@@ -70,7 +78,7 @@ La memoria operativa vive en:
 
 Genkidama Learn v1 termina cuando los 45 lenguajes actuales tienen un curso completo en español, aplicación canónica funcional y validación razonable.
 
-El curso transversal Git mejora la preparación compartida pero no modifica ese denominador. Delphi, GNU Octave, SQL, CSS, MicroPython y Rockstar están registrados como expansión posterior. Rockstar se presenta como contenido pedagógico/esotérico, no como una ruta con demanda laboral significativa.
+El curso transversal de Git mejora la preparación compartida pero no aumenta ni reduce ese denominador. Delphi, GNU Octave, SQL, CSS, MicroPython y Rockstar están registrados como expansión posterior. Rockstar se presenta como contenido pedagógico/esotérico, no como una ruta con demanda laboral significativa.
 
 ## Licencia
 

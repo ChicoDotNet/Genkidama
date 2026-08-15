@@ -27,6 +27,7 @@ REQUIRED_FOUNDATION = (
 
 EXPECTED_LOCALES = ["es", "en", "zh-Hans", "ja", "fr", "it", "pt-BR", "ru", "de"]
 EXPECTED_PILOTS = ["csharp", "python", "javascript", "cobol", "solidity"]
+TRANSVERSAL_COURSE_SLUGS = {"git"}
 MARKDOWN_LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 LESSON_FILE = re.compile(r"^(?P<number>\d+)-.+\.md$")
 
@@ -115,15 +116,34 @@ def validate_progress(errors: list[str], catalog_slugs: set[str]) -> None:
         if item.get("pilot_order") != index:
             fail(errors, f"progress.yml: {slug} must have pilot_order {index}")
 
+    transversal = progress.get("transversal_courses")
+    if not isinstance(transversal, dict):
+        fail(errors, "progress.yml: transversal_courses must be a mapping")
+        return
+
+    if set(transversal) != TRANSVERSAL_COURSE_SLUGS:
+        fail(
+            errors,
+            "progress.yml: transversal_courses must track exactly the configured transversal course slugs",
+        )
+
+    for slug in TRANSVERSAL_COURSE_SLUGS:
+        item = transversal.get(slug, {})
+        complete = item.get("lessons_complete")
+        total = item.get("lessons_total")
+        if not isinstance(complete, int) or not isinstance(total, int) or not 0 <= complete <= total:
+            fail(errors, f"progress.yml: invalid lesson progress for transversal course {slug}")
+
 
 def validate_course_directories(errors: list[str], catalog_slugs: set[str]) -> None:
     locale_root = LEARN / "es"
     if not locale_root.exists():
         return
 
+    known_slugs = catalog_slugs | TRANSVERSAL_COURSE_SLUGS
     for course_dir in sorted(path for path in locale_root.iterdir() if path.is_dir()):
         slug = course_dir.name
-        if slug not in catalog_slugs:
+        if slug not in known_slugs:
             fail(errors, f"unregistered course directory: {course_dir.relative_to(ROOT)}")
 
         readme = course_dir / "README.md"
@@ -137,6 +157,8 @@ def validate_course_directories(errors: list[str], catalog_slugs: set[str]) -> N
         course = load_yaml(metadata)
         if course.get("slug") != slug:
             fail(errors, f"{slug}: course.yml slug must match the directory name")
+        if slug in TRANSVERSAL_COURSE_SLUGS and course.get("course_kind") != "transversal":
+            fail(errors, f"{slug}: transversal course must declare course_kind: transversal")
 
         if course.get("status") == "complete":
             lessons_dir = course_dir / "lessons"
@@ -236,7 +258,7 @@ def main() -> int:
         return 1
 
     print("Genkidama Learn validation passed.")
-    print("Validated 45 v1 courses, 6 planned additions, metadata, lesson navigation and Markdown links.")
+    print("Validated 45 v1 language courses, 6 planned additions, transversal Git, metadata, lesson navigation and Markdown links.")
     return 0
 
 
