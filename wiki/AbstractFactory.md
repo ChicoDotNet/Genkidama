@@ -3,7 +3,7 @@
 > **Familia:** Creational  
 > **Intención:** Proporcionar una abstracción para crear familias de productos relacionados o dependientes sin acoplar al cliente a sus tipos concretos.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `16/48`  
+> **Implementaciones de lenguaje:** `18/48`  
 > **Cobertura de pruebas:** `N/A` — este catálogo valida ejemplos por compilación/ejecución cuando es práctico; no existe una métrica homogénea de line coverage entre 48 ecosistemas.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -161,7 +161,7 @@ Una operación `createX()` no convierte automáticamente una solución en Abstra
 
 ### Separar los selectores hasta perder la familia
 
-Dos funciones independientes `createButton(theme)` y `createCheckbox(theme)` permiten elegir temas distintos y rompen la garantía central. Ese defecto histórico ya fue corregido en JavaScript, Perl, Shell y Erlang dentro de este PR.
+Dos funciones independientes `createButton(theme)` y `createCheckbox(theme)` permiten elegir temas distintos y rompen la garantía central. Ese defecto histórico ya fue corregido en JavaScript, Perl, Shell, Erlang, PowerShell y R dentro de este PR.
 
 ### Traducir mecánicamente una jerarquía OO
 
@@ -180,7 +180,7 @@ En lenguajes funcionales o dinámicos, simular interfaces y clases de otro ecosi
 La evidencia ejecutable se obtiene por dos vías complementarias:
 
 - el gate de patrón cubre C#, Java, Go, PHP, Python, Rust, JavaScript y TypeScript;
-- el CI general, limitado a ramas `patterns/*`, ejecuta además C, C++, Visual Basic .NET, Ruby, Perl, Bash y Erlang. El lote C/C++/VB/Ruby/Perl/Bash quedó verde en `ce60820126eb3eff97dea5b01f445d560897c760`; Erlang/OTP 28.5.0.4 quedó verde después de reestructurar la selección familiar como un único map de constructores.
+- el CI general, limitado a ramas `patterns/*`, ejecuta además C, C++, Visual Basic .NET, F#, Ruby, Perl, Bash, PowerShell y Erlang. El lote F#/PowerShell quedó verde en `f23c0d54fb2a4c958f2dfb9573ff0dca81ce9670` y reutiliza el mismo gate estricto sin afectar PRs de Learn.
 
 Esto es evidencia de ejecución, no line coverage. La política >=44% se aplica cuando un ecosistema tenga medición de coverage significativa; no se inventa un porcentaje transversal para ejemplos heterogéneos.
 
@@ -209,9 +209,9 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Dart | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Kotlin | Applicable | — | Pendiente | [`Example1.kt`](../src/Enterprise/Kotlin/Example1.kt) tiene semántica compatible; falta gate ejecutable. |
 | Swift | Applicable | — | Pendiente | Revisar implementación histórica. |
-| F# | Applicable | — | Pendiente | Revisar ruta real e implementación histórica. |
+| F# | Applicable | [`example1.fsx`](../src/Functional/F%23/example1.fsx) | `dotnet fsi` run ✅ | Record de constructores conserva la familia completa. |
 | Crystal | Applicable | — | Pendiente | Revisar implementación histórica. |
-| Lua | Applicable | — | Pendiente | Revisar implementación histórica. |
+| Lua | Applicable | [`example1.lua`](../src/Scripting/Lua/example1.lua) | Ejemplo reparado; ejecución pendiente | Table de closures representa una familia completa. |
 | Haskell | Applicable | [`Example1.hs`](../src/Functional/Haskell/Example1.hs) | Inspección semántica + ruta ✅ | Record `UIFactory` de operaciones; ejecución automatizada pendiente. |
 | COBOL | Applicable | — | Pendiente | Programas/subprogramas y tablas pueden representar la selección común. |
 | Scala | Applicable | — | Pendiente | Revisar implementación histórica. |
@@ -225,13 +225,13 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | JavaScript | Applicable | [`example1.js`](../src/Web/JavaScriptJS/example1.js) | Node 24 run ✅ | Selecciona una sola factory por familia. |
 | MATLAB | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Perl | Applicable | [`example1.pl`](../src/Scripting/Perl/example1.pl) | syntax check + run ✅ | Reparado: una factory agrupa ambos constructores. |
-| R | Applicable | — | Pendiente | Revisar implementación histórica. |
-| PowerShell | Applicable | — | Pendiente | Revisar implementación histórica. |
+| R | Applicable | [`example1.R`](../src/DataScience/R/example1.R) | Ejemplo reparado; ejecución pendiente | List de closures representa una familia completa. |
+| PowerShell | Applicable | [`example1.ps1`](../src/Shell/PowerShell/example1.ps1) | `pwsh` strict run ✅ | Hashtable de scriptblocks representa una familia seleccionada una vez. |
 | HTML | N/A | — | — | HTML describe estructura; JavaScript embebido sigue siendo JavaScript. |
 | Assembly | Applicable | — | Pendiente | Puede expresarse con tablas de direcciones/rutinas. |
 | Elixir | Applicable | — | Pendiente | Módulos/funciones/datos pueden representar la familia. |
 | Shell | Applicable | [`example1.sh`](../src/Shell/Bash/example1.sh) | `bash -n` + run ✅ | Reparado: associative array + nameref seleccionan una familia una sola vez. |
-| Erlang | Applicable | [`example1.erl`](../src/Functional/Erlang/example1.erl) | OTP 28.5.0.4 compile/run ✅ | Map de funciones encapsula una familia completa. |
+| Erlang | Applicable | [`example1.erl`](../src/Functional/Erlang/example1.erl) | OTP compile/run ✅ | Map de funciones encapsula una familia completa. |
 | Clojure | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Common Lisp | Applicable | — | Pendiente | Revisar implementación histórica y ruta real. |
 | Prolog | Applicable | — | Pendiente | Hechos/reglas con identificador común pueden representar familias. |
@@ -242,7 +242,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | MicroPython | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Rockstar | Applicable | — | Pendiente | Variables, funciones y control de flujo permiten representar selección de familia; requiere revisión idiomática. |
 
-**Cobertura actual verificada: 16 / 48 lenguajes Applicable (33.3%).**
+**Cobertura actual verificada: 18 / 48 lenguajes Applicable (37.5%).**
 
 La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe conservar la intención, resolver su enlace y tener evidencia proporcional.
 
@@ -258,7 +258,7 @@ La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe 
 - El movimiento de diseño es seleccionar una fábrica/familia una vez y pedirle productos relacionados.
 - El principal trade-off es facilitar nuevas familias a costa de encarecer nuevos tipos de producto.
 - Factory Method puede colaborar con Abstract Factory, pero no define su intención.
-- La evidencia asciende a 16/48; la página permanece `in-progress` hasta `48/48`.
+- La evidencia asciende a 18/48; la página permanece `in-progress` hasta `48/48`.
 
 ## Referencias
 
