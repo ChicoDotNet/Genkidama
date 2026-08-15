@@ -108,8 +108,9 @@ jobs:
 
           julia --startup-file=no src/DataScience/Julia/example1.jl
 
-          scalac -deprecation -feature -unchecked src/Functional/Scala/Example1.scala -d /tmp
-          scala -cp /tmp Main
+          scala_out="$(mktemp -d)"
+          scalac -deprecation -feature -unchecked src/Functional/Scala/Example1.scala -d "$scala_out"
+          scala -cp "$scala_out" Example1
 
           gfortran -std=f2018 -Wall -Wextra -Werror src/Historical/Fortran/example1.f90 -o /tmp/abstract-factory-fortran
           /tmp/abstract-factory-fortran
