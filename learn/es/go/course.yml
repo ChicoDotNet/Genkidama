@@ -1,0 +1,50 @@
+schema_version: 1
+slug: go
+language: Go
+locale: es
+source_locale: es
+title: Curso de Go desde cero — Construye un monitor concurrente de uptime
+status: complete
+canonical_app:
+  name: UptimeLab
+  summary: Monitor local concurrente de endpoints HTTP con API, dashboard, historial persistente, scheduling cancelable, diagnóstico agregado y hardening HTTP.
+audience: beginner
+prerequisites: []
+lesson_count: 17
+toolchain:
+  verified_on: '2026-08-14'
+  version_tested: 1.26.5
+  runtime_or_compiler: Go 1.26.5
+  package_or_build_tool: Go modules + go command
+  test_tool: go test + race detector + net/http/httptest
+  operating_systems_targeted:
+    - windows-11
+    - linux
+  operating_systems_tested:
+    - github-actions-ubuntu-24.04
+ci:
+  supported: true
+  workflow: .github/workflows/learn-go.yml
+  isolation: path-scoped
+career_context:
+  uses:
+    - APIs y servicios de red
+    - herramientas CLI y automatización
+    - infraestructura cloud y servicios concurrentes
+  market_note: Go tiene uso profesional fuerte en servicios, tooling e infraestructura, pero la encuesta oficial 2025 indica que suele aprenderse después de iniciar una carrera; este curso prepara fundamentos transferibles sin prometer empleo junior.
+official_references:
+  - https://go.dev/doc/
+  - https://go.dev/doc/devel/release
+  - https://pkg.go.dev/net/http
+  - https://pkg.go.dev/context
+  - https://pkg.go.dev/net/http/httptest
+  - https://pkg.go.dev/encoding/json
+  - https://pkg.go.dev/os/signal
+  - https://pkg.go.dev/time
+  - https://pkg.go.dev/sort
+  - https://pkg.go.dev/strconv
+  - https://pkg.go.dev/sync
+  - https://pkg.go.dev/errors
+  - https://go.dev/doc/diagnostics
+  - https://go.dev/doc/articles/race_detector
+  - https://go.dev/blog/survey2025

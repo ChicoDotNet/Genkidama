@@ -22,7 +22,7 @@ Cada lenguaje tiene una sola aplicación canónica principal que crece durante e
 
 [**Git — ReleaseDesk**](es/git/) enseña control de versiones desde cero sobre un laboratorio independiente y sin exigir conocimiento previo de un lenguaje. Está **completo en 17/17 lecciones**, con cuatro checkpoints, evaluación final sin receta, rúbrica y CI reproducible.
 
-Es infraestructura pedagógica compartida: los cursos de C#, Python, JavaScript y los futuros lenguajes lo recomiendan en vez de duplicar una mini-lección de Git dentro de cada ruta.
+Es infraestructura pedagógica compartida: los cursos de lenguaje lo recomiendan en vez de duplicar una mini-lección de Git dentro de cada ruta.
 
 Git se sigue y valida aparte; **no altera el conteo de 45 lenguajes de Learn v1**.
 
@@ -30,17 +30,29 @@ Git se sigue y valida aparte; **no altera el conteo de 45 lenguajes de Learn v1*
 
 El contenido fuente canónico es español (`es`). Las traducciones se preparan para `en`, `zh-Hans`, `ja`, `fr`, `it`, `pt-BR`, `ru`, `de`, pero no comenzarán hasta que varios cursos en español estén maduros.
 
-## Cursos piloto
+## Pilotos completados
 
 | Orden | Lenguaje | Aplicación canónica | Estado |
 |---|---|---|---|
 | 1 | [C#](es/csharp/) | API de inventario, pedidos y facturación | **Completo** |
 | 2 | [Python](es/python/) | Conciliador de facturas CSV con validación, persistencia y reportes | **Completo** |
 | 3 | [JavaScript](es/javascript/) | Kanban offline-first/PWA principalmente nativo | **Completo** |
-| 4 | [COBOL](es/cobol/) | Procesador batch de nómina | **En progreso** |
-| 5 | Solidity | `FreelanceEscrow`: depósito, entrega, liberación y reembolso | Planeado |
+| 4 | [COBOL](es/cobol/) | Procesador batch de nómina | **Completo** |
+| 5 | [Solidity](es/solidity/) | `FreelanceEscrow`: depósito, entrega, liberación y reembolso | **Completo** |
 
-No se crean carpetas vacías para simular avance. Un curso aparece cuando existe contenido y código coherentes.
+Los cinco pilotos estabilizaron estructura, longitud, ejercicios, soluciones, checkpoints, evaluación, metadata y CI. No se crean carpetas vacías para simular avance.
+
+## Producción v1
+
+Después de los pilotos continúan los cursos del roadmap, uno a la vez salvo dependencia documentada:
+
+| Lenguaje | Aplicación canónica | Estado |
+|---|---|---|
+| [TypeScript](es/typescript/) | FreelanceDesk: proyectos, clientes y cotizaciones | **Completo** |
+| [Java](es/java/) | HelpDesk API de tickets | **Completo** |
+| [Go](es/go/) | UptimeLab: monitor concurrente de uptime con API/dashboard | **Completo** |
+
+El siguiente frente es **Rust**. El orden completo y sus criterios viven en el [roadmap](./_meta/roadmap.md).
 
 ## Qué contiene un curso
 
