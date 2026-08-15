@@ -3,7 +3,7 @@
 > **Familia:** Creational  
 > **Intención:** Proporcionar una abstracción para crear familias de productos relacionados o dependientes sin acoplar al cliente a sus tipos concretos.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `34/48`  
+> **Implementaciones de lenguaje:** `36/48`  
 > **Cobertura de pruebas:** `N/A` — este catálogo valida ejemplos por compilación/ejecución cuando es práctico; no existe una métrica homogénea de line coverage entre 48 ecosistemas.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -184,7 +184,8 @@ La evidencia ejecutable se obtiene de gates históricos y del CI general condici
 - el mismo CI ejecuta Haskell, Kotlin, Swift y Julia;
 - el gate ampliado en `893cd4ac2b056aa3e7bbaff41a95f059e0d9f567` ejecutó además Scala, Fortran, OCaml y Common Lisp. El primer intento reveló únicamente que `missing-mli` de OCaml no es apropiado como error para un ejemplo standalone; todos los demás warnings siguen siendo estrictos y el segundo intento quedó verde;
 - el gate en `ed56a2aa4c51df75e0f38e5795d9c07a3d180e0a` ejecutó Clojure, compiló Elixir con `elixirc --warnings-as-errors` y ejecutó Prolog con SWI-Prolog. Ese corte también corrigió una deuda de indentación Ruby detectada por el propio runner;
-- el gate en `c0dea39a6660b3195677c10f150710a9901e1a7e` compiló y ejecutó Ada con GNAT 2022 y warnings como errores, y compiló Solidity 0.8.30 verificando bytecode no vacío para `Example1`.
+- el gate en `c0dea39a6660b3195677c10f150710a9901e1a7e` compiló y ejecutó Ada con GNAT 2022 y warnings como errores, y compiló Solidity 0.8.30 verificando bytecode no vacío para `Example1`;
+- el head verde `a090d299908dc9f5338dadf6b468f25458218bd9` compiló/ejecutó COBOL con GnuCOBOL y Assembly x86-64 con NASM + `ld`, comprobando además la salida exacta de las cuatro variantes.
 
 Esto es evidencia de ejecución, no line coverage. La política >=44% se aplica cuando un ecosistema tenga medición de coverage significativa; no se inventa un porcentaje transversal para ejemplos heterogéneos.
 
@@ -217,7 +218,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Crystal | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Lua | Applicable | [`example1.lua`](../src/Scripting/Lua/example1.lua) | Lua 5.4 run ✅ | Table de closures representa una familia completa. |
 | Haskell | Applicable | [`Example1.hs`](../src/Functional/Haskell/Example1.hs) | `runghc -Wall -Werror` ✅ | Record `UIFactory` de operaciones conserva una familia completa. |
-| COBOL | Applicable | — | Pendiente | Programas/subprogramas y tablas pueden representar la selección común. |
+| COBOL | Applicable | [`example1.cbl`](../src/Historical/Cobol/example1.cbl) | GnuCOBOL `-Wall` compile/run ✅ | Una sola familia seleccionada produce Button + Checkbox coherentes. |
 | Scala | Applicable | [`Example1.scala`](../src/Functional/Scala/Example1.scala) | `scalac` compile + `scala` run ✅ | `UIFactory` conserva Button + Checkbox dentro de una familia seleccionada. |
 | Groovy | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Ruby | Applicable | [`example1.rb`](../src/Scripting/RubyRB/example1.rb) | syntax check + run ✅ | Factory concreta preserva la familia. |
@@ -232,7 +233,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | R | Applicable | [`example1.R`](../src/DataScience/R/example1.R) | Rscript run ✅ | List de closures representa una familia completa. |
 | PowerShell | Applicable | [`example1.ps1`](../src/Shell/PowerShell/example1.ps1) | `pwsh` strict run ✅ | Hashtable de scriptblocks representa una familia seleccionada una vez. |
 | HTML | N/A | — | — | HTML describe estructura; JavaScript embebido sigue siendo JavaScript. |
-| Assembly | Applicable | — | Pendiente | Puede expresarse con tablas de direcciones/rutinas. |
+| Assembly | Applicable | [`example1.asm`](../src/LowLevel/Assembly/example1.asm) | NASM `elf64` + `ld` + exact output assertion ✅ | Tabla de direcciones/rutinas conserva una familia y emite las cuatro variantes coherentes. |
 | Elixir | Applicable | [`example1.exs`](../src/Functional/Elixir/example1.exs) | `elixirc --warnings-as-errors` ✅ | Map de closures representa una familia coherente y se selecciona una sola vez. |
 | Shell | Applicable | [`example1.sh`](../src/Shell/Bash/example1.sh) | `bash -n` + run ✅ | Reparado: associative array + nameref seleccionan una familia una sola vez. |
 | Erlang | Applicable | [`example1.erl`](../src/Functional/Erlang/example1.erl) | OTP compile/run ✅ | Map de funciones encapsula una familia completa. |
@@ -246,7 +247,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | MicroPython | Applicable | — | Pendiente | Revisar implementación histórica. |
 | Rockstar | Applicable | — | Pendiente | Variables, funciones y control de flujo permiten representar selección de familia; requiere revisión idiomática. |
 
-**Cobertura actual verificada: 34 / 48 lenguajes Applicable (70.8%).**
+**Cobertura actual verificada: 36 / 48 lenguajes Applicable (75.0%).**
 
 La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe conservar la intención, resolver su enlace y tener evidencia proporcional.
 
@@ -262,7 +263,7 @@ La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe 
 - El movimiento de diseño es seleccionar una fábrica/familia una vez y pedirle productos relacionados.
 - El principal trade-off es facilitar nuevas familias a costa de encarecer nuevos tipos de producto.
 - Factory Method puede colaborar con Abstract Factory, pero no define su intención.
-- La evidencia asciende a 34/48; la página permanece `in-progress` hasta `48/48`.
+- La evidencia asciende a 36/48; la página permanece `in-progress` hasta `48/48`.
 
 ## Referencias
 
