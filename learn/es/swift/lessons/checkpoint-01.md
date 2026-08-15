@@ -39,4 +39,4 @@ Cuando hayas terminado tu intento, compara decisiones con [la solución de refer
 
 ## Siguiente paso
 
-El próximo bloque añadirá una frontera de persistencia y protocolos cuando TimeQuote realmente necesite sobrevivir entre ejecuciones.
+Continúa con [la lección 05 — Protocolos como contratos reemplazables](05-protocolos-y-contratos.md).
