@@ -1,232 +1,271 @@
 # Abstract Factory
 
-## Introducción
+> **Familia:** Creational  
+> **Intención:** Proporcionar una abstracción para crear familias de productos relacionados o dependientes sin acoplar al cliente a sus tipos concretos.  
+> **Estado:** `in-progress`  
+> **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
-El patrón Abstract Factory es uno de los patrones de diseño creacionales que proporciona una interfaz para crear familias de objetos relacionados o dependientes sin especificar sus clases concretas. Este patrón permite a una clase delegar la responsabilidad de instanciar objetos a subclases que implementan una interfaz común.
+## En una frase
 
-## Explicación del Problema que Resuelve
+Abstract Factory permite elegir una **familia coherente** de productos —por ejemplo, botón y checkbox de un mismo tema— y crear sus miembros a través de una sola abstracción sin que el consumidor conozca los tipos concretos.
 
-El patrón Abstract Factory resuelve el problema de la creación de familias de productos sin acoplarse a sus clases concretas. Esto es útil en escenarios donde el sistema necesita ser independiente de cómo se crean y representan los productos. Por ejemplo, en una aplicación que soporta múltiples temas de interfaz de usuario (UI), se puede usar el patrón Abstract Factory para crear elementos de UI (botones, ventanas, etc.) específicos de cada tema sin que la lógica de la aplicación necesite conocer los detalles de implementación de cada tema.
+## El problema
+
+Un sistema necesita crear varios tipos de objetos que deben ser compatibles entre sí. Si el consumidor instancia directamente cada implementación concreta, termina con conocimiento de demasiados tipos, lógica de selección duplicada y la posibilidad de mezclar productos incompatibles.
+
+El problema no es únicamente «cómo crear un objeto». La presión aparece cuando existen **varias familias completas** y el sistema debe poder cambiar de familia sin reescribir al consumidor ni permitir combinaciones incoherentes.
+
+## Fuerzas que compiten
+
+- El consumidor debe permanecer independiente de los tipos concretos que instancia.
+- Los productos de una misma familia deben seleccionarse de forma coherente.
+- Debe ser relativamente sencillo agregar una nueva familia completa.
+- Agregar un nuevo **tipo de producto** a todas las familias suele requerir modificar la abstracción y cada fábrica existente.
+- Una solución demasiado ceremonial puede ser peor que una selección directa cuando sólo existe un producto o una familia.
+
+## La solución
+
+Definir una fábrica abstracta que exponga una operación por **tipo de producto** de la familia. Cada fábrica concreta representa una familia y devuelve sus variantes compatibles. El consumidor recibe la fábrica abstracta y solicita productos sin decidir cuáles implementaciones concretas construir.
+
+La esencia del patrón es la **familia**, no la herencia ni el uso obligatorio de clases. En lenguajes funcionales, dinámicos o de bajo nivel puede expresarse con records de funciones, módulos, closures, tablas de funciones, mensajes u otros mecanismos idiomáticos que conserven la misma garantía: seleccionar una familia una vez y obtener de ella productos relacionados.
+
+Factory Method puede ser una técnica utilizada dentro de una Abstract Factory, pero no son la misma intención: Factory Method decide cómo crear un producto mediante una operación sobrescribible; Abstract Factory coordina la creación de **familias de productos relacionados**.
+
+## Participantes y responsabilidades
+
+| Participante | Responsabilidad |
+|---|---|
+| `AbstractFactory` | Declara las operaciones necesarias para obtener cada tipo de producto de una familia. |
+| `ConcreteFactory` | Representa una familia concreta y crea productos compatibles entre sí. |
+| `AbstractProductA/B/...` | Define el contrato que cada variante de un tipo de producto debe respetar. |
+| `ConcreteProduct` | Implementa un producto perteneciente a una familia concreta. |
+| `Client` | Trabaja únicamente contra la fábrica y los contratos de producto; no elige tipos concretos. |
+
+## Cómo funciona
+
+1. La composición de la aplicación selecciona una fábrica concreta según el contexto requerido.
+2. El cliente recibe esa fábrica a través de la abstracción común.
+3. El cliente solicita los distintos productos a la misma fábrica.
+4. La fábrica devuelve variantes pertenecientes a una familia coherente.
+5. Cambiar de familia implica sustituir la fábrica, no reescribir la lógica del cliente.
 
 ## Diagrama
 
 ```mermaid
 classDiagram
-    AbstractFactory <|-- ConcreteFactory1
-    AbstractFactory <|-- ConcreteFactory2
-    AbstractFactory : +createProductA() ProductA
-    AbstractFactory : +createProductB() ProductB
-    ConcreteFactory1 : +createProductA() ProductA1
-    ConcreteFactory1 : +createProductB() ProductB1
-    ConcreteFactory2 : +createProductA() ProductA2
-    ConcreteFactory2 : +createProductB() ProductB2
-    ProductA <|-- ProductA1
-    ProductA <|-- ProductA2
-    ProductB <|-- ProductB1
-    ProductB <|-- ProductB2
+    AbstractFactory <|.. DarkFactory
+    AbstractFactory <|.. LightFactory
+    Button <|.. DarkButton
+    Button <|.. LightButton
+    Checkbox <|.. DarkCheckbox
+    Checkbox <|.. LightCheckbox
 
     class AbstractFactory {
       <<interface>>
-      +createProductA() ProductA
-      +createProductB() ProductB
+      +createButton() Button
+      +createCheckbox() Checkbox
     }
-    class ConcreteFactory1 {
-      +createProductA() ProductA1
-      +createProductB() ProductB1
+    class DarkFactory {
+      +createButton() Button
+      +createCheckbox() Checkbox
     }
-    class ConcreteFactory2 {
-      +createProductA() ProductA2
-      +createProductB() ProductB2
+    class LightFactory {
+      +createButton() Button
+      +createCheckbox() Checkbox
     }
-    class ProductA {
+    class Button {
       <<interface>>
     }
-    class ProductB {
+    class Checkbox {
       <<interface>>
     }
-    class ProductA1
-    class ProductA2
-    class ProductB1
-    class ProductB2
 ```
 
-## Casos Prácticos
+Lo importante del diagrama no es la sintaxis de clases: ambas operaciones salen de **la misma fábrica seleccionada**, por lo que el cliente no combina accidentalmente un `DarkButton` con un `LightCheckbox`.
 
-### Caso 1: Aplicación de gestión de UI con temas
+## Ejemplo mínimo
 
-#### Explicación
+El ejemplo C# existente representa correctamente la intención: `UIFactory` crea `Button` y `Checkbox`; `DarkFactory` y `LightFactory` crean familias coherentes; `CreateUIComponents` sólo conoce la abstracción.
 
-En una aplicación de interfaz de usuario (UI), es común tener diferentes temas (por ejemplo, tema oscuro y tema claro) que cambian la apariencia de los componentes de la UI. Utilizando el patrón Abstract Factory, podemos crear familias de componentes de UI específicos de cada tema sin acoplar la lógica de la aplicación a las clases concretas de los componentes.
+```csharp
+public interface UIFactory
+{
+    Button CreateButton();
+    Checkbox CreateCheckbox();
+}
 
-Por ejemplo, podemos tener una fábrica abstracta `UIFactory` con métodos para crear botones y ventanas. Las fábricas concretas `DarkThemeFactory` y `LightThemeFactory` implementan estos métodos para crear componentes con el estilo correspondiente al tema oscuro y al tema claro, respectivamente.
+public static void CreateUIComponents(UIFactory factory)
+{
+    var button = factory.CreateButton();
+    var checkbox = factory.CreateCheckbox();
+    button.Render();
+    checkbox.Render();
+}
+```
 
-#### Listado de Lenguajes
-- [Erlang](/src/Functional/Erlang/example1.erl)
-- [Elixir](/src/Functional/Elixir/example1.exs)
-- [Clojure](/src/Functional/Clojure/example1.clj)
-- [Scala](/src/Functional/Scala/example1.scala)
-- [F#](/src/Functional/FSharp/example1.fsx)
-- [Lisp](/src/Functional/Lisp/example1.lisp)
-- [OCaml](/src/Functional/OCaml/example1.ml)
-- [Haskell](/src/Functional/Haskell/example1.hs)
-- [Perl](/src/Scripting/Perl/example1.pl)
-- [Python (PY)](/src/Scripting/PythonPY/example1.py)
-- [Ruby (RB)](/src/Scripting/RubyRB/example1.rb)
-- [Lua](/src/Scripting/Lua/example1.lua)
-- [PHP](/src/Scripting/PHP/example1.php)
-- [Groovy](/src/Scripting/Groovy/example1.groovy)
-- [C](/src/Systems/C/example1.c)
-- [C++](/src/Systems/C++/example1.cpp)
-- [Rust](/src/Systems/Rust/example1.rs)
-- [Zig](/src/Systems/Zig/example1.zig)
-- [Go](/src/Systems/Go/example1.go)
-- [Swift](/src/Systems/Swift/example1.swift)
-- [Objective-C](/src/Systems/Objective-C/example1.m)
-- [Java](/src/Enterprise/Java/example1.java)
-- [C#](/src/Enterprise/CSharp/example1.cs)
-- [Kotlin](/src/Enterprise/Kotlin/example1.kt)
-- [Delphi](/src/Enterprise/Delphi/example1.pas)
-- [Visual Basic](/src/Enterprise/VisualBasic/example1.vb)
-- [R](/src/DataScience/R/example1.R)
-- [Julia](/src/DataScience/Julia/example1.jl)
-- [MATLAB](/src/DataScience/MATLAB/example1.m)
-- [HTML/CSS](/src/Web/HTMLCSS/example1.html)
-- [JavaScript (JS)](/src/Web/JavaScriptJS/example1.js)
-- [TypeScript (TS)](/src/Web/TypeScriptTS/example1.ts)
-- [Dart](/src/Web/Dart/example1.dart)
-- [SQL](#) *(No disponible)*
-- [Bash/Shell](/src/Shell/BashShell/example1.sh)
-- [PowerShell](/src/Shell/PowerShell/example1.ps1)
-- [VBA](/src/Shell/VBA/example1.bas)
-- [Fortran](/src/Historical/Fortran/example1.f90)
-- [Cobol](/src/Historical/Cobol/example1.cbl)
-- [Ada](/src/Historical/Ada/example1.adb)
-- [Solidity](/src/Niche/Solidity/example1.sol)
-- [Prolog](/src/Niche/Prolog/example1.pl)
-- [Nim](/src/Niche/Nim/example1.nim)
-- [Crystal](/src/Niche/Crystal/example1.cr)
-- [GDScript](/src/Niche/GDScript/example1.gd)
-- [Assembly](/src/LowLevel/Assembly/example1.asm)
-- [MicroPython](/src/Other/MicroPython/example1.py)
-- [Rockstar](/src/Other/Rockstar/example1.rock)
+La implementación completa y verificada está en [`src/Enterprise/C#/Example1.cs`](../src/Enterprise/C%23/Example1.cs).
 
+## Aplicación real
 
+### Familias de componentes para temas visuales
 
-### Caso 2: Sistema de bases de datos para múltiples plataformas
+Una aplicación puede ofrecer un conjunto de componentes para tema oscuro y otro para tema claro. El consumidor necesita botón, checkbox y otros componentes sin conocer sus clases concretas y, sobre todo, necesita que todos pertenezcan al mismo tema.
 
-#### Explicación
+Abstract Factory encaja cuando la **coherencia transversal de la familia** es una regla real. Si sólo hay que escoger un componente aislado, una función, constructor inyectado o Factory Method suele ser más simple.
 
-En un sistema que necesita interactuar con diferentes bases de datos (por ejemplo, MySQL, PostgreSQL, SQLite), es útil utilizar el patrón Abstract Factory para crear conexiones y consultas específicas de cada plataforma sin acoplar la lógica de la aplicación a las clases concretas de las bases de datos.
+## En Genkidama
 
-Por ejemplo, podemos tener una fábrica abstracta `DatabaseFactory` con métodos para crear conexiones y consultas. Las fábricas concretas `MySQLFactory`, `PostgreSQLFactory` y `SQLiteFactory` implementan estos métodos para crear componentes específicos de cada base de datos.
+No se ha verificado un uso deliberado de Abstract Factory en la arquitectura productiva de Genkidama que justifique afirmarlo aquí. El repositorio sí contiene ejemplos educativos históricos del patrón. Esta ficha los trata como evidencia sólo después de revisar que preserven la intención y que sus rutas existan.
 
-#### Listado de Lenguajes
+La arquitectura productiva no debe modificarse para aumentar artificialmente el número de patrones «usados».
 
-- [Erlang](/src/Functional/Erlang/example2.erl)
-- [Elixir](/src/Functional/Elixir/example2.exs)
-- [Clojure](/src/Functional/Clojure/example2.clj)
-- [Scala](/src/Functional/Scala/example2.scala)
-- [F#](/src/Functional/FSharp/example2.fsx)
-- [Lisp](/src/Functional/Lisp/example2.lisp)
-- [OCaml](/src/Functional/OCaml/example2.ml)
-- [Haskell](/src/Functional/Haskell/example2.hs)
-- [Perl](/src/Scripting/Perl/example2.pl)
-- [Python (PY)](/src/Scripting/PythonPY/example2.py)
-- [Ruby (RB)](/src/Scripting/RubyRB/example2.rb)
-- [Lua](/src/Scripting/Lua/example2.lua)
-- [PHP](/src/Scripting/PHP/example2.php)
-- [Groovy](/src/Scripting/Groovy/example2.groovy)
-- [C](/src/Systems/C/example2.c)
-- [C++](/src/Systems/C++/example2.cpp)
-- [Rust](/src/Systems/Rust/example2.rs)
-- [Zig](/src/Systems/Zig/example2.zig)
-- [Go](/src/Systems/Go/example2.go)
-- [Swift](/src/Systems/Swift/example2.swift)
-- [Objective-C](/src/Systems/Objective-C/example2.m)
-- [Java](/src/Enterprise/Java/example2.java)
-- [C#](/src/Enterprise/CSharp/example2.cs)
-- [Kotlin](/src/Enterprise/Kotlin/example2.kt)
-- [Delphi](/src/Enterprise/Delphi/example2.pas)
-- [Visual Basic](/src/Enterprise/VisualBasic/example2.vb)
-- [R](/src/DataScience/R/example2.R)
-- [Julia](/src/DataScience/Julia/example2.jl)
-- [MATLAB](/src/DataScience/MATLAB/example2.m)
-- [HTML/CSS](/src/Web/HTMLCSS/example2.html)
-- [JavaScript (JS)](/src/Web/JavaScriptJS/example2.js)
-- [TypeScript (TS)](/src/Web/TypeScriptTS/example2.ts)
-- [Dart](/src/Web/Dart/example2.dart)
-- [SQL](#) *(No disponible)*
-- [Bash/Shell](/src/Shell/BashShell/example2.sh)
-- [PowerShell](/src/Shell/PowerShell/example2.ps1)
-- [VBA](/src/Shell/VBA/example2.bas)
-- [Fortran](/src/Historical/Fortran/example2.f90)
-- [Cobol](/src/Historical/Cobol/example2.cbl)
-- [Ada](/src/Historical/Ada/example2.adb)
-- [Solidity](/src/Niche/Solidity/example2.sol)
-- [Prolog](/src/Niche/Prolog/example2.pl)
-- [Nim](/src/Niche/Nim/example2.nim)
-- [Crystal](/src/Niche/Crystal/example2.cr)
-- [GDScript](/src/Niche/GDScript/example2.gd)
-- [Assembly](/src/LowLevel/Assembly/example2.asm)
-- [MicroPython](/src/Other/MicroPython/example2.py)
-- [Rockstar](/src/Other/Rockstar/example2.rock)
+## Cuándo usarlo
 
-### Caso 3: Generador de informes con diferentes formatos
+- Existen dos o más **familias** de productos relacionados.
+- El consumidor debe poder cambiar de familia sin conocer tipos concretos.
+- Mezclar productos de familias distintas sería incorrecto o indeseable.
+- La familia seleccionada forma parte de la configuración o composición del sistema.
 
-#### Explicación
+## Cuándo no usarlo
 
-En una aplicación que necesita generar informes en múltiples formatos (por ejemplo, PDF, Word, Excel), se puede usar el patrón Abstract Factory para crear generadores de informes específicos de cada formato sin acoplar la lógica de la aplicación a las clases concretas de los generadores.
+- Sólo existe un producto o una sola familia estable.
+- Una función, constructor o dependencia directa expresa la variación con menos ceremonia.
+- Se espera agregar tipos de producto con mucha más frecuencia que familias; Abstract Factory hace costosa esa dimensión de cambio.
+- No existe una regla real de compatibilidad entre los productos creados.
 
-Por ejemplo, podemos tener una fábrica abstracta `ReportFactory` con métodos para crear informes en diferentes formatos. Las fábricas concretas `PDFReportFactory`, `WordReportFactory` y `ExcelReportFactory` implementan estos métodos para crear informes en los formatos correspondientes.
+## Consecuencias y trade-offs
 
-#### Listado de Lenguajes
+| A favor | Costo / riesgo |
+|---|---|
+| Aísla al consumidor de tipos concretos. | Introduce una abstracción adicional y varias implementaciones de fábrica. |
+| Mantiene juntas variantes compatibles. | Agregar un nuevo tipo de producto exige modificar todas las familias. |
+| Facilita sustituir una familia completa. | Puede ser sobreingeniería si la variación es pequeña. |
+| Permite probar consumidores con una familia sustituta. | Una implementación puramente nominal puede ocultar que los productos aún pueden mezclarse fuera de la fábrica. |
 
-- [Erlang](/src/Functional/Erlang/example3.erl)
-- [Elixir](/src/Functional/Elixir/example3.exs)
-- [Clojure](/src/Functional/Clojure/example3.clj)
-- [Scala](/src/Functional/Scala/example3.scala)
-- [F#](/src/Functional/FSharp/example3.fsx)
-- [Lisp](/src/Functional/Lisp/example3.lisp)
-- [OCaml](/src/Functional/OCaml/example3.ml)
-- [Haskell](/src/Functional/Haskell/example3.hs)
-- [Perl](/src/Scripting/Perl/example3.pl)
-- [Python (PY)](/src/Scripting/PythonPY/example3.py)
-- [Ruby (RB)](/src/Scripting/RubyRB/example3.rb)
-- [Lua](/src/Scripting/Lua/example3.lua)
-- [PHP](/src/Scripting/PHP/example3.php)
-- [Groovy](/src/Scripting/Groovy/example3.groovy)
-- [C](/src/Systems/C/example3.c)
-- [C++](/src/Systems/C++/example3.cpp)
-- [Rust](/src/Systems/Rust/example3.rs)
-- [Zig](/src/Systems/Zig/example3.zig)
-- [Go](/src/Systems/Go/example3.go)
-- [Swift](/src/Systems/Swift/example3.swift)
-- [Objective-C](/src/Systems/Objective-C/example3.m)
-- [Java](/src/Enterprise/Java/example3.java)
-- [C#](/src/Enterprise/CSharp/example3.cs)
-- [Kotlin](/src/Enterprise/Kotlin/example3.kt)
-- [Delphi](/src/Enterprise/Delphi/example3.pas)
-- [Visual Basic](/src/Enterprise/VisualBasic/example3.vb)
-- [R](/src/DataScience/R/example3.R)
-- [Julia](/src/DataScience/Julia/example3.jl)
-- [MATLAB](/src/DataScience/MATLAB/example3.m)
-- [HTML/CSS](/src/Web/HTMLCSS/example3.html)
-- [JavaScript (JS)](/src/Web/JavaScriptJS/example3.js)
-- [TypeScript (TS)](/src/Web/TypeScriptTS/example3.ts)
-- [Dart](/src/Web/Dart/example3.dart)
-- [SQL](#) *(No disponible)*
-- [Bash/Shell](/src/Shell/BashShell/example3.sh)
-- [PowerShell](/src/Shell/PowerShell/example3.ps1)
-- [VBA](/src/Shell/VBA/example3.bas)
-- [Fortran](/src/Historical/Fortran/example3.f90)
-- [Cobol](/src/Historical/Cobol/example3.cbl)
-- [Ada](/src/Historical/Ada/example3.adb)
-- [Solidity](/src/Niche/Solidity/example3.sol)
-- [Prolog](/src/Niche/Prolog/example3.pl)
-- [Nim](/src/Niche/Nim/example3.nim)
-- [Crystal](/src/Niche/Crystal/example3.cr)
-- [GDScript](/src/Niche/GDScript/example3.gd)
-- [Assembly](/src/LowLevel/Assembly/example3.asm)
-- [MicroPython](/src/Other/MicroPython/example3.py)
-- [Rockstar](/src/Other/Rockstar/example3.rock)
+## Patrones relacionados
 
+[Consulta también el mapa global de relaciones](README.md#relationship-map).
+
+| Patrón | Relación | Por qué importa |
+|---|---|---|
+| [Factory Method](FactoryMethod.md) | often implemented with | Una operación de una fábrica abstracta puede delegar la creación individual mediante Factory Method; sus intenciones siguen siendo distintas. |
+| [Builder](Builder.md) | alternative to | Builder enfatiza la construcción progresiva de un objeto complejo; Abstract Factory selecciona familias de productos. |
+| [Prototype](Prototype.md) | often implemented with | Una fábrica concreta puede producir variantes clonando prototipos preconfigurados. |
+| [Singleton](Singleton.md) | collaborates with | Algunas implementaciones hacen única una fábrica, aunque esa política de ciclo de vida no forma parte de Abstract Factory. |
+
+## Errores comunes y confusiones
+
+### Confundirlo con Factory Method
+
+Una operación `createX()` no convierte automáticamente una solución en Abstract Factory. Debe existir una abstracción que represente una **familia** y permita obtener varios productos relacionados desde esa selección.
+
+### Separar los selectores hasta perder la familia
+
+Dos funciones independientes `createButton(theme)` y `createCheckbox(theme)` pueden recrear las variantes, pero permiten elegir `dark` para una y `light` para otra. Si no existe una frontera que represente la selección común de familia, se pierde una de las garantías principales del patrón.
+
+### Traducir mecánicamente una jerarquía OO
+
+En un lenguaje funcional o dinámico, forzar interfaces y clases simuladas puede enseñar la sintaxis de otro lenguaje en vez del patrón. El ejemplo debe usar el mecanismo idiomático que mejor preserve selección de familia, compatibilidad y sustitución.
+
+## Cómo comprobar una implementación
+
+- El cliente puede cambiar de una familia completa a otra sin editar su lógica de negocio.
+- Todos los productos obtenidos desde una fábrica concreta pertenecen a la misma familia.
+- El cliente no necesita nombrar tipos concretos para crear los productos.
+- Una prueba sustituye la fábrica y observa cambios coherentes en más de un tipo de producto.
+- Las pruebas deben proteger comportamiento y compatibilidad, no únicamente comprobar nombres de clases o relaciones de herencia.
+
+## Cobertura por lenguaje
+
+La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 45 lenguajes v1 y 6 adicionales planeados. `Applicable` significa que el patrón puede expresarse de forma razonablemente idiomática en ese lenguaje. `N/A` exige una razón técnica, no la mera ausencia de clases.
+
+Mientras esta página permanezca `in-progress`, `Pendiente` significa que la aplicabilidad ya fue clasificada pero el ejemplo histórico todavía no ha sido aceptado como evidencia bajo KB-006.
+
+| Lenguaje | Aplicabilidad | Estado de ejemplo | Evidencia / razón |
+|---|---|---|---|
+| C# | Applicable | Verified | [`src/Enterprise/C#/Example1.cs`](../src/Enterprise/C%23/Example1.cs) preserva una familia Button + Checkbox. |
+| TypeScript | Applicable | Pendiente | Revisar implementación histórica y adaptar idiomáticamente si hace falta. |
+| Ada | Applicable | Pendiente | Revisar implementación histórica. |
+| Solidity | Applicable | Pendiente | Puede expresar la familia mediante contratos/interfaces/factories; revisar ejemplo histórico. |
+| Fortran | Applicable | Pendiente | Puede expresarse con módulos/procedimientos/tipos derivados; revisar ejemplo histórico. |
+| Pascal | Applicable | Missing | No hay todavía evidencia verificada enlazada. |
+| Python | Applicable | Verified | [`src/Scripting/PythonPY/example1.py`](../src/Scripting/PythonPY/example1.py) selecciona familias Dark/Light completas. |
+| Visual Basic .NET | Applicable | Pendiente | Revisar implementación histórica y ruta real. |
+| C++ | Applicable | Pendiente | Revisar implementación histórica. |
+| Objective-C | Applicable | Pendiente | Revisar implementación histórica. |
+| Java | Applicable | Pendiente | Revisar implementación histórica. |
+| Rust | Applicable | Verified | [`src/Systems/Rust/example1.rs`](../src/Systems/Rust/example1.rs) usa traits y factories concretas. |
+| Zig | Applicable | Pendiente | Revisar implementación histórica. |
+| Go | Applicable | Pendiente | Revisar implementación histórica. |
+| PHP | Applicable | Pendiente | Revisar implementación histórica. |
+| Nim | Applicable | Pendiente | Revisar implementación histórica. |
+| Dart | Applicable | Pendiente | Revisar implementación histórica. |
+| Kotlin | Applicable | Pendiente | Revisar implementación histórica. |
+| Swift | Applicable | Pendiente | Revisar implementación histórica. |
+| F# | Applicable | Pendiente | Revisar implementación histórica y ruta real. |
+| Crystal | Applicable | Pendiente | Revisar implementación histórica. |
+| Lua | Applicable | Pendiente | Revisar implementación histórica. |
+| Haskell | Applicable | Verified | [`src/Functional/Haskell/Example1.hs`](../src/Functional/Haskell/Example1.hs) usa un record `UIFactory` de operaciones de familia. |
+| COBOL | Applicable | Pendiente | Puede expresarse mediante programas/subprogramas y tablas de selección; revisar ejemplo histórico. |
+| Scala | Applicable | Pendiente | Revisar implementación histórica. |
+| Groovy | Applicable | Pendiente | Revisar implementación histórica. |
+| Ruby | Applicable | Pendiente | Revisar implementación histórica. |
+| C | Applicable | Pendiente | Puede expresarse con structs/tablas de function pointers; revisar ejemplo histórico. |
+| OCaml | Applicable | Pendiente | Revisar implementación histórica. |
+| Julia | Applicable | Pendiente | Revisar implementación histórica. |
+| VBA | Applicable | Pendiente | Revisar implementación histórica y ruta real. |
+| GDScript | Applicable | Pendiente | Revisar implementación histórica. |
+| JavaScript | Applicable | Pendiente | Puede expresarse con objetos/functions/closures sin simular clases; revisar ejemplo histórico. |
+| MATLAB | Applicable | Pendiente | Revisar implementación histórica. |
+| Perl | Applicable | Pendiente | Revisar implementación histórica. |
+| R | Applicable | Pendiente | Revisar implementación histórica. |
+| PowerShell | Applicable | Pendiente | Revisar implementación histórica. |
+| HTML | N/A | N/A | HTML describe estructura de documentos; por sí solo no implementa una frontera de creación de familias en runtime. JavaScript embebido cuenta como JavaScript, no como HTML. |
+| Assembly | Applicable | Pendiente | Puede expresarse con tablas de direcciones/rutinas aunque el costo sea alto; revisar ejemplo histórico. |
+| Elixir | Applicable | Pendiente | Puede expresarse con módulos, funciones y datos que representen la familia; revisar ejemplo histórico. |
+| Shell | Applicable | Pendiente | Puede expresarse con funciones/dispatch y una selección común de familia; revisar ejemplo histórico. |
+| Erlang | Applicable | Needs rework | [`src/Functional/Erlang/example1.erl`](../src/Functional/Erlang/example1.erl) tiene selectores independientes y permite mezclar familias; no cuenta aún como implementación verificada. |
+| Clojure | Applicable | Pendiente | Revisar implementación histórica. |
+| Common Lisp | Applicable | Pendiente | Revisar implementación histórica y ruta real. |
+| Prolog | Applicable | Pendiente | Puede representar familias mediante hechos/reglas y un identificador común; revisar ejemplo histórico. |
+| Delphi | Applicable | Pendiente | Revisar implementación histórica y ruta real. |
+| GNU Octave | Applicable | Missing | Puede expresarse mediante funciones/structs; requiere un ejemplo verificado. |
+| SQL | N/A | N/A | El target canónico es SQL declarativo, no un dialecto procedural; modela y consulta datos pero no ofrece por sí solo una frontera idiomática de creación de familias de objetos en runtime. |
+| CSS | N/A | N/A | CSS selecciona y declara estilos; no crea familias de objetos en runtime. Una factory implementada en JavaScript y estilizada con CSS sigue siendo una implementación JavaScript. |
+| MicroPython | Applicable | Pendiente | Revisar implementación histórica. |
+| Rockstar | Applicable | Pendiente | Dispone de variables, funciones y control de flujo suficientes para expresar selección de familia; requiere revisión idiomática. |
+
+**Cobertura actual verificada: 4 / 48 lenguajes Applicable (8.3%).**
+
+La cobertura no se infiere por la mera existencia de archivos `example1.*`; cada ejemplo debe conservar la intención y su enlace debe resolverse antes de marcarse `Verified`.
+
+## Implementaciones disponibles
+
+Sólo se listan aquí ejemplos ya inspeccionados y con ruta real verificada.
+
+| Lenguaje | Ejemplo | Qué demuestra |
+|---|---|---|
+| C# | [`Example1.cs`](../src/Enterprise/C%23/Example1.cs) | Interfaz de fábrica y dos familias completas de productos. |
+| Python | [`example1.py`](../src/Scripting/PythonPY/example1.py) | Fábricas dinámicas que seleccionan Button + Checkbox coherentes. |
+| Rust | [`example1.rs`](../src/Systems/Rust/example1.rs) | Traits de producto y factory con `Box<dyn Trait>`. |
+| Haskell | [`Example1.hs`](../src/Functional/Haskell/Example1.hs) | Record de operaciones como representación funcional de la familia. |
+
+## Comprueba que lo entendiste
+
+1. Una aplicación permite elegir `dark` o `light` por separado al crear cada control. ¿Qué garantía falta para considerar que la solución expresa bien Abstract Factory?
+2. ¿Cuándo elegirías Factory Method en lugar de Abstract Factory para la creación de componentes?
+3. Si cada semana aparece un nuevo **tipo de producto** que todas las familias deben implementar, ¿qué costo del patrón se vuelve dominante y qué alternativa investigarías?
+
+## Resumen
+
+- La presión central es crear **familias coherentes**, no simplemente ocultar `new`.
+- El movimiento de diseño es seleccionar una fábrica/familia y pedirle todos los productos relacionados.
+- El principal trade-off es facilitar nuevas familias a costa de encarecer nuevos tipos de producto.
+- Factory Method puede colaborar con Abstract Factory, pero no define su intención.
+- La página permanece `in-progress` hasta verificar o reparar todos los ejemplos de los 48 lenguajes Applicable.
+
+## Referencias
+
+- Gamma, Helm, Johnson, Vlissides. *Design Patterns: Elements of Reusable Object-Oriented Software* — Abstract Factory.
+- [`docs/philosophy/001-patterns-as-living-examples.md`](../docs/philosophy/001-patterns-as-living-examples.md)
+- [`docs/kb/catalog/pattern-authoring-standard.md`](../docs/kb/catalog/pattern-authoring-standard.md)
