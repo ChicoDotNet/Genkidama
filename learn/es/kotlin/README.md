@@ -4,18 +4,19 @@ Kotlin es un lenguaje moderno y tipado usado ampliamente en Android y también e
 
 ## Qué vas a construir
 
-FieldFlow comienza con un núcleo Kotlin puro que modela órdenes y reglas de negocio sin depender de Android. Después añadiremos persistencia local, interfaz Android y sincronización deliberada. Esta separación permite aprender Kotlin antes de ocultarlo detrás de un framework.
+FieldFlow comienza con un núcleo Kotlin puro que modela órdenes y reglas de negocio sin depender de Android. Después añade persistencia local durable y prepara una sustitución controlada por Room antes de incorporar interfaz Android y sincronización. Esta secuencia permite aprender Kotlin y diseño de fronteras antes de ocultarlos detrás de un framework.
 
 ## Estado
 
-Curso en construcción: **8/17 lecciones**.
+Curso en construcción: **12/17 lecciones**.
 
 ## Tooling verificado
 
 - Kotlin 2.4.10.
 - JDK 17 como baseline compatible con Android Gradle Plugin actual.
-- Gradle 9.5 cuando se incorpore el módulo Android.
-- Slice actual: Kotlin/JVM + Gradle para que dominio, casos de uso y frontera de persistencia tengan feedback rápido y CI ligero.
+- Gradle 9.6.1 para el slice Kotlin/JVM; AGP 9.3 requiere Gradle 9.5.0 como mínimo cuando se incorpore el módulo Android.
+- Kotlinx Serialization 1.11.0 para el primer adaptador durable.
+- Slice actual: Kotlin/JVM + Gradle para mantener dominio, casos de uso y persistencia con feedback rápido y CI ligero.
 
 ## Lecciones
 
@@ -27,10 +28,15 @@ Curso en construcción: **8/17 lecciones**.
 6. [Casos de uso sin depender de Android](lessons/06-casos-de-uso.md)
 7. [Una frontera para persistencia](lessons/07-frontera-persistencia.md)
 8. [Integra el flujo y protege comportamiento](lessons/08-integra-y-protege.md)
+9. [Serializa datos sin contaminar el dominio](lessons/09-serializa-datos.md)
+10. [Persistencia durable detrás del repositorio](lessons/10-persistencia-durable.md)
+11. [Escrituras seguras y fallos de almacenamiento](lessons/11-escrituras-seguras.md)
+12. [Diseña el salto a Room sin romper el núcleo](lessons/12-prepara-room.md)
 
 ### Checkpoints
 
 - [Checkpoint 02 — Fronteras y resultados](lessons/checkpoint-02.md)
+- [Checkpoint 03 — Persistencia offline](lessons/checkpoint-03.md)
 
 ## Instalar, build, test y run
 
@@ -41,7 +47,7 @@ gradle test
 gradle run
 ```
 
-Android Studio será necesario cuando el curso incorpore la aplicación Android; no es requisito para las primeras lecciones de lenguaje y arquitectura de aplicación.
+Android Studio será necesario cuando el curso incorpore el módulo Android; no es requisito para dominar primero el lenguaje, el dominio y las fronteras que ese módulo consumirá.
 
 ## Qué sabrás hacer al terminar
 
@@ -55,8 +61,10 @@ Kotlin es la opción recomendada por Google para desarrollo Android moderno. El 
 
 - https://kotlinlang.org/docs/home.html
 - https://kotlinlang.org/docs/releases.html
+- https://kotlinlang.org/docs/serialization.html
 - https://developer.android.com/kotlin
 - https://developer.android.com/build/releases/agp-9-3-0-release-notes
+- https://developer.android.com/training/data-storage/room
 
 ## Siguiente paso
 
