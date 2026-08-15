@@ -1,4 +1,4 @@
-public struct TimeQuoteBook: Sendable {
+public struct TimeQuoteBook: Codable, Sendable {
     private var clients: [String: Client] = [:]
     private var entries: [TimeEntry] = []
 

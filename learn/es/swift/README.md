@@ -8,7 +8,7 @@ TimeQuote comienza como un paquete Swift ejecutable y probado con SwiftPM. Esa b
 
 ## Estado
 
-**En progreso: 8/17 lecciones.** TimeQuote ya modela clientes y tiempo, calcula importes, protege reglas con pruebas y separa casos de uso de almacenamiento mediante un protocolo reemplazable.
+**En progreso: 12/17 lecciones.** TimeQuote ya modela clientes y tiempo, calcula importes, protege reglas con pruebas, separa casos de uso de almacenamiento y cuenta con persistencia JSON durable detrás del mismo protocolo.
 
 ## Tooling verificado
 
@@ -29,11 +29,16 @@ Swift también dispone de instalación oficial para Windows y Linux, por lo que 
 6. [Casos de uso sin framework](lessons/06-casos-de-uso.md)
 7. [Una implementación en memoria para aprender y probar](lessons/07-repositorio-en-memoria.md)
 8. [Integra la frontera antes de añadir disco](lessons/08-integracion-y-siguiente-persistencia.md)
+9. [Serializa el estado sin filtrar infraestructura](lessons/09-serializa-el-estado.md)
+10. [Repositorio JSON durable](lessons/10-repositorio-json-durable.md)
+11. [Fallos de I/O explícitos](lessons/11-fallos-de-io-explicitos.md)
+12. [Prueba persistencia entre instancias](lessons/12-prueba-persistencia-entre-instancias.md)
 
 ### Checkpoints
 
 - [Checkpoint 01 — Un cliente, varias horas y un total verificable](lessons/checkpoint-01.md)
 - [Checkpoint 02 — Sustituye almacenamiento sin tocar el dominio](lessons/checkpoint-02.md)
+- [Checkpoint 03 — Haz durable TimeQuote](lessons/checkpoint-03.md)
 
 ## Instalar, build, test y run
 
@@ -69,4 +74,4 @@ Para ramas, historial, recuperación y colaboración utiliza el [curso transvers
 
 ## Siguiente paso
 
-Si empiezas desde cero, comienza por [la lección 1](lessons/01-primer-registro.md). Si ya completaste el primer checkpoint, continúa con [la lección 5](lessons/05-protocolos-y-contratos.md).
+Si empiezas desde cero, comienza por [la lección 1](lessons/01-primer-registro.md). Si ya completaste el segundo checkpoint, continúa con [la lección 9](lessons/09-serializa-el-estado.md).

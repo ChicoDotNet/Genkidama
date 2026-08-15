@@ -49,4 +49,4 @@ Realiza [Checkpoint 02](checkpoint-02.md).
 
 ## Siguiente paso
 
-El siguiente bloque 9–12 implementará persistencia durable detrás del mismo protocolo y probará que el estado sobrevive entre ejecuciones.
+Continúa con [la lección 9](09-serializa-el-estado.md) para hacer durable el estado detrás del mismo protocolo.

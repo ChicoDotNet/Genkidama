@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import TimeQuote
 
@@ -61,5 +62,38 @@ import Testing
 
     #expect(throws: TimeQuoteError.clientNotFound("missing")) {
         try service.record(entry)
+    }
+}
+
+@Test func fileRepositorySurvivesRecreation() throws {
+    let directory = FileManager.default.temporaryDirectory
+        .appendingPathComponent("timequote-\(UUID().uuidString)", isDirectory: true)
+    let fileURL = directory.appendingPathComponent("timequote.json")
+    defer { try? FileManager.default.removeItem(at: directory) }
+
+    var firstService = try TimeQuoteService(repository: FileTimeQuoteRepository(fileURL: fileURL))
+    let client = try Client(id: "persisted", name: "Cliente Persistido", hourlyRateCents: 30_000)
+    try firstService.addClient(client)
+    try firstService.record(TimeEntry(clientID: client.id, minutes: 90, note: "Persistencia"))
+
+    let secondService = try TimeQuoteService(repository: FileTimeQuoteRepository(fileURL: fileURL))
+    let summary = try secondService.summary(for: client.id)
+
+    #expect(summary.minutes == 90)
+    #expect(summary.amountCents == 45_000)
+}
+
+@Test func fileRepositoryRejectsCorruptDataExplicitly() throws {
+    let directory = FileManager.default.temporaryDirectory
+        .appendingPathComponent("timequote-corrupt-\(UUID().uuidString)", isDirectory: true)
+    let fileURL = directory.appendingPathComponent("timequote.json")
+    defer { try? FileManager.default.removeItem(at: directory) }
+
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    try Data("not-json".utf8).write(to: fileURL)
+    var repository = FileTimeQuoteRepository(fileURL: fileURL)
+
+    #expect(throws: PersistenceError.invalidData) {
+        _ = try repository.load()
     }
 }

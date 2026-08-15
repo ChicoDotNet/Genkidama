@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Client: Equatable, Sendable {
+public struct Client: Codable, Equatable, Sendable {
     public let id: String
     public var name: String
     public var hourlyRateCents: Int
@@ -19,7 +19,7 @@ public struct Client: Equatable, Sendable {
     }
 }
 
-public struct TimeEntry: Equatable, Sendable {
+public struct TimeEntry: Codable, Equatable, Sendable {
     public let clientID: String
     public let minutes: Int
     public let note: String?
@@ -45,7 +45,7 @@ public enum TimeQuoteError: Error, Equatable, Sendable {
     case clientNotFound(String)
 }
 
-public struct ClientSummary: Equatable, Sendable {
+public struct ClientSummary: Codable, Equatable, Sendable {
     public let client: Client
     public let minutes: Int
     public let amountCents: Int
