@@ -4,19 +4,22 @@ Kotlin es un lenguaje moderno y tipado usado ampliamente en Android y también e
 
 ## Qué vas a construir
 
-FieldFlow comienza con un núcleo Kotlin puro que modela órdenes y reglas de negocio sin depender de Android. Después añade persistencia local durable y prepara una sustitución controlada por Room antes de incorporar interfaz Android y sincronización. Esta secuencia permite aprender Kotlin y diseño de fronteras antes de ocultarlos detrás de un framework.
+FieldFlow comienza con un núcleo Kotlin puro que modela órdenes y reglas de negocio sin depender de Android. Después añade persistencia local durable y sustituye controladamente esa frontera por Room antes de incorporar una interfaz Compose. Esta secuencia permite aprender Kotlin y diseño de fronteras antes de ocultarlos detrás de un framework.
 
 ## Estado
 
-Temario completo: **17/17 lecciones**. El curso permanece `in_progress` hasta materializar y validar evidencia Android/Room/Compose proporcional al alcance prometido por la aplicación canónica.
+**Completo: 17/17 lecciones.** El repositorio contiene y valida tanto el núcleo Kotlin/JVM como un módulo Android compilable con Room y Compose.
 
 ## Tooling verificado
 
-- Kotlin 2.4.10.
-- JDK 17 como baseline compatible con Android Gradle Plugin actual.
-- Gradle 9.6.1 para el slice Kotlin/JVM; AGP 9.3 requiere Gradle 9.5.0 como mínimo cuando se incorpore el módulo Android.
-- Kotlinx Serialization 1.11.0 para el primer adaptador durable.
-- Slice ejecutable actual: Kotlin/JVM + Gradle; las lecciones 13–16 diseñan la frontera Android/Room/Compose manteniendo el núcleo verificable en JVM.
+- Kotlin 2.4.10 para el núcleo JVM y Compose compiler.
+- JDK 17.
+- Gradle 9.6.1.
+- Android Gradle Plugin 9.3.0 con **Built-in Kotlin**, como exige la ruta moderna de AGP 9.
+- Android SDK 36 y Build Tools 36.0.0.
+- Compose BOM 2026.06.00.
+- Room 2.8.4 con KSP 2.3.10.
+- Kotlinx Serialization 1.11.0 para el primer adaptador durable del núcleo JVM.
 
 ## Lecciones
 
@@ -46,22 +49,34 @@ Temario completo: **17/17 lecciones**. El curso permanece `in_progress` hasta ma
 
 ## Instalar, build, test y run
 
-Necesitas JDK 17+. En el slice ejecutable actual:
+Necesitas JDK 17+ y Gradle 9.6.1.
+
+### Núcleo Kotlin/JVM
+
+Desde `app/`:
 
 ```bash
 gradle test
 gradle run
 ```
 
-Android Studio será necesario para materializar el módulo Android; el curso conserva el núcleo Kotlin/JVM como referencia ejecutable y separa las pruebas Android para comportamiento realmente dependiente de Room/Compose.
+### Evidencia Android
+
+El subproyecto [`android/`](android/README.md) contiene una aplicación Android real con Room y Compose. Con Android SDK 36 instalado:
+
+```bash
+gradle :app:assembleDebug :app:testDebugUnitTest
+```
+
+GitHub Actions ejecuta ambos recorridos. El APK debug se genera bajo `android/app/build/outputs/apk/debug/`.
 
 ## Qué sabrás hacer al terminar
 
-Leer y escribir Kotlin idiomático, modelar datos y nullability, usar colecciones, funciones y lambdas, manejar resultados y errores, probar comportamiento, estructurar una aplicación, persistir offline y construir una UI Android que consume el mismo dominio.
+Leer y escribir Kotlin idiomático, modelar datos y nullability, usar colecciones, funciones y lambdas, manejar resultados y errores, probar comportamiento, estructurar una aplicación, persistir offline con Room y construir una UI Android Compose que consume estado observable.
 
 ## Contexto profesional
 
-Kotlin es la opción recomendada por Google para desarrollo Android moderno. El curso no promete empleo: construye evidencia práctica transferible a mantenimiento y desarrollo de aplicaciones móviles.
+Kotlin es una opción central para desarrollo Android moderno. El curso no promete empleo: construye evidencia práctica transferible a mantenimiento y desarrollo de aplicaciones móviles.
 
 ## Referencias oficiales
 
@@ -70,6 +85,7 @@ Kotlin es la opción recomendada por Google para desarrollo Android moderno. El 
 - https://kotlinlang.org/docs/serialization.html
 - https://developer.android.com/kotlin
 - https://developer.android.com/build/releases/agp-9-3-0-release-notes
+- https://developer.android.com/build/migrate-to-built-in-kotlin
 - https://developer.android.com/training/data-storage/room
 - https://developer.android.com/topic/architecture/data-layer/offline-first
 - https://developer.android.com/develop/ui/compose
