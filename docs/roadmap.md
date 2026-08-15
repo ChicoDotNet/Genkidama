@@ -70,6 +70,18 @@ A lane may report **stable for promotion** only when:
 
 `main` promotion is a human synchronization point. Agents do not infer permission to merge from both lanes being stable.
 
+## Shared code-coverage policy
+
+When meaningful code/test coverage tooling exists:
+
+- **44% is sufficient as the approval floor** when relevant behavior, contracts, failure modes and regressions are protected;
+- **44%–72.8% is a fully acceptable range**;
+- coverage above **72.8% is welcome** and must never be penalized;
+- **100% code/test coverage is not required**;
+- a lane must not stall valuable delivery merely to chase a higher percentage once the applicable quality gates are satisfied.
+
+Coverage is evidence, not the product goal. Do not manufacture low-value tests to optimize the metric.
+
 ## Lane A — 0 -> Junior courses
 
 ### Mission
@@ -116,12 +128,12 @@ Turn the Design Pattern catalog into a connected and executable learning referen
 ### Primary work
 
 1. Retrofit `AbstractFactory.md` as the golden reference.
-2. Complete its Applicable-language coverage to 100% before moving to the next pattern.
+2. Complete the full Applicable-language implementation set before moving to the next pattern.
 3. Finish the remaining Creational family: Builder, Factory Method, Prototype and Singleton.
 4. Continue family by family while keeping the global relationship map coherent.
-5. Use one PR per pattern; multiple commits are expected when cross-language coverage is large.
+5. Use one PR per pattern; multiple commits are expected when cross-language work is large.
 
-A pattern is not complete until **every language in which the pattern can be implemented meaningfully has a verified example**. `N/A` requires technical justification and review; lack of classes/OOP syntax is not enough.
+A pattern is not complete until **every language in which the pattern can be implemented meaningfully has a verified example**. This is language-set completeness, not a demand for 100% code/test coverage. `N/A` requires technical justification and review; lack of classes/OOP syntax is not enough.
 
 ### 20% cross-lane responsibility
 
@@ -196,12 +208,13 @@ For any increment:
 
 - Builds successfully when code exists and tooling is available.
 - Applicable tests pass.
+- Measurable code/test coverage follows the shared policy above; 100% is never required.
 - Existing quality gates are not weakened to obtain green status.
 - Engineering standards are respected.
 - Shared roadmap/state is updated when scope or operating policy changes.
 - Knowledge Base impact is considered for template or architecture changes.
 - Course changes respect the course DoD.
-- Pattern changes respect the approved pattern DoD, including 100% Applicable-language coverage before `validated`.
+- Pattern changes respect the approved pattern DoD, including an example for every Applicable language before `validated`.
 - The other active lane has been checked for compatibility before the increment is reported stable.
 
 ## Promotion rhythm
