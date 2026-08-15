@@ -1,0 +1,29 @@
+{
+  "name": "genkidama/agenda-php",
+  "description": "Agenda web de citas para aprender PHP construyendo una aplicación real.",
+  "type": "project",
+  "license": "MIT",
+  "require": {
+    "php": "^8.5"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^13.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "Genkidama\\Agenda\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Genkidama\\Agenda\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": "phpunit --colors=always",
+    "serve": "php -S 127.0.0.1:8080 -t public"
+  },
+  "config": {
+    "sort-packages": true
+  }
+}
