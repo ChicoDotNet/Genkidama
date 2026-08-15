@@ -1,3 +1,4 @@
+function example1
 % Abstract Factory represented as a struct of related constructors.
 % Select the family once, then create all related products from it.
 
@@ -6,30 +7,33 @@ lightFactory = createFactory(@lightButton, @lightCheckbox);
 
 createUIComponents(darkFactory);
 createUIComponents(lightFactory);
+end
 
 function factory = createFactory(buttonConstructor, checkboxConstructor)
-    factory = struct( ...
-        'createButton', buttonConstructor, ...
-        'createCheckbox', checkboxConstructor);
+factory = struct( ...
+    'createButton', buttonConstructor, ...
+    'createCheckbox', checkboxConstructor);
 end
 
 function createUIComponents(factory)
-    factory.createButton();
-    factory.createCheckbox();
+buttonConstructor = factory.createButton;
+checkboxConstructor = factory.createCheckbox;
+buttonConstructor();
+checkboxConstructor();
 end
 
-function darkButton()
-    disp('Dark Button');
+function darkButton
+fprintf('Dark Button\n');
 end
 
-function lightButton()
-    disp('Light Button');
+function lightButton
+fprintf('Light Button\n');
 end
 
-function darkCheckbox()
-    disp('Dark Checkbox');
+function darkCheckbox
+fprintf('Dark Checkbox\n');
 end
 
-function lightCheckbox()
-    disp('Light Checkbox');
+function lightCheckbox
+fprintf('Light Checkbox\n');
 end
