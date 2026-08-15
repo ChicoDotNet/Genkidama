@@ -8,6 +8,23 @@ use Genkidama\Agenda\Infrastructure\JsonAppointmentStore;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
+header('X-Content-Type-Options: nosniff');
+header('Referrer-Policy: no-referrer');
+header("Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'");
+header('Cache-Control: no-store');
+
+ini_set('session.use_strict_mode', '1');
+session_set_cookie_params([
+    'httponly' => true,
+    'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+    'samesite' => 'Lax',
+]);
+session_start();
+if (!isset($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+$csrfToken = $_SESSION['csrf_token'];
+
 $timeZoneName = getenv('AGENDA_TIMEZONE') ?: 'UTC';
 try {
     $timeZone = new DateTimeZone($timeZoneName);
@@ -38,34 +55,49 @@ $status = isset($_GET['created']) ? 'Cita registrada correctamente.' : (isset($_
 $editing = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $action = (string) ($_POST['action'] ?? 'book');
-    try {
-        if ($action === 'cancel') {
-            $service->cancel($values['id']);
-            header('Location: /?cancelled=1', true, 303);
+    $contentLength = (int) ($_SERVER['CONTENT_LENGTH'] ?? 0);
+    $contentType = strtolower(trim(explode(';', (string) ($_SERVER['CONTENT_TYPE'] ?? ''))[0]));
+    $submittedCsrfToken = (string) ($_POST['csrfToken'] ?? '');
+
+    if ($contentLength > 16384) {
+        http_response_code(413);
+        $error = 'La solicitud es demasiado grande.';
+    } elseif ($contentType !== 'application/x-www-form-urlencoded') {
+        http_response_code(415);
+        $error = 'AgendaPHP sólo acepta formularios application/x-www-form-urlencoded para modificar citas.';
+    } elseif ($submittedCsrfToken === '' || !hash_equals($csrfToken, $submittedCsrfToken)) {
+        http_response_code(403);
+        $error = 'La solicitud no pudo verificarse. Recarga la página e inténtalo de nuevo.';
+    } else {
+        $action = (string) ($_POST['action'] ?? 'book');
+        try {
+            if ($action === 'cancel') {
+                $service->cancel($values['id']);
+                header('Location: /?cancelled=1', true, 303);
+                exit;
+            }
+
+            if (!ctype_digit($values['durationMinutes'])) {
+                throw new DomainException('La duración debe ser un número entero de minutos.');
+            }
+
+            if ($action === 'update') {
+                $service->update($values['id'], $values['clientName'], $values['serviceName'], $values['startsAt'], (int) $values['durationMinutes']);
+                header('Location: /?updated=1', true, 303);
+                exit;
+            }
+
+            $service->book($values['clientName'], $values['serviceName'], $values['startsAt'], (int) $values['durationMinutes']);
+            header('Location: /?created=1', true, 303);
             exit;
+        } catch (DomainException $exception) {
+            http_response_code(422);
+            $error = $exception->getMessage();
+            $editing = $action === 'update';
+        } catch (RuntimeException) {
+            http_response_code(503);
+            $error = 'No fue posible guardar la cita. Revisa el almacenamiento local e inténtalo de nuevo.';
         }
-
-        if (!ctype_digit($values['durationMinutes'])) {
-            throw new DomainException('La duración debe ser un número entero de minutos.');
-        }
-
-        if ($action === 'update') {
-            $service->update($values['id'], $values['clientName'], $values['serviceName'], $values['startsAt'], (int) $values['durationMinutes']);
-            header('Location: /?updated=1', true, 303);
-            exit;
-        }
-
-        $service->book($values['clientName'], $values['serviceName'], $values['startsAt'], (int) $values['durationMinutes']);
-        header('Location: /?created=1', true, 303);
-        exit;
-    } catch (DomainException $exception) {
-        http_response_code(422);
-        $error = $exception->getMessage();
-        $editing = $action === 'update';
-    } catch (RuntimeException) {
-        http_response_code(503);
-        $error = 'No fue posible guardar la cita. Revisa el almacenamiento local e inténtalo de nuevo.';
     }
 }
 
@@ -199,6 +231,7 @@ $exportQuery = http_build_query(array_filter([
       <p class="message success" role="status"><?= e($status) ?></p>
     <?php endif; ?>
     <form method="post" action="/">
+      <input type="hidden" name="csrfToken" value="<?= e($csrfToken) ?>">
       <input type="hidden" name="action" value="<?= $editing ? 'update' : 'book' ?>">
       <input type="hidden" name="id" value="<?= e($values['id']) ?>">
       <label>Cliente
@@ -256,6 +289,7 @@ $exportQuery = http_build_query(array_filter([
             <td data-label="Acciones"><div class="actions">
               <a class="button-link secondary" href="/?edit=<?= urlencode($appointment->id) ?>">Editar</a>
               <form class="inline" method="post" action="/">
+                <input type="hidden" name="csrfToken" value="<?= e($csrfToken) ?>">
                 <input type="hidden" name="action" value="cancel">
                 <input type="hidden" name="id" value="<?= e($appointment->id) ?>">
                 <button class="danger" type="submit">Cancelar cita</button>
