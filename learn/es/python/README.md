@@ -108,6 +108,9 @@ Hace visible la capacidad que el servicio necesita del almacenamiento sin obliga
 ### ¿Está listo para sistema financiero multiusuario?
 No. Es una herramienta educativa local endurecida para su contexto; multiusuario exige decisiones adicionales de identidad, autorización, concurrencia, respaldo y operación.
 
+### ¿Dónde aprendo Git?
+En el [curso transversal de Git](../git/). Python se concentra aquí en el lenguaje, tooling y aplicación; ramas, merges, recuperación y colaboración se aprenden una sola vez en esa ruta compartida.
+
 ## Glosario
 
 `Decimal`: aritmética decimal; `dataclass`: tipo orientado a datos; `argparse`: CLI; transacción: cambios como unidad; idempotencia: repetición sin efecto acumulativo incorrecto; fingerprint: huella de contenido; `Protocol`: typing estructural; wheel: artefacto instalable; profiling: medición de tiempo; hardening: reducción deliberada de riesgo.
