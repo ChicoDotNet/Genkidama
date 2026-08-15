@@ -58,9 +58,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          output="$(matlab -batch \"addpath('src/DataScience/MATLAB'); example1\" 2>&1)"
-          printf '%s\n' "$output"
-          grep -Fxq 'Dark Button' <<<"$output"
-          grep -Fxq 'Dark Checkbox' <<<"$output"
-          grep -Fxq 'Light Button' <<<"$output"
-          grep -Fxq 'Light Checkbox' <<<"$output"
+          matlab -batch "addpath('src/DataScience/MATLAB'); example1" 2>&1 | tee /tmp/matlab-output.txt
+          grep -Fxq 'Dark Button' /tmp/matlab-output.txt
+          grep -Fxq 'Dark Checkbox' /tmp/matlab-output.txt
+          grep -Fxq 'Light Button' /tmp/matlab-output.txt
+          grep -Fxq 'Light Checkbox' /tmp/matlab-output.txt
