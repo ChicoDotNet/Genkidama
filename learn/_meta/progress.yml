@@ -3,9 +3,9 @@ initiative:
   status: pilots_complete
   source_locale: es
   last_updated: '2026-08-14'
-  active_work: php_course
+  active_work: kotlin_course
   v1_courses_total: 45
-  v1_courses_complete: 9
+  v1_courses_complete: 10
 foundation:
   status: complete
   catalog: complete
@@ -85,10 +85,11 @@ courses:
     last_green_executable_sha: fe8847c70d699845d47d8a18d6a68553a0878224
     pr: 45
   php:
-    status: in_progress
+    status: complete
     lessons_complete: 17
     lessons_total: 17
-    ci: pending
+    ci: green
+    last_green_executable_sha: 637a4b715a87f460e605c42e95d24af424318496
     pr: 49
   nim: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   dart: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
