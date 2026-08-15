@@ -169,7 +169,10 @@ jobs:
           dart_output="$(dart run src/Web/Dart/example1.dart)"
           test "$dart_output" = "$expected"
 
-          crystal tool format --check src/Niche/Crystal/example1.cr
+          crystal tool format src/Niche/Crystal/example1.cr
+          git diff -- src/Niche/Crystal/example1.cr
+          test -z "$(git status --short -- src/Niche/Crystal/example1.cr)"
+
           crystal build --error-on-warnings src/Niche/Crystal/example1.cr -o /tmp/abstract-factory-crystal
           crystal_output="$(/tmp/abstract-factory-crystal)"
           test "$crystal_output" = "$expected"
