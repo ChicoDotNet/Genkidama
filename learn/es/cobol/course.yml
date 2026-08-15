@@ -1,0 +1,39 @@
+schema_version: 1
+slug: cobol
+language: COBOL
+locale: es
+source_locale: es
+title: Curso de COBOL desde cero — Construye un procesador batch de nómina
+authoring_status: pilot
+status: complete
+canonical_app:
+  name: NominaBatch
+  summary: Procesador batch local que lee empleados desde archivo secuencial, valida registros, calcula percepciones y deducciones y genera un reporte reproducible.
+audience: beginner
+prerequisites: []
+lesson_count: 17
+toolchain:
+  verified_on: '2026-08-13'
+  version_tested: '3.2.0'
+  runtime_or_compiler: GnuCOBOL 3.2
+  package_or_build_tool: cobc + shell/PowerShell
+  test_tool: shell assertions sobre ejecutable compilado
+  operating_systems_targeted:
+    - windows-11
+    - linux
+  operating_systems_tested:
+    - github-actions-ubuntu-24.04
+ci:
+  supported: true
+  workflow: .github/workflows/learn-cobol.yml
+  isolation: path-scoped
+career_context:
+  uses:
+    - mantenimiento y evolución de sistemas batch de negocio
+    - procesamiento de archivos y reglas deterministas en entornos empresariales
+    - modernización e integración de aplicaciones COBOL existentes
+  market_note: COBOL conserva relevancia en sistemas empresariales y mainframe, pero el mercado es más especializado que el de lenguajes web generalistas. Este curso prepara fundamentos transferibles y no promete empleo ni simula experiencia real en z/OS.
+official_references:
+  - https://gnucobol.sourceforge.io/
+  - https://sourceforge.net/projects/gnucobol/files/gnucobol/3.2/
+  - https://formulae.brew.sh/formula/gnucobol

@@ -1,0 +1,10 @@
+E001;Demo Uno;40;250.00;10.00
+E002;Demo Dos;35;180.50;8.00
+E003;Demo Tres;95;210.00;12.00
+E004;Demo Cuatro;40;100.00
+E005;Demo Cinco;abc;100.00;10.00
+E006;Demo Seis;40;0;10.00
+E007;Demo Siete;40;100.00;120.00
+;Demo Ocho;40;100.00;10.00
+E009;Demo Nueve;40;200.00;25.00
+E001;Demo Duplicado;10;100.00;5.00

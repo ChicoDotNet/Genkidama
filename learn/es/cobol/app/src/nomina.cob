@@ -1,0 +1,341 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. NOMINABATCH.
+
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT EMPLOYEE-FILE ASSIGN TO "data/employees.dat"
+               ORGANIZATION IS LINE SEQUENTIAL
+               FILE STATUS IS WS-EMPLOYEE-STATUS.
+           SELECT REPORT-FILE ASSIGN TO "report.txt"
+               ORGANIZATION IS LINE SEQUENTIAL
+               FILE STATUS IS WS-REPORT-STATUS.
+
+       DATA DIVISION.
+       FILE SECTION.
+       FD  EMPLOYEE-FILE.
+       01  EMPLOYEE-RECORD               PIC X(160).
+
+       FD  REPORT-FILE.
+       01  REPORT-RECORD                 PIC X(160).
+
+       WORKING-STORAGE SECTION.
+       01  WS-END-OF-FILE                PIC X VALUE "N".
+           88 END-OF-FILE                VALUE "Y".
+
+       01  WS-FILE-STATUS.
+           05 WS-EMPLOYEE-STATUS         PIC XX VALUE SPACES.
+           05 WS-REPORT-STATUS           PIC XX VALUE SPACES.
+
+       COPY "copybooks/payroll-data.cpy".
+
+       01  WS-COUNTERS.
+           05 WS-FIELD-COUNT             PIC 9 VALUE 0.
+           05 WS-PROCESSED               PIC 9(6) VALUE 0.
+           05 WS-REJECTED                PIC 9(6) VALUE 0.
+           05 WS-PROCESSED-DISPLAY       PIC Z(5)9.
+           05 WS-REJECTED-DISPLAY        PIC Z(5)9.
+
+       01  WS-TOTALS.
+           05 WS-TOTAL-GROSS             PIC 9(10)V99 VALUE ZERO.
+           05 WS-TOTAL-DEDUCTION         PIC 9(10)V99 VALUE ZERO.
+           05 WS-TOTAL-NET               PIC 9(10)V99 VALUE ZERO.
+
+       01  WS-TOTAL-DISPLAY.
+           05 WS-TOTAL-GROSS-DISPLAY     PIC ZZZZZZZZZ9.99.
+           05 WS-TOTAL-DEDUCT-DISPLAY    PIC ZZZZZZZZZ9.99.
+           05 WS-TOTAL-NET-DISPLAY       PIC ZZZZZZZZZ9.99.
+
+       *> Tabla pequeña para demostrar OCCURS con agregados deterministas.
+       01  WS-DEDUCTION-BANDS.
+           05 WS-BAND OCCURS 4 TIMES.
+               10 WS-BAND-NAME           PIC X(12) VALUE SPACES.
+               10 WS-BAND-COUNT          PIC 9(6) VALUE ZERO.
+               10 WS-BAND-NET            PIC 9(10)V99 VALUE ZERO.
+
+       01  WS-BAND-WORK.
+           05 WS-BAND-NUMBER             PIC 9 VALUE ZERO.
+           05 WS-BAND-LOOP               PIC 9 VALUE ZERO.
+           05 WS-BAND-COUNT-DISPLAY      PIC Z(5)9.
+           05 WS-BAND-NET-DISPLAY        PIC ZZZZZZZZZ9.99.
+
+       *> IDs aceptados durante este lote. Un duplicado nunca llega a totales.
+       01  WS-SEEN-IDS.
+           05 WS-SEEN-ID OCCURS 100 TIMES PIC X(12) VALUE SPACES.
+       01  WS-SEEN-WORK.
+           05 WS-SEEN-COUNT              PIC 9(3) VALUE ZERO.
+           05 WS-SEEN-POS                PIC 9(3) VALUE ZERO.
+           05 WS-DUPLICATE-FOUND         PIC X VALUE "N".
+               88 DUPLICATE-FOUND        VALUE "Y".
+
+       01  WS-REPORT-LINE                PIC X(160).
+       01  WS-REJECTION-REASON           PIC X(50).
+
+       PROCEDURE DIVISION.
+       MAIN.
+           OPEN INPUT EMPLOYEE-FILE
+           IF WS-EMPLOYEE-STATUS NOT = "00"
+               PERFORM FAIL-INPUT-OPEN
+           END-IF
+
+           OPEN OUTPUT REPORT-FILE
+           IF WS-REPORT-STATUS NOT = "00"
+               PERFORM FAIL-REPORT-OPEN
+           END-IF
+
+           PERFORM INITIALIZE-BANDS
+           PERFORM WRITE-HEADER
+           PERFORM UNTIL END-OF-FILE
+               READ EMPLOYEE-FILE
+                   AT END
+                       SET END-OF-FILE TO TRUE
+                   NOT AT END
+                       PERFORM PROCESS-RECORD
+               END-READ
+               IF WS-EMPLOYEE-STATUS NOT = "00"
+                   AND WS-EMPLOYEE-STATUS NOT = "10"
+                   PERFORM FAIL-INPUT-READ
+               END-IF
+           END-PERFORM
+
+           PERFORM WRITE-SUMMARY
+           PERFORM WRITE-BAND-SUMMARIES
+           CLOSE EMPLOYEE-FILE REPORT-FILE
+           DISPLAY "NominaBatch completo. Consulta report.txt"
+           STOP RUN.
+
+       INITIALIZE-BANDS.
+           MOVE "CERO" TO WS-BAND-NAME(1)
+           MOVE "HASTA10" TO WS-BAND-NAME(2)
+           MOVE "HASTA20" TO WS-BAND-NAME(3)
+           MOVE "MAS20" TO WS-BAND-NAME(4).
+
+       WRITE-HEADER.
+           MOVE "NOMINABATCH - REPORTE" TO REPORT-RECORD
+           WRITE REPORT-RECORD
+           PERFORM ENSURE-REPORT-WRITE
+           MOVE "ID|NOMBRE|BRUTO|DEDUCCIONES|NETO" TO REPORT-RECORD
+           WRITE REPORT-RECORD
+           PERFORM ENSURE-REPORT-WRITE.
+
+       PROCESS-RECORD.
+           PERFORM RESET-RECORD
+           UNSTRING EMPLOYEE-RECORD DELIMITED BY ";"
+               INTO WS-ID-TEXT
+                    WS-NAME
+                    WS-HOURS-TEXT
+                    WS-RATE-TEXT
+                    WS-DEDUCTION-TEXT
+               TALLYING IN WS-FIELD-COUNT
+           END-UNSTRING
+
+           IF WS-FIELD-COUNT NOT = 5
+               MOVE "FORMATO: se esperaban 5 campos" TO WS-REJECTION-REASON
+               PERFORM WRITE-REJECTION
+           ELSE
+               PERFORM VALIDATE-AND-CALCULATE
+           END-IF.
+
+       RESET-RECORD.
+           MOVE SPACES TO WS-PARSED-RECORD
+           MOVE ZERO TO WS-NUMERIC-VALUES WS-FIELD-COUNT
+           MOVE SPACES TO WS-REJECTION-REASON WS-REPORT-LINE
+           MOVE "N" TO WS-DUPLICATE-FOUND.
+
+       VALIDATE-AND-CALCULATE.
+           IF FUNCTION TRIM(WS-ID-TEXT) = SPACES
+               MOVE "ID vacío" TO WS-REJECTION-REASON
+               PERFORM WRITE-REJECTION
+               EXIT PARAGRAPH
+           END-IF
+
+           IF FUNCTION TEST-NUMVAL(WS-HOURS-TEXT) NOT = 0
+               MOVE "HORAS no es numérico" TO WS-REJECTION-REASON
+               PERFORM WRITE-REJECTION
+               EXIT PARAGRAPH
+           END-IF
+
+           IF FUNCTION TEST-NUMVAL(WS-RATE-TEXT) NOT = 0
+               MOVE "TARIFA no es numérica" TO WS-REJECTION-REASON
+               PERFORM WRITE-REJECTION
+               EXIT PARAGRAPH
+           END-IF
+
+           IF FUNCTION TEST-NUMVAL(WS-DEDUCTION-TEXT) NOT = 0
+               MOVE "DEDUCCIÓN no es numérica" TO WS-REJECTION-REASON
+               PERFORM WRITE-REJECTION
+               EXIT PARAGRAPH
+           END-IF
+
+           COMPUTE WS-HOURS = FUNCTION NUMVAL(WS-HOURS-TEXT)
+           COMPUTE WS-HOURLY-RATE = FUNCTION NUMVAL(WS-RATE-TEXT)
+           COMPUTE WS-DEDUCTION-PCT = FUNCTION NUMVAL(WS-DEDUCTION-TEXT)
+
+           IF WS-HOURS = 0 OR WS-HOURS > 80
+               MOVE "HORAS fuera de rango 1..80" TO WS-REJECTION-REASON
+               PERFORM WRITE-REJECTION
+               EXIT PARAGRAPH
+           END-IF
+
+           IF WS-HOURLY-RATE = 0
+               MOVE "TARIFA debe ser mayor que cero" TO WS-REJECTION-REASON
+               PERFORM WRITE-REJECTION
+               EXIT PARAGRAPH
+           END-IF
+
+           IF WS-DEDUCTION-PCT > 100
+               MOVE "DEDUCCIÓN debe estar entre 0 y 100" TO WS-REJECTION-REASON
+               PERFORM WRITE-REJECTION
+               EXIT PARAGRAPH
+           END-IF
+
+           PERFORM FIND-DUPLICATE-ID
+           IF DUPLICATE-FOUND
+               MOVE "ID duplicado en el lote" TO WS-REJECTION-REASON
+               PERFORM WRITE-REJECTION
+               EXIT PARAGRAPH
+           END-IF
+
+           IF WS-SEEN-COUNT >= 100
+               MOVE "CAPACIDAD: máximo 100 IDs por lote" TO WS-REJECTION-REASON
+               PERFORM WRITE-REJECTION
+               EXIT PARAGRAPH
+           END-IF
+
+           COMPUTE WS-GROSS = WS-HOURS * WS-HOURLY-RATE
+           COMPUTE WS-DEDUCTION ROUNDED =
+               WS-GROSS * WS-DEDUCTION-PCT / 100
+           COMPUTE WS-NET = WS-GROSS - WS-DEDUCTION
+
+           ADD 1 TO WS-SEEN-COUNT
+           MOVE FUNCTION TRIM(WS-ID-TEXT) TO WS-SEEN-ID(WS-SEEN-COUNT)
+           ADD WS-GROSS TO WS-TOTAL-GROSS
+           ADD WS-DEDUCTION TO WS-TOTAL-DEDUCTION
+           ADD WS-NET TO WS-TOTAL-NET
+           ADD 1 TO WS-PROCESSED
+           PERFORM ACCUMULATE-BAND
+           PERFORM WRITE-PAYROLL-LINE.
+
+       FIND-DUPLICATE-ID.
+           MOVE 1 TO WS-SEEN-POS
+           PERFORM UNTIL WS-SEEN-POS > WS-SEEN-COUNT
+               IF WS-SEEN-ID(WS-SEEN-POS) = FUNCTION TRIM(WS-ID-TEXT)
+                   MOVE "Y" TO WS-DUPLICATE-FOUND
+                   EXIT PERFORM
+               END-IF
+               ADD 1 TO WS-SEEN-POS
+           END-PERFORM.
+
+       ACCUMULATE-BAND.
+           EVALUATE TRUE
+               WHEN WS-DEDUCTION-PCT = 0
+                   MOVE 1 TO WS-BAND-NUMBER
+               WHEN WS-DEDUCTION-PCT <= 10
+                   MOVE 2 TO WS-BAND-NUMBER
+               WHEN WS-DEDUCTION-PCT <= 20
+                   MOVE 3 TO WS-BAND-NUMBER
+               WHEN OTHER
+                   MOVE 4 TO WS-BAND-NUMBER
+           END-EVALUATE
+           ADD 1 TO WS-BAND-COUNT(WS-BAND-NUMBER)
+           ADD WS-NET TO WS-BAND-NET(WS-BAND-NUMBER).
+
+       WRITE-PAYROLL-LINE.
+           MOVE WS-GROSS TO WS-GROSS-DISPLAY
+           MOVE WS-DEDUCTION TO WS-DEDUCTION-DISPLAY
+           MOVE WS-NET TO WS-NET-DISPLAY
+           STRING
+               FUNCTION TRIM(WS-ID-TEXT) DELIMITED BY SIZE
+               "|" DELIMITED BY SIZE
+               FUNCTION TRIM(WS-NAME) DELIMITED BY SIZE
+               "|" DELIMITED BY SIZE
+               FUNCTION TRIM(WS-GROSS-DISPLAY) DELIMITED BY SIZE
+               "|" DELIMITED BY SIZE
+               FUNCTION TRIM(WS-DEDUCTION-DISPLAY) DELIMITED BY SIZE
+               "|" DELIMITED BY SIZE
+               FUNCTION TRIM(WS-NET-DISPLAY) DELIMITED BY SIZE
+               INTO WS-REPORT-LINE
+           END-STRING
+           WRITE REPORT-RECORD FROM WS-REPORT-LINE
+           PERFORM ENSURE-REPORT-WRITE.
+
+       WRITE-REJECTION.
+           ADD 1 TO WS-REJECTED
+           STRING
+               "RECHAZADO|" DELIMITED BY SIZE
+               FUNCTION TRIM(WS-ID-TEXT) DELIMITED BY SIZE
+               "|" DELIMITED BY SIZE
+               FUNCTION TRIM(WS-REJECTION-REASON) DELIMITED BY SIZE
+               INTO WS-REPORT-LINE
+           END-STRING
+           WRITE REPORT-RECORD FROM WS-REPORT-LINE
+           PERFORM ENSURE-REPORT-WRITE.
+
+       WRITE-SUMMARY.
+           MOVE WS-PROCESSED TO WS-PROCESSED-DISPLAY
+           MOVE WS-REJECTED TO WS-REJECTED-DISPLAY
+           MOVE WS-TOTAL-GROSS TO WS-TOTAL-GROSS-DISPLAY
+           MOVE WS-TOTAL-DEDUCTION TO WS-TOTAL-DEDUCT-DISPLAY
+           MOVE WS-TOTAL-NET TO WS-TOTAL-NET-DISPLAY
+           MOVE SPACES TO WS-REPORT-LINE
+           STRING
+               "RESUMEN|PROCESADOS=" DELIMITED BY SIZE
+               FUNCTION TRIM(WS-PROCESSED-DISPLAY) DELIMITED BY SIZE
+               "|RECHAZADOS=" DELIMITED BY SIZE
+               FUNCTION TRIM(WS-REJECTED-DISPLAY) DELIMITED BY SIZE
+               "|BRUTO=" DELIMITED BY SIZE
+               FUNCTION TRIM(WS-TOTAL-GROSS-DISPLAY) DELIMITED BY SIZE
+               "|DEDUCCIONES=" DELIMITED BY SIZE
+               FUNCTION TRIM(WS-TOTAL-DEDUCT-DISPLAY) DELIMITED BY SIZE
+               "|NETO=" DELIMITED BY SIZE
+               FUNCTION TRIM(WS-TOTAL-NET-DISPLAY) DELIMITED BY SIZE
+               INTO WS-REPORT-LINE
+           END-STRING
+           WRITE REPORT-RECORD FROM WS-REPORT-LINE
+           PERFORM ENSURE-REPORT-WRITE.
+
+       WRITE-BAND-SUMMARIES.
+           PERFORM VARYING WS-BAND-LOOP FROM 1 BY 1
+               UNTIL WS-BAND-LOOP > 4
+               MOVE WS-BAND-COUNT(WS-BAND-LOOP)
+                   TO WS-BAND-COUNT-DISPLAY
+               MOVE WS-BAND-NET(WS-BAND-LOOP)
+                   TO WS-BAND-NET-DISPLAY
+               MOVE SPACES TO WS-REPORT-LINE
+               STRING
+                   "BANDA|" DELIMITED BY SIZE
+                   FUNCTION TRIM(WS-BAND-NAME(WS-BAND-LOOP))
+                       DELIMITED BY SIZE
+                   "|EMPLEADOS=" DELIMITED BY SIZE
+                   FUNCTION TRIM(WS-BAND-COUNT-DISPLAY)
+                       DELIMITED BY SIZE
+                   "|NETO=" DELIMITED BY SIZE
+                   FUNCTION TRIM(WS-BAND-NET-DISPLAY)
+                       DELIMITED BY SIZE
+                   INTO WS-REPORT-LINE
+               END-STRING
+               WRITE REPORT-RECORD FROM WS-REPORT-LINE
+               PERFORM ENSURE-REPORT-WRITE
+           END-PERFORM.
+
+       ENSURE-REPORT-WRITE.
+           IF WS-REPORT-STATUS NOT = "00"
+               DISPLAY "ERROR|REPORT_WRITE|STATUS=" WS-REPORT-STATUS
+               MOVE 4 TO RETURN-CODE
+               STOP RUN
+           END-IF.
+
+       FAIL-INPUT-OPEN.
+           DISPLAY "ERROR|EMPLOYEE_OPEN|STATUS=" WS-EMPLOYEE-STATUS
+           MOVE 2 TO RETURN-CODE
+           STOP RUN.
+
+       FAIL-REPORT-OPEN.
+           DISPLAY "ERROR|REPORT_OPEN|STATUS=" WS-REPORT-STATUS
+           MOVE 3 TO RETURN-CODE
+           STOP RUN.
+
+       FAIL-INPUT-READ.
+           DISPLAY "ERROR|EMPLOYEE_READ|STATUS=" WS-EMPLOYEE-STATUS
+           MOVE 5 TO RETURN-CODE
+           STOP RUN.

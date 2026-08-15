@@ -1,0 +1,40 @@
+schema_version: 1
+slug: rust
+language: Rust
+locale: es
+source_locale: es
+title: Curso de Rust desde cero — Construye un backup incremental verificable
+status: complete
+canonical_app:
+  name: BackupForge
+  summary: Herramienta local de backup incremental verificable por checksums SHA-256, con manifest, restauración segura, snapshots históricos inmutables y auditoría de contenido inesperado.
+audience: beginner
+prerequisites: []
+lesson_count: 17
+toolchain:
+  verified_on: '2026-08-14'
+  version_tested: 1.97.1
+  runtime_or_compiler: rustc 1.97.1 stable
+  package_or_build_tool: Cargo + rustfmt + Clippy
+  test_tool: cargo test
+  operating_systems_targeted:
+    - windows-11
+    - linux
+  operating_systems_tested:
+    - github-actions-ubuntu-latest
+ci:
+  supported: true
+  workflow: .github/workflows/learn-rust.yml
+  isolation: path-scoped
+career_context:
+  uses:
+    - tooling de sistemas e infraestructura
+    - servicios y componentes de alto rendimiento
+    - software donde seguridad de memoria y control de recursos importan
+  market_note: Rust tiene demanda profesional real pero normalmente menos posiciones junior que lenguajes generalistas; este curso desarrolla fundamentos transferibles sin prometer empleo.
+official_references:
+  - https://blog.rust-lang.org/releases/
+  - https://doc.rust-lang.org/book/
+  - https://doc.rust-lang.org/cargo/
+  - https://doc.rust-lang.org/stable/clippy/
+  - https://doc.rust-lang.org/stable/std/

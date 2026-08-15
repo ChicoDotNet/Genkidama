@@ -1,0 +1,22 @@
+:root { font-family: system-ui, sans-serif; color-scheme: light dark; }
+body { margin: 0; }
+.shell { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+.eyebrow { font-size: .85rem; text-transform: uppercase; letter-spacing: .08em; }
+.new-card-row { display: flex; gap: .5rem; max-width: 38rem; }
+input, select { padding: .7rem; }
+.new-card-row input { flex: 1; }
+button { padding: .55rem .8rem; cursor: pointer; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+#form-error, .status-message { min-height: 1.4rem; }
+.toolbar { display: flex; gap: 1rem; flex-wrap: wrap; align-items: end; margin-top: 1.25rem; }
+.toolbar > div { display: grid; gap: .35rem; }
+.transfer-actions { grid-template-columns: auto 1fr; }
+.transfer-actions button, .transfer-actions label { align-self: center; }
+.transfer-actions input { grid-column: 1 / -1; max-width: 20rem; }
+.board { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+.board > section { border: 1px solid currentColor; border-radius: .6rem; padding: 1rem; }
+.cards { list-style: none; padding: 0; display: grid; gap: .75rem; }
+.card { border: 1px solid currentColor; border-radius: .4rem; padding: .75rem; }
+.card-title { overflow-wrap: anywhere; }
+.card-actions { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .75rem; }
+@media (max-width: 760px) { .board { grid-template-columns: 1fr; } .new-card-row { flex-direction: column; } }

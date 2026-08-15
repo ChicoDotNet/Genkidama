@@ -1,0 +1,67 @@
+name: Learn Go
+
+on:
+  pull_request:
+    paths:
+      - 'learn/es/go/**'
+      - '.github/workflows/learn-go.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'learn/es/go/**'
+      - '.github/workflows/learn-go.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  go:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: learn/es/go/app
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Go 1.26.5
+        uses: actions/setup-go@v7
+        with:
+          go-version: '1.26.5'
+          cache-dependency-path: learn/es/go/app/go.mod
+
+      - name: Show Go version
+        run: go version
+
+      - name: Check formatting
+        shell: bash
+        run: |
+          set -euo pipefail
+          unformatted="$(gofmt -l .)"
+          test -z "$unformatted" || { echo "$unformatted"; exit 1; }
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Test with race detector
+        run: go test -race ./...
+
+      - name: Build
+        run: go build ./cmd/uptimelab
+
+      - name: Smoke HTTP process
+        shell: bash
+        run: |
+          set -euo pipefail
+          UPTIMELAB_TARGETS='Local=http://127.0.0.1:65534' UPTIMELAB_ADDR='127.0.0.1:18080' ./uptimelab > /tmp/uptimelab.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          for _ in {1..20}; do
+            if curl --fail --silent --output /dev/null http://127.0.0.1:18080/health; then
+              exit 0
+            fi
+            sleep 0.25
+          done
+          cat /tmp/uptimelab.log
+          exit 1
