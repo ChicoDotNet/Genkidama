@@ -35,7 +35,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y fp-compiler octave r-base lua5.4
+          sudo apt-get install --no-install-recommends -y fp-compiler octave r-base lua5.4 ghc
 
       - name: Restore
         run: dotnet restore Genkidama.slnx
@@ -89,6 +89,16 @@ jobs:
           Rscript --vanilla src/DataScience/R/example1.R
 
           lua5.4 src/Scripting/Lua/example1.lua
+
+          runghc -Wall -Werror src/Functional/Haskell/Example1.hs
+
+          command -v kotlinc >/dev/null
+          kotlinc src/Enterprise/Kotlin/Example1.kt -include-runtime -d /tmp/abstract-factory-kotlin.jar
+          java -jar /tmp/abstract-factory-kotlin.jar
+
+          command -v swiftc >/dev/null
+          swiftc src/Systems/Swift/example1.swift -o /tmp/abstract-factory-swift
+          /tmp/abstract-factory-swift
 
       - name: Pack CLI Tool
         run: dotnet pack src/Genkidama.Cli/Genkidama.Cli.csproj --configuration Release --no-build --output artifacts/packages
