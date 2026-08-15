@@ -1,89 +1,52 @@
-module ui_factory
-  implicit none
-  type, abstract :: button
+module abstract_factory
+    implicit none
+
+    type :: ui_factory
+        character(len=5) :: theme
     contains
-      procedure(render_button), deferred :: render
-  end type button
+        procedure :: create_button
+        procedure :: create_checkbox
+    end type ui_factory
 
-  type, abstract :: checkbox
-    contains
-      procedure(render_checkbox), deferred :: render
-  end type checkbox
+contains
 
-  abstract interface
-    subroutine render_button(self)
-      import :: button
-      class(button), intent(inout) :: self
-    end subroutine render_button
+    function dark_factory() result(factory)
+        type(ui_factory) :: factory
+        factory%theme = 'Dark '
+    end function dark_factory
 
-    subroutine render_checkbox(self)
-      import :: checkbox
-      class(checkbox), intent(inout) :: self
-    end subroutine render_checkbox
-  end interface
-end module ui_factory
+    function light_factory() result(factory)
+        type(ui_factory) :: factory
+        factory%theme = 'Light'
+    end function light_factory
 
-module dark_theme
-  use ui_factory
-  implicit none
-  type, extends(button) :: dark_button
-  contains
-    procedure :: render => render_dark_button
-  end type dark_button
+    subroutine create_button(self)
+        class(ui_factory), intent(in) :: self
+        print '(A,A)', trim(self%theme), ' Button'
+    end subroutine create_button
 
-  type, extends(checkbox) :: dark_checkbox
-  contains
-    procedure :: render => render_dark_checkbox
-  end type dark_checkbox
+    subroutine create_checkbox(self)
+        class(ui_factory), intent(in) :: self
+        print '(A,A)', trim(self%theme), ' Checkbox'
+    end subroutine create_checkbox
 
-  contains
-    subroutine render_dark_button(self)
-      class(dark_button), intent(inout) :: self
-      print *, 'Dark Button'
-    end subroutine render_dark_button
+    subroutine render_ui(factory)
+        type(ui_factory), intent(in) :: factory
+        call factory%create_button()
+        call factory%create_checkbox()
+    end subroutine render_ui
 
-    subroutine render_dark_checkbox(self)
-      class(dark_checkbox), intent(inout) :: self
-      print *, 'Dark Checkbox'
-    end subroutine render_dark_checkbox
-end module dark_theme
-
-module light_theme
-  use ui_factory
-  implicit none
-  type, extends(button) :: light_button
-  contains
-    procedure :: render => render_light_button
-  end type light_button
-
-  type, extends(checkbox) :: light_checkbox
-  contains
-    procedure :: render => render_light_checkbox
-  end type light_checkbox
-
-  contains
-    subroutine render_light_button(self)
-      class(light_button), intent(inout) :: self
-      print *, 'Light Button'
-    end subroutine render_light_button
-
-    subroutine render_light_checkbox(self)
-      class(light_checkbox), intent(inout) :: self
-      print *, 'Light Checkbox'
-    end subroutine render_light_checkbox
-end module light_theme
+end module abstract_factory
 
 program example1
-  use ui_factory
-  use dark_theme
-  use light_theme
-  implicit none
-  type(button) :: btn
-  type(checkbox) :: chk
+    use abstract_factory
+    implicit none
 
-  btn = dark_button()
-  call btn%render()
+    type(ui_factory) :: factory
 
-  chk = light_checkbox()
-  call chk%render()
+    factory = dark_factory()
+    call render_ui(factory)
+
+    factory = light_factory()
+    call render_ui(factory)
 end program example1
