@@ -1,0 +1,4 @@
+/vendor/
+/.phpunit.cache/
+/data/*.json
+/data/*.tmp
