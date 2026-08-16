@@ -206,7 +206,7 @@ jobs:
               (r'THtmlReportBuilder\s*=\s*class\(TTextReportBuilder\)', 'Delphi HTML builder'),
               (r'THtmlReportBuilder\.AddTitle.*<h1>', 'Delphi HTML title step'),
               (r'THtmlReportBuilder\.AddSection.*<h2>', 'Delphi HTML section step'),
-              (r'function\s+BuildAvailabilityReport.*ABuilder\.Reset.*ABuilder\.AddTitle\(''Service status''\).*ABuilder\.AddSection\(''Availability'',\s*''99\.95%''\).*ABuilder\.Build', 'Delphi shared recipe'),
+              (r"function\s+BuildAvailabilityReport.*ABuilder\.Reset.*ABuilder\.AddTitle\('Service status'\).*ABuilder\.AddSection\('Availability',\s*'99\.95%'\).*ABuilder\.Build", 'Delphi shared recipe'),
           ]:
               require(delphi, pattern, label)
 
