@@ -82,3 +82,5 @@ jobs:
 
           assert_output "$(clojure src/Functional/Clojure/builder.clj)"
           assert_output "$(swipl -q -s src/Niche/Prolog/builder.pl -g run -t halt)"
+
+# Triggered intentionally after batching implementations so CI reports only real failures.
