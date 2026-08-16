@@ -42,14 +42,15 @@ procedure Builder is
    procedure Add_Section
      (Target  : in out Report_Builder;
       Heading : String;
-      Body    : String) is
+      Content : String) is
    begin
       case Target.Format is
          when Text_Report =>
             Add_Part (Target, "## " & Heading);
-            Add_Part (Target, Body);
+            Add_Part (Target, Content);
          when Html_Report =>
-            Add_Part (Target, "<h2>" & Heading & "</h2><p>" & Body & "</p>");
+            Add_Part
+              (Target, "<h2>" & Heading & "</h2><p>" & Content & "</p>");
       end case;
    end Add_Section;
 
