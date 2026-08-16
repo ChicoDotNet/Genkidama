@@ -11,13 +11,22 @@ struct TextReportBuilder {
 }
 
 impl ReportBuilder for TextReportBuilder {
-    fn reset(&mut self) { self.parts.clear(); }
-    fn add_title(&mut self, title: &str) { self.parts.push(format!("# {title}")); }
+    fn reset(&mut self) {
+        self.parts.clear();
+    }
+
+    fn add_title(&mut self, title: &str) {
+        self.parts.push(format!("# {title}"));
+    }
+
     fn add_section(&mut self, heading: &str, body: &str) {
         self.parts.push(format!("## {heading}"));
         self.parts.push(body.to_owned());
     }
-    fn build(&self) -> String { self.parts.join("\n") }
+
+    fn build(&self) -> String {
+        self.parts.join("\n")
+    }
 }
 
 #[derive(Default)]
@@ -26,13 +35,22 @@ struct HtmlReportBuilder {
 }
 
 impl ReportBuilder for HtmlReportBuilder {
-    fn reset(&mut self) { self.parts.clear(); }
-    fn add_title(&mut self, title: &str) { self.parts.push(format!("<h1>{title}</h1>")); }
+    fn reset(&mut self) {
+        self.parts.clear();
+    }
+
+    fn add_title(&mut self, title: &str) {
+        self.parts.push(format!("<h1>{title}</h1>"));
+    }
+
     fn add_section(&mut self, heading: &str, body: &str) {
         self.parts.push(format!("<h2>{heading}</h2>"));
         self.parts.push(format!("<p>{body}</p>"));
     }
-    fn build(&self) -> String { self.parts.concat() }
+
+    fn build(&self) -> String {
+        self.parts.concat()
+    }
 }
 
 fn build_availability_report(builder: &mut dyn ReportBuilder) -> String {
@@ -43,7 +61,13 @@ fn build_availability_report(builder: &mut dyn ReportBuilder) -> String {
 }
 
 fn main() {
-    println!("{}", build_availability_report(&mut TextReportBuilder::default()));
+    println!(
+        "{}",
+        build_availability_report(&mut TextReportBuilder::default())
+    );
     println!("---");
-    println!("{}", build_availability_report(&mut HtmlReportBuilder::default()));
+    println!(
+        "{}",
+        build_availability_report(&mut HtmlReportBuilder::default())
+    );
 }
