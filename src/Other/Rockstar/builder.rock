@@ -1,0 +1,29 @@
+Text takes nothing
+Rock report
+Report at "title" is "# Service status"
+Report at "section" is "## Availability"
+Report at "body" is "99.95%"
+Give back report
+Yeah
+
+Html takes nothing
+Rock report
+Report at "title" is "<h1>Service status</h1>"
+Report at "section" is "<h2>Availability</h2><p>99.95%</p>"
+Report at "body" is ""
+Give back report
+Yeah
+
+Render takes report
+Print report at "title"
+Print report at "section"
+If report at "body" ain't ""
+Print report at "body"
+Yeah
+Yeah
+
+Call Text into built
+Call Render with built
+Print "---"
+Call Html into built
+Call Render with built
