@@ -1,5 +1,6 @@
 name: Pattern Builder
 
+# Executes the complete mainstream Builder tranche; keep language steps explicit so CI debt is target-specific.
 on:
   pull_request:
     branches:
