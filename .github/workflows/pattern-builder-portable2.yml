@@ -157,7 +157,7 @@ jobs:
         run: |
           set -euo pipefail
           work="$(mktemp -d)"
-          npx --yes typescript@6.0.3 tsc src/Web/TypeScriptTS/builder.ts --strict --target ES2024 --module commonjs --outDir "$work"
+          npx --yes --package typescript@6.0.3 tsc src/Web/TypeScriptTS/builder.ts --strict --target ES2024 --module commonjs --outDir "$work"
           output="$(node "$work/builder.js")"
           grep -Fq '# Service status' <<<"$output"
           grep -Fq '<h1>Service status</h1>' <<<"$output"
