@@ -103,8 +103,9 @@ void inspect_regular_candidate(
         return;
     }
 
+    const auto path = entry.path();
     std::error_code error;
-    const bool regular = entry.is_regular_file(error);
+    const bool regular = std::filesystem::is_regular_file(path, error);
     if (error) {
         context.skipped();
         return;
@@ -113,12 +114,12 @@ void inspect_regular_candidate(
         return;
     }
 
-    const auto size = entry.file_size(error);
+    const auto size = std::filesystem::file_size(path, error);
     if (error) {
         context.skipped();
         return;
     }
-    records.push_back(FileRecord{entry.path(), size});
+    records.push_back(FileRecord{path, size});
     context.discovered();
 }
 
