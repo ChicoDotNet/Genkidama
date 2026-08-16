@@ -3,7 +3,7 @@
 > **Familia:** Creational  
 > **Intención:** Proporcionar una abstracción para crear familias de productos relacionados o dependientes sin acoplar al cliente a sus tipos concretos.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `44/48`  
+> **Implementaciones de lenguaje:** `46/48`  
 > **Cobertura de pruebas:** `N/A` — este catálogo valida ejemplos por compilación/ejecución cuando es práctico; no existe una métrica homogénea de line coverage entre 48 ecosistemas.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -184,7 +184,8 @@ La evidencia ejecutable se obtiene de CI general y gates específicos condiciona
 - Objective-C se compila y ejecuta en macOS con Clang, ARC, Foundation y warnings como errores;
 - GDScript se ejecuta con Godot 4.6.3 headless y comprueba las cuatro variantes Dark/Light;
 - MATLAB se ejecuta con las acciones oficiales de MathWorks y comprueba las cuatro variantes Dark/Light;
-- MicroPython permanece pendiente hasta que el gate con el Unix port oficial termine verde.
+- MicroPython se construye desde el tag oficial 1.28.0 y el Unix port ejecuta el ejemplo real;
+- Rockstar se ejecuta con el runtime oficial v2.0.31 Linux x64, con SHA-256 fijado, y comprueba las cuatro variantes Dark/Light.
 
 Esto es evidencia de ejecución, no line coverage. La política >=44% se aplica cuando un ecosistema tenga medición de coverage significativa; no se inventa un porcentaje transversal para ejemplos heterogéneos.
 
@@ -243,10 +244,10 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | GNU Octave | Applicable | [`example1.m`](../src/DataScience/Octave/example1.m) | GNU Octave run ✅ | Struct de function handles. |
 | SQL | N/A | — | — | SQL declarativo modela/consulta datos, no crea familias runtime. |
 | CSS | N/A | — | — | CSS selecciona estilos; no crea familias de objetos runtime. |
-| MicroPython | Applicable | — | Pendiente | [`example1.py`](../src/Other/MicroPython/example1.py) conserva una familia completa; gate con MicroPython Unix port en curso. |
-| Rockstar | Applicable | — | Pendiente | [`example1.rock`](../src/Other/Rockstar/example1.rock) requiere actualización/validación con Rockstar v2 real. |
+| MicroPython | Applicable | [`example1.py`](../src/Other/MicroPython/example1.py) | MicroPython 1.28.0 Unix port build/run ✅ | Una factory dinámica conserva la familia completa en el runtime real. |
+| Rockstar | Applicable | [`example1.rock`](../src/Other/Rockstar/example1.rock) | Rockstar v2.0.31 official runtime + exact output ✅ | Dos funciones-fábrica devuelven hashes de productos relacionados; una familia se selecciona una sola vez. |
 
-**Cobertura actual verificada: 44 / 48 lenguajes Applicable (91.7%).**
+**Cobertura actual verificada: 46 / 48 lenguajes Applicable (95.8%).**
 
 La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe conservar la intención, resolver su enlace y tener evidencia proporcional.
 
@@ -262,7 +263,7 @@ La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe 
 - El movimiento de diseño es seleccionar una fábrica/familia una vez y pedirle productos relacionados.
 - El principal trade-off es facilitar nuevas familias a costa de encarecer nuevos tipos de producto.
 - Factory Method puede colaborar con Abstract Factory, pero no define su intención.
-- La evidencia asciende a 44/48; la página permanece `in-progress` hasta `48/48`.
+- La evidencia asciende a 46/48; la página permanece `in-progress` hasta `48/48`.
 
 ## Referencias
 
