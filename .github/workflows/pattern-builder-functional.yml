@@ -44,43 +44,119 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y ghc scala clojure perl powershell r-base octave fp-compiler swi-prolog-nox
 
-      - name: Validate functional Builder examples
+      - name: Validate F# Builder
         shell: bash
         run: |
           set -euo pipefail
-          assert_output() {
-            local output="$1"
-            grep -Fq '# Service status' <<<"$output"
-            grep -Fq '<h1>Service status</h1>' <<<"$output"
-            grep -Fq '99.95%' <<<"$output"
-          }
+          output="$(dotnet fsi 'src/Functional/F#/builder.fsx')"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
-          assert_output "$(dotnet fsi 'src/Functional/F#/builder.fsx')"
-          assert_output "$(runghc -Wall -Werror src/Functional/Haskell/Builder.hs)"
+      - name: Validate Haskell Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(runghc -Wall -Werror src/Functional/Haskell/Builder.hs)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
-          scala_out="$(mktemp -d)"
-          scalac -deprecation -feature -unchecked src/Functional/Scala/Builder.scala -d "$scala_out"
-          assert_output "$(scala -cp "$scala_out" Builder)"
+      - name: Validate Scala Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$(mktemp -d)"
+          scalac -deprecation -feature -unchecked src/Functional/Scala/Builder.scala -d "$out"
+          output="$(scala -cp "$out" Builder)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
+      - name: Validate Perl Builder
+        shell: bash
+        run: |
+          set -euo pipefail
           perl -c src/Scripting/Perl/builder.pl
-          assert_output "$(perl src/Scripting/Perl/builder.pl)"
-          assert_output "$(pwsh -NoLogo -NoProfile -NonInteractive -File src/Shell/PowerShell/builder.ps1)"
-          assert_output "$(Rscript --vanilla src/DataScience/R/builder.R)"
-          assert_output "$(octave --no-gui --quiet --eval "addpath('src/DataScience/Octave'); builder();")"
+          output="$(perl src/Scripting/Perl/builder.pl)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
-          pascal_out="$(mktemp -d)"
-          fpc -Mobjfpc -O2 -Sew -FE"$pascal_out" src/Historical/Pascal/builder.pas >/dev/null
-          assert_output "$("$pascal_out/builder")"
+      - name: Validate PowerShell Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(pwsh -NoLogo -NoProfile -NonInteractive -File src/Shell/PowerShell/builder.ps1)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
-          erlang_out="$(mktemp -d)"
-          erlc -Werror -o "$erlang_out" src/Functional/Erlang/builder.erl
-          assert_output "$(erl -noshell -pa "$erlang_out" -eval 'builder:main(), halt().')"
+      - name: Validate R Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(Rscript --vanilla src/DataScience/R/builder.R)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
-          elixir_out="$(mktemp -d)"
-          elixirc --warnings-as-errors -o "$elixir_out" src/Functional/Elixir/builder.exs >/dev/null
-          assert_output "$(elixir src/Functional/Elixir/builder.exs)"
+      - name: Validate GNU Octave Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(octave --no-gui --quiet --eval "addpath('src/DataScience/Octave'); builder();")"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
-          assert_output "$(clojure src/Functional/Clojure/builder.clj)"
-          assert_output "$(swipl -q -s src/Niche/Prolog/builder.pl -g run -t halt)"
+      - name: Validate Pascal Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$(mktemp -d)"
+          fpc -Mobjfpc -O2 -Sew -FE"$out" src/Historical/Pascal/builder.pas >/dev/null
+          output="$("$out/builder")"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
-# Triggered intentionally after batching implementations so CI reports only real failures.
+      - name: Validate Erlang Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$(mktemp -d)"
+          erlc -Werror -o "$out" src/Functional/Erlang/builder.erl
+          output="$(erl -noshell -pa "$out" -eval 'builder:main(), halt().')"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
+
+      - name: Validate Elixir Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$(mktemp -d)"
+          elixirc --warnings-as-errors -o "$out" src/Functional/Elixir/builder.exs >/dev/null
+          output="$(elixir src/Functional/Elixir/builder.exs)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
+
+      - name: Validate Clojure Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(clojure src/Functional/Clojure/builder.clj)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
+
+      - name: Validate Prolog Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(swipl -q -s src/Niche/Prolog/builder.pl -g run -t halt)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
