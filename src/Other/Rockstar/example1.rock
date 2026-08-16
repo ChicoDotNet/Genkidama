@@ -1,25 +1,24 @@
-The dark button is whispering "Dark Button"
-The light button is whispering "Light Button"
-The dark checkbox is whispering "Dark Checkbox"
-The light checkbox is whispering "Light Checkbox"
+DarkFactory takes nothing
+Rock products
+Let products at "button" be "Dark Button"
+Let products at "checkbox" be "Dark Checkbox"
+Give back products
+End
 
-Shout "Choose your theme: dark or light"
-Listen to your theme
+LightFactory takes nothing
+Rock products
+Let products at "button" be "Light Button"
+Let products at "checkbox" be "Light Checkbox"
+Give back products
+End
 
-If your theme is "dark"
-Put dark button into the stage
-Put dark checkbox into the stage
-Otherwise
-Put light button into the stage
-Put light checkbox into the stage
+RenderFamily takes factory
+Shout factory at "button"
+Shout factory at "checkbox"
+End
 
-Listen to the stage
+Put DarkFactory! into chosen
+RenderFamily taking chosen
 
-If the stage is dark button
-Shout "Dark Button"
-If the stage is dark checkbox
-Shout "Dark Checkbox"
-If the stage is light button
-Shout "Light Button"
-If the stage is light checkbox
-Shout "Light Checkbox"
+Put LightFactory! into chosen
+RenderFamily taking chosen
