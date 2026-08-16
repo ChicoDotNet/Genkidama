@@ -1,11 +1,11 @@
-Dark Factory takes nothing
+Shadow takes nothing
 Rock products
 Products at "button" is "Dark Button"
 Products at "checkbox" is "Dark Checkbox"
 Give back products
 Yeah
 
-Light Factory takes nothing
+Sunlight takes nothing
 Rock products
 Products at "button" is "Light Button"
 Products at "checkbox" is "Light Checkbox"
@@ -17,8 +17,8 @@ Print factory at "button"
 Print factory at "checkbox"
 Yeah
 
-Put Dark Factory! into chosen
+Call Shadow into chosen
 Call Render with chosen
 
-Put Light Factory! into chosen
+Call Sunlight into chosen
 Call Render with chosen
