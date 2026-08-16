@@ -22,31 +22,24 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-
-      - name: Setup Java
-        uses: actions/setup-java@v5
-        with:
-          distribution: temurin
-          java-version: '25'
-
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Setup lightweight runtimes
+      - name: Setup runtimes
         shell: bash
         run: |
           set -euo pipefail
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y lua5.4 php-cli ruby
+          command -v node
+          command -v javac
+          command -v rustc
+          command -v rustfmt
+          command -v gcc
+          command -v g++
+          command -v kotlinc
+          command -v swiftc
 
       - name: Validate TypeScript Builder
         shell: bash
@@ -148,7 +141,6 @@ jobs:
         run: |
           set -euo pipefail
           work="$(mktemp -d)"
-          command -v kotlinc >/dev/null
           kotlinc src/Enterprise/Kotlin/BuilderExample.kt -include-runtime -d "$work/builder.jar"
           output="$(java -jar "$work/builder.jar")"
           grep -Fq '# Service status' <<<"$output"
@@ -160,7 +152,6 @@ jobs:
         run: |
           set -euo pipefail
           work="$(mktemp -d)"
-          command -v swiftc >/dev/null
           swiftc src/Systems/Swift/builder.swift -o "$work/builder"
           output="$("$work/builder")"
           grep -Fq '# Service status' <<<"$output"
