@@ -125,9 +125,17 @@ jobs:
       - name: Validate Rockstar Abstract Factory
         shell: bash
         run: |
-          set -euo pipefail
-          output="$("$ROCKSTAR" src/Other/Rockstar/example1.rock)"
+          set -uo pipefail
+          set +e
+          output="$("$ROCKSTAR" src/Other/Rockstar/example1.rock 2>&1)"
+          status=$?
+          set -e
           printf '%s\n' "$output"
+          if [ "$status" -ne 0 ]; then
+            message="$(printf '%s' "$output" | tr '\n' ' ' | sed 's/%/%25/g; s/\r/%0D/g; s/\n/%0A/g')"
+            echo "::error title=Rockstar v2.0.31 parser/runtime::$message"
+            exit "$status"
+          fi
           grep -Fxq 'Dark Button' <<<"$output"
           grep -Fxq 'Dark Checkbox' <<<"$output"
           grep -Fxq 'Light Button' <<<"$output"
