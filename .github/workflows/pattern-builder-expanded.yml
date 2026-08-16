@@ -132,3 +132,5 @@ jobs:
           command -v swiftc >/dev/null
           swiftc src/Systems/Swift/builder.swift -o "$work/builder-swift"
           assert_output "$("$work/builder-swift")"
+
+# Triggered intentionally after batching implementations so CI reports only real failures.
