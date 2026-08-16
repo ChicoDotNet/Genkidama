@@ -15,6 +15,7 @@ on:
       - 'src/Functional/OCaml/builder.ml'
       - 'src/DataScience/Julia/builder.jl'
       - 'src/Functional/Lisp/builder.lisp'
+      - 'wiki/Builder.md'
 
 jobs:
   portable:
@@ -32,43 +33,103 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y nim groovy ocaml sbcl
-      - name: Validate Builder examples
+
+      - name: Validate Visual Basic .NET Builder
         shell: bash
         run: |
           set -euo pipefail
-          assert_output() {
-            grep -Fq '# Service status' <<<"$1"
-            grep -Fq '<h1>Service status</h1>' <<<"$1"
-            grep -Fq '99.95%' <<<"$1"
-          }
           work="$(mktemp -d)"
-          dotnet new console --language VB --framework net10.0 --output "$work/vb" --force >/dev/null
-          cp src/Enterprise/VisualBasic/BuilderExample.vb "$work/vb/Program.vb"
-          assert_output "$(dotnet run --project "$work/vb" -c Release)"
+          dotnet new console --language VB --framework net10.0 --output "$work" --force >/dev/null
+          cp src/Enterprise/VisualBasic/BuilderExample.vb "$work/Program.vb"
+          output="$(dotnet run --project "$work" -c Release)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
+      - name: Validate Zig Builder
+        shell: bash
+        run: |
+          set -euo pipefail
           zig fmt --check src/Systems/Zig/builder.zig
-          assert_output "$(zig run src/Systems/Zig/builder.zig 2>&1)"
+          output="$(zig run src/Systems/Zig/builder.zig 2>&1)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
-          nim c --hints:off --warnings:on -o:"$work/builder-nim" src/Niche/Nim/builder.nim
-          assert_output "$("$work/builder-nim")"
+      - name: Validate Nim Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          nim c --hints:off --warnings:on -o:"$work/builder" src/Niche/Nim/builder.nim
+          output="$("$work/builder")"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
+      - name: Validate Dart Builder
+        shell: bash
+        run: |
+          set -euo pipefail
           dart format --output=none --set-exit-if-changed src/Web/Dart/builder.dart
           dart analyze --fatal-infos --fatal-warnings src/Web/Dart/builder.dart
-          assert_output "$(dart run src/Web/Dart/builder.dart)"
+          output="$(dart run src/Web/Dart/builder.dart)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
+      - name: Validate Crystal Builder
+        shell: bash
+        run: |
+          set -euo pipefail
           crystal tool format src/Niche/Crystal/builder.cr
           test -z "$(git status --short -- src/Niche/Crystal/builder.cr)"
-          crystal build --error-on-warnings src/Niche/Crystal/builder.cr -o "$work/builder-crystal"
-          assert_output "$("$work/builder-crystal")"
+          work="$(mktemp -d)"
+          crystal build --error-on-warnings src/Niche/Crystal/builder.cr -o "$work/builder"
+          output="$("$work/builder")"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
-          groovyc -d "$work/groovy" src/Scripting/Groovy/builder.groovy
-          assert_output "$(groovy src/Scripting/Groovy/builder.groovy)"
+      - name: Validate Groovy Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          groovyc -d "$work" src/Scripting/Groovy/builder.groovy
+          output="$(groovy src/Scripting/Groovy/builder.groovy)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
-          ocamlc -w +A-70 -warn-error +A-70 src/Functional/OCaml/builder.ml -o "$work/builder-ocaml"
-          assert_output "$("$work/builder-ocaml")"
+      - name: Validate OCaml Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          ocamlc -w +A-70 -warn-error +A-70 src/Functional/OCaml/builder.ml -o "$work/builder"
+          output="$("$work/builder")"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
-          assert_output "$(julia --startup-file=no src/DataScience/Julia/builder.jl)"
-          assert_output "$(sbcl --noinform --non-interactive --load src/Functional/Lisp/builder.lisp)"
+      - name: Validate Julia Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(julia --startup-file=no src/DataScience/Julia/builder.jl)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
+
+      - name: Validate Common Lisp Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(sbcl --noinform --non-interactive --load src/Functional/Lisp/builder.lisp)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
   objective-c:
     runs-on: macos-latest
