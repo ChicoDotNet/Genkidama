@@ -1,4 +1,4 @@
-// The same construction recipe produces two representations without changing client logic.
+// The Builder contract exposes construction steps independently from each representation.
 interface ReportBuilder {
   reset(): void;
   addTitle(title: string): void;
