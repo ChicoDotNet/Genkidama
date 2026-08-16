@@ -8,44 +8,53 @@ End Enum
 
 Private Type ReportBuilder
     Format As ReportFormat
-    Parts As Collection
+    PartCount As Long
+    Parts(1 To 3) As String
 End Type
 
 Private Function CreateBuilder(ByVal format As ReportFormat) As ReportBuilder
     Dim target As ReportBuilder
     target.Format = format
-    Set target.Parts = New Collection
     CreateBuilder = target
 End Function
 
 Private Sub Reset(ByRef target As ReportBuilder)
-    Set target.Parts = New Collection
+    Dim index As Long
+    target.PartCount = 0
+    For index = LBound(target.Parts) To UBound(target.Parts)
+        target.Parts(index) = vbNullString
+    Next index
+End Sub
+
+Private Sub AppendPart(ByRef target As ReportBuilder, ByVal value As String)
+    target.PartCount = target.PartCount + 1
+    target.Parts(target.PartCount) = value
 End Sub
 
 Private Sub AddTitle(ByRef target As ReportBuilder, ByVal title As String)
     If target.Format = TextReport Then
-        target.Parts.Add "# " & title
+        AppendPart target, "# " & title
     Else
-        target.Parts.Add "<h1>" & title & "</h1>"
+        AppendPart target, "<h1>" & title & "</h1>"
     End If
 End Sub
 
 Private Sub AddSection(ByRef target As ReportBuilder, ByVal heading As String, ByVal body As String)
     If target.Format = TextReport Then
-        target.Parts.Add "## " & heading
-        target.Parts.Add body
+        AppendPart target, "## " & heading
+        AppendPart target, body
     Else
-        target.Parts.Add "<h2>" & heading & "</h2><p>" & body & "</p>"
+        AppendPart target, "<h2>" & heading & "</h2><p>" & body & "</p>"
     End If
 End Sub
 
 Private Function Build(ByRef target As ReportBuilder) As String
-    Dim item As Variant
+    Dim index As Long
     Dim result As String
-    For Each item In target.Parts
+    For index = 1 To target.PartCount
         If Len(result) > 0 Then result = result & vbCrLf
-        result = result & CStr(item)
-    Next item
+        result = result & target.Parts(index)
+    Next index
     Build = result
 End Function
 
