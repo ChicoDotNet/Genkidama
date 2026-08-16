@@ -44,6 +44,14 @@ jobs:
       - name: Test
         run: ctest --test-dir learn/es/cpp/app/build -C Release --output-on-failure
 
+      - name: Upload CTest diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cpp-${{ matrix.compiler }}-ctest-diagnostics
+          path: learn/es/cpp/app/build/Testing/Temporary/LastTest.log
+          if-no-files-found: ignore
+
       - name: Smoke test CLI on Linux
         if: runner.os == 'Linux'
         shell: bash
