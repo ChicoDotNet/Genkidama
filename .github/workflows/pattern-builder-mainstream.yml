@@ -206,3 +206,5 @@ jobs:
           grep -Fq '# Service status' <<<"$output"
           grep -Fq '<h1>Service status</h1>' <<<"$output"
           grep -Fq '99.95%' <<<"$output"
+
+# Trigger after workflow registration so pull_request validation is observable.
