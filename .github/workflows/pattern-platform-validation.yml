@@ -9,6 +9,7 @@ on:
       - 'src/Niche/GDScript/**'
       - 'src/DataScience/MATLAB/**'
       - 'src/Other/MicroPython/**'
+      - 'src/Other/Rockstar/**'
       - 'wiki/AbstractFactory.md'
 
 jobs:
@@ -92,6 +93,40 @@ jobs:
         run: |
           set -euo pipefail
           output="$(/tmp/micropython/ports/unix/build-standard/micropython src/Other/MicroPython/example1.py)"
+          printf '%s\n' "$output"
+          grep -Fxq 'Dark Button' <<<"$output"
+          grep -Fxq 'Dark Checkbox' <<<"$output"
+          grep -Fxq 'Light Button' <<<"$output"
+          grep -Fxq 'Light Checkbox' <<<"$output"
+
+  rockstar-abstract-factory:
+    if: startsWith(github.head_ref, 'patterns/')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Rockstar v2.0.31
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 \
+            'https://github.com/RockstarLang/rockstar/releases/download/v2.0.31/rockstar-v2.0.31-linux-x64.tar.gz' \
+            --output /tmp/rockstar.tar.gz
+          echo '3d265c80d9d039ad92524f42951eb546d8b42c680965dfa551210457e399653f  /tmp/rockstar.tar.gz' | sha256sum -c -
+          mkdir -p /tmp/rockstar
+          tar -xzf /tmp/rockstar.tar.gz -C /tmp/rockstar
+          ROCKSTAR="$(find /tmp/rockstar -type f -name rockstar -perm -111 | head -n 1)"
+          test -n "$ROCKSTAR"
+          echo "ROCKSTAR=$ROCKSTAR" >> "$GITHUB_ENV"
+          "$ROCKSTAR" --version
+
+      - name: Validate Rockstar Abstract Factory
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$("$ROCKSTAR" src/Other/Rockstar/example1.rock)"
           printf '%s\n' "$output"
           grep -Fxq 'Dark Button' <<<"$output"
           grep -Fxq 'Dark Checkbox' <<<"$output"
