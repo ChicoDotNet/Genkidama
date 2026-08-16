@@ -46,6 +46,7 @@ class HtmlReportBuilder implements ReportBuilder {
   }
 }
 
+// This function acts as the Director: the recipe depends only on the Builder contract.
 function buildAvailabilityReport(builder: ReportBuilder): string {
   builder.reset();
   builder.addTitle("Service status");
