@@ -8,6 +8,7 @@ on:
       - '.github/workflows/pattern-platform-validation.yml'
       - 'src/Niche/GDScript/**'
       - 'src/DataScience/MATLAB/**'
+      - 'src/Other/MicroPython/**'
       - 'wiki/AbstractFactory.md'
 
 jobs:
@@ -65,3 +66,34 @@ jobs:
             assert(contains(output, "Dark Checkbox"));
             assert(contains(output, "Light Button"));
             assert(contains(output, "Light Checkbox"));
+
+  micropython-abstract-factory:
+    if: startsWith(github.head_ref, 'patterns/')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Build MicroPython 1.28.0 Unix port
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential libffi-dev pkg-config
+          git clone --depth 1 --branch v1.28.0 --recurse-submodules \
+            https://github.com/micropython/micropython.git /tmp/micropython
+          make -C /tmp/micropython/mpy-cross -j2
+          make -C /tmp/micropython/ports/unix -j2
+          /tmp/micropython/ports/unix/build-standard/micropython --version
+
+      - name: Validate MicroPython Abstract Factory
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(/tmp/micropython/ports/unix/build-standard/micropython src/Other/MicroPython/example1.py)"
+          printf '%s\n' "$output"
+          grep -Fxq 'Dark Button' <<<"$output"
+          grep -Fxq 'Dark Checkbox' <<<"$output"
+          grep -Fxq 'Light Button' <<<"$output"
+          grep -Fxq 'Light Checkbox' <<<"$output"
