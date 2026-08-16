@@ -27,7 +27,7 @@ let htmlBuilder () =
         Build = fun () -> System.String.Concat(parts)
     }
 
-let buildAvailabilityReport builder =
+let buildAvailabilityReport (builder: ReportBuilder) =
     builder.Reset()
     builder.AddTitle "Service status"
     builder.AddSection "Availability" "99.95%"
