@@ -4,7 +4,7 @@ C++ es un lenguaje compilado de propósito general usado cuando importan rendimi
 
 ## Qué vas a construir
 
-ThreadSeek recorre directorios, representa archivos con tipos claros, busca por nombre y ya puede persistir/reconstruir su índice sin volver a escanear la raíz. Más adelante medirá tiempos y distribuirá trabajo entre varios hilos sin sacrificar determinismo.
+ThreadSeek recorre directorios, representa archivos con tipos claros, busca por nombre, persiste/reconstruye su índice y ahora puede comparar descubrimiento secuencial contra una versión paralela acotada sin sacrificar determinismo.
 
 ## Qué necesitas
 
@@ -26,7 +26,7 @@ ctest --test-dir build --output-on-failure
 
 ## Avance
 
-**8/17 lecciones.** Ya existe un índice secuencial, probado y durable; todavía no hay múltiples hilos.
+**12/17 lecciones.** Ya existe una línea base secuencial durable y una implementación paralela acotada que conserva el mismo resultado observable.
 
 1. [Compila y ejecuta ThreadSeek](lessons/01-compila-y-ejecuta-threadseek.md)
 2. [Modela archivos con tipos y `std::filesystem`](lessons/02-modela-archivos-con-tipos.md)
@@ -36,10 +36,10 @@ ctest --test-dir build --output-on-failure
 6. [RAII en recursos reales](lessons/06-raii-en-recursos-reales.md)
 7. [Persiste y reconstruye el índice](lessons/07-persiste-y-reconstruye-el-indice.md)
 8. [Diseña fallos de persistencia explícitos](lessons/08-fallos-de-persistencia.md)
-9. Próximo: medir antes de paralelizar.
-10. Próximo: `std::thread`, tareas y partición de trabajo.
-11. Próximo: sincronización mínima y datos compartidos.
-12. Próximo: comparar versión secuencial vs multihilo.
+9. [Mide la línea base antes de paralelizar](lessons/09-mide-la-linea-base.md)
+10. [Particiona trabajo con `std::jthread`](lessons/10-particiona-trabajo-con-jthread.md)
+11. [Minimiza estado mutable compartido](lessons/11-minimiza-estado-compartido.md)
+12. [Compara sin perder determinismo](lessons/12-compara-sin-perder-determinismo.md)
 13. Próximo: cancelación y progreso.
 14. Próximo: robustez ante archivos que cambian.
 15. Próximo: profiling y optimización basada en evidencia.
@@ -49,6 +49,8 @@ ctest --test-dir build --output-on-failure
 [Checkpoint 01 — Índice confiable](exercises/checkpoint-01.md) · [Solución](solutions/checkpoint-01.md)
 
 [Checkpoint 02 — Índice durable](exercises/checkpoint-02.md) · [Solución](solutions/checkpoint-02.md)
+
+[Checkpoint 03 — Concurrencia medible y determinista](exercises/checkpoint-03.md) · [Solución](solutions/checkpoint-03.md)
 
 ## Qué sabrás hacer al terminar
 
@@ -64,7 +66,9 @@ Estas habilidades aparecen en software de sistemas, motores, tooling, multimedia
 
 **¿Por qué no empezamos con punteros manuales?** Porque ownership manual no es un rito de iniciación. Primero usamos valores, RAII y contenedores estándar.
 
-**¿Por qué aún no hay múltiples hilos?** Porque primero necesitamos una línea base correcta y medible para saber si paralelizar aporta valor.
+**¿Por qué medimos antes de paralelizar?** Porque más hilos no garantizan menor tiempo. El filesystem, la caché, la carga y el tamaño del árbol cambian el resultado.
+
+**¿Por qué no usamos un mutex global?** Porque cada worker produce un lote local y el hilo coordinador combina los resultados después del join; eliminar estado mutable compartido simplifica el razonamiento.
 
 ## Referencias oficiales
 
@@ -74,8 +78,8 @@ Estas habilidades aparecen en software de sistemas, motores, tooling, multimedia
 
 ## Cómo hablar de este proyecto en una entrevista
 
-Explica cómo separaste filesystem, índice y persistencia; qué recursos poseen los tipos estándar; qué casos de error probaste; por qué persistes mediante temporal; y por qué medirás la versión secuencial antes de agregar threads.
+Explica cómo separaste filesystem, índice y persistencia; por qué mides una baseline antes de optimizar; cómo `std::jthread` mantiene ownership de los workers; cómo evitaste un vector compartido durante el escaneo; y por qué el resultado final se ordena para conservar determinismo.
 
 ## Siguiente paso
 
-Completa Checkpoint 02. Después instrumentaremos tiempos y recién entonces introduciremos concurrencia.
+Completa Checkpoint 03. Después agregaremos cancelación/progreso, robustez ante archivos que cambian y profiling antes del hardening final.
