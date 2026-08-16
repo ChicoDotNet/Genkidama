@@ -84,7 +84,7 @@ void createUIComponents(id<UIFactory> factory) {
     [checkbox render];
 }
 
-int main(int argc, const char * argv[]) {
+int main(void) {
     @autoreleasepool {
         createUIComponents([DarkFactory new]);
         createUIComponents([LightFactory new]);

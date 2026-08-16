@@ -46,7 +46,7 @@ contract DarkFactory is UIFactory {
     function createButton() public override returns (Button) {
         return new DarkButton();
     }
-    
+
     function createCheckbox() public override returns (Checkbox) {
         return new DarkCheckbox();
     }
@@ -56,20 +56,20 @@ contract LightFactory is UIFactory {
     function createButton() public override returns (Button) {
         return new LightButton();
     }
-    
+
     function createCheckbox() public override returns (Checkbox) {
         return new LightCheckbox();
     }
 }
 
 contract Example1 {
-    function createUIComponents(UIFactory factory) public view returns (string memory, string memory) {
+    function createUIComponents(UIFactory factory) public returns (string memory, string memory) {
         Button button = factory.createButton();
         Checkbox checkbox = factory.createCheckbox();
         return (button.render(), checkbox.render());
     }
 
-    function test() public view returns (string memory, string memory, string memory, string memory) {
+    function test() public returns (string memory, string memory, string memory, string memory) {
         UIFactory darkFactory = new DarkFactory();
         UIFactory lightFactory = new LightFactory();
         (string memory darkButton, string memory darkCheckbox) = createUIComponents(darkFactory);

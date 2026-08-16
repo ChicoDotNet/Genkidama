@@ -1,23 +1,20 @@
-(defun create-button (theme)
-  (cond ((eq theme 'dark) (dark-button))
-        ((eq theme 'light) (light-button))))
+(defstruct ui-factory
+  create-button
+  create-checkbox)
 
-(defun create-checkbox (theme)
-  (cond ((eq theme 'dark) (dark-checkbox))
-        ((eq theme 'light) (light-checkbox))))
+(defun dark-factory ()
+  (make-ui-factory
+   :create-button (lambda () (format t "Dark Button~%"))
+   :create-checkbox (lambda () (format t "Dark Checkbox~%"))))
 
-(defun dark-button ()
-  (print "Dark Button"))
+(defun light-factory ()
+  (make-ui-factory
+   :create-button (lambda () (format t "Light Button~%"))
+   :create-checkbox (lambda () (format t "Light Checkbox~%"))))
 
-(defun light-button ()
-  (print "Light Button"))
+(defun render-ui (factory)
+  (funcall (ui-factory-create-button factory))
+  (funcall (ui-factory-create-checkbox factory)))
 
-(defun dark-checkbox ()
-  (print "Dark Checkbox"))
-
-(defun light-checkbox ()
-  (print "Light Checkbox"))
-
-;; Usage
-(create-button 'dark)
-(create-checkbox 'light)
+(render-ui (dark-factory))
+(render-ui (light-factory))

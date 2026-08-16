@@ -1,59 +1,24 @@
--- Abstract Factory
-UIFactory = {}
-function UIFactory:createButton() end
-function UIFactory:createCheckbox() end
-
--- Concrete Factory
-DarkFactory = UIFactory:new()
-function DarkFactory:createButton()
-    return DarkButton:new()
-end
-function DarkFactory:createCheckbox()
-    return DarkCheckbox:new()
+local function make_factory(create_button, create_checkbox)
+    return {
+        create_button = create_button,
+        create_checkbox = create_checkbox,
+    }
 end
 
-LightFactory = UIFactory:new()
-function LightFactory:createButton()
-    return LightButton:new()
-end
-function LightFactory:createCheckbox()
-    return LightCheckbox:new()
-end
+local dark_factory = make_factory(
+    function() return "Dark Button" end,
+    function() return "Dark Checkbox" end
+)
 
--- Products
-Button = {}
-function Button:render() end
+local light_factory = make_factory(
+    function() return "Light Button" end,
+    function() return "Light Checkbox" end
+)
 
-DarkButton = Button:new()
-function DarkButton:render()
-    print("Dark Button")
+local function render_ui(factory)
+    print(factory.create_button())
+    print(factory.create_checkbox())
 end
 
-LightButton = Button:new()
-function LightButton:render()
-    print("Light Button")
-end
-
-Checkbox = {}
-function Checkbox:render() end
-
-DarkCheckbox = Checkbox:new()
-function DarkCheckbox:render()
-    print("Dark Checkbox")
-end
-
-LightCheckbox = Checkbox:new()
-function LightCheckbox:render()
-    print("Light Checkbox")
-end
-
-function createUIComponents(factory)
-    local button = factory:createButton()
-    local checkbox = factory:createCheckbox()
-    button:render()
-    checkbox:render()
-end
-
--- Usage
-createUIComponents(DarkFactory)
-createUIComponents(LightFactory)
+render_ui(dark_factory)
+render_ui(light_factory)

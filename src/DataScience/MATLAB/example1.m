@@ -1,40 +1,39 @@
-% Abstract Factory
-function button = createButton(theme)
-    if strcmp(theme, 'dark')
-        button = @darkButton;
-    elseif strcmp(theme, 'light')
-        button = @lightButton;
-    end
+function example1
+% Abstract Factory represented as a struct of related constructors.
+% Select the family once, then create all related products from it.
+
+darkFactory = createFactory(@darkButton, @darkCheckbox);
+lightFactory = createFactory(@lightButton, @lightCheckbox);
+
+createUIComponents(darkFactory);
+createUIComponents(lightFactory);
 end
 
-function checkbox = createCheckbox(theme)
-    if strcmp(theme, 'dark')
-        checkbox = @darkCheckbox;
-    elseif strcmp(theme, 'light')
-        checkbox = @lightCheckbox;
-    end
+function factory = createFactory(buttonConstructor, checkboxConstructor)
+factory = struct( ...
+    'createButton', buttonConstructor, ...
+    'createCheckbox', checkboxConstructor);
 end
 
-% Concrete Products
-function darkButton()
-    disp('Dark Button');
+function createUIComponents(factory)
+buttonConstructor = factory.createButton;
+checkboxConstructor = factory.createCheckbox;
+buttonConstructor();
+checkboxConstructor();
 end
 
-function lightButton()
-    disp('Light Button');
+function darkButton
+fprintf('Dark Button\n');
 end
 
-function darkCheckbox()
-    disp('Dark Checkbox');
+function lightButton
+fprintf('Light Button\n');
 end
 
-function lightCheckbox()
-    disp('Light Checkbox');
+function darkCheckbox
+fprintf('Dark Checkbox\n');
 end
 
-% Usage
-button = createButton('dark');
-button();
-
-checkbox = createCheckbox('light');
-checkbox();
+function lightCheckbox
+fprintf('Light Checkbox\n');
+end

@@ -1,39 +1,38 @@
-# Abstract Factory
-function Create-Button {
-    param ([string]$theme)
-    if ($theme -eq "dark") {
-        Dark-Button
-    } elseif ($theme -eq "light") {
-        Light-Button
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+
+function New-UiFactory {
+    param(
+        [Parameter(Mandatory)]
+        [scriptblock]$CreateButton,
+
+        [Parameter(Mandatory)]
+        [scriptblock]$CreateCheckbox
+    )
+
+    return @{
+        CreateButton = $CreateButton
+        CreateCheckbox = $CreateCheckbox
     }
 }
 
-function Create-Checkbox {
-    param ([string]$theme)
-    if ($theme -eq "dark") {
-        Dark-Checkbox
-    } elseif ($theme -eq "light") {
-        Light-Checkbox
-    }
+$DarkFactory = New-UiFactory `
+    -CreateButton { 'Dark Button' } `
+    -CreateCheckbox { 'Dark Checkbox' }
+
+$LightFactory = New-UiFactory `
+    -CreateButton { 'Light Button' } `
+    -CreateCheckbox { 'Light Checkbox' }
+
+function Show-UiComponents {
+    param(
+        [Parameter(Mandatory)]
+        [hashtable]$Factory
+    )
+
+    & $Factory.CreateButton
+    & $Factory.CreateCheckbox
 }
 
-# Concrete Products
-function Dark-Button {
-    Write-Output "Dark Button"
-}
-
-function Light-Button {
-    Write-Output "Light Button"
-}
-
-function Dark-Checkbox {
-    Write-Output "Dark Checkbox"
-}
-
-function Light-Checkbox {
-    Write-Output "Light Checkbox"
-}
-
-# Usage
-Create-Button "dark"
-Create-Checkbox "light"
+Show-UiComponents -Factory $DarkFactory
+Show-UiComponents -Factory $LightFactory

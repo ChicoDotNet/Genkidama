@@ -1,78 +1,46 @@
 const std = @import("std");
 
-const Button = struct {
-    pub fn render(self: @This()) void {
-        std.debug.print("Button\n", .{});
-    }
-};
-
-const DarkButton = struct {
-    pub fn render(self: @This()) void {
-        std.debug.print("Dark Button\n", .{});
-    }
-};
-
-const LightButton = struct {
-    pub fn render(self: @This()) void {
-        std.debug.print("Light Button\n", .{});
-    }
-};
-
-const Checkbox = struct {
-    pub fn render(self: @This()) void {
-        std.debug.print("Checkbox\n", .{});
-    }
-};
-
-const DarkCheckbox = struct {
-    pub fn render(self: @This()) void {
-        std.debug.print("Dark Checkbox\n", .{});
-    }
-};
-
-const LightCheckbox = struct {
-    pub fn render(self: @This()) void {
-        std.debug.print("Light Checkbox\n", .{});
-    }
-};
+const ProductFactory = *const fn () []const u8;
 
 const UIFactory = struct {
-    pub fn createButton(self: @This()) Button {
-        return Button{};
-    }
-    pub fn createCheckbox(self: @This()) Checkbox {
-        return Checkbox{};
-    }
+    create_button: ProductFactory,
+    create_checkbox: ProductFactory,
 };
 
-const DarkFactory = struct {
-    pub fn createButton(self: @This()) DarkButton {
-        return DarkButton{};
-    }
-    pub fn createCheckbox(self: @This()) DarkCheckbox {
-        return DarkCheckbox{};
-    }
+fn darkButton() []const u8 {
+    return "Dark Button";
+}
+
+fn darkCheckbox() []const u8 {
+    return "Dark Checkbox";
+}
+
+fn lightButton() []const u8 {
+    return "Light Button";
+}
+
+fn lightCheckbox() []const u8 {
+    return "Light Checkbox";
+}
+
+const dark_factory = UIFactory{
+    .create_button = darkButton,
+    .create_checkbox = darkCheckbox,
 };
 
-const LightFactory = struct {
-    pub fn createButton(self: @This()) LightButton {
-        return LightButton{};
-    }
-    pub fn createCheckbox(self: @This()) LightCheckbox {
-        return LightCheckbox{};
-    }
+const light_factory = UIFactory{
+    .create_button = lightButton,
+    .create_checkbox = lightCheckbox,
 };
 
 fn createUIComponents(factory: UIFactory) void {
-    const button = factory.createButton();
-    const checkbox = factory.createCheckbox();
-    button.render();
-    checkbox.render();
+    std.debug.print("{s}\n{s}\n", .{
+        factory.create_button(),
+        factory.create_checkbox(),
+    });
 }
 
 pub fn main() void {
-    const darkFactory = DarkFactory{};
-    const lightFactory = LightFactory{};
-    createUIComponents(darkFactory);
-    createUIComponents(lightFactory);
+    createUIComponents(dark_factory);
+    createUIComponents(light_factory);
 }

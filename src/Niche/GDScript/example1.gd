@@ -1,35 +1,31 @@
-extends Node
+extends SceneTree
 
-# Abstract Factory
-func create_button(theme: String) -> Callable:
-    if theme == "dark":
-        return funcref(self, "dark_button")
-    elif theme == "light":
-        return funcref(self, "light_button")
+# Abstract Factory represented as a family of related constructors.
+func create_factory(theme: String) -> Dictionary:
+	match theme:
+		"dark":
+			return {
+				"create_button": func() -> void: print("Dark Button"),
+				"create_checkbox": func() -> void: print("Dark Checkbox"),
+			}
+		"light":
+			return {
+				"create_button": func() -> void: print("Light Button"),
+				"create_checkbox": func() -> void: print("Light Checkbox"),
+			}
+		_:
+			push_error("Unknown UI family: %s" % theme)
+			return {}
 
-func create_checkbox(theme: String) -> Callable:
-    if theme == "dark":
-        return funcref(self, "dark_checkbox")
-    elif theme == "light":
-        return funcref(self, "light_checkbox")
 
-# Concrete Products
-func dark_button():
-    print("Dark Button")
+func create_ui_components(factory: Dictionary) -> void:
+	var create_button: Callable = factory["create_button"]
+	var create_checkbox: Callable = factory["create_checkbox"]
+	create_button.call()
+	create_checkbox.call()
 
-func light_button():
-    print("Light Button")
 
-func dark_checkbox():
-    print("Dark Checkbox")
-
-func light_checkbox():
-    print("Light Checkbox")
-
-# Usage
-func _ready():
-    var button = create_button("dark")
-    button.call_func()
-    
-    var checkbox = create_checkbox("light")
-    checkbox.call_func()
+func _init() -> void:
+	create_ui_components(create_factory("dark"))
+	create_ui_components(create_factory("light"))
+	quit()

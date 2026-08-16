@@ -1,9 +1,14 @@
 % Abstract Factory
-create_button(dark, dark_button).
-create_button(light, light_button).
+%
+% A factory term represents one coherent product family. The consumer selects
+% the family once and receives both products from that same factory.
 
-create_checkbox(dark, dark_checkbox).
-create_checkbox(light, light_checkbox).
+ui_factory(dark, factory(dark_button, dark_checkbox)).
+ui_factory(light, factory(light_button, light_checkbox)).
+
+create_ui_components(factory(Button, Checkbox)) :-
+    call(Button),
+    call(Checkbox).
 
 % Concrete Products
 dark_button :- write('Dark Button'), nl.
@@ -14,7 +19,5 @@ light_checkbox :- write('Light Checkbox'), nl.
 
 % Usage
 run :-
-    create_button(dark, Button1),
-    call(Button1),
-    create_checkbox(light, Checkbox1),
-    call(Checkbox1).
+    ui_factory(dark, Factory),
+    create_ui_components(Factory).
