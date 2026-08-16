@@ -2,7 +2,7 @@ schema_version: 1
 initiative:
   status: pilots_complete
   source_locale: es
-  last_updated: '2026-08-15'
+  last_updated: '2026-08-16'
   active_work: cpp_course
   v1_courses_total: 45
   v1_courses_complete: 12
@@ -62,9 +62,10 @@ courses:
   vbnet: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   cpp:
     status: in_progress
-    lessons_complete: 4
+    lessons_complete: 8
     lessons_total: 17
-    ci: pending
+    ci: green
+    last_green_executable_sha: 62f5758cbf138941df933d405265d782f0441469
     pr: 58
   objective-c: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   java:
