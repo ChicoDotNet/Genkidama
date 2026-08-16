@@ -1,11 +1,11 @@
-DarkFactory takes nothing
+Dark Factory takes nothing
 Rock products
 Products at "button" is "Dark Button"
 Products at "checkbox" is "Dark Checkbox"
 Give back products
 Yeah
 
-LightFactory takes nothing
+Light Factory takes nothing
 Rock products
 Products at "button" is "Light Button"
 Products at "checkbox" is "Light Checkbox"
@@ -17,8 +17,8 @@ Print factory at "button"
 Print factory at "checkbox"
 Yeah
 
-Put DarkFactory! into chosen
+Put Dark Factory! into chosen
 Call Render with chosen
 
-Put LightFactory! into chosen
+Put Light Factory! into chosen
 Call Render with chosen
