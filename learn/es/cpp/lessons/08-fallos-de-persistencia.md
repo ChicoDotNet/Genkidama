@@ -10,4 +10,6 @@ No necesitamos una jerarquía compleja de excepciones todavía. La granularidad 
 
 Rompe la cabecera del archivo persistido y ejecuta la prueba `rejects_corrupt_index`. Después completa el [Checkpoint 02 — Índice durable](../exercises/checkpoint-02.md).
 
-Siguiente bloque: medir la versión secuencial antes de introducir múltiples hilos.
+## Siguiente paso
+
+En la [lección 09 — Mide la línea base antes de paralelizar](09-mide-la-linea-base.md) instrumentaremos la versión secuencial antes de introducir múltiples hilos.
