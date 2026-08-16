@@ -62,10 +62,10 @@ courses:
   vbnet: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   cpp:
     status: in_progress
-    lessons_complete: 8
+    lessons_complete: 12
     lessons_total: 17
     ci: green
-    last_green_executable_sha: 62f5758cbf138941df933d405265d782f0441469
+    last_green_executable_sha: 765ae585d43da1f48cb0783de8c3fc8fc8fa5ea7
     pr: 58
   objective-c: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   java:
