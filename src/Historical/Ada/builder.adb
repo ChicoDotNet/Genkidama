@@ -8,6 +8,7 @@ procedure Builder is
    end record;
 
    procedure Reset (Target : in out Report_Builder) is
+      pragma Unreferenced (Target);
    begin
       null;
    end Reset;
