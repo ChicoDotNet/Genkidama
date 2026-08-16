@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-// The Director applies one construction recipe to interchangeable representations.
+// The builder contract exposes the construction steps without coupling the recipe to a representation.
 public interface IReportBuilder
 {
     void Reset();
@@ -44,6 +44,7 @@ public sealed class HtmlReportBuilder : IReportBuilder
     public string Build() => string.Join(string.Empty, _parts);
 }
 
+// The Director applies one reusable construction recipe to interchangeable builders.
 public static class ReportDirector
 {
     public static string BuildAvailabilityReport(IReportBuilder builder)
