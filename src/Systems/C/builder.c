@@ -41,8 +41,18 @@ static Report build_availability_report(ReportBuilder *builder) {
 }
 
 int main(void) {
-    ReportBuilder text = {{0}, text_reset, text_add_title, text_add_section};
-    ReportBuilder html = {{0}, html_reset, html_add_title, html_add_section};
+    ReportBuilder text = {
+        .report = {.output = {0}},
+        .reset = text_reset,
+        .add_title = text_add_title,
+        .add_section = text_add_section,
+    };
+    ReportBuilder html = {
+        .report = {.output = {0}},
+        .reset = html_reset,
+        .add_title = html_add_title,
+        .add_section = html_add_section,
+    };
     printf("%s\n---\n%s\n", build_availability_report(&text).output, build_availability_report(&html).output);
     return 0;
 }
