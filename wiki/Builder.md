@@ -2,8 +2,8 @@
 
 > **Familia:** Creational  
 > **Intención:** construir un objeto complejo paso a paso, permitiendo reutilizar el mismo proceso para obtener representaciones diferentes.  
-> **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `7/48` verificadas; `48/48` ejemplos publicados  
+> **Estado:** `validated`  
+> **Implementaciones de lenguaje:** `48/48`  
 > **Cobertura de pruebas:** N/A — los ejemplos heterogéneos se validan por compilación/ejecución o evidencia proporcional; no existe un porcentaje homogéneo de line coverage.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -86,9 +86,9 @@ Si construir el producto equivale a asignar dos campos o sólo existe una repres
 
 ## En Genkidama
 
-[`docs/philosophy/001-patterns-as-living-examples.md`](../docs/philosophy/001-patterns-as-living-examples.md) identifica **project generation configuration** como un lugar potencialmente natural para Builder, pero esta ficha no ha verificado todavía un uso productivo deliberado que satisfaga el estándar canónico. Por eso no se presenta la arquitectura productiva como ejemplo del patrón.
+[`docs/philosophy/001-patterns-as-living-examples.md`](../docs/philosophy/001-patterns-as-living-examples.md) identifica **project generation configuration** como un lugar potencialmente natural para Builder, pero esta ficha no ha verificado un uso productivo deliberado que satisfaga el estándar canónico. Por eso no se presenta la arquitectura productiva como ejemplo del patrón.
 
-La auditoría no modificará código productivo para fabricar una demostración.
+La auditoría no modificó código productivo para fabricar una demostración.
 
 ## Cuándo usarlo
 
@@ -148,69 +148,73 @@ Builder no sustituye invariantes de dominio. Si el producto admite demasiadas co
 
 ## Implementaciones por lenguaje
 
-La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): **51 targets actuales**, de los cuales Builder clasifica **48 Applicable** y **3 N/A**. `Verified` significa que un gate observado ejecutó, compiló o aplicó la evidencia proporcional correspondiente; `Candidate` significa que el archivo real existe y conserva la intención, pero su evidencia final aún no está verde.
+La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): **51 targets actuales**, de los cuales Builder clasifica **48 Applicable** y **3 N/A**. Todas las filas Applicable tienen un ejemplo real enlazado y evidencia verde observada en el head de cierre.
 
-| Lenguaje | Aplicabilidad | Ejemplo | Validación actual | Nota |
+| Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
-| C# | Applicable | [`BuilderExample.cs`](../src/Enterprise/C%23/BuilderExample.cs) | compile/run ✅ | Interface + dos builders + receta compartida. |
-| TypeScript | Applicable | [`builder.ts`](../src/Web/TypeScriptTS/builder.ts) | Candidate | Gate expandido. |
-| Ada | Applicable | [`builder.adb`](../src/Historical/Ada/builder.adb) | Candidate | Record + procedimientos; warning-clean fix publicado tras primer rojo. |
-| Solidity | Applicable | [`Builder.sol`](../src/Niche/Solidity/Builder.sol) | Candidate | Interface + builders concretos; compile/bytecode gate. |
-| Fortran | Applicable | [`builder.f90`](../src/Historical/Fortran/builder.f90) | Candidate | Derived type + type-bound procedures. |
-| Pascal | Applicable | [`builder.pas`](../src/Historical/Pascal/builder.pas) | Candidate | Record/procedimientos; gate funcional. |
-| Python | Applicable | [`builder.py`](../src/Scripting/PythonPY/builder.py) | run ✅ | Objetos dinámicos + receta compartida. |
-| Visual Basic .NET | Applicable | [`BuilderExample.vb`](../src/Enterprise/VisualBasic/BuilderExample.vb) | compile/run ✅ | Gate portable observado verde. |
-| C++ | Applicable | [`builder.cpp`](../src/Systems/C%2B%2B/builder.cpp) | Candidate | Gate expandido. |
-| Objective-C | Applicable | [`builder.m`](../src/Systems/Objective-C/builder.m) | macOS compile/run ✅ | Protocol + concrete builders con Foundation. |
-| Java | Applicable | [`BuilderExample.java`](../src/Enterprise/Java/BuilderExample.java) | Candidate | Gate expandido. |
-| Rust | Applicable | [`builder.rs`](../src/Systems/Rust/builder.rs) | Candidate | Gate expandido. |
-| Zig | Applicable | [`builder.zig`](../src/Systems/Zig/builder.zig) | Candidate | API de salida alineada al runtime actual tras primer rojo. |
-| Go | Applicable | [`builder.go`](../src/Systems/Go/builder.go) | run ✅ | Interface + dos representaciones. |
-| PHP | Applicable | [`builder.php`](../src/Scripting/PHP/builder.php) | Candidate | Gate expandido. |
-| Nim | Applicable | [`builder.nim`](../src/Niche/Nim/builder.nim) | Candidate | Gate portable 2. |
-| Dart | Applicable | [`builder.dart`](../src/Web/Dart/builder.dart) | Candidate | Gate portable 2. |
-| Kotlin | Applicable | [`BuilderExample.kt`](../src/Enterprise/Kotlin/BuilderExample.kt) | Candidate | Gate expandido. |
-| Swift | Applicable | [`builder.swift`](../src/Systems/Swift/builder.swift) | Candidate | Gate expandido. |
-| F# | Applicable | [`builder.fsx`](../src/Functional/F%23/builder.fsx) | Candidate | Record de funciones; fix de inferencia publicado. |
-| Crystal | Applicable | [`builder.cr`](../src/Niche/Crystal/builder.cr) | Candidate | Gate portable 2. |
-| Lua | Applicable | [`builder.lua`](../src/Scripting/Lua/builder.lua) | Candidate | Gate expandido. |
-| Haskell | Applicable | [`Builder.hs`](../src/Functional/Haskell/Builder.hs) | Candidate | Record de operaciones; gate funcional. |
-| COBOL | Applicable | [`builder.cbl`](../src/Historical/Cobol/builder.cbl) | Candidate | Secciones/procedimientos + receta compartida. |
-| Scala | Applicable | [`Builder.scala`](../src/Functional/Scala/Builder.scala) | Candidate | Gate funcional. |
-| Groovy | Applicable | [`builder.groovy`](../src/Scripting/Groovy/builder.groovy) | Candidate | Gate portable 2. |
-| Ruby | Applicable | [`builder.rb`](../src/Scripting/RubyRB/builder.rb) | Candidate | Gate expandido. |
-| C | Applicable | [`builder.c`](../src/Systems/C/builder.c) | Candidate | Gate expandido. |
-| OCaml | Applicable | [`builder.ml`](../src/Functional/OCaml/builder.ml) | Candidate | Closures/record; gate portable 2. |
-| Julia | Applicable | [`builder.jl`](../src/DataScience/Julia/builder.jl) | Candidate | Mutable struct idiomático; gate portable 2. |
-| VBA | Applicable | [`builder.bas`](../src/Shell/VBA/builder.bas) | Candidate | Source contract proporcional; no se sustituye por VB.NET. |
-| GDScript | Applicable | [`builder.gd`](../src/Niche/GDScript/builder.gd) | Candidate | Godot 4.6.3 headless. |
-| JavaScript | Applicable | [`builder.js`](../src/Web/JavaScriptJS/builder.js) | run ✅ | Prototipos/objetos dinámicos. |
-| MATLAB | Applicable | [`builder.m`](../src/DataScience/MATLAB/builder.m) | Candidate | Gate oficial MathWorks; no se sustituye por Octave. |
-| Perl | Applicable | [`builder.pl`](../src/Scripting/Perl/builder.pl) | Candidate | Gate funcional. |
-| R | Applicable | [`builder.R`](../src/DataScience/R/builder.R) | Candidate | Gate funcional. |
-| PowerShell | Applicable | [`builder.ps1`](../src/Shell/PowerShell/builder.ps1) | Candidate | Gate funcional. |
+| C# | Applicable | [`BuilderExample.cs`](../src/Enterprise/C%23/BuilderExample.cs) | .NET 10 compile/run ✅ | Interface + dos builders + receta compartida. |
+| TypeScript | Applicable | [`builder.ts`](../src/Web/TypeScriptTS/builder.ts) | strict compile + Node run ✅ | Interface + representaciones text/HTML. |
+| Ada | Applicable | [`builder.adb`](../src/Historical/Ada/builder.adb) | GNAT Ada 2022 warnings-as-errors compile/run ✅ | Record + procedimientos. |
+| Solidity | Applicable | [`Builder.sol`](../src/Niche/Solidity/Builder.sol) | Solidity compile + bytecode artifact ✅ | Interface + builders concretos. |
+| Fortran | Applicable | [`builder.f90`](../src/Historical/Fortran/builder.f90) | Fortran 2018 compile/run ✅ | Derived type + type-bound procedures. |
+| Pascal | Applicable | [`builder.pas`](../src/Historical/Pascal/builder.pas) | Free Pascal compile/run ✅ | Record/procedimientos. |
+| Python | Applicable | [`builder.py`](../src/Scripting/PythonPY/builder.py) | Python compile/run ✅ | Objetos dinámicos + receta compartida. |
+| Visual Basic .NET | Applicable | [`BuilderExample.vb`](../src/Enterprise/VisualBasic/BuilderExample.vb) | .NET 10 compile/run ✅ | Interface + dos builders. |
+| C++ | Applicable | [`builder.cpp`](../src/Systems/C%2B%2B/builder.cpp) | C++20 compile/run ✅ | Polimorfismo + estado explícito. |
+| Objective-C | Applicable | [`builder.m`](../src/Systems/Objective-C/builder.m) | macOS Clang/ARC/Foundation compile/run ✅ | Protocol + concrete builders. |
+| Java | Applicable | [`BuilderExample.java`](../src/Enterprise/Java/BuilderExample.java) | Java compile/run ✅ | Interface + receta compartida. |
+| Rust | Applicable | [`builder.rs`](../src/Systems/Rust/builder.rs) | rustfmt + rustc warnings-as-errors + run ✅ | Trait + representaciones concretas. |
+| Zig | Applicable | [`builder.zig`](../src/Systems/Zig/builder.zig) | Zig fmt/run ✅ | Structs y funciones. |
+| Go | Applicable | [`builder.go`](../src/Systems/Go/builder.go) | gofmt + vet + run ✅ | Interface + dos representaciones. |
+| PHP | Applicable | [`builder.php`](../src/Scripting/PHP/builder.php) | lint/run ✅ | Interfaces + builders concretos. |
+| Nim | Applicable | [`builder.nim`](../src/Niche/Nim/builder.nim) | compile/run ✅ | Objetos/procedimientos. |
+| Dart | Applicable | [`builder.dart`](../src/Web/Dart/builder.dart) | format/analyze/run ✅ | Interface + builders concretos. |
+| Kotlin | Applicable | [`BuilderExample.kt`](../src/Enterprise/Kotlin/BuilderExample.kt) | kotlinc/JVM run ✅ | Interface + receta compartida. |
+| Swift | Applicable | [`builder.swift`](../src/Systems/Swift/builder.swift) | swiftc compile/run ✅ | Protocol + builders concretos. |
+| F# | Applicable | [`builder.fsx`](../src/Functional/F%23/builder.fsx) | dotnet fsi run ✅ | Record de funciones con tipo explícito. |
+| Crystal | Applicable | [`builder.cr`](../src/Niche/Crystal/builder.cr) | format/build/run ✅ | Clases/duck typing idiomático. |
+| Lua | Applicable | [`builder.lua`](../src/Scripting/Lua/builder.lua) | Lua run ✅ | Tables + closures. |
+| Haskell | Applicable | [`Builder.hs`](../src/Functional/Haskell/Builder.hs) | runghc warnings-as-errors ✅ | Record de operaciones. |
+| COBOL | Applicable | [`builder.cbl`](../src/Historical/Cobol/builder.cbl) | GnuCOBOL compile/run ✅ | Secciones/procedimientos + receta compartida. |
+| Scala | Applicable | [`Builder.scala`](../src/Functional/Scala/Builder.scala) | scalac + run ✅ | Traits/objetos + receta compartida. |
+| Groovy | Applicable | [`builder.groovy`](../src/Scripting/Groovy/builder.groovy) | compile/run ✅ | Objetos dinámicos. |
+| Ruby | Applicable | [`builder.rb`](../src/Scripting/RubyRB/builder.rb) | syntax/run ✅ | Objetos dinámicos + receta compartida. |
+| C | Applicable | [`builder.c`](../src/Systems/C/builder.c) | C17 warnings-as-errors compile/run ✅ | Struct de function pointers. |
+| OCaml | Applicable | [`builder.ml`](../src/Functional/OCaml/builder.ml) | warnings-as-errors compile/run ✅ | Records + closures. |
+| Julia | Applicable | [`builder.jl`](../src/DataScience/Julia/builder.jl) | Julia run ✅ | Mutable structs + funciones. |
+| VBA | Applicable | [`builder.bas`](../src/Shell/VBA/builder.bas) | source contract proporcional ✅ | VBA real; no se sustituye por VB.NET. |
+| GDScript | Applicable | [`builder.gd`](../src/Niche/GDScript/builder.gd) | Godot 4.6.3 headless run ✅ | RefCounted/classes + receta compartida. |
+| JavaScript | Applicable | [`builder.js`](../src/Web/JavaScriptJS/builder.js) | Node syntax/run ✅ | Prototipos/objetos dinámicos. |
+| MATLAB | Applicable | [`builder.m`](../src/DataScience/MATLAB/builder.m) | MATLAB oficial MathWorks run ✅ | Funciones/structs; no se sustituye por Octave. |
+| Perl | Applicable | [`builder.pl`](../src/Scripting/Perl/builder.pl) | syntax/run ✅ | Hashes + closures/objetos. |
+| R | Applicable | [`builder.R`](../src/DataScience/R/builder.R) | Rscript run ✅ | Closures/listas. |
+| PowerShell | Applicable | [`builder.ps1`](../src/Shell/PowerShell/builder.ps1) | StrictMode run ✅ | Scriptblocks con estado capturado por closure. |
 | HTML | N/A | — | — | Markup declarativo; el proceso de construcción runtime pertenecería a otro lenguaje, p. ej. JavaScript. |
-| Assembly | Applicable | [`builder.asm`](../src/LowLevel/Assembly/builder.asm) | Candidate | Tabla de function pointers + NASM/LD. |
-| Elixir | Applicable | [`builder.exs`](../src/Functional/Elixir/builder.exs) | Candidate | Funciones/módulos; gate funcional. |
-| Shell | Applicable | [`builder.sh`](../src/Shell/Bash/builder.sh) | Candidate | Funciones + estado explícito; gate expandido. |
-| Erlang | Applicable | [`builder.erl`](../src/Functional/Erlang/builder.erl) | Candidate | Módulo/estado explícito; gate funcional. |
-| Clojure | Applicable | [`builder.clj`](../src/Functional/Clojure/builder.clj) | Candidate | Maps/funciones; gate funcional. |
-| Common Lisp | Applicable | [`builder.lisp`](../src/Functional/Lisp/builder.lisp) | Candidate | Struct + funciones; gate portable 2. |
-| Prolog | Applicable | [`builder.pl`](../src/Niche/Prolog/builder.pl) | Candidate | Predicados/estado explícito; gate funcional. |
-| Delphi | Applicable | [`Builder.pas`](../src/Enterprise/Delphi/Builder.pas) | Candidate | Source contract proporcional; dispatch virtual explícito. |
-| GNU Octave | Applicable | [`builder.m`](../src/DataScience/Octave/builder.m) | Candidate | Gate funcional. |
-| SQL | N/A | — | — | El target es SQL declarativo; no se usará un dialecto procedural distinto para forzar construcción runtime. |
+| Assembly | Applicable | [`builder.asm`](../src/LowLevel/Assembly/builder.asm) | NASM/LD compile/run ✅ | Tabla de function pointers + estado explícito. |
+| Elixir | Applicable | [`builder.exs`](../src/Functional/Elixir/builder.exs) | warnings-as-errors compile/run ✅ | Funciones/módulos. |
+| Shell | Applicable | [`builder.sh`](../src/Shell/Bash/builder.sh) | Bash syntax/run ✅ | Funciones + estado explícito. |
+| Erlang | Applicable | [`builder.erl`](../src/Functional/Erlang/builder.erl) | erlc warnings-as-errors + run ✅ | Módulo/estado explícito. |
+| Clojure | Applicable | [`builder.clj`](../src/Functional/Clojure/builder.clj) | Clojure run ✅ | Maps/funciones. |
+| Common Lisp | Applicable | [`builder.lisp`](../src/Functional/Lisp/builder.lisp) | SBCL run ✅ | Struct + funciones. |
+| Prolog | Applicable | [`builder.pl`](../src/Niche/Prolog/builder.pl) | SWI-Prolog run ✅ | Predicados/estado explícito. |
+| Delphi | Applicable | [`Builder.pas`](../src/Enterprise/Delphi/Builder.pas) | source contract proporcional ✅ | Delphi real; dispatch virtual explícito. |
+| GNU Octave | Applicable | [`builder.m`](../src/DataScience/Octave/builder.m) | Octave run ✅ | Funciones/structs. |
+| SQL | N/A | — | — | El target es SQL declarativo; no se usa un dialecto procedural distinto para forzar construcción runtime. |
 | CSS | N/A | — | — | Lenguaje declarativo de presentación sin proceso runtime general de construcción de productos. |
-| MicroPython | Applicable | [`builder.py`](../src/Other/MicroPython/builder.py) | Candidate | Unix port oficial 1.28.0. |
+| MicroPython | Applicable | [`builder.py`](../src/Other/MicroPython/builder.py) | MicroPython 1.28.0 Unix port run ✅ | Clases simples + receta compartida. |
 | Rockstar | Applicable | [`builder.rock`](../src/Other/Rockstar/builder.rock) | runtime oficial v2.0.31 ✅ | Binario oficial con SHA-256 fijado; salida observable. |
 
-### Evidencia automatizada actual
+### Evidencia automatizada
 
-- `Pattern Builder` verificó C#, Python, JavaScript y Go con salida observable de las dos representaciones.
-- `Pattern Builder Portable 2` ya produjo evidencia verde observada para Visual Basic .NET y Objective-C; Zig recibió una corrección acotada de compatibilidad y el lote vuelve a ejecutarse.
-- `Pattern Builder Functional` cubre F#, Haskell, Scala, Perl, PowerShell, R, GNU Octave, Pascal, Erlang, Elixir, Clojure y Prolog con pasos nombrados por lenguaje.
-- `Pattern Builder Final` cubre Ada, Solidity, Fortran, COBOL, Assembly, GDScript, MATLAB, MicroPython, Rockstar y los source contracts proporcionales de VBA/Delphi. Rockstar ya produjo un run verde; Ada produjo el primer rojo del lote portable y recibió un fix warning-clean.
-- No se inventa line coverage transversal. La política >=44% aplica cuando un ecosistema tenga medición de coverage significativa.
+El head de cierre fue observado con todos los gates aplicables verdes:
+
+- `Pattern Builder`: C#, Python, JavaScript y Go, con salida observable de texto y HTML.
+- `Pattern Builder Portable 2`: Visual Basic .NET, Zig, Nim, Dart, Crystal, Groovy, OCaml, Julia, Common Lisp, TypeScript, Java, Rust, C++, C, Ruby, PHP, Lua, Shell/Bash, Kotlin, Swift y Objective-C; Objective-C se ejecuta en macOS con Foundation.
+- `Pattern Builder Functional`: F#, Haskell, Scala, Perl, PowerShell, R, GNU Octave, Pascal, Erlang, Elixir, Clojure y Prolog.
+- `Pattern Builder Final`: Ada, Solidity, Fortran, COBOL, Assembly, GDScript, MATLAB, MicroPython, Rockstar y source contracts proporcionales sobre los archivos reales de VBA y Delphi.
+- `CI` y `Pattern Platform Validation` también quedaron verdes en el mismo head, protegiendo la integración general y los gates compartidos.
+
+No se inventa line coverage transversal. La política >=44% aplica cuando un ecosistema tenga medición de coverage significativa; para estos ejemplos independientes la evidencia fuerte disponible es compilación, ejecución, análisis estático o source contract proporcional según el runtime.
 
 ## Comprueba que lo entendiste
 
@@ -225,7 +229,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 - El patrón gana flexibilidad a cambio de protocolo, estado y tipos/funciones adicionales.
 - Abstract Factory selecciona familias; Factory Method decide creación individual; Builder enfatiza construcción progresiva.
 - La intención se puede expresar idiomáticamente sin clases mediante records, closures, módulos, predicados, structs o mensajes.
-- Cardinalidad actual: **51 targets = 48 Applicable + 3 N/A; 48/48 ejemplos materializados; 7/48 con evidencia verde observada hasta este incremento**.
+- Cardinalidad validada: **51 targets = 48 Applicable + 3 N/A; 48/48 Applicable con ejemplo real y evidencia verde observada**.
 
 ## Referencias
 
