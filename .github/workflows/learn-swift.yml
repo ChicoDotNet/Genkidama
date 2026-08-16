@@ -1,0 +1,27 @@
+name: Learn Swift
+
+on:
+  pull_request:
+    paths:
+      - 'learn/es/swift/**'
+      - '.github/workflows/learn-swift.yml'
+  push:
+    branches: [dev]
+    paths:
+      - 'learn/es/swift/**'
+      - '.github/workflows/learn-swift.yml'
+
+jobs:
+  swift:
+    runs-on: ubuntu-latest
+    container: swift:6.3-noble
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Swift toolchain
+        run: swift --version
+      - name: Test TimeQuote
+        working-directory: learn/es/swift/app
+        run: swift test
+      - name: Run TimeQuote
+        working-directory: learn/es/swift/app
+        run: swift run TimeQuote

@@ -3,9 +3,9 @@ initiative:
   status: pilots_complete
   source_locale: es
   last_updated: '2026-08-15'
-  active_work: swift_course
+  active_work: cpp_course
   v1_courses_total: 45
-  v1_courses_complete: 11
+  v1_courses_complete: 12
 foundation:
   status: complete
   catalog: complete
@@ -100,7 +100,13 @@ courses:
     ci: green
     last_green_executable_sha: 9ca97103b5f79d3e6baed04827c81a8da9bdfeb3
     pr: 54
-  swift: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  swift:
+    status: complete
+    lessons_complete: 17
+    lessons_total: 17
+    ci: green
+    last_green_executable_sha: fbe0993b0d1f9332d16b706a53aa65735c586105
+    pr: 57
   fsharp: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   crystal: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   lua: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
