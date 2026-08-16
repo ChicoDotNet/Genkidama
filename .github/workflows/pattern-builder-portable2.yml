@@ -1,0 +1,85 @@
+name: Pattern Builder Portable 2
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - '.github/workflows/pattern-builder-portable2.yml'
+      - 'src/Enterprise/VisualBasic/BuilderExample.vb'
+      - 'src/Systems/Objective-C/builder.m'
+      - 'src/Systems/Zig/builder.zig'
+      - 'src/Niche/Nim/builder.nim'
+      - 'src/Web/Dart/builder.dart'
+      - 'src/Niche/Crystal/builder.cr'
+      - 'src/Scripting/Groovy/builder.groovy'
+      - 'src/Functional/OCaml/builder.ml'
+      - 'src/DataScience/Julia/builder.jl'
+      - 'src/Functional/Lisp/builder.lisp'
+
+jobs:
+  portable:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with: { dotnet-version: '10.0.x' }
+      - uses: mlugg/setup-zig@v2
+      - uses: dart-lang/setup-dart@v1
+      - uses: crystal-lang/install-crystal@v1
+      - uses: julia-actions/setup-julia@v2
+        with: { version: '1' }
+      - name: Setup runtimes
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y nim groovy ocaml sbcl
+      - name: Validate Builder examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          assert_output() {
+            grep -Fq '# Service status' <<<"$1"
+            grep -Fq '<h1>Service status</h1>' <<<"$1"
+            grep -Fq '99.95%' <<<"$1"
+          }
+          work="$(mktemp -d)"
+          dotnet new console --language VB --framework net10.0 --output "$work/vb" --force >/dev/null
+          cp src/Enterprise/VisualBasic/BuilderExample.vb "$work/vb/Program.vb"
+          assert_output "$(dotnet run --project "$work/vb" -c Release)"
+
+          zig fmt --check src/Systems/Zig/builder.zig
+          assert_output "$(zig run src/Systems/Zig/builder.zig 2>&1)"
+
+          nim c --hints:off --warnings:on -o:"$work/builder-nim" src/Niche/Nim/builder.nim
+          assert_output "$("$work/builder-nim")"
+
+          dart format --output=none --set-exit-if-changed src/Web/Dart/builder.dart
+          dart analyze --fatal-infos --fatal-warnings src/Web/Dart/builder.dart
+          assert_output "$(dart run src/Web/Dart/builder.dart)"
+
+          crystal tool format src/Niche/Crystal/builder.cr
+          test -z "$(git status --short -- src/Niche/Crystal/builder.cr)"
+          crystal build --error-on-warnings src/Niche/Crystal/builder.cr -o "$work/builder-crystal"
+          assert_output "$("$work/builder-crystal")"
+
+          groovyc -d "$work/groovy" src/Scripting/Groovy/builder.groovy
+          assert_output "$(groovy src/Scripting/Groovy/builder.groovy)"
+
+          ocamlc -w +A-70 -warn-error +A-70 src/Functional/OCaml/builder.ml -o "$work/builder-ocaml"
+          assert_output "$("$work/builder-ocaml")"
+
+          assert_output "$(julia --startup-file=no src/DataScience/Julia/builder.jl)"
+          assert_output "$(sbcl --noinform --non-interactive --load src/Functional/Lisp/builder.lisp)"
+
+  objective-c:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate Objective-C Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          clang -fobjc-arc -Wall -Wextra -Werror -framework Foundation src/Systems/Objective-C/builder.m -o /tmp/builder-objc
+          output="$(/tmp/builder-objc 2>&1)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
