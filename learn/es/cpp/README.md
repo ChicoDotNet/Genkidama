@@ -12,7 +12,7 @@ ThreadSeek recorre directorios, representa archivos con tipos claros, busca por 
 - CMake 3.28 o posterior. Baseline local probada: CMake 3.31.6.
 - VS Code es opcional.
 
-Al verificar el curso, GCC publicaba 16.1 como línea estable principal y CMake 4.4.2 como release estable. Se documenta aparte la baseline realmente ejecutada.
+Al verificar el curso, GCC publicaba 16.1 como línea estable principal y CMake 4.4.2 como release estable. Se documenta aparte la baseline realmente ejecutada y la matriz CI valida GCC/Clang en Linux y MSVC en Windows.
 
 ## Build, test y run
 
@@ -26,7 +26,7 @@ ctest --test-dir build --output-on-failure
 
 ## Avance
 
-**17/17 lecciones implementadas.** La evaluación final ya existe; el curso permanece `in_progress` hasta que los gates del cierre y la metadata final queden verdes.
+**17/17 lecciones — curso completo.** ThreadSeek satisface el Course DoD con aplicación real, cuatro checkpoints, evaluación autónoma, rúbrica, pruebas, CI y evidencia multiplataforma.
 
 1. [Compila y ejecuta ThreadSeek](lessons/01-compila-y-ejecuta-threadseek.md)
 2. [Modela archivos con tipos y `std::filesystem`](lessons/02-modela-archivos-con-tipos.md)
@@ -87,4 +87,4 @@ Explica cómo separaste filesystem, índice y persistencia; por qué mides antes
 
 ## Siguiente paso
 
-Resuelve la evaluación final sin receta. Si satisface la rúbrica y los gates ejecutables, conserva ThreadSeek como proyecto de portafolio y continúa usando el curso transversal de Git para versionarlo.
+Conserva ThreadSeek como proyecto de portafolio, practica la evaluación final sin consultar la solución y usa el curso transversal de Git para versionar nuevas mejoras.
