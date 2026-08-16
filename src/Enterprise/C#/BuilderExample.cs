@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 
+// The Director applies one construction recipe to interchangeable representations.
 public interface IReportBuilder
 {
     void Reset();
