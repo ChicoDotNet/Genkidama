@@ -1,3 +1,5 @@
+import std/strutils
+
 type
   ReportFormat = enum text, html
   ReportBuilder = object
@@ -28,7 +30,6 @@ proc buildAvailabilityReport(builder: var ReportBuilder): string =
   builder.addSection("Availability", "99.95%")
   builder.build()
 
-import std/strutils
 var textBuilder = ReportBuilder(format: text)
 var htmlBuilder = ReportBuilder(format: html)
 echo buildAvailabilityReport(textBuilder)
