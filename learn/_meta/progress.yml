@@ -3,9 +3,9 @@ initiative:
   status: pilots_complete
   source_locale: es
   last_updated: '2026-08-16'
-  active_work: cpp_course
+  active_work: powershell_course
   v1_courses_total: 45
-  v1_courses_complete: 12
+  v1_courses_complete: 13
 foundation:
   status: complete
   catalog: complete
@@ -61,11 +61,11 @@ courses:
     pilot_order: 2
   vbnet: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   cpp:
-    status: in_progress
-    lessons_complete: 12
+    status: complete
+    lessons_complete: 17
     lessons_total: 17
     ci: green
-    last_green_executable_sha: 765ae585d43da1f48cb0783de8c3fc8fc8fa5ea7
+    last_green_executable_sha: f940558c1b7bace5e773c24fb95c061021cc23c0
     pr: 58
   objective-c: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   java:
