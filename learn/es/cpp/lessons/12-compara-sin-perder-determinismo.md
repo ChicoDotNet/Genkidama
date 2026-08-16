@@ -39,4 +39,4 @@ Agrega un árbol con al menos tres subdirectorios y demuestra que 1, 2 y 4 worke
 
 ## Siguiente paso
 
-Completa el [Checkpoint 03](../exercises/checkpoint-03.md). Después entraremos a cancelación, cambios concurrentes del filesystem y profiling.
+Completa el [Checkpoint 03](../exercises/checkpoint-03.md) y continúa con [Lección 13 — Cancela sin abandonar recursos](13-cancela-sin-abandonar-recursos.md).

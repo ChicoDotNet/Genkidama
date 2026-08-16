@@ -9,28 +9,56 @@ on:
 
 jobs:
   build-test-run:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            compiler: gcc
+          - os: ubuntu-latest
+            compiler: clang
+          - os: windows-latest
+            compiler: msvc
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: Show toolchain
-        run: |
-          g++ --version
-          cmake --version
+      - name: Configure GCC
+        if: matrix.compiler == 'gcc'
+        shell: bash
+        run: CXX=g++ cmake -S learn/es/cpp/app -B learn/es/cpp/app/build -G Ninja -DCMAKE_BUILD_TYPE=Release
 
-      - name: Configure
-        run: cmake -S learn/es/cpp/app -B learn/es/cpp/app/build -DCMAKE_BUILD_TYPE=Release
+      - name: Configure Clang
+        if: matrix.compiler == 'clang'
+        shell: bash
+        run: CXX=clang++ cmake -S learn/es/cpp/app -B learn/es/cpp/app/build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Configure MSVC
+        if: matrix.compiler == 'msvc'
+        shell: pwsh
+        run: cmake -S learn/es/cpp/app -B learn/es/cpp/app/build -A x64
 
       - name: Build
-        run: cmake --build learn/es/cpp/app/build --parallel
+        run: cmake --build learn/es/cpp/app/build --config Release --parallel
 
       - name: Test
-        run: ctest --test-dir learn/es/cpp/app/build --output-on-failure
+        run: ctest --test-dir learn/es/cpp/app/build -C Release --output-on-failure
 
-      - name: Smoke test CLI
+      - name: Smoke test CLI on Linux
+        if: runner.os == 'Linux'
         shell: bash
         run: |
           mkdir -p "$RUNNER_TEMP/threadseek-smoke/docs"
           printf 'hola\n' > "$RUNNER_TEMP/threadseek-smoke/README.md"
           printf 'manual\n' > "$RUNNER_TEMP/threadseek-smoke/docs/manual.txt"
           learn/es/cpp/app/build/threadseek "$RUNNER_TEMP/threadseek-smoke" txt
+
+      - name: Smoke test CLI on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $root = Join-Path $env:RUNNER_TEMP 'threadseek-smoke'
+          New-Item -ItemType Directory -Force -Path (Join-Path $root 'docs') | Out-Null
+          Set-Content -Path (Join-Path $root 'README.md') -Value 'hola'
+          Set-Content -Path (Join-Path $root 'docs/manual.txt') -Value 'manual'
+          & 'learn/es/cpp/app/build/Release/threadseek.exe' $root 'txt'

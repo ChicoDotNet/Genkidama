@@ -4,12 +4,12 @@ C++ es un lenguaje compilado de propósito general usado cuando importan rendimi
 
 ## Qué vas a construir
 
-ThreadSeek recorre directorios, representa archivos con tipos claros, busca por nombre, persiste/reconstruye su índice y ahora puede comparar descubrimiento secuencial contra una versión paralela acotada sin sacrificar determinismo.
+ThreadSeek recorre directorios, representa archivos con tipos claros, busca por nombre, persiste/reconstruye su índice, compara descubrimiento secuencial y paralelo, permite cancelación cooperativa, reporta progreso y tolera cambios normales del filesystem.
 
 ## Qué necesitas
 
-- Compilador moderno con C++23. Baseline probado: GCC 14.2.0.
-- CMake 3.28 o posterior. Baseline probado: CMake 3.31.6.
+- Compilador moderno con C++23. Baseline local probada: GCC 14.2.0.
+- CMake 3.28 o posterior. Baseline local probada: CMake 3.31.6.
 - VS Code es opcional.
 
 Al verificar el curso, GCC publicaba 16.1 como línea estable principal y CMake 4.4.2 como release estable. Se documenta aparte la baseline realmente ejecutada.
@@ -26,7 +26,7 @@ ctest --test-dir build --output-on-failure
 
 ## Avance
 
-**12/17 lecciones.** Ya existe una línea base secuencial durable y una implementación paralela acotada que conserva el mismo resultado observable.
+**16/17 lecciones implementadas.** El incremento 13–16 agrega operación robusta y evidencia portable; la metadata global se promoverá después de que los gates del nuevo HEAD terminen verdes.
 
 1. [Compila y ejecuta ThreadSeek](lessons/01-compila-y-ejecuta-threadseek.md)
 2. [Modela archivos con tipos y `std::filesystem`](lessons/02-modela-archivos-con-tipos.md)
@@ -40,10 +40,10 @@ ctest --test-dir build --output-on-failure
 10. [Particiona trabajo con `std::jthread`](lessons/10-particiona-trabajo-con-jthread.md)
 11. [Minimiza estado mutable compartido](lessons/11-minimiza-estado-compartido.md)
 12. [Compara sin perder determinismo](lessons/12-compara-sin-perder-determinismo.md)
-13. Próximo: cancelación y progreso.
-14. Próximo: robustez ante archivos que cambian.
-15. Próximo: profiling y optimización basada en evidencia.
-16. Próximo: hardening, portabilidad y entrega.
+13. [Cancela sin abandonar recursos](lessons/13-cancela-sin-abandonar-recursos.md)
+14. [Tolera un filesystem que cambia](lessons/14-tolera-un-filesystem-que-cambia.md)
+15. [Perfila antes de optimizar](lessons/15-perfila-antes-de-optimizar.md)
+16. [Endurece portabilidad y entrega](lessons/16-endurece-portabilidad-y-entrega.md)
 17. Próximo: evaluación final autónoma.
 
 [Checkpoint 01 — Índice confiable](exercises/checkpoint-01.md) · [Solución](solutions/checkpoint-01.md)
@@ -52,9 +52,11 @@ ctest --test-dir build --output-on-failure
 
 [Checkpoint 03 — Concurrencia medible y determinista](exercises/checkpoint-03.md) · [Solución](solutions/checkpoint-03.md)
 
+[Checkpoint 04 — Operación robusta](exercises/checkpoint-04.md) · [Solución](solutions/checkpoint-04.md)
+
 ## Qué sabrás hacer al terminar
 
-Leer C++ moderno, comprender value semantics y ownership, usar RAII y STL, separar I/O de lógica, manejar errores, construir con CMake, probar comportamiento, medir rendimiento y trabajar con concurrencia sin carreras obvias.
+Leer C++ moderno, comprender value semantics y ownership, usar RAII y STL, separar I/O de lógica, manejar errores, construir con CMake, probar comportamiento, medir rendimiento, cancelar trabajo cooperativamente y trabajar con concurrencia sin carreras obvias.
 
 ## Empleabilidad
 
@@ -68,7 +70,7 @@ Estas habilidades aparecen en software de sistemas, motores, tooling, multimedia
 
 **¿Por qué medimos antes de paralelizar?** Porque más hilos no garantizan menor tiempo. El filesystem, la caché, la carga y el tamaño del árbol cambian el resultado.
 
-**¿Por qué no usamos un mutex global?** Porque cada worker produce un lote local y el hilo coordinador combina los resultados después del join; eliminar estado mutable compartido simplifica el razonamiento.
+**¿Qué ocurre si un archivo desaparece durante el scan?** Se contabiliza como omitido cuando la operación de filesystem lo reporta y el resto del trabajo continúa; una raíz inválida sigue siendo un error fatal.
 
 ## Referencias oficiales
 
@@ -78,8 +80,8 @@ Estas habilidades aparecen en software de sistemas, motores, tooling, multimedia
 
 ## Cómo hablar de este proyecto en una entrevista
 
-Explica cómo separaste filesystem, índice y persistencia; por qué mides una baseline antes de optimizar; cómo `std::jthread` mantiene ownership de los workers; cómo evitaste un vector compartido durante el escaneo; y por qué el resultado final se ordena para conservar determinismo.
+Explica cómo separaste filesystem, índice y persistencia; por qué mides antes de optimizar; cómo `std::jthread` y `std::stop_token` gobiernan lifetime/cancelación; cómo evitas un vector global compartido; y cómo la matriz GCC/Clang/MSVC aporta evidencia de portabilidad.
 
 ## Siguiente paso
 
-Completa Checkpoint 03. Después agregaremos cancelación/progreso, robustez ante archivos que cambian y profiling antes del hardening final.
+Completa Checkpoint 04. Después implementa la evaluación final autónoma de la lección 17 sin receta paso a paso.

@@ -1,13 +1,15 @@
 #include "threadseek/indexer.hpp"
 
 #include <algorithm>
+#include <atomic>
 #include <cctype>
 #include <fstream>
 #include <iomanip>
 #include <iterator>
+#include <mutex>
 #include <stdexcept>
-#include <thread>
 #include <system_error>
+#include <thread>
 
 namespace threadseek {
 namespace {
@@ -25,6 +27,18 @@ void sort_records(std::vector<FileRecord>& records) {
     });
 }
 
+bool records_equal(const std::vector<FileRecord>& left, const std::vector<FileRecord>& right) {
+    if (left.size() != right.size()) {
+        return false;
+    }
+    for (std::size_t index = 0; index < left.size(); ++index) {
+        if (left[index].path != right[index].path || left[index].size_bytes != right[index].size_bytes) {
+            return false;
+        }
+    }
+    return true;
+}
+
 void validate_root(const std::filesystem::path& root) {
     std::error_code error;
     if (!std::filesystem::exists(root, error) || error) {
@@ -35,32 +49,104 @@ void validate_root(const std::filesystem::path& root) {
     }
 }
 
-void append_regular_file(
-    const std::filesystem::directory_entry& entry,
-    std::vector<FileRecord>& records) {
-    std::error_code error;
-    if (entry.is_regular_file(error) && !error) {
-        const auto size = entry.file_size(error);
-        if (!error) {
-            records.push_back(FileRecord{entry.path(), size});
-        }
+class DiscoveryContext {
+public:
+    explicit DiscoveryContext(const DiscoveryOptions& options) : options_(options) {}
+
+    [[nodiscard]] bool stop_requested() const noexcept {
+        return options_.stop_token.stop_requested();
     }
+
+    void visit(const std::filesystem::path& path) {
+        entries_visited_.fetch_add(1, std::memory_order_relaxed);
+        notify(path);
+    }
+
+    void discovered() noexcept { files_discovered_.fetch_add(1, std::memory_order_relaxed); }
+    void skipped() noexcept { entries_skipped_.fetch_add(1, std::memory_order_relaxed); }
+
+    [[nodiscard]] DiscoveryProgress snapshot() const {
+        return DiscoveryProgress{
+            entries_visited_.load(std::memory_order_relaxed),
+            files_discovered_.load(std::memory_order_relaxed),
+            entries_skipped_.load(std::memory_order_relaxed),
+            {}};
+    }
+
+private:
+    void notify(const std::filesystem::path& path) {
+        if (!options_.on_progress) {
+            return;
+        }
+        std::scoped_lock lock(callback_mutex_);
+        auto progress = snapshot();
+        progress.current_path = path;
+        options_.on_progress(progress);
+    }
+
+    const DiscoveryOptions& options_;
+    std::atomic_size_t entries_visited_{0};
+    std::atomic_size_t files_discovered_{0};
+    std::atomic_size_t entries_skipped_{0};
+    std::mutex callback_mutex_;
+};
+
+void inspect_regular_candidate(
+    const std::filesystem::directory_entry& entry,
+    std::vector<FileRecord>& records,
+    DiscoveryContext& context,
+    const bool already_visited = false) {
+    if (!already_visited) {
+        context.visit(entry.path());
+    }
+    if (context.stop_requested()) {
+        return;
+    }
+
+    std::error_code error;
+    const bool regular = entry.is_regular_file(error);
+    if (error) {
+        context.skipped();
+        return;
+    }
+    if (!regular) {
+        return;
+    }
+
+    const auto size = entry.file_size(error);
+    if (error) {
+        context.skipped();
+        return;
+    }
+    records.push_back(FileRecord{entry.path(), size});
+    context.discovered();
 }
 
-std::vector<FileRecord> discover_subtree(const std::filesystem::path& root) {
+std::vector<FileRecord> discover_subtree(
+    const std::filesystem::path& root,
+    DiscoveryContext& context) {
     std::vector<FileRecord> records;
     std::error_code error;
     const auto options = std::filesystem::directory_options::skip_permission_denied;
     std::filesystem::recursive_directory_iterator iterator(root, options, error);
     const std::filesystem::recursive_directory_iterator end;
 
-    while (iterator != end) {
+    if (error) {
+        context.skipped();
+        return records;
+    }
+
+    while (iterator != end && !context.stop_requested()) {
         if (error) {
+            context.skipped();
             error.clear();
             iterator.increment(error);
             continue;
         }
-        append_regular_file(*iterator, records);
+        inspect_regular_candidate(*iterator, records, context);
+        if (context.stop_requested()) {
+            break;
+        }
         error.clear();
         iterator.increment(error);
     }
@@ -70,75 +156,105 @@ std::vector<FileRecord> discover_subtree(const std::filesystem::path& root) {
 }  // namespace
 
 std::vector<FileRecord> discover_files(const std::filesystem::path& root) {
-    validate_root(root);
-    auto records = discover_subtree(root);
-    sort_records(records);
-    return records;
+    return discover_files_controlled(root).records;
 }
 
 std::vector<FileRecord> discover_files_parallel(
     const std::filesystem::path& root,
     const std::size_t worker_count) {
+    return discover_files_parallel_controlled(root, worker_count).records;
+}
+
+ControlledDiscoveryReport discover_files_controlled(
+    const std::filesystem::path& root,
+    const DiscoveryOptions& options) {
+    validate_root(root);
+    DiscoveryContext context(options);
+    auto records = discover_subtree(root, context);
+    sort_records(records);
+    return ControlledDiscoveryReport{std::move(records), context.snapshot(), context.stop_requested()};
+}
+
+ControlledDiscoveryReport discover_files_parallel_controlled(
+    const std::filesystem::path& root,
+    const std::size_t worker_count,
+    const DiscoveryOptions& options) {
     validate_root(root);
     if (worker_count == 0) {
         throw std::invalid_argument("worker_count debe ser mayor que cero");
     }
 
+    DiscoveryContext context(options);
     std::vector<FileRecord> direct_files;
     std::vector<std::filesystem::path> subdirectories;
     std::error_code error;
-    const auto options = std::filesystem::directory_options::skip_permission_denied;
-    std::filesystem::directory_iterator iterator(root, options, error);
+    const auto directory_options = std::filesystem::directory_options::skip_permission_denied;
+    std::filesystem::directory_iterator iterator(root, directory_options, error);
     const std::filesystem::directory_iterator end;
 
-    while (iterator != end) {
+    if (error) {
+        context.skipped();
+    }
+
+    while (iterator != end && !context.stop_requested()) {
         if (error) {
+            context.skipped();
             error.clear();
             iterator.increment(error);
             continue;
         }
-        if (iterator->is_directory(error) && !error) {
+
+        context.visit(iterator->path());
+        if (context.stop_requested()) {
+            break;
+        }
+
+        const bool directory = iterator->is_directory(error);
+        if (error) {
+            context.skipped();
+        } else if (directory) {
             subdirectories.push_back(iterator->path());
         } else {
-            error.clear();
-            append_regular_file(*iterator, direct_files);
+            inspect_regular_candidate(*iterator, direct_files, context, true);
         }
+
         error.clear();
         iterator.increment(error);
     }
 
-    if (subdirectories.empty()) {
-        sort_records(direct_files);
-        return direct_files;
+    if (!context.stop_requested() && !subdirectories.empty()) {
+        std::sort(subdirectories.begin(), subdirectories.end());
+        const auto actual_workers = std::min(worker_count, subdirectories.size());
+        std::vector<std::vector<FileRecord>> local_batches(actual_workers);
+        std::vector<std::jthread> workers;
+        workers.reserve(actual_workers);
+
+        for (std::size_t worker = 0; worker < actual_workers; ++worker) {
+            workers.emplace_back([&, worker] {
+                for (std::size_t index = worker;
+                     index < subdirectories.size() && !context.stop_requested();
+                     index += actual_workers) {
+                    auto discovered = discover_subtree(subdirectories[index], context);
+                    local_batches[worker].insert(
+                        local_batches[worker].end(),
+                        std::make_move_iterator(discovered.begin()),
+                        std::make_move_iterator(discovered.end()));
+                }
+            });
+        }
+        workers.clear();
+
+        for (auto& batch : local_batches) {
+            direct_files.insert(
+                direct_files.end(),
+                std::make_move_iterator(batch.begin()),
+                std::make_move_iterator(batch.end()));
+        }
     }
 
-    std::sort(subdirectories.begin(), subdirectories.end());
-    const auto actual_workers = std::min(worker_count, subdirectories.size());
-    std::vector<std::vector<FileRecord>> local_batches(actual_workers);
-    std::vector<std::jthread> workers;
-    workers.reserve(actual_workers);
-
-    for (std::size_t worker = 0; worker < actual_workers; ++worker) {
-        workers.emplace_back([&, worker] {
-            for (std::size_t index = worker; index < subdirectories.size(); index += actual_workers) {
-                auto discovered = discover_subtree(subdirectories[index]);
-                local_batches[worker].insert(
-                    local_batches[worker].end(),
-                    std::make_move_iterator(discovered.begin()),
-                    std::make_move_iterator(discovered.end()));
-            }
-        });
-    }
-    workers.clear();  // jthread destruction joins before combining local batches.
-
-    for (auto& batch : local_batches) {
-        direct_files.insert(
-            direct_files.end(),
-            std::make_move_iterator(batch.begin()),
-            std::make_move_iterator(batch.end()));
-    }
     sort_records(direct_files);
-    return direct_files;
+    return ControlledDiscoveryReport{
+        std::move(direct_files), context.snapshot(), context.stop_requested()};
 }
 
 DiscoveryReport measure_discovery(
@@ -161,6 +277,15 @@ DiscoveryReport measure_discovery(
 
     report.elapsed = std::chrono::steady_clock::now() - start;
     return report;
+}
+
+DiscoveryComparison compare_discovery(
+    const std::filesystem::path& root,
+    const std::size_t worker_count) {
+    auto sequential = measure_discovery(root, DiscoveryMode::sequential);
+    auto parallel = measure_discovery(root, DiscoveryMode::parallel, worker_count);
+    const bool equivalent = records_equal(sequential.records, parallel.records);
+    return DiscoveryComparison{std::move(sequential), std::move(parallel), equivalent};
 }
 
 FileIndex::FileIndex(const std::filesystem::path& root) : files_(discover_files(root)) {}

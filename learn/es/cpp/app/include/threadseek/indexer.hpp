@@ -4,6 +4,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <filesystem>
+#include <functional>
+#include <stop_token>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -29,16 +31,52 @@ struct DiscoveryReport {
     std::size_t workers_requested{1};
 };
 
+/// Reports observable discovery progress without exposing internal worker state.
+struct DiscoveryProgress {
+    std::size_t entries_visited{};
+    std::size_t files_discovered{};
+    std::size_t entries_skipped{};
+    std::filesystem::path current_path;
+};
+
+/// Optional cancellation and progress hooks for long-running discovery.
+struct DiscoveryOptions {
+    std::stop_token stop_token{};
+    std::function<void(const DiscoveryProgress&)> on_progress{};
+};
+
+/// Captures a controlled discovery run, including cancellation and skipped entries.
+struct ControlledDiscoveryReport {
+    std::vector<FileRecord> records;
+    DiscoveryProgress progress;
+    bool cancelled{};
+};
+
+/// Compares sequential and parallel discovery without imposing a timing threshold.
+struct DiscoveryComparison {
+    DiscoveryReport sequential;
+    DiscoveryReport parallel;
+    bool equivalent{};
+};
+
 /// Discovers regular files recursively using one calling thread.
 [[nodiscard]] std::vector<FileRecord> discover_files(const std::filesystem::path& root);
 
 /// Discovers regular files by partitioning top-level subdirectories across bounded workers.
-/// \param root Existing directory to scan.
-/// \param worker_count Maximum workers requested; must be greater than zero.
-/// \return Deterministically sorted records equivalent to discover_files().
 [[nodiscard]] std::vector<FileRecord> discover_files_parallel(
     const std::filesystem::path& root,
     std::size_t worker_count);
+
+/// Runs sequential discovery with optional cooperative cancellation and progress reporting.
+[[nodiscard]] ControlledDiscoveryReport discover_files_controlled(
+    const std::filesystem::path& root,
+    const DiscoveryOptions& options = {});
+
+/// Runs bounded parallel discovery with shared cooperative cancellation and serialized progress callbacks.
+[[nodiscard]] ControlledDiscoveryReport discover_files_parallel_controlled(
+    const std::filesystem::path& root,
+    std::size_t worker_count,
+    const DiscoveryOptions& options = {});
 
 /// Measures one discovery strategy with a monotonic clock.
 /// \param worker_count Requested worker count for parallel mode; zero selects hardware_concurrency().
@@ -47,13 +85,15 @@ struct DiscoveryReport {
     DiscoveryMode mode,
     std::size_t worker_count = 0);
 
+/// Measures both strategies and reports whether they produced equivalent deterministic records.
+[[nodiscard]] DiscoveryComparison compare_discovery(
+    const std::filesystem::path& root,
+    std::size_t worker_count);
+
 /// Owns an in-memory file index and deterministic search operations.
 class FileIndex {
 public:
-    /// Recursively indexes regular files under root.
     explicit FileIndex(const std::filesystem::path& root);
-
-    /// Reconstructs an index from already discovered or persisted records.
     explicit FileIndex(std::vector<FileRecord> records);
 
     [[nodiscard]] const std::vector<FileRecord>& files() const noexcept;
@@ -67,11 +107,7 @@ private:
 /// Persists and reconstructs indexes using a small text format.
 class IndexStore {
 public:
-    /// Writes the complete index through a temporary file and replaces destination.
     static void save(const FileIndex& index, const std::filesystem::path& destination);
-
-    /// Loads an index previously written by save().
-    /// Throws std::runtime_error for malformed or unreadable input.
     [[nodiscard]] static FileIndex load(const std::filesystem::path& source);
 };
 
