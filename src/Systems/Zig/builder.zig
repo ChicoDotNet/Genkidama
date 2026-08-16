@@ -14,32 +14,34 @@ const ReportBuilder = struct {
         self.body = "";
     }
 
-    fn addTitle(self: *ReportBuilder, title: []const u8) void { self.title = title; }
+    fn addTitle(self: *ReportBuilder, title: []const u8) void {
+        self.title = title;
+    }
+
     fn addSection(self: *ReportBuilder, heading: []const u8, body: []const u8) void {
         self.heading = heading;
         self.body = body;
     }
 
-    fn write(self: ReportBuilder, writer: anytype) !void {
+    fn print(self: ReportBuilder) void {
         switch (self.format) {
-            .text => try writer.print("# {s}\n## {s}\n{s}\n", .{ self.title, self.heading, self.body }),
-            .html => try writer.print("<h1>{s}</h1><h2>{s}</h2><p>{s}</p>\n", .{ self.title, self.heading, self.body }),
+            .text => std.debug.print("# {s}\n## {s}\n{s}\n", .{ self.title, self.heading, self.body }),
+            .html => std.debug.print("<h1>{s}</h1><h2>{s}</h2><p>{s}</p>\n", .{ self.title, self.heading, self.body }),
         }
     }
 };
 
-fn buildAvailabilityReport(builder: *ReportBuilder, writer: anytype) !void {
+fn buildAvailabilityReport(builder: *ReportBuilder) void {
     builder.reset();
     builder.addTitle("Service status");
     builder.addSection("Availability", "99.95%");
-    try builder.write(writer);
+    builder.print();
 }
 
-pub fn main() !void {
-    const out = std.io.getStdOut().writer();
+pub fn main() void {
     var text = ReportBuilder{ .format = .text };
     var html = ReportBuilder{ .format = .html };
-    try buildAvailabilityReport(&text, out);
-    try out.writeAll("---\n");
-    try buildAvailabilityReport(&html, out);
+    buildAvailabilityReport(&text);
+    std.debug.print("---\n", .{});
+    buildAvailabilityReport(&html);
 }
