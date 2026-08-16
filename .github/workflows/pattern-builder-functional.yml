@@ -1,0 +1,84 @@
+name: Pattern Builder Functional
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-builder-functional.yml'
+      - 'src/Functional/Clojure/builder.clj'
+      - 'src/Functional/Elixir/builder.exs'
+      - 'src/Functional/Erlang/builder.erl'
+      - 'src/Functional/F#/builder.fsx'
+      - 'src/Functional/Haskell/Builder.hs'
+      - 'src/Functional/Scala/Builder.scala'
+      - 'src/Scripting/Perl/builder.pl'
+      - 'src/Shell/PowerShell/builder.ps1'
+      - 'src/DataScience/R/builder.R'
+      - 'src/DataScience/Octave/builder.m'
+      - 'src/Historical/Pascal/builder.pas'
+      - 'src/Niche/Prolog/builder.pl'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Setup Erlang and Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '28.5.0.4'
+          elixir-version: '1.19.1'
+
+      - name: Setup runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y ghc scala clojure perl powershell r-base octave fp-compiler swi-prolog-nox
+
+      - name: Validate functional Builder examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          assert_output() {
+            local output="$1"
+            grep -Fq '# Service status' <<<"$output"
+            grep -Fq '<h1>Service status</h1>' <<<"$output"
+            grep -Fq '99.95%' <<<"$output"
+          }
+
+          assert_output "$(dotnet fsi 'src/Functional/F#/builder.fsx')"
+          assert_output "$(runghc -Wall -Werror src/Functional/Haskell/Builder.hs)"
+
+          scala_out="$(mktemp -d)"
+          scalac -deprecation -feature -unchecked src/Functional/Scala/Builder.scala -d "$scala_out"
+          assert_output "$(scala -cp "$scala_out" Builder)"
+
+          perl -c src/Scripting/Perl/builder.pl
+          assert_output "$(perl src/Scripting/Perl/builder.pl)"
+          assert_output "$(pwsh -NoLogo -NoProfile -NonInteractive -File src/Shell/PowerShell/builder.ps1)"
+          assert_output "$(Rscript --vanilla src/DataScience/R/builder.R)"
+          assert_output "$(octave --no-gui --quiet --eval "addpath('src/DataScience/Octave'); builder();")"
+
+          pascal_out="$(mktemp -d)"
+          fpc -Mobjfpc -O2 -Sew -FE"$pascal_out" src/Historical/Pascal/builder.pas >/dev/null
+          assert_output "$("$pascal_out/builder")"
+
+          erlang_out="$(mktemp -d)"
+          erlc -Werror -o "$erlang_out" src/Functional/Erlang/builder.erl
+          assert_output "$(erl -noshell -pa "$erlang_out" -eval 'builder:main(), halt().')"
+
+          elixir_out="$(mktemp -d)"
+          elixirc --warnings-as-errors -o "$elixir_out" src/Functional/Elixir/builder.exs >/dev/null
+          assert_output "$(elixir src/Functional/Elixir/builder.exs)"
+
+          assert_output "$(clojure src/Functional/Clojure/builder.clj)"
+          assert_output "$(swipl -q -s src/Niche/Prolog/builder.pl -g run -t halt)"
