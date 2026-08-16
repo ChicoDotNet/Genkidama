@@ -16,7 +16,10 @@ module builder_pattern
 contains
 
     subroutine reset(self)
-        class(report_builder), intent(inout) :: self
+        class(report_builder), intent(in) :: self
+        if (self%format /= text_report .and. self%format /= html_report) then
+            error stop 'invalid builder format'
+        end if
     end subroutine reset
 
     subroutine add_title(self, title)
