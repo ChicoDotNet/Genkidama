@@ -1,3 +1,4 @@
+// The same construction recipe produces two representations without changing client logic.
 interface ReportBuilder {
   reset(): void;
   addTitle(title: string): void;
