@@ -1,4 +1,5 @@
-with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
+with Ada.Characters.Latin_1;
+with Ada.Strings.Unbounded;
 with Ada.Text_IO; use Ada.Text_IO;
 
 procedure Builder is
@@ -6,21 +7,25 @@ procedure Builder is
 
    type Report_Builder is record
       Format : Report_Format;
-      Parts  : Unbounded_String := Null_Unbounded_String;
+      Parts  : Ada.Strings.Unbounded.Unbounded_String :=
+        Ada.Strings.Unbounded.Null_Unbounded_String;
    end record;
 
    procedure Reset (Target : in out Report_Builder) is
    begin
-      Target.Parts := Null_Unbounded_String;
+      Target.Parts := Ada.Strings.Unbounded.Null_Unbounded_String;
    end Reset;
 
-   procedure Append (Target : in out Report_Builder; Value : String) is
+   procedure Add_Part
+     (Target : in out Report_Builder;
+      Value  : String) is
    begin
-      if Length (Target.Parts) > 0 then
-         Append (Target.Parts, ASCII.LF);
+      if Ada.Strings.Unbounded.Length (Target.Parts) > 0 then
+         Ada.Strings.Unbounded.Append
+           (Target.Parts, Ada.Characters.Latin_1.LF);
       end if;
-      Append (Target.Parts, Value);
-   end Append;
+      Ada.Strings.Unbounded.Append (Target.Parts, Value);
+   end Add_Part;
 
    procedure Add_Title
      (Target : in out Report_Builder;
@@ -28,9 +33,9 @@ procedure Builder is
    begin
       case Target.Format is
          when Text_Report =>
-            Append (Target, "# " & Title);
+            Add_Part (Target, "# " & Title);
          when Html_Report =>
-            Append (Target, "<h1>" & Title & "</h1>");
+            Add_Part (Target, "<h1>" & Title & "</h1>");
       end case;
    end Add_Title;
 
@@ -41,16 +46,16 @@ procedure Builder is
    begin
       case Target.Format is
          when Text_Report =>
-            Append (Target, "## " & Heading);
-            Append (Target, Body);
+            Add_Part (Target, "## " & Heading);
+            Add_Part (Target, Body);
          when Html_Report =>
-            Append (Target, "<h2>" & Heading & "</h2><p>" & Body & "</p>");
+            Add_Part (Target, "<h2>" & Heading & "</h2><p>" & Body & "</p>");
       end case;
    end Add_Section;
 
    function Build (Target : Report_Builder) return String is
    begin
-      return To_String (Target.Parts);
+      return Ada.Strings.Unbounded.To_String (Target.Parts);
    end Build;
 
    function Build_Availability_Report
