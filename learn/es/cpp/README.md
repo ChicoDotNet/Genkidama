@@ -1,6 +1,6 @@
 # Curso de C++ desde cero — Construye un indexador y buscador de archivos
 
-C++ es un lenguaje compilado de propósito general usado cuando importan rendimiento, integración nativa y control explícito de recursos. El curso construye una sola aplicación real: **ThreadSeek**, un indexador/buscador que introduce concurrencia sólo después de establecer comportamiento correcto, durable y medible.
+C++ es un lenguaje compilado de propósito general usado cuando importan rendimiento, integración nativa y control explícito de recursos. El curso construye una sola aplicación real: **ThreadSeek**, un indexador/buscador que evoluciona desde una baseline secuencial correcta hasta concurrencia medible y operación portable.
 
 ## Qué vas a construir
 
@@ -26,7 +26,7 @@ ctest --test-dir build --output-on-failure
 
 ## Avance
 
-**16/17 lecciones implementadas.** El incremento 13–16 agrega operación robusta y evidencia portable; la metadata global se promoverá después de que los gates del nuevo HEAD terminen verdes.
+**17/17 lecciones implementadas.** La evaluación final ya existe; el curso permanece `in_progress` hasta que los gates del cierre y la metadata final queden verdes.
 
 1. [Compila y ejecuta ThreadSeek](lessons/01-compila-y-ejecuta-threadseek.md)
 2. [Modela archivos con tipos y `std::filesystem`](lessons/02-modela-archivos-con-tipos.md)
@@ -44,7 +44,7 @@ ctest --test-dir build --output-on-failure
 14. [Tolera un filesystem que cambia](lessons/14-tolera-un-filesystem-que-cambia.md)
 15. [Perfila antes de optimizar](lessons/15-perfila-antes-de-optimizar.md)
 16. [Endurece portabilidad y entrega](lessons/16-endurece-portabilidad-y-entrega.md)
-17. Próximo: evaluación final autónoma.
+17. [Evaluación final: entrega ThreadSeek](lessons/17-evaluacion-final.md)
 
 [Checkpoint 01 — Índice confiable](exercises/checkpoint-01.md) · [Solución](solutions/checkpoint-01.md)
 
@@ -53,6 +53,8 @@ ctest --test-dir build --output-on-failure
 [Checkpoint 03 — Concurrencia medible y determinista](exercises/checkpoint-03.md) · [Solución](solutions/checkpoint-03.md)
 
 [Checkpoint 04 — Operación robusta](exercises/checkpoint-04.md) · [Solución](solutions/checkpoint-04.md)
+
+[Ejercicio final](exercises/final-threadseek.md) · [Solución de referencia](solutions/final-threadseek.md)
 
 ## Qué sabrás hacer al terminar
 
@@ -70,18 +72,19 @@ Estas habilidades aparecen en software de sistemas, motores, tooling, multimedia
 
 **¿Por qué medimos antes de paralelizar?** Porque más hilos no garantizan menor tiempo. El filesystem, la caché, la carga y el tamaño del árbol cambian el resultado.
 
-**¿Qué ocurre si un archivo desaparece durante el scan?** Se contabiliza como omitido cuando la operación de filesystem lo reporta y el resto del trabajo continúa; una raíz inválida sigue siendo un error fatal.
+**¿Qué ocurre si un archivo desaparece durante el scan?** Se consulta el estado actual de la ruta; si la metadata deja de estar disponible se contabiliza como omitido y el resto del scan continúa.
 
 ## Referencias oficiales
 
 - GCC: sitio y releases oficiales.
 - CMake: documentación oficial.
-- ISO C++ / isocpp.org para recursos del ecosistema del estándar.
+- cppreference para APIs de biblioteca estándar.
+- Microsoft Learn para MSVC y C++ en Windows.
 
 ## Cómo hablar de este proyecto en una entrevista
 
-Explica cómo separaste filesystem, índice y persistencia; por qué mides antes de optimizar; cómo `std::jthread` y `std::stop_token` gobiernan lifetime/cancelación; cómo evitas un vector global compartido; y cómo la matriz GCC/Clang/MSVC aporta evidencia de portabilidad.
+Explica cómo separaste filesystem, índice y persistencia; por qué mides antes de optimizar; cómo `std::jthread` y `std::stop_token` gobiernan lifetime/cancelación; cómo evitas un vector global compartido; qué diferencia multiplataforma expuso MSVC y cómo la corregiste sin debilitar tests.
 
 ## Siguiente paso
 
-Completa Checkpoint 04. Después implementa la evaluación final autónoma de la lección 17 sin receta paso a paso.
+Resuelve la evaluación final sin receta. Si satisface la rúbrica y los gates ejecutables, conserva ThreadSeek como proyecto de portafolio y continúa usando el curso transversal de Git para versionarlo.

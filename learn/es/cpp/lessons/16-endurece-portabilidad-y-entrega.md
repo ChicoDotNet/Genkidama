@@ -12,7 +12,7 @@ Código que compila en la laptop del autor puede depender de extensiones, rutas,
 
 El workflow de Learn C++ construye y prueba el mismo CMake project en GCC y Clang sobre Linux y MSVC sobre Windows. Los warnings siguen tratándose como errores. El smoke test usa rutas nativas por plataforma y CTest mantiene el contrato común.
 
-No buscamos que cada compilador genere el mismo binario. Buscamos que el comportamiento público, pruebas y build descritos por el curso sean reproducibles.
+El primer pase multiplataforma encontró una diferencia real: `std::filesystem::directory_entry` podía conservar metadata cacheada en Windows después de que el archivo se eliminara. La solución no fue excluir MSVC ni cambiar la expectativa; ThreadSeek pasó a consultar el estado actual mediante las funciones libres `std::filesystem::is_regular_file(path, error)` y `file_size(path, error)`.
 
 ## Aplicación real
 
@@ -24,7 +24,7 @@ Antes de entregar una biblioteca o CLI nativa, define la matriz de plataformas s
 - concatenar rutas con `/` o `\\` manualmente;
 - silenciar warnings diferentes entre compiladores;
 - afirmar soporte Windows sin ejecutar MSVC;
-- introducir dependencias sólo para evitar aprender CMake o STL.
+- convertir una diferencia de implementación en un test más débil sin entender la causa.
 
 ## Ejercicio
 
@@ -40,4 +40,4 @@ El incremento está listo sólo cuando Linux/GCC, Linux/Clang y Windows/MSVC com
 
 ## Siguiente paso
 
-Completa el [Checkpoint 04 — Operación robusta](../exercises/checkpoint-04.md). Después quedará la evaluación final autónoma de la lección 17.
+Completa el [Checkpoint 04 — Operación robusta](../exercises/checkpoint-04.md) y continúa con la [Lección 17 — Evaluación final: entrega ThreadSeek](17-evaluacion-final.md).
