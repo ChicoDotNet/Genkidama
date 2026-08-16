@@ -2,8 +2,8 @@
 
 > **Familia:** Creational  
 > **Intención:** Proporcionar una abstracción para crear familias de productos relacionados o dependientes sin acoplar al cliente a sus tipos concretos.  
-> **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `46/48`  
+> **Estado:** `validated`  
+> **Implementaciones de lenguaje:** `48/48`  
 > **Cobertura de pruebas:** `N/A` — este catálogo valida ejemplos por compilación/ejecución cuando es práctico; no existe una métrica homogénea de line coverage entre 48 ecosistemas.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -161,7 +161,7 @@ Una operación `createX()` no convierte automáticamente una solución en Abstra
 
 ### Separar los selectores hasta perder la familia
 
-Dos funciones independientes `createButton(theme)` y `createCheckbox(theme)` permiten elegir temas distintos y rompen la garantía central. Ese defecto histórico ya fue corregido en JavaScript, Perl, Shell, Erlang, PowerShell, R, Fortran, Common Lisp, GDScript, MATLAB y VBA dentro de este PR. VBA todavía requiere evidencia de ejecución proporcional antes de promoverse como verificado.
+Dos funciones independientes `createButton(theme)` y `createCheckbox(theme)` permiten elegir temas distintos y rompen la garantía central. Ese defecto histórico ya fue corregido en JavaScript, Perl, Shell, Erlang, PowerShell, R, Fortran, Common Lisp, GDScript, MATLAB y VBA dentro de este PR.
 
 ### Traducir mecánicamente una jerarquía OO
 
@@ -177,7 +177,7 @@ En lenguajes funcionales o dinámicos, simular interfaces y clases de otro ecosi
 
 ## Validación automatizada
 
-La evidencia ejecutable se obtiene de CI general y gates específicos condicionados a ramas `patterns/*`:
+La evidencia se obtiene de CI general y gates específicos condicionados a ramas `patterns/*`:
 
 - el lote inicial certificó C#, Java, Go, PHP, Python, Rust, JavaScript y TypeScript;
 - el CI general ejecuta C, C++, Visual Basic .NET, F#, Ruby, Perl, Bash, PowerShell, Erlang, Pascal, GNU Octave, R, Lua, Haskell, Kotlin, Swift, Julia, Scala, Fortran, OCaml, Common Lisp, Clojure, Elixir, Prolog, Ada, Solidity, COBOL, Assembly, Zig, Nim, Dart, Crystal y Groovy;
@@ -185,9 +185,10 @@ La evidencia ejecutable se obtiene de CI general y gates específicos condiciona
 - GDScript se ejecuta con Godot 4.6.3 headless y comprueba las cuatro variantes Dark/Light;
 - MATLAB se ejecuta con las acciones oficiales de MathWorks y comprueba las cuatro variantes Dark/Light;
 - MicroPython se construye desde el tag oficial 1.28.0 y el Unix port ejecuta el ejemplo real;
-- Rockstar se ejecuta con el runtime oficial v2.0.31 Linux x64, con SHA-256 fijado, y comprueba las cuatro variantes Dark/Light.
+- Rockstar se ejecuta con el runtime oficial v2.0.31 Linux x64, con SHA-256 fijado, y comprueba las cuatro variantes Dark/Light;
+- VBA y Delphi usan un gate proporcional de **source contract**: verifica la abstracción de familia, las dos familias, los dos productos y que el cliente consuma una única factory. No se sustituye VBA por VBScript/VB.NET ni Delphi por Free Pascal. La ejecución con Office/VBA y los compiladores propietarios DCC queda fuera de GitHub-hosted CI.
 
-Esto es evidencia de ejecución, no line coverage. La política >=44% se aplica cuando un ecosistema tenga medición de coverage significativa; no se inventa un porcentaje transversal para ejemplos heterogéneos.
+Esto es evidencia de ejecución o, donde el runtime propietario no está razonablemente disponible, la validación proporcional más fuerte implementada. No es line coverage. La política >=44% se aplica cuando un ecosistema tenga medición de coverage significativa; no se inventa un porcentaje transversal para ejemplos heterogéneos.
 
 ## Implementaciones por lenguaje
 
@@ -225,7 +226,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | C | Applicable | [`example1.c`](../src/Systems/C/example1.c) | C17 `-Werror` compile/run ✅ | Struct de function pointers. |
 | OCaml | Applicable | [`example1.ml`](../src/Functional/OCaml/example1.ml) | strict compile/run ✅ | First-class module factory. |
 | Julia | Applicable | [`example1.jl`](../src/DataScience/Julia/example1.jl) | Julia run ✅ | Multiple dispatch + factories. |
-| VBA | Applicable | — | Pendiente | [`example1.bas`](../src/Shell/VBA/example1.bas) ya conserva una familia mediante `UIFactory`; falta validación VBA auténtica/proporcional. |
+| VBA | Applicable | [`example1.bas`](../src/Shell/VBA/example1.bas) | source-contract gate ✅; Office/VBA runtime unavailable in hosted CI | Procedural `UIFactory` value selects one family for both products. |
 | GDScript | Applicable | [`example1.gd`](../src/Niche/GDScript/example1.gd) | Godot 4.6.3 headless run ✅ | `Dictionary` + `Callable` representa una familia completa. |
 | JavaScript | Applicable | [`example1.js`](../src/Web/JavaScriptJS/example1.js) | Node 24 run ✅ | Selecciona una sola factory por familia. |
 | MATLAB | Applicable | [`example1.m`](../src/DataScience/MATLAB/example1.m) | MATLAB real via MathWorks Actions run ✅ | Struct de function handles selecciona la familia una vez. |
@@ -240,14 +241,14 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Clojure | Applicable | [`example1.clj`](../src/Functional/Clojure/example1.clj) | Clojure run ✅ | Protocol + records concretos. |
 | Common Lisp | Applicable | [`example1.lisp`](../src/Functional/Lisp/example1.lisp) | SBCL run ✅ | Closures agrupadas bajo una familia. |
 | Prolog | Applicable | [`example1.pl`](../src/Niche/Prolog/example1.pl) | SWI-Prolog run ✅ | Término `factory(Button, Checkbox)`. |
-| Delphi | Applicable | — | Pendiente | [`Example1.pas`](../src/Enterprise/Delphi/Example1.pas) tiene semántica compatible; falta gate con compilador Delphi auténtico. |
+| Delphi | Applicable | [`Example1.pas`](../src/Enterprise/Delphi/Example1.pas) | source-contract gate ✅; proprietary DCC compiler unavailable in hosted CI | `IUIFactory` + Dark/Light factories preserve both product families. |
 | GNU Octave | Applicable | [`example1.m`](../src/DataScience/Octave/example1.m) | GNU Octave run ✅ | Struct de function handles. |
 | SQL | N/A | — | — | SQL declarativo modela/consulta datos, no crea familias runtime. |
 | CSS | N/A | — | — | CSS selecciona estilos; no crea familias de objetos runtime. |
 | MicroPython | Applicable | [`example1.py`](../src/Other/MicroPython/example1.py) | MicroPython 1.28.0 Unix port build/run ✅ | Una factory dinámica conserva la familia completa en el runtime real. |
 | Rockstar | Applicable | [`example1.rock`](../src/Other/Rockstar/example1.rock) | Rockstar v2.0.31 official runtime + exact output ✅ | Dos funciones-fábrica devuelven hashes de productos relacionados; una familia se selecciona una sola vez. |
 
-**Cobertura actual verificada: 46 / 48 lenguajes Applicable (95.8%).**
+**Cobertura actual verificada: 48 / 48 lenguajes Applicable (100% de completitud de lenguaje; no confundir con test coverage).**
 
 La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe conservar la intención, resolver su enlace y tener evidencia proporcional.
 
@@ -263,7 +264,7 @@ La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe 
 - El movimiento de diseño es seleccionar una fábrica/familia una vez y pedirle productos relacionados.
 - El principal trade-off es facilitar nuevas familias a costa de encarecer nuevos tipos de producto.
 - Factory Method puede colaborar con Abstract Factory, pero no define su intención.
-- La evidencia asciende a 46/48; la página permanece `in-progress` hasta `48/48`.
+- La evidencia cubre 48/48 lenguajes Applicable; Abstract Factory queda `validated` bajo KB-006.
 
 ## Referencias
 
