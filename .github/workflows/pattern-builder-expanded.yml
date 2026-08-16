@@ -68,69 +68,173 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y lua5.4 php-cli ruby
 
-      - name: Validate Builder tranche
+      - name: Validate C# Builder
         shell: bash
         run: |
           set -euo pipefail
-          assert_output() {
-            local output="$1"
-            grep -Fq '# Service status' <<<"$output"
-            grep -Fq '<h1>Service status</h1>' <<<"$output"
-            grep -Fq '99.95%' <<<"$output"
-          }
-
           work="$(mktemp -d)"
-          dotnet new console --framework net10.0 --output "$work/csharp" --force >/dev/null
-          cp 'src/Enterprise/C#/BuilderExample.cs' "$work/csharp/Program.cs"
-          assert_output "$(dotnet run --project "$work/csharp" --configuration Release)"
+          dotnet new console --framework net10.0 --output "$work" --force >/dev/null
+          cp 'src/Enterprise/C#/BuilderExample.cs' "$work/Program.cs"
+          output="$(dotnet run --project "$work" --configuration Release)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
+      - name: Validate Python Builder
+        shell: bash
+        run: |
+          set -euo pipefail
           python -m py_compile src/Scripting/PythonPY/builder.py
-          assert_output "$(python src/Scripting/PythonPY/builder.py)"
+          output="$(python src/Scripting/PythonPY/builder.py)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
+      - name: Validate JavaScript Builder
+        shell: bash
+        run: |
+          set -euo pipefail
           node --check src/Web/JavaScriptJS/builder.js
-          assert_output "$(node src/Web/JavaScriptJS/builder.js)"
+          output="$(node src/Web/JavaScriptJS/builder.js)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
-          npx --yes typescript@6.0.3 tsc src/Web/TypeScriptTS/builder.ts --strict --target ES2024 --module commonjs --outDir "$work/typescript"
-          assert_output "$(node "$work/typescript/builder.js")"
+      - name: Validate TypeScript Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          npx --yes typescript@6.0.3 tsc src/Web/TypeScriptTS/builder.ts --strict --target ES2024 --module commonjs --outDir "$work"
+          output="$(node "$work/builder.js")"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
+      - name: Validate Go Builder
+        shell: bash
+        run: |
+          set -euo pipefail
           test -z "$(gofmt -d src/Systems/Go/builder.go)"
           go vet src/Systems/Go/builder.go
-          assert_output "$(go run src/Systems/Go/builder.go)"
+          output="$(go run src/Systems/Go/builder.go)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
-          javac -Xlint:all -Werror -d "$work/java" src/Enterprise/Java/BuilderExample.java
-          assert_output "$(java -cp "$work/java" BuilderExample)"
+      - name: Validate Java Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          javac -Xlint:all -Werror -d "$work" src/Enterprise/Java/BuilderExample.java
+          output="$(java -cp "$work" BuilderExample)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
+      - name: Validate Rust Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
           rustfmt --check src/Systems/Rust/builder.rs
-          rustc -D warnings src/Systems/Rust/builder.rs -o "$work/builder-rust"
-          assert_output "$("$work/builder-rust")"
+          rustc -D warnings src/Systems/Rust/builder.rs -o "$work/builder"
+          output="$("$work/builder")"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
-          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/builder.cpp' -o "$work/builder-cpp"
-          assert_output "$("$work/builder-cpp")"
+      - name: Validate C++ Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/builder.cpp' -o "$work/builder"
+          output="$("$work/builder")"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
-          gcc -std=c17 -Wall -Wextra -Werror src/Systems/C/builder.c -o "$work/builder-c"
-          assert_output "$("$work/builder-c")"
+      - name: Validate C Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          gcc -std=c17 -Wall -Wextra -Werror src/Systems/C/builder.c -o "$work/builder"
+          output="$("$work/builder")"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
+      - name: Validate Ruby Builder
+        shell: bash
+        run: |
+          set -euo pipefail
           ruby -cw src/Scripting/RubyRB/builder.rb
-          assert_output "$(ruby src/Scripting/RubyRB/builder.rb)"
+          output="$(ruby src/Scripting/RubyRB/builder.rb)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
+      - name: Validate PHP Builder
+        shell: bash
+        run: |
+          set -euo pipefail
           php -l src/Scripting/PHP/builder.php
-          assert_output "$(php src/Scripting/PHP/builder.php)"
+          output="$(php src/Scripting/PHP/builder.php)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
-          dotnet fsi src/Functional/F#/builder.fsx > "$work/fsharp.out"
-          assert_output "$(cat "$work/fsharp.out")"
+      - name: Validate F# Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(dotnet fsi 'src/Functional/F#/builder.fsx')"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
-          lua5.4 src/Scripting/Lua/builder.lua > "$work/lua.out"
-          assert_output "$(cat "$work/lua.out")"
+      - name: Validate Lua Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(lua5.4 src/Scripting/Lua/builder.lua)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
+      - name: Validate Bash Builder
+        shell: bash
+        run: |
+          set -euo pipefail
           bash -n src/Shell/Bash/builder.sh
-          assert_output "$(bash src/Shell/Bash/builder.sh)"
+          output="$(bash src/Shell/Bash/builder.sh)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
+      - name: Validate Kotlin Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
           command -v kotlinc >/dev/null
-          kotlinc src/Enterprise/Kotlin/BuilderExample.kt -include-runtime -d "$work/builder-kotlin.jar"
-          assert_output "$(java -jar "$work/builder-kotlin.jar")"
+          kotlinc src/Enterprise/Kotlin/BuilderExample.kt -include-runtime -d "$work/builder.jar"
+          output="$(java -jar "$work/builder.jar")"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
 
+      - name: Validate Swift Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
           command -v swiftc >/dev/null
-          swiftc src/Systems/Swift/builder.swift -o "$work/builder-swift"
-          assert_output "$("$work/builder-swift")"
-
-# Triggered intentionally after batching implementations so CI reports only real failures.
+          swiftc src/Systems/Swift/builder.swift -o "$work/builder"
+          output="$("$work/builder")"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
