@@ -17,15 +17,20 @@ void expect(const bool condition, const std::string& message) {
     }
 }
 
+void write_file(const std::filesystem::path& path, const std::string& content) {
+    std::ofstream output(path, std::ios::binary);
+    output << content;
+}
+
 class TempDirectory {
 public:
     TempDirectory() : path_(std::filesystem::temp_directory_path() / "threadseek-tests") {
         std::error_code error;
         std::filesystem::remove_all(path_, error);
         std::filesystem::create_directories(path_ / "docs");
-        write(path_ / "README.md", "hola");
-        write(path_ / "docs" / "Manual.TXT", "1234567890");
-        write(path_ / "notes.txt", "abc");
+        write_file(path_ / "README.md", "hola");
+        write_file(path_ / "docs" / "Manual.TXT", "1234567890");
+        write_file(path_ / "notes.txt", "abc");
     }
 
     ~TempDirectory() {
@@ -36,11 +41,30 @@ public:
     [[nodiscard]] const std::filesystem::path& path() const noexcept { return path_; }
 
 private:
-    static void write(const std::filesystem::path& path, const std::string& content) {
-        std::ofstream output(path, std::ios::binary);
-        output << content;
+    std::filesystem::path path_;
+};
+
+class ParallelDirectory {
+public:
+    ParallelDirectory() : path_(std::filesystem::temp_directory_path() / "threadseek-parallel-tests") {
+        std::error_code error;
+        std::filesystem::remove_all(path_, error);
+        std::filesystem::create_directories(path_ / "docs");
+        std::filesystem::create_directories(path_ / "src" / "nested");
+        write_file(path_ / "root.txt", "root");
+        write_file(path_ / "docs" / "manual.txt", "manual");
+        write_file(path_ / "src" / "main.cpp", "int main(){}\n");
+        write_file(path_ / "src" / "nested" / "worker.cpp", "void work(){}\n");
     }
 
+    ~ParallelDirectory() {
+        std::error_code error;
+        std::filesystem::remove_all(path_, error);
+    }
+
+    [[nodiscard]] const std::filesystem::path& path() const noexcept { return path_; }
+
+private:
     std::filesystem::path path_;
 };
 
@@ -99,6 +123,40 @@ void rejects_corrupt_index() {
     expect(rejected, "debe rechazar formato inválido");
 }
 
+void parallel_discovery_matches_sequential_results() {
+    const ParallelDirectory fixture;
+    const auto sequential = threadseek::discover_files(fixture.path());
+    const auto parallel = threadseek::discover_files_parallel(fixture.path(), 2);
+
+    expect(sequential.size() == parallel.size(), "ambos modos deben descubrir el mismo número de archivos");
+    for (std::size_t index = 0; index < sequential.size() && index < parallel.size(); ++index) {
+        expect(sequential[index].path == parallel[index].path, "ambos modos deben conservar orden determinista");
+        expect(sequential[index].size_bytes == parallel[index].size_bytes, "ambos modos deben conservar tamaños");
+    }
+}
+
+void rejects_zero_parallel_workers() {
+    const ParallelDirectory fixture;
+    bool rejected = false;
+    try {
+        (void)threadseek::discover_files_parallel(fixture.path(), 0);
+    } catch (const std::invalid_argument&) {
+        rejected = true;
+    }
+    expect(rejected, "debe rechazar worker_count cero");
+}
+
+void measures_without_assuming_parallel_is_faster() {
+    const ParallelDirectory fixture;
+    const auto sequential = threadseek::measure_discovery(fixture.path(), threadseek::DiscoveryMode::sequential);
+    const auto parallel = threadseek::measure_discovery(fixture.path(), threadseek::DiscoveryMode::parallel, 2);
+
+    expect(sequential.records.size() == parallel.records.size(), "medir no debe cambiar resultados");
+    expect(sequential.workers_requested == 1, "modo secuencial debe reportar un worker");
+    expect(parallel.workers_requested == 2, "modo paralelo debe reportar workers solicitados");
+    expect(sequential.elapsed.count() >= 0 && parallel.elapsed.count() >= 0, "duraciones deben ser válidas");
+}
+
 }  // namespace
 
 int main() {
@@ -107,9 +165,12 @@ int main() {
     rejects_missing_root();
     persists_and_reconstructs_index();
     rejects_corrupt_index();
+    parallel_discovery_matches_sequential_results();
+    rejects_zero_parallel_workers();
+    measures_without_assuming_parallel_is_faster();
 
     if (failures == 0) {
-        std::cout << "5 pruebas pasaron\n";
+        std::cout << "8 pruebas pasaron\n";
         return 0;
     }
     std::cerr << failures << " pruebas fallaron\n";
