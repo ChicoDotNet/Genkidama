@@ -3,7 +3,7 @@
 > **Familia:** Creational  
 > **Intención:** Proporcionar una abstracción para crear familias de productos relacionados o dependientes sin acoplar al cliente a sus tipos concretos.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `42/48`  
+> **Implementaciones de lenguaje:** `44/48`  
 > **Cobertura de pruebas:** `N/A` — este catálogo valida ejemplos por compilación/ejecución cuando es práctico; no existe una métrica homogénea de line coverage entre 48 ecosistemas.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -161,7 +161,7 @@ Una operación `createX()` no convierte automáticamente una solución en Abstra
 
 ### Separar los selectores hasta perder la familia
 
-Dos funciones independientes `createButton(theme)` y `createCheckbox(theme)` permiten elegir temas distintos y rompen la garantía central. Ese defecto histórico ya fue corregido en JavaScript, Perl, Shell, Erlang, PowerShell, R, Fortran y Common Lisp dentro de este PR.
+Dos funciones independientes `createButton(theme)` y `createCheckbox(theme)` permiten elegir temas distintos y rompen la garantía central. Ese defecto histórico ya fue corregido en JavaScript, Perl, Shell, Erlang, PowerShell, R, Fortran, Common Lisp, GDScript, MATLAB y VBA dentro de este PR. VBA todavía requiere evidencia de ejecución proporcional antes de promoverse como verificado.
 
 ### Traducir mecánicamente una jerarquía OO
 
@@ -177,17 +177,14 @@ En lenguajes funcionales o dinámicos, simular interfaces y clases de otro ecosi
 
 ## Validación automatizada
 
-La evidencia ejecutable se obtiene de gates históricos y del CI general condicionado a ramas `patterns/*`:
+La evidencia ejecutable se obtiene de CI general y gates específicos condicionados a ramas `patterns/*`:
 
 - el lote inicial certificó C#, Java, Go, PHP, Python, Rust, JavaScript y TypeScript;
-- el CI general ejecuta C, C++, Visual Basic .NET, F#, Ruby, Perl, Bash, PowerShell, Erlang, Pascal, GNU Octave, R y Lua;
-- el mismo CI ejecuta Haskell, Kotlin, Swift y Julia;
-- el gate ampliado en `893cd4ac2b056aa3e7bbaff41a95f059e0d9f567` ejecutó además Scala, Fortran, OCaml y Common Lisp. El primer intento reveló únicamente que `missing-mli` de OCaml no es apropiado como error para un ejemplo standalone; todos los demás warnings siguen siendo estrictos y el segundo intento quedó verde;
-- el gate en `ed56a2aa4c51df75e0f38e5795d9c07a3d180e0a` ejecutó Clojure, compiló Elixir con `elixirc --warnings-as-errors` y ejecutó Prolog con SWI-Prolog. Ese corte también corrigió una deuda de indentación Ruby detectada por el propio runner;
-- el gate en `c0dea39a6660b3195677c10f150710a9901e1a7e` compiló y ejecutó Ada con GNAT 2022 y warnings como errores, y compiló Solidity 0.8.30 verificando bytecode no vacío para `Example1`;
-- el head verde `a090d299908dc9f5338dadf6b468f25458218bd9` compiló/ejecutó COBOL con GnuCOBOL y Assembly x86-64 con NASM + `ld`, comprobando además la salida exacta de las cuatro variantes;
-- el head verde `18999b8b9c58ca68b5e2497e8e05948c941a7de6` ejecutó Zig, Nim, Dart, Crystal y Groovy con formato/análisis/compilación proporcional y comprobó la salida exacta de las familias Dark/Light;
-- el job macOS del head `72daa2efb7aa34645c0ab026bba99c8d8769b45c` compiló Objective-C con ARC, Foundation y warnings como errores, ejecutó el binario y comprobó las cuatro variantes Dark/Light.
+- el CI general ejecuta C, C++, Visual Basic .NET, F#, Ruby, Perl, Bash, PowerShell, Erlang, Pascal, GNU Octave, R, Lua, Haskell, Kotlin, Swift, Julia, Scala, Fortran, OCaml, Common Lisp, Clojure, Elixir, Prolog, Ada, Solidity, COBOL, Assembly, Zig, Nim, Dart, Crystal y Groovy;
+- Objective-C se compila y ejecuta en macOS con Clang, ARC, Foundation y warnings como errores;
+- GDScript se ejecuta con Godot 4.6.3 headless y comprueba las cuatro variantes Dark/Light;
+- MATLAB se ejecuta con las acciones oficiales de MathWorks y comprueba las cuatro variantes Dark/Light;
+- MicroPython permanece pendiente hasta que el gate con el Unix port oficial termine verde.
 
 Esto es evidencia de ejecución, no line coverage. La política >=44% se aplica cuando un ecosistema tenga medición de coverage significativa; no se inventa un porcentaje transversal para ejemplos heterogéneos.
 
@@ -199,57 +196,57 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 |---|---|---|---|---|
 | C# | Applicable | [`Example1.cs`](../src/Enterprise/C%23/Example1.cs) | .NET 10 compile/run ✅ | Interfaces + dos familias completas. |
 | TypeScript | Applicable | [`example1.ts`](../src/Web/TypeScriptTS/example1.ts) | TS 6.0.3 strict compile + Node 24 run ✅ | Interfaz de fábrica explícita. |
-| Ada | Applicable | [`example1.adb`](../src/Historical/Ada/example1.adb) | GNAT Ada 2022 `-gnatwa -gnatwe` compile/run ✅ | Record de access-to-function selecciona una familia una sola vez sin imponer jerarquía OO artificial. |
-| Solidity | Applicable | [`Example1.sol`](../src/Niche/Solidity/Example1.sol) | Solidity 0.8.30 compile + bytecode artifact ✅ | `UIFactory` y factories Dark/Light conservan la familia; las rutas que despliegan contratos son correctamente no-`view`. |
-| Fortran | Applicable | [`example1.f90`](../src/Historical/Fortran/example1.f90) | Fortran 2018 `-Werror` compile/run ✅ | `ui_factory` selecciona una familia una sola vez y produce ambos productos. |
-| Pascal | Applicable | [`example1.pas`](../src/Historical/Pascal/example1.pas) | Free Pascal compile/run ✅ | Record de function pointers selecciona la familia una sola vez. |
+| Ada | Applicable | [`example1.adb`](../src/Historical/Ada/example1.adb) | GNAT Ada 2022 `-gnatwa -gnatwe` compile/run ✅ | Record de access-to-function selecciona una familia una sola vez. |
+| Solidity | Applicable | [`Example1.sol`](../src/Niche/Solidity/Example1.sol) | Solidity 0.8.30 compile + bytecode artifact ✅ | `UIFactory` y factories Dark/Light conservan la familia. |
+| Fortran | Applicable | [`example1.f90`](../src/Historical/Fortran/example1.f90) | Fortran 2018 `-Werror` compile/run ✅ | `ui_factory` selecciona una familia una sola vez. |
+| Pascal | Applicable | [`example1.pas`](../src/Historical/Pascal/example1.pas) | Free Pascal compile/run ✅ | Record de function pointers selecciona la familia. |
 | Python | Applicable | [`example1.py`](../src/Scripting/PythonPY/example1.py) | Python 3.14 run ✅ | Fábricas dinámicas Dark/Light. |
-| Visual Basic .NET | Applicable | [`Example1.vb`](../src/Enterprise/VisualBasic/Example1.vb) | .NET 10 compile/run ✅ | Dos familias concretas verificadas en CI. |
-| C++ | Applicable | [`example1.cpp`](../src/Systems/C%2B%2B/example1.cpp) | C++20 `-Werror` compile/run ✅ | RAII, destructores virtuales y `std::unique_ptr`. |
-| Objective-C | Applicable | [`example1.m`](../src/Systems/Objective-C/example1.m) | macOS + Clang `-fobjc-arc -Wall -Wextra -Werror` + Foundation compile/run ✅ | Protocols + factories concretas conservan la familia; el gate comprueba las cuatro variantes. |
-| Java | Applicable | [`Example1.java`](../src/Enterprise/Java/Example1.java) | Java 25 compile/run ✅ | `UIFactory` conserva Button + Checkbox. |
+| Visual Basic .NET | Applicable | [`Example1.vb`](../src/Enterprise/VisualBasic/Example1.vb) | .NET 10 compile/run ✅ | Dos familias concretas. |
+| C++ | Applicable | [`example1.cpp`](../src/Systems/C%2B%2B/example1.cpp) | C++20 `-Werror` compile/run ✅ | RAII y ownership explícito. |
+| Objective-C | Applicable | [`example1.m`](../src/Systems/Objective-C/example1.m) | macOS + Clang/ARC/Foundation compile/run ✅ | Protocols + factories concretas. |
+| Java | Applicable | [`Example1.java`](../src/Enterprise/Java/Example1.java) | Java 25 compile/run ✅ | `UIFactory` conserva ambos productos. |
 | Rust | Applicable | [`example1.rs`](../src/Systems/Rust/example1.rs) | `rustc` compile/run ✅ | Traits + factories concretas. |
-| Zig | Applicable | [`example1.zig`](../src/Systems/Zig/example1.zig) | Zig 0.16.0 `fmt --check` + run + exact output ✅ | Struct de function pointers selecciona una familia una sola vez. |
-| Go | Applicable | [`example1.go`](../src/Systems/Go/example1.go) | Go 1.26.5 run ✅ | Interfaz + dos factories concretas. |
+| Zig | Applicable | [`example1.zig`](../src/Systems/Zig/example1.zig) | Zig fmt/run + exact output ✅ | Struct de function pointers. |
+| Go | Applicable | [`example1.go`](../src/Systems/Go/example1.go) | Go 1.26.5 run ✅ | Interfaz + factories concretas. |
 | PHP | Applicable | [`example1.php`](../src/Scripting/PHP/example1.php) | PHP 8.5 lint/run ✅ | Interfaces + familias coherentes. |
-| Nim | Applicable | [`example1.nim`](../src/Niche/Nim/example1.nim) | Nim compile/run + exact output ✅ | Objeto `UIFactory` agrupa ambos constructores. |
-| Dart | Applicable | [`example1.dart`](../src/Web/Dart/example1.dart) | Dart format + analyze + run + exact output ✅ | Interfaz + factories concretas conservan la familia. |
-| Kotlin | Applicable | [`Example1.kt`](../src/Enterprise/Kotlin/Example1.kt) | `kotlinc` compile + JVM run ✅ | `UIFactory` conserva Button + Checkbox. |
-| Swift | Applicable | [`example1.swift`](../src/Systems/Swift/example1.swift) | `swiftc` compile/run ✅ | Protocols + factories concretas conservan la familia. |
-| F# | Applicable | [`example1.fsx`](../src/Functional/F%23/example1.fsx) | `dotnet fsi` run ✅ | Record de constructores conserva la familia completa. |
-| Crystal | Applicable | [`example1.cr`](../src/Niche/Crystal/example1.cr) | Crystal format + `--error-on-warnings` build + run + exact output ✅ | NamedTuple de closures representa una familia completa. |
-| Lua | Applicable | [`example1.lua`](../src/Scripting/Lua/example1.lua) | Lua 5.4 run ✅ | Table de closures representa una familia completa. |
-| Haskell | Applicable | [`Example1.hs`](../src/Functional/Haskell/Example1.hs) | `runghc -Wall -Werror` ✅ | Record `UIFactory` de operaciones conserva una familia completa. |
-| COBOL | Applicable | [`example1.cbl`](../src/Historical/Cobol/example1.cbl) | GnuCOBOL `-Wall` compile/run ✅ | Una sola familia seleccionada produce Button + Checkbox coherentes. |
-| Scala | Applicable | [`Example1.scala`](../src/Functional/Scala/Example1.scala) | `scalac` compile + `scala` run ✅ | `UIFactory` conserva Button + Checkbox dentro de una familia seleccionada. |
-| Groovy | Applicable | [`example1.groovy`](../src/Scripting/Groovy/example1.groovy) | `groovyc` compile + Groovy run + exact output ✅ | `UIFactory` + factories concretas preservan la familia. |
+| Nim | Applicable | [`example1.nim`](../src/Niche/Nim/example1.nim) | Nim compile/run ✅ | Objeto factory agrupa constructores. |
+| Dart | Applicable | [`example1.dart`](../src/Web/Dart/example1.dart) | format/analyze/run ✅ | Interfaz + factories concretas. |
+| Kotlin | Applicable | [`Example1.kt`](../src/Enterprise/Kotlin/Example1.kt) | `kotlinc` + JVM run ✅ | `UIFactory` conserva la familia. |
+| Swift | Applicable | [`example1.swift`](../src/Systems/Swift/example1.swift) | `swiftc` compile/run ✅ | Protocols + factories concretas. |
+| F# | Applicable | [`example1.fsx`](../src/Functional/F%23/example1.fsx) | `dotnet fsi` run ✅ | Record de constructores. |
+| Crystal | Applicable | [`example1.cr`](../src/Niche/Crystal/example1.cr) | format/build/run ✅ | NamedTuple de closures. |
+| Lua | Applicable | [`example1.lua`](../src/Scripting/Lua/example1.lua) | Lua 5.4 run ✅ | Table de closures. |
+| Haskell | Applicable | [`Example1.hs`](../src/Functional/Haskell/Example1.hs) | `runghc -Wall -Werror` ✅ | Record de operaciones. |
+| COBOL | Applicable | [`example1.cbl`](../src/Historical/Cobol/example1.cbl) | GnuCOBOL compile/run ✅ | Una familia seleccionada produce ambos productos. |
+| Scala | Applicable | [`Example1.scala`](../src/Functional/Scala/Example1.scala) | `scalac` + `scala` ✅ | `UIFactory` conserva la familia. |
+| Groovy | Applicable | [`example1.groovy`](../src/Scripting/Groovy/example1.groovy) | `groovyc` + run ✅ | Factory concreta coherente. |
 | Ruby | Applicable | [`example1.rb`](../src/Scripting/RubyRB/example1.rb) | syntax check + run ✅ | Factory concreta preserva la familia. |
-| C | Applicable | [`example1.c`](../src/Systems/C/example1.c) | C17 `-Werror` compile/run ✅ | Struct de function pointers representa una familia. |
-| OCaml | Applicable | [`example1.ml`](../src/Functional/OCaml/example1.ml) | `ocamlc` strict compile/run ✅ | First-class module `UIFactory` agrupa ambos constructores; `missing-mli` se excluye por ser ejemplo standalone. |
-| Julia | Applicable | [`example1.jl`](../src/DataScience/Julia/example1.jl) | Julia run ✅ | Multiple dispatch + factories concretas conservan la familia. |
-| VBA | Applicable | — | Pendiente | Revisar implementación histórica y ruta real. |
-| GDScript | Applicable | — | Pendiente | Revisar implementación histórica. |
+| C | Applicable | [`example1.c`](../src/Systems/C/example1.c) | C17 `-Werror` compile/run ✅ | Struct de function pointers. |
+| OCaml | Applicable | [`example1.ml`](../src/Functional/OCaml/example1.ml) | strict compile/run ✅ | First-class module factory. |
+| Julia | Applicable | [`example1.jl`](../src/DataScience/Julia/example1.jl) | Julia run ✅ | Multiple dispatch + factories. |
+| VBA | Applicable | — | Pendiente | [`example1.bas`](../src/Shell/VBA/example1.bas) ya conserva una familia mediante `UIFactory`; falta validación VBA auténtica/proporcional. |
+| GDScript | Applicable | [`example1.gd`](../src/Niche/GDScript/example1.gd) | Godot 4.6.3 headless run ✅ | `Dictionary` + `Callable` representa una familia completa. |
 | JavaScript | Applicable | [`example1.js`](../src/Web/JavaScriptJS/example1.js) | Node 24 run ✅ | Selecciona una sola factory por familia. |
-| MATLAB | Applicable | — | Pendiente | Revisar implementación histórica. |
-| Perl | Applicable | [`example1.pl`](../src/Scripting/Perl/example1.pl) | syntax check + run ✅ | Reparado: una factory agrupa ambos constructores. |
-| R | Applicable | [`example1.R`](../src/DataScience/R/example1.R) | Rscript run ✅ | List de closures representa una familia completa. |
-| PowerShell | Applicable | [`example1.ps1`](../src/Shell/PowerShell/example1.ps1) | `pwsh` strict run ✅ | Hashtable de scriptblocks representa una familia seleccionada una vez. |
+| MATLAB | Applicable | [`example1.m`](../src/DataScience/MATLAB/example1.m) | MATLAB real via MathWorks Actions run ✅ | Struct de function handles selecciona la familia una vez. |
+| Perl | Applicable | [`example1.pl`](../src/Scripting/Perl/example1.pl) | syntax check + run ✅ | Una factory agrupa ambos constructores. |
+| R | Applicable | [`example1.R`](../src/DataScience/R/example1.R) | Rscript run ✅ | List de closures. |
+| PowerShell | Applicable | [`example1.ps1`](../src/Shell/PowerShell/example1.ps1) | strict run ✅ | Hashtable de scriptblocks. |
 | HTML | N/A | — | — | HTML describe estructura; JavaScript embebido sigue siendo JavaScript. |
-| Assembly | Applicable | [`example1.asm`](../src/LowLevel/Assembly/example1.asm) | NASM `elf64` + `ld` + exact output assertion ✅ | Tabla de direcciones/rutinas conserva una familia y emite las cuatro variantes coherentes. |
-| Elixir | Applicable | [`example1.exs`](../src/Functional/Elixir/example1.exs) | `elixirc --warnings-as-errors` ✅ | Map de closures representa una familia coherente y se selecciona una sola vez. |
-| Shell | Applicable | [`example1.sh`](../src/Shell/Bash/example1.sh) | `bash -n` + run ✅ | Reparado: associative array + nameref seleccionan una familia una sola vez. |
-| Erlang | Applicable | [`example1.erl`](../src/Functional/Erlang/example1.erl) | OTP compile/run ✅ | Map de funciones encapsula una familia completa. |
-| Clojure | Applicable | [`example1.clj`](../src/Functional/Clojure/example1.clj) | Clojure run ✅ | Protocol + records concretos conservan Button y Checkbox bajo una sola factory. |
-| Common Lisp | Applicable | [`example1.lisp`](../src/Functional/Lisp/example1.lisp) | SBCL run ✅ | `ui-factory` agrupa dos closures de construcción bajo una sola familia. |
-| Prolog | Applicable | [`example1.pl`](../src/Niche/Prolog/example1.pl) | SWI-Prolog run ✅ | Un término `factory(Button, Checkbox)` representa la familia completa seleccionada una sola vez. |
-| Delphi | Applicable | — | Pendiente | [`Example1.pas`](../src/Enterprise/Delphi/Example1.pas) tiene semántica compatible; falta gate ejecutable. |
-| GNU Octave | Applicable | [`example1.m`](../src/DataScience/Octave/example1.m) | GNU Octave run ✅ | Struct de function handles representa una familia completa. |
-| SQL | N/A | — | — | SQL declarativo modela/consulta datos, pero no ofrece por sí solo una frontera idiomática de creación de familias runtime. |
+| Assembly | Applicable | [`example1.asm`](../src/LowLevel/Assembly/example1.asm) | NASM + `ld` + exact output ✅ | Tabla/rutinas conservan la familia. |
+| Elixir | Applicable | [`example1.exs`](../src/Functional/Elixir/example1.exs) | `elixirc --warnings-as-errors` ✅ | Map de closures. |
+| Shell | Applicable | [`example1.sh`](../src/Shell/Bash/example1.sh) | `bash -n` + run ✅ | Associative array + nameref. |
+| Erlang | Applicable | [`example1.erl`](../src/Functional/Erlang/example1.erl) | OTP compile/run ✅ | Map de funciones encapsula la familia. |
+| Clojure | Applicable | [`example1.clj`](../src/Functional/Clojure/example1.clj) | Clojure run ✅ | Protocol + records concretos. |
+| Common Lisp | Applicable | [`example1.lisp`](../src/Functional/Lisp/example1.lisp) | SBCL run ✅ | Closures agrupadas bajo una familia. |
+| Prolog | Applicable | [`example1.pl`](../src/Niche/Prolog/example1.pl) | SWI-Prolog run ✅ | Término `factory(Button, Checkbox)`. |
+| Delphi | Applicable | — | Pendiente | [`Example1.pas`](../src/Enterprise/Delphi/Example1.pas) tiene semántica compatible; falta gate con compilador Delphi auténtico. |
+| GNU Octave | Applicable | [`example1.m`](../src/DataScience/Octave/example1.m) | GNU Octave run ✅ | Struct de function handles. |
+| SQL | N/A | — | — | SQL declarativo modela/consulta datos, no crea familias runtime. |
 | CSS | N/A | — | — | CSS selecciona estilos; no crea familias de objetos runtime. |
-| MicroPython | Applicable | — | Pendiente | Revisar implementación histórica. |
-| Rockstar | Applicable | — | Pendiente | Variables, funciones y control de flujo permiten representar selección de familia; requiere revisión idiomática. |
+| MicroPython | Applicable | — | Pendiente | [`example1.py`](../src/Other/MicroPython/example1.py) conserva una familia completa; gate con MicroPython Unix port en curso. |
+| Rockstar | Applicable | — | Pendiente | [`example1.rock`](../src/Other/Rockstar/example1.rock) requiere actualización/validación con Rockstar v2 real. |
 
-**Cobertura actual verificada: 42 / 48 lenguajes Applicable (87.5%).**
+**Cobertura actual verificada: 44 / 48 lenguajes Applicable (91.7%).**
 
 La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe conservar la intención, resolver su enlace y tener evidencia proporcional.
 
@@ -265,7 +262,7 @@ La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe 
 - El movimiento de diseño es seleccionar una fábrica/familia una vez y pedirle productos relacionados.
 - El principal trade-off es facilitar nuevas familias a costa de encarecer nuevos tipos de producto.
 - Factory Method puede colaborar con Abstract Factory, pero no define su intención.
-- La evidencia asciende a 42/48; la página permanece `in-progress` hasta `48/48`.
+- La evidencia asciende a 44/48; la página permanece `in-progress` hasta `48/48`.
 
 ## Referencias
 
