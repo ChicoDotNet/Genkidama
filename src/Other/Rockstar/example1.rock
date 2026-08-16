@@ -1,24 +1,24 @@
-Dark takes nothing
+DarkFactory takes nothing
 Rock products
-Let products at "button" be "Dark Button"
-Let products at "checkbox" be "Dark Checkbox"
+Products at "button" is "Dark Button"
+Products at "checkbox" is "Dark Checkbox"
 Give back products
-End
+Yeah
 
-Light takes nothing
+LightFactory takes nothing
 Rock products
-Let products at "button" be "Light Button"
-Let products at "checkbox" be "Light Checkbox"
+Products at "button" is "Light Button"
+Products at "checkbox" is "Light Checkbox"
 Give back products
-End
+Yeah
 
 Render takes factory
-Shout factory at "button"
-Shout factory at "checkbox"
-End
+Print factory at "button"
+Print factory at "checkbox"
+Yeah
 
-Put Dark! into chosen
-Render taking chosen
+Put DarkFactory! into chosen
+Call Render with chosen
 
-Put Light! into chosen
-Render taking chosen
+Put LightFactory! into chosen
+Call Render with chosen
