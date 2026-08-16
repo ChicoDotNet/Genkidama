@@ -2,37 +2,42 @@
        PROGRAM-ID. Example1.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01 THEME        PIC X(5).
+       01 ACTIVE-FACTORY PIC X(5).
        PROCEDURE DIVISION.
 
-       PERFORM TEST-THEME WITH THEME "dark"
-       PERFORM TEST-THEME WITH THEME "light"
-       STOP RUN.
+           MOVE "dark" TO ACTIVE-FACTORY
+           PERFORM CREATE-UI-FAMILY
 
-       TEST-THEME SECTION.
-           DISPLAY "Testing theme: " THEME
-           PERFORM CREATE-BUTTON
-           PERFORM CREATE-CHECKBOX
-           .
+           MOVE "light" TO ACTIVE-FACTORY
+           PERFORM CREATE-UI-FAMILY
 
-       CREATE-BUTTON SECTION.
-           EVALUATE THEME
+           STOP RUN.
+
+       CREATE-UI-FAMILY SECTION.
+           EVALUATE ACTIVE-FACTORY
                WHEN "dark"
-                   DISPLAY "Dark Button"
+                   PERFORM CREATE-DARK-BUTTON
+                   PERFORM CREATE-DARK-CHECKBOX
                WHEN "light"
-                   DISPLAY "Light Button"
+                   PERFORM CREATE-LIGHT-BUTTON
+                   PERFORM CREATE-LIGHT-CHECKBOX
                WHEN OTHER
-                   DISPLAY "Unknown Button"
+                   DISPLAY "Unknown UI family"
            END-EVALUATE
            .
 
-       CREATE-CHECKBOX SECTION.
-           EVALUATE THEME
-               WHEN "dark"
-                   DISPLAY "Dark Checkbox"
-               WHEN "light"
-                   DISPLAY "Light Checkbox"
-               WHEN OTHER
-                   DISPLAY "Unknown Checkbox"
-           END-EVALUATE
+       CREATE-DARK-BUTTON SECTION.
+           DISPLAY "Dark Button"
+           .
+
+       CREATE-DARK-CHECKBOX SECTION.
+           DISPLAY "Dark Checkbox"
+           .
+
+       CREATE-LIGHT-BUTTON SECTION.
+           DISPLAY "Light Button"
+           .
+
+       CREATE-LIGHT-CHECKBOX SECTION.
+           DISPLAY "Light Checkbox"
            .

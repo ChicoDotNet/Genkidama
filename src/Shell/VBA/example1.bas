@@ -1,51 +1,52 @@
-' Abstract Factory
-Function CreateButton(theme As String) As Object
-    If theme = "dark" Then
-        Set CreateButton = New DarkButton
-    ElseIf theme = "light" Then
-        Set CreateButton = New LightButton
-    End If
+' Abstract Factory — procedural VBA representation
+Option Explicit
+
+Private Enum ThemeFamily
+    DarkTheme = 1
+    LightTheme = 2
+End Enum
+
+Private Type UIFactory
+    Family As ThemeFamily
+End Type
+
+Private Function CreateFactory(ByVal family As ThemeFamily) As UIFactory
+    Dim factory As UIFactory
+    factory.Family = family
+    CreateFactory = factory
 End Function
 
-Function CreateCheckbox(theme As String) As Object
-    If theme = "dark" Then
-        Set CreateCheckbox = New DarkCheckbox
-    ElseIf theme = "light" Then
-        Set CreateCheckbox = New LightCheckbox
-    End If
+Private Function CreateButton(ByRef factory As UIFactory) As String
+    Select Case factory.Family
+        Case DarkTheme
+            CreateButton = "Dark Button"
+        Case LightTheme
+            CreateButton = "Light Button"
+        Case Else
+            Err.Raise vbObjectError + 1, "AbstractFactory", "Unknown theme family"
+    End Select
 End Function
 
-' Concrete Products
-Class DarkButton
-    Sub Render()
-        MsgBox "Dark Button"
-    End Sub
-End Class
+Private Function CreateCheckbox(ByRef factory As UIFactory) As String
+    Select Case factory.Family
+        Case DarkTheme
+            CreateCheckbox = "Dark Checkbox"
+        Case LightTheme
+            CreateCheckbox = "Light Checkbox"
+        Case Else
+            Err.Raise vbObjectError + 1, "AbstractFactory", "Unknown theme family"
+    End Select
+End Function
 
-Class LightButton
-    Sub Render()
-        MsgBox "Light Button"
-    End Sub
-End Class
+Public Sub Usage()
+    Dim factory As UIFactory
+    factory = CreateFactory(DarkTheme)
 
-Class DarkCheckbox
-    Sub Render()
-        MsgBox "Dark Checkbox"
-    End Sub
-End Class
+    Debug.Print CreateButton(factory)
+    Debug.Print CreateCheckbox(factory)
 
-Class LightCheckbox
-    Sub Render()
-        MsgBox "Light Checkbox"
-    End Sub
-End Class
+    factory = CreateFactory(LightTheme)
 
-Sub Usage()
-    Dim button As Object
-    Set button = CreateButton("dark")
-    button.Render
-
-    Dim checkbox As Object
-    Set checkbox = CreateCheckbox("light")
-    checkbox.Render
+    Debug.Print CreateButton(factory)
+    Debug.Print CreateCheckbox(factory)
 End Sub
