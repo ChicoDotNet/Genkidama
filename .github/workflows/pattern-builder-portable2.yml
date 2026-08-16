@@ -12,7 +12,7 @@ on:
       - 'src/Systems/Zig/builder.zig'
       - 'src/Systems/Rust/builder.rs'
       - 'src/Systems/C/builder.c'
-      - 'src/Systems/C++/builder.cpp'
+      - 'src/Systems/C\+\+/builder.cpp'
       - 'src/Systems/Swift/builder.swift'
       - 'src/Niche/Nim/builder.nim'
       - 'src/Web/Dart/builder.dart'
