@@ -3,8 +3,8 @@
 > **Familia:** Creational  
 > **Intención:** construir un objeto complejo paso a paso, permitiendo reutilizar el mismo proceso para obtener representaciones diferentes.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `0/48`  
-> **Cobertura de pruebas:** N/A — la primera entrega establece semántica y matriz; cada Applicable se promoverá sólo con evidencia proporcional.  
+> **Implementaciones de lenguaje:** `0/48` verificadas; 27 candidatas publicadas  
+> **Cobertura de pruebas:** N/A — cada Applicable se promoverá sólo con evidencia proporcional.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
 ## En una frase
@@ -139,13 +139,20 @@ Sólo merece existir cuando una receta tiene identidad o reutilización propia.
 
 ## Matriz de implementaciones
 
-El universo canónico mantiene **51 targets**. Esta primera entrega clasifica **48 como Applicable** y conserva **HTML, CSS y SQL como N/A provisionales sujetos a revisión técnica**. Ningún target se excluye por carecer de clases.
+El universo canónico mantiene **51 targets**. Esta entrega clasifica **48 como Applicable** y conserva **HTML, CSS y SQL como N/A provisionales sujetos a revisión técnica**. Ningún target se excluye por carecer de clases.
 
 | Estado | Cantidad | Criterio |
 |---|---:|---|
 | Applicable | 48 | Puede expresar construcción incremental y separar proceso de representación significativamente. |
 | N/A | 3 | HTML, CSS y SQL declarativo no son por sí mismos runtimes generales de construcción de objetos. |
-| Verified | 0 | Ningún ejemplo histórico se promueve sin inspección semántica, ruta real y evidencia proporcional. |
+| Verified | 0 | Aún no se promueve ningún candidato hasta que terminen los gates recién disparados. |
+| Candidate | 27 | Implementación publicada y semántica Builder revisada; evidencia ejecutable en curso. |
+
+### Candidatos publicados en esta pasada
+
+C#, Python, JavaScript, Go, Java, TypeScript, Rust, PHP, C++, Kotlin, Ruby, C, Swift, F#, Lua, Bash, Haskell, Scala, Perl, PowerShell, R, GNU Octave, Pascal, Erlang, Elixir, Clojure y Prolog.
+
+Todos ejercitan la misma receta observable: título + sección de disponibilidad producidos como **texto** y **HTML** mediante dos representaciones distintas. Esto permite comprobar intención de Builder, no sólo nombres de clases.
 
 ### N/A provisionales
 
