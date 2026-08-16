@@ -5,13 +5,24 @@ on:
     branches: [dev]
     paths:
       - '.github/workflows/pattern-builder-portable2.yml'
+      - 'src/Enterprise/Java/BuilderExample.java'
+      - 'src/Enterprise/Kotlin/BuilderExample.kt'
       - 'src/Enterprise/VisualBasic/BuilderExample.vb'
       - 'src/Systems/Objective-C/builder.m'
       - 'src/Systems/Zig/builder.zig'
+      - 'src/Systems/Rust/builder.rs'
+      - 'src/Systems/C/builder.c'
+      - 'src/Systems/C++/builder.cpp'
+      - 'src/Systems/Swift/builder.swift'
       - 'src/Niche/Nim/builder.nim'
       - 'src/Web/Dart/builder.dart'
+      - 'src/Web/TypeScriptTS/builder.ts'
       - 'src/Niche/Crystal/builder.cr'
       - 'src/Scripting/Groovy/builder.groovy'
+      - 'src/Scripting/PHP/builder.php'
+      - 'src/Scripting/RubyRB/builder.rb'
+      - 'src/Scripting/Lua/builder.lua'
+      - 'src/Shell/Bash/builder.sh'
       - 'src/Functional/OCaml/builder.ml'
       - 'src/DataScience/Julia/builder.jl'
       - 'src/Functional/Lisp/builder.lisp'
@@ -30,9 +41,19 @@ jobs:
       - uses: julia-actions/setup-julia@v2
         with: { version: '1' }
       - name: Setup runtimes
+        shell: bash
         run: |
+          set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y nim groovy ocaml sbcl
+          sudo apt-get install --no-install-recommends -y nim groovy ocaml sbcl lua5.4 php-cli ruby
+          command -v node
+          command -v javac
+          command -v rustc
+          command -v rustfmt
+          command -v gcc
+          command -v g++
+          command -v kotlinc
+          command -v swiftc
 
       - name: Validate Visual Basic .NET Builder
         shell: bash
@@ -127,6 +148,123 @@ jobs:
         run: |
           set -euo pipefail
           output="$(sbcl --noinform --non-interactive --load src/Functional/Lisp/builder.lisp)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
+
+      - name: Validate TypeScript Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          npx --yes typescript@6.0.3 tsc src/Web/TypeScriptTS/builder.ts --strict --target ES2024 --module commonjs --outDir "$work"
+          output="$(node "$work/builder.js")"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
+
+      - name: Validate Java Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          javac -Xlint:all -Werror -d "$work" src/Enterprise/Java/BuilderExample.java
+          output="$(java -cp "$work" BuilderExample)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
+
+      - name: Validate Rust Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          rustfmt --check src/Systems/Rust/builder.rs
+          rustc -D warnings src/Systems/Rust/builder.rs -o "$work/builder"
+          output="$("$work/builder")"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
+
+      - name: Validate C++ Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/builder.cpp' -o "$work/builder"
+          output="$("$work/builder")"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
+
+      - name: Validate C Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          gcc -std=c17 -Wall -Wextra -Werror src/Systems/C/builder.c -o "$work/builder"
+          output="$("$work/builder")"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
+
+      - name: Validate Ruby Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          ruby -cw src/Scripting/RubyRB/builder.rb
+          output="$(ruby src/Scripting/RubyRB/builder.rb)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
+
+      - name: Validate PHP Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          php -l src/Scripting/PHP/builder.php
+          output="$(php src/Scripting/PHP/builder.php)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
+
+      - name: Validate Lua Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(lua5.4 src/Scripting/Lua/builder.lua)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
+
+      - name: Validate Bash Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash -n src/Shell/Bash/builder.sh
+          output="$(bash src/Shell/Bash/builder.sh)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
+
+      - name: Validate Kotlin Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          kotlinc src/Enterprise/Kotlin/BuilderExample.kt -include-runtime -d "$work/builder.jar"
+          output="$(java -jar "$work/builder.jar")"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
+
+      - name: Validate Swift Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          swiftc src/Systems/Swift/builder.swift -o "$work/builder"
+          output="$("$work/builder")"
           grep -Fq '# Service status' <<<"$output"
           grep -Fq '<h1>Service status</h1>' <<<"$output"
           grep -Fq '99.95%' <<<"$output"
