@@ -15,21 +15,21 @@ type
   end;
 
   TTextReportBuilder = class(TInterfacedObject, IReportBuilder)
-  private
+  protected
     FParts: TStringList;
   public
     constructor Create;
     destructor Destroy; override;
     procedure Reset;
-    procedure AddTitle(const ATitle: string);
-    procedure AddSection(const AHeading, ABody: string);
+    procedure AddTitle(const ATitle: string); virtual;
+    procedure AddSection(const AHeading, ABody: string); virtual;
     function Build: string;
   end;
 
   THtmlReportBuilder = class(TTextReportBuilder)
   public
-    procedure AddTitle(const ATitle: string);
-    procedure AddSection(const AHeading, ABody: string);
+    procedure AddTitle(const ATitle: string); override;
+    procedure AddSection(const AHeading, ABody: string); override;
   end;
 
 constructor TTextReportBuilder.Create;
