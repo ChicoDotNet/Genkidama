@@ -170,12 +170,16 @@ Callbacks, closures, records, predicates o function pointers son representacione
 
 ## Validación automatizada
 
-Los ejemplos se agrupan en gates para que un rojo identifique el ecosistema que necesita Debt First. El antiguo gate `Pattern Factory Method Portable` no estaba siendo registrado por GitHub Actions de forma observable, por lo que sus diez targets se consolidaron en el workflow principal sin reducir ninguna comprobación:
+La validación de Factory Method se ancla en `.github/workflows/ci.yml`, un workflow que ya existe en `dev` y que GitHub registra consistentemente. Sus tres jobs son exclusivos de `patterns/factory-method-kb006`, por lo que no añaden costo ni riesgo al lane Learn ni a otros PRs:
 
-- `Pattern Factory Method`: C#, Java, Python, JavaScript, TypeScript, Go, Rust, PHP, C, C++, Visual Basic .NET, F#, Ruby, Lua, Shell/Bash, PowerShell, Kotlin y Swift.
-- `Pattern Factory Method Portable 2`: Ada, Solidity, Fortran, Pascal, Zig, Nim, Dart, Crystal, Haskell, Scala, Groovy y Objective-C.
+- `factory-method-mainstream`: C#, Java, Python, JavaScript, TypeScript, Go, Rust, PHP, C, C++, Visual Basic .NET, F#, Ruby, Lua, Shell/Bash, PowerShell, Kotlin y Swift.
+- `factory-method-portable`: Ada, Solidity, Fortran, Pascal, Zig, Nim, Dart, Crystal, Haskell, Scala y Groovy.
+- `factory-method-objective-c`: Objective-C en macOS con Clang/ARC/Foundation.
 - `Pattern Factory Method Functional`: Perl, Erlang, GNU Octave, R, Julia, OCaml, Common Lisp, Clojure, Elixir y Prolog.
 - `Pattern Factory Method Final`: COBOL, Assembly, GDScript, MATLAB, MicroPython, Rockstar y contratos proporcionales de VBA/Delphi.
+- `Pattern Platform Validation` y el job `build` del CI conservan los gates compartidos/regresión del repositorio, incluido Abstract Factory.
+
+Los workflows standalone de mainstream/portable fueron retirados después de presentar registro intermitente en GitHub Actions; sus comprobaciones no se eliminaron, sino que se trasladaron al CI registrado. En el run de CI que introdujo esta topología GitHub expuso explícitamente los jobs `factory-method-mainstream`, `factory-method-portable` y `factory-method-objective-c`, todos encolados junto con `build` y la regresión Objective-C de Abstract Factory.
 
 C#, Java, Python y JavaScript ya pasaron compile/run en un head anterior con exactamente los mismos blobs. TypeScript descubrió deuda del gate —la sintaxis de `npx` dejó de ser válida con npm 11— y el workflow fue corregido sin relajar la compilación strict. C, C++, Go, Ruby, PHP, Kotlin, Swift y Fortran tienen además prevalidación ejecutable sobre sus blobs actuales; esa evidencia reduce incertidumbre, pero la matriz espera los gates del head común antes de promover filas adicionales.
 
