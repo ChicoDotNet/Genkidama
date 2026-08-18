@@ -1,0 +1,162 @@
+name: Pattern Factory Method Portable 2
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-factory-method-portable2.yml'
+      - 'src/Historical/Ada/factory_method.adb'
+      - 'src/Niche/Solidity/FactoryMethod.sol'
+      - 'src/Historical/Fortran/factory_method.f90'
+      - 'src/Historical/Pascal/factory_method.pas'
+      - 'src/Systems/Zig/factory_method.zig'
+      - 'src/Niche/Nim/factory_method.nim'
+      - 'src/Web/Dart/factory_method.dart'
+      - 'src/Niche/Crystal/factory_method.cr'
+      - 'src/Functional/Haskell/FactoryMethod.hs'
+      - 'src/Functional/Scala/FactoryMethod.scala'
+      - 'src/Scripting/Groovy/factory_method.groovy'
+      - 'src/Systems/Objective-C/factory_method.m'
+      - 'wiki/FactoryMethod.md'
+
+jobs:
+  validate-portable:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Zig
+        uses: mlugg/setup-zig@v2
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+
+      - name: Setup Crystal
+        uses: crystal-lang/install-crystal@v1
+
+      - name: Setup runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y gnat gfortran fp-compiler ghc scala groovy nim
+
+      - name: Validate Ada
+        shell: bash
+        run: |
+          set -euo pipefail
+          gnatmake -q -gnat2022 -gnatwa -gnatwe src/Historical/Ada/factory_method.adb -o /tmp/factory-method-ada
+          output="$(/tmp/factory-method-ada)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Solidity
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$(mktemp -d)"
+          npx --yes solc@0.8.30 --bin --abi src/Niche/Solidity/FactoryMethod.sol -o "$out"
+          test -n "$(find "$out" -type f -name '*FactoryMethodPostgresCreator.bin' -size +0c -print -quit)"
+          test -n "$(find "$out" -type f -name '*FactoryMethodMySqlCreator.bin' -size +0c -print -quit)"
+
+      - name: Validate Fortran
+        shell: bash
+        run: |
+          set -euo pipefail
+          gfortran -std=f2018 -Wall -Wextra -Werror src/Historical/Fortran/factory_method.f90 -o /tmp/factory-method-fortran
+          output="$(/tmp/factory-method-fortran)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Pascal
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$(mktemp -d)"
+          fpc -Mobjfpc -O2 -Sew -FE"$out" src/Historical/Pascal/factory_method.pas >/dev/null
+          output="$("$out/factory_method")"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Zig
+        shell: bash
+        run: |
+          set -euo pipefail
+          zig fmt --check src/Systems/Zig/factory_method.zig
+          output="$(zig run src/Systems/Zig/factory_method.zig 2>&1)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Nim
+        shell: bash
+        run: |
+          set -euo pipefail
+          nim c --hints:off --warnings:on -o:/tmp/factory-method-nim src/Niche/Nim/factory_method.nim
+          output="$(/tmp/factory-method-nim)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Dart
+        shell: bash
+        run: |
+          set -euo pipefail
+          dart format --output=none --set-exit-if-changed src/Web/Dart/factory_method.dart
+          dart analyze --fatal-infos --fatal-warnings src/Web/Dart/factory_method.dart
+          output="$(dart run src/Web/Dart/factory_method.dart)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Crystal
+        shell: bash
+        run: |
+          set -euo pipefail
+          crystal tool format src/Niche/Crystal/factory_method.cr
+          test -z "$(git status --short -- src/Niche/Crystal/factory_method.cr)"
+          crystal build --error-on-warnings src/Niche/Crystal/factory_method.cr -o /tmp/factory-method-crystal
+          output="$(/tmp/factory-method-crystal)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Haskell
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(runghc -Wall -Werror src/Functional/Haskell/FactoryMethod.hs)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Scala
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$(mktemp -d)"
+          scalac -deprecation -feature -unchecked src/Functional/Scala/FactoryMethod.scala -d "$out"
+          output="$(scala -cp "$out" FactoryMethod)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Groovy
+        shell: bash
+        run: |
+          set -euo pipefail
+          groovyc -d /tmp/factory-method-groovy src/Scripting/Groovy/factory_method.groovy
+          output="$(groovy src/Scripting/Groovy/factory_method.groovy)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+  validate-objective-c:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Validate Objective-C
+        shell: bash
+        run: |
+          set -euo pipefail
+          clang -fobjc-arc -Wall -Wextra -Werror -framework Foundation src/Systems/Objective-C/factory_method.m -o /tmp/factory-method-objective-c
+          output="$(/tmp/factory-method-objective-c 2>&1)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
