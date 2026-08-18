@@ -170,15 +170,14 @@ Callbacks, closures, records, predicates o function pointers son representacione
 
 ## Validación automatizada
 
-Los ejemplos se agrupan en gates pequeños para que un rojo identifique el ecosistema que necesita Debt First:
+Los ejemplos se agrupan en gates para que un rojo identifique el ecosistema que necesita Debt First. El antiguo gate `Pattern Factory Method Portable` no estaba siendo registrado por GitHub Actions de forma observable, por lo que sus diez targets se consolidaron en el workflow principal sin reducir ninguna comprobación:
 
-- `Pattern Factory Method`: C#, Java, Python, JavaScript, TypeScript, Go, Rust y PHP.
-- `Pattern Factory Method Portable`: C, C++, Visual Basic .NET, F#, Ruby, Lua, Shell/Bash, PowerShell, Kotlin y Swift.
+- `Pattern Factory Method`: C#, Java, Python, JavaScript, TypeScript, Go, Rust, PHP, C, C++, Visual Basic .NET, F#, Ruby, Lua, Shell/Bash, PowerShell, Kotlin y Swift.
 - `Pattern Factory Method Portable 2`: Ada, Solidity, Fortran, Pascal, Zig, Nim, Dart, Crystal, Haskell, Scala, Groovy y Objective-C.
 - `Pattern Factory Method Functional`: Perl, Erlang, GNU Octave, R, Julia, OCaml, Common Lisp, Clojure, Elixir y Prolog.
 - `Pattern Factory Method Final`: COBOL, Assembly, GDScript, MATLAB, MicroPython, Rockstar y contratos proporcionales de VBA/Delphi.
 
-C#, Java, Python y JavaScript ya pasaron compile/run en un head anterior con exactamente los mismos blobs. TypeScript descubrió deuda del gate —la sintaxis de `npx` dejó de ser válida con npm 11— y el workflow fue corregido sin relajar la compilación strict. El head común actual vuelve a ejecutar todos los gates antes de promover más filas.
+C#, Java, Python y JavaScript ya pasaron compile/run en un head anterior con exactamente los mismos blobs. TypeScript descubrió deuda del gate —la sintaxis de `npx` dejó de ser válida con npm 11— y el workflow fue corregido sin relajar la compilación strict. C, C++, Go, Ruby, PHP, Kotlin, Swift y Fortran tienen además prevalidación ejecutable sobre sus blobs actuales; esa evidencia reduce incertidumbre, pero la matriz espera los gates del head común antes de promover filas adicionales.
 
 ## Implementaciones por lenguaje
 
