@@ -1,19 +1,25 @@
 type
-  DatabaseKind = enum
-    postgres, mysql
-  FactoryMethod = proc(): DatabaseKind
+  DatabaseAction = proc()
+  Database = object
+    connect: DatabaseAction
+    query: DatabaseAction
+  FactoryMethod = proc(): Database
 
-proc createPostgres(): DatabaseKind = postgres
-proc createMySql(): DatabaseKind = mysql
+proc postgresConnect() = echo "PostgreSQL connect"
+proc postgresQuery() = echo "PostgreSQL query"
+proc mySqlConnect() = echo "MySQL connect"
+proc mySqlQuery() = echo "MySQL query"
+
+proc createPostgres(): Database =
+  Database(connect: postgresConnect, query: postgresQuery)
+
+proc createMySql(): Database =
+  Database(connect: mySqlConnect, query: mySqlQuery)
 
 proc useDatabase(createDatabase: FactoryMethod) =
-  case createDatabase()
-  of postgres:
-    echo "PostgreSQL connect"
-    echo "PostgreSQL query"
-  of mysql:
-    echo "MySQL connect"
-    echo "MySQL query"
+  let database = createDatabase()
+  database.connect()
+  database.query()
 
 useDatabase(createPostgres)
 useDatabase(createMySql)
