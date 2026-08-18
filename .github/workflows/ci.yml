@@ -205,3 +205,210 @@ jobs:
           grep -Fq 'Dark Checkbox' <<<"$output"
           grep -Fq 'Light Button' <<<"$output"
           grep -Fq 'Light Checkbox' <<<"$output"
+
+  factory-method-mainstream:
+    if: github.event_name == 'pull_request' && github.head_ref == 'patterns/factory-method-kb006'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.26.5'
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup portable runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y php-cli lua5.4 ruby
+
+      - name: Validate mainstream and portable Factory Method examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          assert_output() {
+            local output="$1"
+            grep -Fq 'PostgreSQL connect' <<<"$output"
+            grep -Fq 'MySQL query' <<<"$output"
+          }
+
+          work="$(mktemp -d)"
+          dotnet new console --framework net10.0 --output "$work/csharp" --force >/dev/null
+          cp 'src/Enterprise/C#/FactoryMethodExample.cs' "$work/csharp/Program.cs"
+          assert_output "$(dotnet run --project "$work/csharp" --configuration Release)"
+
+          java_out="$work/java"
+          mkdir -p "$java_out"
+          javac -Xlint:all -Werror -d "$java_out" src/Enterprise/Java/FactoryMethodExample.java
+          assert_output "$(java -cp "$java_out" FactoryMethodExample)"
+
+          python -m py_compile src/Scripting/PythonPY/factory_method.py
+          assert_output "$(python src/Scripting/PythonPY/factory_method.py)"
+
+          node --check src/Web/JavaScriptJS/factory_method.js
+          assert_output "$(node src/Web/JavaScriptJS/factory_method.js)"
+
+          ts_out="$work/typescript"
+          npx --yes --package typescript@6.0.3 tsc src/Web/TypeScriptTS/factory_method.ts --strict --target ES2024 --module commonjs --outDir "$ts_out"
+          assert_output "$(node "$ts_out/factory_method.js")"
+
+          test -z "$(gofmt -d src/Systems/Go/factory_method.go)"
+          go vet src/Systems/Go/factory_method.go
+          assert_output "$(go run src/Systems/Go/factory_method.go)"
+
+          rustfmt --check src/Systems/Rust/factory_method.rs
+          rustc -D warnings src/Systems/Rust/factory_method.rs -o "$work/factory-method-rust"
+          assert_output "$("$work/factory-method-rust")"
+
+          php -l src/Scripting/PHP/factory_method.php >/dev/null
+          assert_output "$(php src/Scripting/PHP/factory_method.php)"
+
+          gcc -std=c17 -Wall -Wextra -Werror src/Systems/C/factory_method.c -o "$work/factory-method-c"
+          assert_output "$("$work/factory-method-c")"
+
+          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/factory_method.cpp' -o "$work/factory-method-cpp"
+          assert_output "$("$work/factory-method-cpp")"
+
+          vb="$work/vb"
+          dotnet new console --language VB --framework net10.0 --output "$vb" --force >/dev/null
+          cp src/Enterprise/VisualBasic/FactoryMethodExample.vb "$vb/Program.vb"
+          assert_output "$(dotnet run --project "$vb" --configuration Release)"
+
+          assert_output "$(dotnet fsi 'src/Functional/F#/factory_method.fsx')"
+
+          ruby -cw src/Scripting/RubyRB/factory_method.rb
+          assert_output "$(ruby src/Scripting/RubyRB/factory_method.rb)"
+          assert_output "$(lua5.4 src/Scripting/Lua/factory_method.lua)"
+          bash -n src/Shell/Bash/factory_method.sh
+          assert_output "$(bash src/Shell/Bash/factory_method.sh)"
+          assert_output "$(pwsh -NoLogo -NoProfile -NonInteractive -File src/Shell/PowerShell/factory_method.ps1)"
+
+          kotlinc src/Enterprise/Kotlin/FactoryMethodExample.kt -include-runtime -d "$work/factory-method-kotlin.jar"
+          assert_output "$(java -jar "$work/factory-method-kotlin.jar")"
+
+          swiftc src/Systems/Swift/factory_method.swift -o "$work/factory-method-swift"
+          assert_output "$("$work/factory-method-swift")"
+
+  factory-method-portable:
+    if: github.event_name == 'pull_request' && github.head_ref == 'patterns/factory-method-kb006'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Zig
+        uses: mlugg/setup-zig@v2
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+
+      - name: Setup Crystal
+        uses: crystal-lang/install-crystal@v1
+
+      - name: Setup portable runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y gnat gfortran fp-compiler ghc scala groovy nim
+
+      - name: Validate extended portable Factory Method examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          assert_output() {
+            local output="$1"
+            grep -Fq 'PostgreSQL connect' <<<"$output"
+            grep -Fq 'MySQL query' <<<"$output"
+          }
+
+          work="$(mktemp -d)"
+          gnatmake -q -gnat2022 -gnatwa -gnatwe src/Historical/Ada/factory_method.adb -o "$work/factory-method-ada"
+          assert_output "$("$work/factory-method-ada")"
+
+          sol="$work/solidity"
+          mkdir -p "$sol"
+          npx --yes solc@0.8.30 --bin --abi src/Niche/Solidity/FactoryMethod.sol -o "$sol"
+          test -n "$(find "$sol" -type f -name '*FactoryMethodPostgresCreator.bin' -size +0c -print -quit)"
+          test -n "$(find "$sol" -type f -name '*FactoryMethodMySqlCreator.bin' -size +0c -print -quit)"
+
+          gfortran -std=f2018 -Wall -Wextra -Werror src/Historical/Fortran/factory_method.f90 -o "$work/factory-method-fortran"
+          assert_output "$("$work/factory-method-fortran")"
+
+          pas="$work/pascal"
+          mkdir -p "$pas"
+          fpc -Mobjfpc -O2 -Sew -FE"$pas" src/Historical/Pascal/factory_method.pas >/dev/null
+          assert_output "$("$pas/factory_method")"
+
+          zig fmt --check src/Systems/Zig/factory_method.zig
+          assert_output "$(zig run src/Systems/Zig/factory_method.zig 2>&1)"
+
+          nim c --hints:off --warnings:on -o:"$work/factory-method-nim" src/Niche/Nim/factory_method.nim
+          assert_output "$("$work/factory-method-nim")"
+
+          dart format --output=none --set-exit-if-changed src/Web/Dart/factory_method.dart
+          dart analyze --fatal-infos --fatal-warnings src/Web/Dart/factory_method.dart
+          assert_output "$(dart run src/Web/Dart/factory_method.dart)"
+
+          crystal tool format src/Niche/Crystal/factory_method.cr
+          test -z "$(git status --short -- src/Niche/Crystal/factory_method.cr)"
+          crystal build --error-on-warnings src/Niche/Crystal/factory_method.cr -o "$work/factory-method-crystal"
+          assert_output "$("$work/factory-method-crystal")"
+
+          assert_output "$(runghc -Wall -Werror src/Functional/Haskell/FactoryMethod.hs)"
+
+          scala_out="$work/scala"
+          mkdir -p "$scala_out"
+          scalac -deprecation -feature -unchecked src/Functional/Scala/FactoryMethod.scala -d "$scala_out"
+          assert_output "$(scala -cp "$scala_out" FactoryMethod)"
+
+          groovyc -d "$work/groovy" src/Scripting/Groovy/factory_method.groovy
+          assert_output "$(groovy src/Scripting/Groovy/factory_method.groovy)"
+
+  factory-method-objective-c:
+    if: github.event_name == 'pull_request' && github.head_ref == 'patterns/factory-method-kb006'
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Validate Objective-C Factory Method with Foundation
+        shell: bash
+        run: |
+          set -euo pipefail
+          clang -fobjc-arc -Wall -Wextra -Werror -framework Foundation \
+            src/Systems/Objective-C/factory_method.m \
+            -o /tmp/factory-method-objective-c
+          output="$(/tmp/factory-method-objective-c 2>&1)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
