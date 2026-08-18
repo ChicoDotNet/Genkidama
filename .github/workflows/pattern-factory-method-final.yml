@@ -55,6 +55,8 @@ jobs:
           ld /tmp/factory-method-assembly.o -o /tmp/factory-method-assembly
           output="$(/tmp/factory-method-assembly)"
           grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'PostgreSQL query' <<<"$output"
+          grep -Fq 'MySQL connect' <<<"$output"
           grep -Fq 'MySQL query' <<<"$output"
 
   gdscript:
@@ -77,6 +79,8 @@ jobs:
           set -euo pipefail
           output="$(godot --headless --script src/Niche/GDScript/factory_method.gd 2>&1)"
           grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'PostgreSQL query' <<<"$output"
+          grep -Fq 'MySQL connect' <<<"$output"
           grep -Fq 'MySQL query' <<<"$output"
 
   matlab:
@@ -124,6 +128,8 @@ jobs:
           set -euo pipefail
           output="$(/tmp/micropython/ports/unix/build-standard/micropython src/Other/MicroPython/factory_method.py)"
           grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'PostgreSQL query' <<<"$output"
+          grep -Fq 'MySQL connect' <<<"$output"
           grep -Fq 'MySQL query' <<<"$output"
 
   rockstar:
@@ -151,6 +157,8 @@ jobs:
           output="$("$ROCKSTAR" src/Other/Rockstar/factory_method.rock 2>&1)"
           printf '%s\n' "$output"
           grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'PostgreSQL query' <<<"$output"
+          grep -Fq 'MySQL connect' <<<"$output"
           grep -Fq 'MySQL query' <<<"$output"
 
   proprietary-source-contracts:
