@@ -1,27 +1,42 @@
 const std = @import("std");
 
-const DatabaseKind = enum { postgres, mysql };
-const FactoryMethod = *const fn () DatabaseKind;
+const DatabaseAction = *const fn () void;
 
-fn createPostgres() DatabaseKind {
-    return .postgres;
+const Database = struct {
+    connect: DatabaseAction,
+    query: DatabaseAction,
+};
+
+const FactoryMethod = *const fn () Database;
+
+fn postgresConnect() void {
+    std.debug.print("PostgreSQL connect\n", .{});
 }
 
-fn createMySql() DatabaseKind {
-    return .mysql;
+fn postgresQuery() void {
+    std.debug.print("PostgreSQL query\n", .{});
+}
+
+fn mysqlConnect() void {
+    std.debug.print("MySQL connect\n", .{});
+}
+
+fn mysqlQuery() void {
+    std.debug.print("MySQL query\n", .{});
+}
+
+fn createPostgres() Database {
+    return .{ .connect = postgresConnect, .query = postgresQuery };
+}
+
+fn createMySql() Database {
+    return .{ .connect = mysqlConnect, .query = mysqlQuery };
 }
 
 fn useDatabase(createDatabase: FactoryMethod) void {
-    switch (createDatabase()) {
-        .postgres => {
-            std.debug.print("PostgreSQL connect\n", .{});
-            std.debug.print("PostgreSQL query\n", .{});
-        },
-        .mysql => {
-            std.debug.print("MySQL connect\n", .{});
-            std.debug.print("MySQL query\n", .{});
-        },
-    }
+    const database = createDatabase();
+    database.connect();
+    database.query();
 }
 
 pub fn main() void {
