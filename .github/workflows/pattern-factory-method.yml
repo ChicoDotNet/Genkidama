@@ -1,0 +1,140 @@
+name: Pattern Factory Method
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-factory-method.yml'
+      - 'src/Enterprise/C#/FactoryMethodExample.cs'
+      - 'src/Enterprise/Java/FactoryMethodExample.java'
+      - 'src/Scripting/PythonPY/factory_method.py'
+      - 'src/Web/JavaScriptJS/factory_method.js'
+      - 'src/Web/TypeScriptTS/factory_method.ts'
+      - 'src/Systems/Go/factory_method.go'
+      - 'src/Systems/Rust/factory_method.rs'
+      - 'src/Scripting/PHP/factory_method.php'
+      - 'wiki/FactoryMethod.md'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.26.5'
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup PHP
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y php-cli
+
+      - name: Validate C#
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          dotnet new console --framework net10.0 --output "$work" --force >/dev/null
+          cp 'src/Enterprise/C#/FactoryMethodExample.cs' "$work/Program.cs"
+          output="$(dotnet run --project "$work" --configuration Release)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'PostgreSQL query' <<<"$output"
+          grep -Fq 'MySQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Java
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          javac -Xlint:all -Werror -d "$work" src/Enterprise/Java/FactoryMethodExample.java
+          output="$(java -cp "$work" FactoryMethodExample)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Python
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile src/Scripting/PythonPY/factory_method.py
+          output="$(python src/Scripting/PythonPY/factory_method.py)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check src/Web/JavaScriptJS/factory_method.js
+          output="$(node src/Web/JavaScriptJS/factory_method.js)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate TypeScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          npx --yes typescript@6.0.3 tsc src/Web/TypeScriptTS/factory_method.ts --strict --target ES2024 --module commonjs --outDir "$work"
+          output="$(node "$work/factory_method.js")"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Go
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(gofmt -d src/Systems/Go/factory_method.go)"
+          go vet src/Systems/Go/factory_method.go
+          output="$(go run src/Systems/Go/factory_method.go)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Rust
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustfmt --check src/Systems/Rust/factory_method.rs
+          rustc -D warnings src/Systems/Rust/factory_method.rs -o /tmp/factory-method-rust
+          output="$(/tmp/factory-method-rust)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate PHP
+        shell: bash
+        run: |
+          set -euo pipefail
+          php -l src/Scripting/PHP/factory_method.php
+          output="$(php src/Scripting/PHP/factory_method.php)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
