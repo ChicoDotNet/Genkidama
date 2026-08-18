@@ -3,36 +3,54 @@ program FactoryMethod;
 {$mode objfpc}{$H+}
 
 type
-  TDatabaseKind = (dkPostgres, dkMySql);
-  TFactoryMethod = function: TDatabaseKind;
+  TDatabaseAction = procedure;
 
-function CreatePostgres: TDatabaseKind;
+  TDatabase = record
+    Connect: TDatabaseAction;
+    Query: TDatabaseAction;
+  end;
+
+  TFactoryMethod = function: TDatabase;
+
+procedure PostgresConnect;
 begin
-  Result := dkPostgres;
+  WriteLn('PostgreSQL connect');
 end;
 
-function CreateMySql: TDatabaseKind;
+procedure PostgresQuery;
 begin
-  Result := dkMySql;
+  WriteLn('PostgreSQL query');
+end;
+
+procedure MySqlConnect;
+begin
+  WriteLn('MySQL connect');
+end;
+
+procedure MySqlQuery;
+begin
+  WriteLn('MySQL query');
+end;
+
+function CreatePostgres: TDatabase;
+begin
+  Result.Connect := @PostgresConnect;
+  Result.Query := @PostgresQuery;
+end;
+
+function CreateMySql: TDatabase;
+begin
+  Result.Connect := @MySqlConnect;
+  Result.Query := @MySqlQuery;
 end;
 
 procedure UseDatabase(CreateDatabase: TFactoryMethod);
 var
-  Database: TDatabaseKind;
+  Database: TDatabase;
 begin
   Database := CreateDatabase();
-  case Database of
-    dkPostgres:
-      begin
-        WriteLn('PostgreSQL connect');
-        WriteLn('PostgreSQL query');
-      end;
-    dkMySql:
-      begin
-        WriteLn('MySQL connect');
-        WriteLn('MySQL query');
-      end;
-  end;
+  Database.Connect();
+  Database.Query();
 end;
 
 begin
