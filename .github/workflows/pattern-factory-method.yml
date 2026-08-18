@@ -27,7 +27,7 @@ on:
       - 'wiki/FactoryMethod.md'
 
 concurrency:
-  group: factory-method-main-${{ github.event.pull_request.number || github.ref }}
+  group: factory-method-main-${{ github.head_ref }}
   cancel-in-progress: true
 
 jobs:
