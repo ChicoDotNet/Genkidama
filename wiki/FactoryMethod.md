@@ -160,14 +160,6 @@ Callbacks, closures, records, predicates o function pointers son representacione
 - La evidencia ejecuta al menos dos variantes y observa comportamiento distinto del producto.
 - La validación no se limita a buscar nombres como `Factory` o `Create`.
 
-## Preguntas de comprensión
-
-1. ¿Qué diferencia una factory function de Factory Method?
-2. ¿Qué parte debe permanecer estable al agregar una nueva variante?
-3. ¿Por qué la herencia no es requisito del patrón?
-4. ¿Cuándo Abstract Factory resuelve una presión distinta?
-5. ¿Qué comportamiento observable demostraría que el hook de creación realmente varía?
-
 ## Validación automatizada
 
 La validación de Factory Method se ancla en `.github/workflows/ci.yml`, un workflow que ya existe en `dev` y que GitHub registra consistentemente. Sus tres jobs son exclusivos de `patterns/factory-method-kb006`, por lo que no añaden costo ni riesgo al lane Learn ni a otros PRs:
@@ -242,3 +234,23 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | CSS | N/A | — | Presentación declarativa; no expresa por sí sola una operación runtime con creación sustituible. | N/A |
 
 La página permanece `in-progress` hasta que **implemented == applicable == 48**.
+
+## Comprueba que lo entendiste
+
+1. ¿Qué diferencia una factory function de Factory Method y qué operación debe permanecer estable para que exista el patrón?
+2. Si agregar una nueva variante obliga a editar `useDatabase()`, ¿qué parte del diseño está rompiendo la intención de Factory Method?
+3. ¿Cuándo sería preferible Abstract Factory, Builder o una función factory simple en lugar de Factory Method?
+
+## Resumen
+
+- **Presión:** una operación estable necesita un producto cuya variante concreta debe poder cambiar sin acoplar el flujo a constructores concretos.
+- **Movimiento central:** el Creator delega únicamente la creación a un factory method/hook sustituible y después consume sólo el contrato de Product.
+- **Trade-off:** se gana extensibilidad de creación a cambio de un punto adicional de indirection que puede ser ceremonia si sólo existe una variante.
+- **Relaciones:** Abstract Factory puede apoyarse en factory methods; Template Method puede contenerlos como hooks; Builder y Prototype resuelven presiones de creación diferentes.
+- **Portabilidad:** herencia no es requisito; closures, callbacks, records, predicates y function pointers son válidos cuando conservan el flujo estable y sustituyen sólo la creación.
+
+## Referencias
+
+- Erich Gamma, Richard Helm, Ralph Johnson y John Vlissides, *Design Patterns: Elements of Reusable Object-Oriented Software* — patrón Factory Method.
+- [`docs/philosophy/001-patterns-as-living-examples.md`](../docs/philosophy/001-patterns-as-living-examples.md) — arquitectura antes que exhibición de patrones y lugares potenciales de uso en Genkidama.
+- [`docs/kb/catalog/pattern-authoring-standard.md`](../docs/kb/catalog/pattern-authoring-standard.md) — KB-006, estructura y Definition of Done canónicos para el catálogo.
