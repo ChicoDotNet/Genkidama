@@ -1,4 +1,4 @@
-name: Pattern Factory Method Portable 2
+name: Pattern Factory Method Core
 
 on:
   pull_request:
@@ -6,6 +6,24 @@ on:
       - dev
     paths:
       - '.github/workflows/pattern-factory-method-portable2.yml'
+      - 'src/Enterprise/C#/FactoryMethodExample.cs'
+      - 'src/Enterprise/Java/FactoryMethodExample.java'
+      - 'src/Scripting/PythonPY/factory_method.py'
+      - 'src/Web/JavaScriptJS/factory_method.js'
+      - 'src/Web/TypeScriptTS/factory_method.ts'
+      - 'src/Systems/Go/factory_method.go'
+      - 'src/Systems/Rust/factory_method.rs'
+      - 'src/Scripting/PHP/factory_method.php'
+      - 'src/Systems/C/factory_method.c'
+      - 'src/Systems/C++/factory_method.cpp'
+      - 'src/Enterprise/VisualBasic/FactoryMethodExample.vb'
+      - 'src/Functional/F#/factory_method.fsx'
+      - 'src/Scripting/RubyRB/factory_method.rb'
+      - 'src/Scripting/Lua/factory_method.lua'
+      - 'src/Shell/Bash/factory_method.sh'
+      - 'src/Shell/PowerShell/factory_method.ps1'
+      - 'src/Enterprise/Kotlin/FactoryMethodExample.kt'
+      - 'src/Systems/Swift/factory_method.swift'
       - 'src/Historical/Ada/factory_method.adb'
       - 'src/Niche/Solidity/FactoryMethod.sol'
       - 'src/Historical/Fortran/factory_method.f90'
@@ -21,6 +39,217 @@ on:
       - 'wiki/FactoryMethod.md'
 
 jobs:
+  validate-mainstream:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.26.5'
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup portable runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y php-cli lua5.4 ruby
+
+      - name: Validate C#
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          dotnet new console --framework net10.0 --output "$work" --force >/dev/null
+          cp 'src/Enterprise/C#/FactoryMethodExample.cs' "$work/Program.cs"
+          output="$(dotnet run --project "$work" --configuration Release)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'PostgreSQL query' <<<"$output"
+          grep -Fq 'MySQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Java
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          javac -Xlint:all -Werror -d "$work" src/Enterprise/Java/FactoryMethodExample.java
+          output="$(java -cp "$work" FactoryMethodExample)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Python
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile src/Scripting/PythonPY/factory_method.py
+          output="$(python src/Scripting/PythonPY/factory_method.py)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check src/Web/JavaScriptJS/factory_method.js
+          output="$(node src/Web/JavaScriptJS/factory_method.js)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate TypeScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          npx --yes --package typescript@6.0.3 tsc src/Web/TypeScriptTS/factory_method.ts --strict --target ES2024 --module commonjs --outDir "$work"
+          output="$(node "$work/factory_method.js")"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Go
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(gofmt -d src/Systems/Go/factory_method.go)"
+          go vet src/Systems/Go/factory_method.go
+          output="$(go run src/Systems/Go/factory_method.go)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Rust
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustfmt --check src/Systems/Rust/factory_method.rs
+          rustc -D warnings src/Systems/Rust/factory_method.rs -o /tmp/factory-method-rust
+          output="$(/tmp/factory-method-rust)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate PHP
+        shell: bash
+        run: |
+          set -euo pipefail
+          php -l src/Scripting/PHP/factory_method.php
+          output="$(php src/Scripting/PHP/factory_method.php)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate C
+        shell: bash
+        run: |
+          set -euo pipefail
+          gcc -std=c17 -Wall -Wextra -Werror src/Systems/C/factory_method.c -o /tmp/factory-method-c
+          output="$(/tmp/factory-method-c)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate C++
+        shell: bash
+        run: |
+          set -euo pipefail
+          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/factory_method.cpp' -o /tmp/factory-method-cpp
+          output="$(/tmp/factory-method-cpp)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate VB.NET
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          dotnet new console --language VB --framework net10.0 --output "$work" --force >/dev/null
+          cp src/Enterprise/VisualBasic/FactoryMethodExample.vb "$work/Program.vb"
+          output="$(dotnet run --project "$work" --configuration Release)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate F#
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(dotnet fsi 'src/Functional/F#/factory_method.fsx')"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Ruby
+        shell: bash
+        run: |
+          set -euo pipefail
+          ruby -cw src/Scripting/RubyRB/factory_method.rb
+          output="$(ruby src/Scripting/RubyRB/factory_method.rb)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Lua
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(lua5.4 src/Scripting/Lua/factory_method.lua)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Bash
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash -n src/Shell/Bash/factory_method.sh
+          output="$(bash src/Shell/Bash/factory_method.sh)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate PowerShell
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $output = & ./src/Shell/PowerShell/factory_method.ps1 | Out-String
+          if (-not $output.Contains('PostgreSQL connect')) { throw 'Missing PostgreSQL output' }
+          if (-not $output.Contains('MySQL query')) { throw 'Missing MySQL output' }
+
+      - name: Validate Kotlin
+        shell: bash
+        run: |
+          set -euo pipefail
+          kotlinc src/Enterprise/Kotlin/FactoryMethodExample.kt -include-runtime -d /tmp/factory-method-kotlin.jar
+          output="$(java -jar /tmp/factory-method-kotlin.jar)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Swift
+        shell: bash
+        run: |
+          set -euo pipefail
+          swiftc src/Systems/Swift/factory_method.swift -o /tmp/factory-method-swift
+          output="$(/tmp/factory-method-swift)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
   validate-portable:
     runs-on: ubuntu-latest
     steps:
