@@ -1,0 +1,197 @@
+name: Pattern Factory Method Final
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-factory-method-final.yml'
+      - 'src/Historical/Cobol/factory_method.cbl'
+      - 'src/LowLevel/Assembly/factory_method.asm'
+      - 'src/Niche/GDScript/factory_method.gd'
+      - 'src/DataScience/MATLAB/factory_method.m'
+      - 'src/Other/MicroPython/factory_method.py'
+      - 'src/Other/Rockstar/factory_method.rock'
+      - 'src/Shell/VBA/IDatabase.cls'
+      - 'src/Shell/VBA/PostgresDatabase.cls'
+      - 'src/Shell/VBA/MySqlDatabase.cls'
+      - 'src/Shell/VBA/IDatabaseCreator.cls'
+      - 'src/Shell/VBA/PostgresCreator.cls'
+      - 'src/Shell/VBA/MySqlCreator.cls'
+      - 'src/Shell/VBA/factory_method.bas'
+      - 'src/Enterprise/Delphi/FactoryMethod.pas'
+      - 'wiki/FactoryMethod.md'
+
+jobs:
+  portable-final:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup compilers
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y gnucobol3 nasm
+
+      - name: Validate COBOL
+        shell: bash
+        run: |
+          set -euo pipefail
+          cobc -x -Wall src/Historical/Cobol/factory_method.cbl -o /tmp/factory-method-cobol
+          output="$(/tmp/factory-method-cobol)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'PostgreSQL query' <<<"$output"
+          grep -Fq 'MySQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Assembly
+        shell: bash
+        run: |
+          set -euo pipefail
+          nasm -f elf64 -Wall src/LowLevel/Assembly/factory_method.asm -o /tmp/factory-method-assembly.o
+          ld /tmp/factory-method-assembly.o -o /tmp/factory-method-assembly
+          output="$(/tmp/factory-method-assembly)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+  gdscript:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Godot 4.6.3
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 'https://github.com/godotengine/godot-builds/releases/download/4.6.3-stable/Godot_v4.6.3-stable_linux.x86_64.zip' --output /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          sudo install -m 0755 /tmp/godot/Godot_v4.6.3-stable_linux.x86_64 /usr/local/bin/godot
+
+      - name: Validate GDScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(godot --headless --script src/Niche/GDScript/factory_method.gd 2>&1)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+  matlab:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup MATLAB
+        uses: matlab-actions/setup-matlab@v3
+        with:
+          release: latest
+
+      - name: Validate MATLAB
+        uses: matlab-actions/run-command@v3
+        with:
+          command: >-
+            addpath('src/DataScience/MATLAB');
+            output = evalc('factory_method');
+            disp(output);
+            assert(contains(output, "PostgreSQL connect"));
+            assert(contains(output, "PostgreSQL query"));
+            assert(contains(output, "MySQL connect"));
+            assert(contains(output, "MySQL query"));
+
+  micropython:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Build MicroPython 1.28.0 Unix port
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential libffi-dev pkg-config
+          git clone --depth 1 --branch v1.28.0 --recurse-submodules https://github.com/micropython/micropython.git /tmp/micropython
+          make -C /tmp/micropython/mpy-cross -j2
+          make -C /tmp/micropython/ports/unix -j2
+
+      - name: Validate MicroPython
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(/tmp/micropython/ports/unix/build-standard/micropython src/Other/MicroPython/factory_method.py)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+  rockstar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Rockstar v2.0.31
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 'https://github.com/RockstarLang/rockstar/releases/download/v2.0.31/rockstar-v2.0.31-linux-x64.tar.gz' --output /tmp/rockstar.tar.gz
+          echo '3d265c80d9d039ad92524f42951eb546d8b42c680965dfa551210457e399653f  /tmp/rockstar.tar.gz' | sha256sum -c -
+          mkdir -p /tmp/rockstar
+          tar -xzf /tmp/rockstar.tar.gz -C /tmp/rockstar
+          ROCKSTAR="$(find /tmp/rockstar -type f -name rockstar -perm -111 | head -n 1)"
+          test -n "$ROCKSTAR"
+          echo "ROCKSTAR=$ROCKSTAR" >> "$GITHUB_ENV"
+
+      - name: Validate Rockstar
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$("$ROCKSTAR" src/Other/Rockstar/factory_method.rock 2>&1)"
+          printf '%s\n' "$output"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+  proprietary-source-contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Validate VBA and Delphi Factory Method source contracts
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          def require(text: str, pattern: str, label: str) -> None:
+              if re.search(pattern, text, flags=re.IGNORECASE | re.MULTILINE | re.DOTALL) is None:
+                  raise SystemExit(f"Missing source contract: {label}")
+
+          vba_root = Path('src/Shell/VBA')
+          idatabase = (vba_root / 'IDatabase.cls').read_text(encoding='utf-8')
+          pg_product = (vba_root / 'PostgresDatabase.cls').read_text(encoding='utf-8')
+          mysql_product = (vba_root / 'MySqlDatabase.cls').read_text(encoding='utf-8')
+          creator_contract = (vba_root / 'IDatabaseCreator.cls').read_text(encoding='utf-8')
+          pg_creator = (vba_root / 'PostgresCreator.cls').read_text(encoding='utf-8')
+          mysql_creator = (vba_root / 'MySqlCreator.cls').read_text(encoding='utf-8')
+          client = (vba_root / 'factory_method.bas').read_text(encoding='utf-8')
+
+          require(idatabase, r'Public\s+Sub\s+Connect.*Public\s+Sub\s+Query', 'VBA product contract')
+          require(pg_product, r'Implements\s+IDatabase.*PostgreSQL connect.*PostgreSQL query', 'VBA PostgreSQL product')
+          require(mysql_product, r'Implements\s+IDatabase.*MySQL connect.*MySQL query', 'VBA MySQL product')
+          require(creator_contract, r'Function\s+CreateDatabase\(\)\s+As\s+IDatabase', 'VBA creator contract')
+          require(pg_creator, r'Implements\s+IDatabaseCreator.*IDatabaseCreator_CreateDatabase.*New\s+PostgresDatabase', 'VBA PostgreSQL factory method')
+          require(mysql_creator, r'Implements\s+IDatabaseCreator.*IDatabaseCreator_CreateDatabase.*New\s+MySqlDatabase', 'VBA MySQL factory method')
+          require(client, r'UseDatabase\(ByVal\s+creator\s+As\s+IDatabaseCreator\).*creator\.CreateDatabase\(\).*database\.Connect.*database\.Query', 'VBA stable creator operation')
+
+          delphi = Path('src/Enterprise/Delphi/FactoryMethod.pas').read_text(encoding='utf-8')
+          require(delphi, r'IDatabase\s*=\s*interface.*procedure\s+Connect.*procedure\s+Query', 'Delphi product contract')
+          require(delphi, r'TDatabaseCreator\s*=\s*class\s+abstract.*function\s+CreateDatabase:\s*IDatabase;\s*virtual;\s*abstract.*procedure\s+UseDatabase', 'Delphi creator contract')
+          require(delphi, r'TPostgresCreator.*CreateDatabase.*TPostgresDatabase\.Create', 'Delphi PostgreSQL factory method')
+          require(delphi, r'TMySqlCreator.*CreateDatabase.*TMySqlDatabase\.Create', 'Delphi MySQL factory method')
+          require(delphi, r'TDatabaseCreator\.UseDatabase.*CreateDatabase.*Database\.Connect.*Database\.Query', 'Delphi stable creator operation')
+
+          print('VBA Factory Method source contract: OK')
+          print('Delphi Factory Method source contract: OK')
