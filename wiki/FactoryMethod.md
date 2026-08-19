@@ -3,7 +3,7 @@
 > **Familia:** Creational  
 > **Intención:** definir una operación estable que necesita crear un producto, dejando que una variante sustituible decida qué producto concreto construir.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `4/48`  
+> **Implementaciones de lenguaje:** `34/48`  
 > **Cobertura de pruebas:** N/A — la completitud se valida por lenguaje con compile/run o evidencia proporcional; no existe una métrica homogénea transversal.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -171,9 +171,9 @@ La validación de Factory Method se ancla en `.github/workflows/ci.yml`, un work
 - `Pattern Factory Method Final`: COBOL, Assembly, GDScript, MATLAB, MicroPython, Rockstar y contratos proporcionales de VBA/Delphi.
 - `Pattern Platform Validation` y el job `build` del CI conservan los gates compartidos/regresión del repositorio, incluido Abstract Factory.
 
-Los workflows standalone de mainstream/portable fueron retirados después de presentar registro intermitente en GitHub Actions; sus comprobaciones no se eliminaron, sino que se trasladaron al CI registrado. En el run de CI que introdujo esta topología GitHub expuso explícitamente los jobs `factory-method-mainstream`, `factory-method-portable` y `factory-method-objective-c`, todos encolados junto con `build` y la regresión Objective-C de Abstract Factory.
+Los workflows standalone de mainstream/portable fueron retirados después de presentar registro intermitente en GitHub Actions; sus comprobaciones no se eliminaron, sino que se trasladaron al CI registrado.
 
-C#, Java, Python y JavaScript ya pasaron compile/run en un head anterior con exactamente los mismos blobs. TypeScript descubrió deuda del gate —la sintaxis de `npx` dejó de ser válida con npm 11— y el workflow fue corregido sin relajar la compilación strict. C, C++, Go, Ruby, PHP, Kotlin, Swift y Fortran tienen además prevalidación ejecutable sobre sus blobs actuales; esa evidencia reduce incertidumbre, pero la matriz espera los gates del head común antes de promover filas adicionales.
+El head `136ad764efb507c75335c5aa1f6f5d174666be4a` produjo evidencia completa verde para `factory-method-portable`, `factory-method-objective-c`, `Pattern Factory Method Functional`, `Pattern Factory Method Final`, `Pattern Platform Validation` y el job general `build`. La única falla de ese head fue `factory-method-mainstream`, acotada a formato no canónico en Go. El head posterior `4196b334769504bca99c6f80735172ddc61d6ed6` difiere de `136ad764...` únicamente en `src/Systems/Go/factory_method.go`, donde se aplicó exactamente el formato requerido por `gofmt`. Por tanto, esta matriz promueve las 30 filas cubiertas por los jobs completamente verdes y conserva pendientes sólo los 14 targets del tranche mainstream que aún requieren rerun común; C#, Java, Python y JavaScript ya tenían evidencia previa sobre blobs sin cambios.
 
 ## Implementaciones por lenguaje
 
@@ -182,53 +182,53 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Lenguaje | Aplicabilidad | Ejemplo | Validación | Estado |
 |---|---|---|---|---|
 | C# | Applicable | [`FactoryMethodExample.cs`](../src/Enterprise/C%23/FactoryMethodExample.cs) | .NET 10 compile/run | ✅ verificado |
-| TypeScript | Applicable | [`factory_method.ts`](../src/Web/TypeScriptTS/factory_method.ts) | TS strict + Node | ⏳ rerun |
-| Ada | Applicable | [`factory_method.adb`](../src/Historical/Ada/factory_method.adb) | GNAT Ada 2022 compile/run | ⏳ rerun |
-| Solidity | Applicable | [`FactoryMethod.sol`](../src/Niche/Solidity/FactoryMethod.sol) | solc 0.8.30 artifact | ⏳ rerun |
-| Fortran | Applicable | [`factory_method.f90`](../src/Historical/Fortran/factory_method.f90) | Fortran 2018 warnings-as-errors | ⏳ rerun |
-| Pascal | Applicable | [`factory_method.pas`](../src/Historical/Pascal/factory_method.pas) | Free Pascal compile/run | ⏳ rerun |
+| TypeScript | Applicable | [`factory_method.ts`](../src/Web/TypeScriptTS/factory_method.ts) | TS strict + Node | ⏳ rerun mainstream |
+| Ada | Applicable | [`factory_method.adb`](../src/Historical/Ada/factory_method.adb) | GNAT Ada 2022 compile/run | ✅ verificado |
+| Solidity | Applicable | [`FactoryMethod.sol`](../src/Niche/Solidity/FactoryMethod.sol) | solc 0.8.30 artifact | ✅ verificado |
+| Fortran | Applicable | [`factory_method.f90`](../src/Historical/Fortran/factory_method.f90) | Fortran 2018 warnings-as-errors | ✅ verificado |
+| Pascal | Applicable | [`factory_method.pas`](../src/Historical/Pascal/factory_method.pas) | Free Pascal compile/run | ✅ verificado |
 | Python | Applicable | [`factory_method.py`](../src/Scripting/PythonPY/factory_method.py) | Python 3.14 compile/run | ✅ verificado |
-| Visual Basic .NET | Applicable | [`FactoryMethodExample.vb`](../src/Enterprise/VisualBasic/FactoryMethodExample.vb) | .NET 10 compile/run | ⏳ rerun |
-| C++ | Applicable | [`factory_method.cpp`](../src/Systems/C%2B%2B/factory_method.cpp) | C++20 warnings-as-errors | ⏳ rerun |
-| Objective-C | Applicable | [`factory_method.m`](../src/Systems/Objective-C/factory_method.m) | macOS Clang/ARC/Foundation | ⏳ rerun |
+| Visual Basic .NET | Applicable | [`FactoryMethodExample.vb`](../src/Enterprise/VisualBasic/FactoryMethodExample.vb) | .NET 10 compile/run | ⏳ rerun mainstream |
+| C++ | Applicable | [`factory_method.cpp`](../src/Systems/C%2B%2B/factory_method.cpp) | C++20 warnings-as-errors | ⏳ rerun mainstream |
+| Objective-C | Applicable | [`factory_method.m`](../src/Systems/Objective-C/factory_method.m) | macOS Clang/ARC/Foundation | ✅ verificado |
 | Java | Applicable | [`FactoryMethodExample.java`](../src/Enterprise/Java/FactoryMethodExample.java) | Java 25 `-Werror` compile/run | ✅ verificado |
-| Rust | Applicable | [`factory_method.rs`](../src/Systems/Rust/factory_method.rs) | rustfmt + rustc warnings-as-errors | ⏳ rerun |
-| Zig | Applicable | [`factory_method.zig`](../src/Systems/Zig/factory_method.zig) | Zig fmt/run | ⏳ rerun |
-| Go | Applicable | [`factory_method.go`](../src/Systems/Go/factory_method.go) | gofmt/vet/run | ⏳ rerun |
-| PHP | Applicable | [`factory_method.php`](../src/Scripting/PHP/factory_method.php) | PHP lint/run | ⏳ rerun |
-| Nim | Applicable | [`factory_method.nim`](../src/Niche/Nim/factory_method.nim) | Nim compile/run | ⏳ rerun |
-| Dart | Applicable | [`factory_method.dart`](../src/Web/Dart/factory_method.dart) | format/analyze/run | ⏳ rerun |
-| Kotlin | Applicable | [`FactoryMethodExample.kt`](../src/Enterprise/Kotlin/FactoryMethodExample.kt) | kotlinc/JVM run | ⏳ rerun |
-| Swift | Applicable | [`factory_method.swift`](../src/Systems/Swift/factory_method.swift) | swiftc compile/run | ⏳ rerun |
-| F# | Applicable | [`factory_method.fsx`](../src/Functional/F%23/factory_method.fsx) | dotnet fsi | ⏳ rerun |
-| Crystal | Applicable | [`factory_method.cr`](../src/Niche/Crystal/factory_method.cr) | format/build/run | ⏳ rerun |
-| Lua | Applicable | [`factory_method.lua`](../src/Scripting/Lua/factory_method.lua) | Lua 5.4 run | ⏳ rerun |
-| Haskell | Applicable | [`FactoryMethod.hs`](../src/Functional/Haskell/FactoryMethod.hs) | runghc `-Wall -Werror` | ⏳ rerun |
-| COBOL | Applicable | [`factory_method.cbl`](../src/Historical/Cobol/factory_method.cbl) | GnuCOBOL compile/run | ⏳ rerun |
-| Scala | Applicable | [`FactoryMethod.scala`](../src/Functional/Scala/FactoryMethod.scala) | scalac/run | ⏳ rerun |
-| Groovy | Applicable | [`factory_method.groovy`](../src/Scripting/Groovy/factory_method.groovy) | groovyc/run | ⏳ rerun |
-| Ruby | Applicable | [`factory_method.rb`](../src/Scripting/RubyRB/factory_method.rb) | syntax/run | ⏳ rerun |
-| C | Applicable | [`factory_method.c`](../src/Systems/C/factory_method.c) | C17 warnings-as-errors | ⏳ rerun |
-| OCaml | Applicable | [`factory_method.ml`](../src/Functional/OCaml/factory_method.ml) | ocamlc warnings-as-errors | ⏳ rerun |
-| Julia | Applicable | [`factory_method.jl`](../src/DataScience/Julia/factory_method.jl) | Julia run | ⏳ rerun |
-| VBA | Applicable | [`factory_method.bas`](../src/Shell/VBA/factory_method.bas) + class modules | source contract sobre VBA real | ⏳ rerun |
-| GDScript | Applicable | [`factory_method.gd`](../src/Niche/GDScript/factory_method.gd) | Godot 4.6.3 headless | ⏳ rerun |
+| Rust | Applicable | [`factory_method.rs`](../src/Systems/Rust/factory_method.rs) | rustfmt + rustc warnings-as-errors | ⏳ rerun mainstream |
+| Zig | Applicable | [`factory_method.zig`](../src/Systems/Zig/factory_method.zig) | Zig fmt/run | ✅ verificado |
+| Go | Applicable | [`factory_method.go`](../src/Systems/Go/factory_method.go) | gofmt/vet/run | ⏳ rerun mainstream |
+| PHP | Applicable | [`factory_method.php`](../src/Scripting/PHP/factory_method.php) | PHP lint/run | ⏳ rerun mainstream |
+| Nim | Applicable | [`factory_method.nim`](../src/Niche/Nim/factory_method.nim) | Nim compile/run | ✅ verificado |
+| Dart | Applicable | [`factory_method.dart`](../src/Web/Dart/factory_method.dart) | format/analyze/run | ✅ verificado |
+| Kotlin | Applicable | [`FactoryMethodExample.kt`](../src/Enterprise/Kotlin/FactoryMethodExample.kt) | kotlinc/JVM run | ⏳ rerun mainstream |
+| Swift | Applicable | [`factory_method.swift`](../src/Systems/Swift/factory_method.swift) | swiftc compile/run | ⏳ rerun mainstream |
+| F# | Applicable | [`factory_method.fsx`](../src/Functional/F%23/factory_method.fsx) | dotnet fsi | ⏳ rerun mainstream |
+| Crystal | Applicable | [`factory_method.cr`](../src/Niche/Crystal/factory_method.cr) | format/build/run | ✅ verificado |
+| Lua | Applicable | [`factory_method.lua`](../src/Scripting/Lua/factory_method.lua) | Lua 5.4 run | ⏳ rerun mainstream |
+| Haskell | Applicable | [`FactoryMethod.hs`](../src/Functional/Haskell/FactoryMethod.hs) | runghc `-Wall -Werror` | ✅ verificado |
+| COBOL | Applicable | [`factory_method.cbl`](../src/Historical/Cobol/factory_method.cbl) | GnuCOBOL compile/run | ✅ verificado |
+| Scala | Applicable | [`FactoryMethod.scala`](../src/Functional/Scala/FactoryMethod.scala) | scalac/run | ✅ verificado |
+| Groovy | Applicable | [`factory_method.groovy`](../src/Scripting/Groovy/factory_method.groovy) | groovyc/run | ✅ verificado |
+| Ruby | Applicable | [`factory_method.rb`](../src/Scripting/RubyRB/factory_method.rb) | syntax/run | ⏳ rerun mainstream |
+| C | Applicable | [`factory_method.c`](../src/Systems/C/factory_method.c) | C17 warnings-as-errors | ⏳ rerun mainstream |
+| OCaml | Applicable | [`factory_method.ml`](../src/Functional/OCaml/factory_method.ml) | ocamlc warnings-as-errors | ✅ verificado |
+| Julia | Applicable | [`factory_method.jl`](../src/DataScience/Julia/factory_method.jl) | Julia run | ✅ verificado |
+| VBA | Applicable | [`factory_method.bas`](../src/Shell/VBA/factory_method.bas) + class modules | source contract sobre VBA real | ✅ verificado |
+| GDScript | Applicable | [`factory_method.gd`](../src/Niche/GDScript/factory_method.gd) | Godot 4.6.3 headless | ✅ verificado |
 | JavaScript | Applicable | [`factory_method.js`](../src/Web/JavaScriptJS/factory_method.js) | Node 24 syntax/run | ✅ verificado |
-| MATLAB | Applicable | [`factory_method.m`](../src/DataScience/MATLAB/factory_method.m) | MathWorks Actions | ⏳ rerun |
-| Perl | Applicable | [`factory_method.pl`](../src/Scripting/Perl/factory_method.pl) | Perl syntax/run | ⏳ rerun |
-| R | Applicable | [`factory_method.R`](../src/DataScience/R/factory_method.R) | Rscript | ⏳ rerun |
-| PowerShell | Applicable | [`factory_method.ps1`](../src/Shell/PowerShell/factory_method.ps1) | pwsh strict/run | ⏳ rerun |
-| Assembly | Applicable | [`factory_method.asm`](../src/LowLevel/Assembly/factory_method.asm) | NASM + ld + run | ⏳ rerun |
-| Elixir | Applicable | [`factory_method.exs`](../src/Functional/Elixir/factory_method.exs) | elixirc warnings-as-errors + run | ⏳ rerun |
-| Shell | Applicable | [`factory_method.sh`](../src/Shell/Bash/factory_method.sh) | bash syntax/run | ⏳ rerun |
-| Erlang | Applicable | [`factory_method.erl`](../src/Functional/Erlang/factory_method.erl) | erlc `-Werror` + run | ⏳ rerun |
-| Clojure | Applicable | [`factory_method.clj`](../src/Functional/Clojure/factory_method.clj) | Clojure run | ⏳ rerun |
-| Common Lisp | Applicable | [`factory_method.lisp`](../src/Functional/Lisp/factory_method.lisp) | SBCL load/run | ⏳ rerun |
-| Prolog | Applicable | [`factory_method.pl`](../src/Niche/Prolog/factory_method.pl) | SWI-Prolog run | ⏳ rerun |
-| Delphi | Applicable | [`FactoryMethod.pas`](../src/Enterprise/Delphi/FactoryMethod.pas) | source contract sobre Delphi real | ⏳ rerun |
-| GNU Octave | Applicable | [`factory_method.m`](../src/DataScience/Octave/factory_method.m) | Octave run | ⏳ rerun |
-| MicroPython | Applicable | [`factory_method.py`](../src/Other/MicroPython/factory_method.py) | MicroPython 1.28.0 Unix port | ⏳ rerun |
-| Rockstar | Applicable | [`factory_method.rock`](../src/Other/Rockstar/factory_method.rock) | Rockstar 2.0.31 pinned runtime | ⏳ rerun |
+| MATLAB | Applicable | [`factory_method.m`](../src/DataScience/MATLAB/factory_method.m) | MathWorks Actions | ✅ verificado |
+| Perl | Applicable | [`factory_method.pl`](../src/Scripting/Perl/factory_method.pl) | Perl syntax/run | ✅ verificado |
+| R | Applicable | [`factory_method.R`](../src/DataScience/R/factory_method.R) | Rscript | ✅ verificado |
+| PowerShell | Applicable | [`factory_method.ps1`](../src/Shell/PowerShell/factory_method.ps1) | pwsh strict/run | ⏳ rerun mainstream |
+| Assembly | Applicable | [`factory_method.asm`](../src/LowLevel/Assembly/factory_method.asm) | NASM + ld + run | ✅ verificado |
+| Elixir | Applicable | [`factory_method.exs`](../src/Functional/Elixir/factory_method.exs) | elixirc warnings-as-errors + run | ✅ verificado |
+| Shell | Applicable | [`factory_method.sh`](../src/Shell/Bash/factory_method.sh) | bash syntax/run | ⏳ rerun mainstream |
+| Erlang | Applicable | [`factory_method.erl`](../src/Functional/Erlang/factory_method.erl) | erlc `-Werror` + run | ✅ verificado |
+| Clojure | Applicable | [`factory_method.clj`](../src/Functional/Clojure/factory_method.clj) | Clojure run | ✅ verificado |
+| Common Lisp | Applicable | [`factory_method.lisp`](../src/Functional/Lisp/factory_method.lisp) | SBCL load/run | ✅ verificado |
+| Prolog | Applicable | [`factory_method.pl`](../src/Niche/Prolog/factory_method.pl) | SWI-Prolog run | ✅ verificado |
+| Delphi | Applicable | [`FactoryMethod.pas`](../src/Enterprise/Delphi/FactoryMethod.pas) | source contract sobre Delphi real | ✅ verificado |
+| GNU Octave | Applicable | [`factory_method.m`](../src/DataScience/Octave/factory_method.m) | Octave run | ✅ verificado |
+| MicroPython | Applicable | [`factory_method.py`](../src/Other/MicroPython/factory_method.py) | MicroPython 1.28.0 Unix port | ✅ verificado |
+| Rockstar | Applicable | [`factory_method.rock`](../src/Other/Rockstar/factory_method.rock) | Rockstar 2.0.31 pinned runtime | ✅ verificado |
 | HTML | N/A | — | Markup declarativo; el hook ejecutable pertenece a otro runtime/lenguaje. | N/A |
 | SQL | N/A | — | SQL declarativo; no se fuerza un dialecto procedural bajo la etiqueta SQL. | N/A |
 | CSS | N/A | — | Presentación declarativa; no expresa por sí sola una operación runtime con creación sustituible. | N/A |
