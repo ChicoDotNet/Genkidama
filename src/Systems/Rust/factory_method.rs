@@ -5,14 +5,22 @@ trait Database {
 
 struct PostgresDatabase;
 impl Database for PostgresDatabase {
-    fn connect(&self) { println!("PostgreSQL connect"); }
-    fn query(&self) { println!("PostgreSQL query"); }
+    fn connect(&self) {
+        println!("PostgreSQL connect");
+    }
+    fn query(&self) {
+        println!("PostgreSQL query");
+    }
 }
 
 struct MySqlDatabase;
 impl Database for MySqlDatabase {
-    fn connect(&self) { println!("MySQL connect"); }
-    fn query(&self) { println!("MySQL query"); }
+    fn connect(&self) {
+        println!("MySQL connect");
+    }
+    fn query(&self) {
+        println!("MySQL query");
+    }
 }
 
 fn use_database(create: fn() -> Box<dyn Database>) {
@@ -21,8 +29,12 @@ fn use_database(create: fn() -> Box<dyn Database>) {
     database.query();
 }
 
-fn create_postgres() -> Box<dyn Database> { Box::new(PostgresDatabase) }
-fn create_mysql() -> Box<dyn Database> { Box::new(MySqlDatabase) }
+fn create_postgres() -> Box<dyn Database> {
+    Box::new(PostgresDatabase)
+}
+fn create_mysql() -> Box<dyn Database> {
+    Box::new(MySqlDatabase)
+}
 
 fn main() {
     use_database(create_postgres);
