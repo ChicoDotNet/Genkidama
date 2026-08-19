@@ -2,8 +2,8 @@
 
 > **Familia:** Creational  
 > **Intención:** definir una operación estable que necesita crear un producto, dejando que una variante sustituible decida qué producto concreto construir.  
-> **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `34/48`  
+> **Estado:** `validated`  
+> **Implementaciones de lenguaje:** `48/48`  
 > **Cobertura de pruebas:** N/A — la completitud se valida por lenguaje con compile/run o evidencia proporcional; no existe una métrica homogénea transversal.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -173,42 +173,42 @@ La validación de Factory Method se ancla en `.github/workflows/ci.yml`, un work
 
 Los workflows standalone de mainstream/portable fueron retirados después de presentar registro intermitente en GitHub Actions; sus comprobaciones no se eliminaron, sino que se trasladaron al CI registrado.
 
-El head `136ad764efb507c75335c5aa1f6f5d174666be4a` produjo evidencia completa verde para `factory-method-portable`, `factory-method-objective-c`, `Pattern Factory Method Functional`, `Pattern Factory Method Final`, `Pattern Platform Validation` y el job general `build`. La única falla de ese head fue `factory-method-mainstream`, acotada a formato no canónico en Go. El head posterior `4196b334769504bca99c6f80735172ddc61d6ed6` difiere de `136ad764...` únicamente en `src/Systems/Go/factory_method.go`, donde se aplicó exactamente el formato requerido por `gofmt`. Por tanto, esta matriz promueve las 30 filas cubiertas por los jobs completamente verdes y conserva pendientes sólo los 14 targets del tranche mainstream que aún requieren rerun común; C#, Java, Python y JavaScript ya tenían evidencia previa sobre blobs sin cambios.
+El head `24a66dfa92441e4c16d2029c142f4db235021b8c` produjo evidencia verde completa para `factory-method-mainstream`, `factory-method-portable`, `factory-method-objective-c`, `Pattern Factory Method Functional`, `Pattern Factory Method Final`, `Pattern Platform Validation` y el job general `build`. El tranche mainstream confirmó además los arreglos acotados de formato Go y Rust sin relajar ningún gate. Por tanto, los **48 targets Applicable** tienen ejemplo real enlazado y la validación más fuerte/ligera razonablemente disponible para su ecosistema.
 
 ## Implementaciones por lenguaje
 
-La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): **45 targets v1 + 6 adicionales = 51**. Factory Method clasifica **48 Applicable** y **3 N/A**. Los 48 ejemplos ya están materializados; una fila cuenta como implementada sólo después de evidencia suficiente.
+La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): **45 targets v1 + 6 adicionales = 51**. Factory Method clasifica **48 Applicable** y **3 N/A**. Los 48 ejemplos están materializados y verificados.
 
 | Lenguaje | Aplicabilidad | Ejemplo | Validación | Estado |
 |---|---|---|---|---|
 | C# | Applicable | [`FactoryMethodExample.cs`](../src/Enterprise/C%23/FactoryMethodExample.cs) | .NET 10 compile/run | ✅ verificado |
-| TypeScript | Applicable | [`factory_method.ts`](../src/Web/TypeScriptTS/factory_method.ts) | TS strict + Node | ⏳ rerun mainstream |
+| TypeScript | Applicable | [`factory_method.ts`](../src/Web/TypeScriptTS/factory_method.ts) | TS strict + Node | ✅ verificado |
 | Ada | Applicable | [`factory_method.adb`](../src/Historical/Ada/factory_method.adb) | GNAT Ada 2022 compile/run | ✅ verificado |
 | Solidity | Applicable | [`FactoryMethod.sol`](../src/Niche/Solidity/FactoryMethod.sol) | solc 0.8.30 artifact | ✅ verificado |
 | Fortran | Applicable | [`factory_method.f90`](../src/Historical/Fortran/factory_method.f90) | Fortran 2018 warnings-as-errors | ✅ verificado |
 | Pascal | Applicable | [`factory_method.pas`](../src/Historical/Pascal/factory_method.pas) | Free Pascal compile/run | ✅ verificado |
 | Python | Applicable | [`factory_method.py`](../src/Scripting/PythonPY/factory_method.py) | Python 3.14 compile/run | ✅ verificado |
-| Visual Basic .NET | Applicable | [`FactoryMethodExample.vb`](../src/Enterprise/VisualBasic/FactoryMethodExample.vb) | .NET 10 compile/run | ⏳ rerun mainstream |
-| C++ | Applicable | [`factory_method.cpp`](../src/Systems/C%2B%2B/factory_method.cpp) | C++20 warnings-as-errors | ⏳ rerun mainstream |
+| Visual Basic .NET | Applicable | [`FactoryMethodExample.vb`](../src/Enterprise/VisualBasic/FactoryMethodExample.vb) | .NET 10 compile/run | ✅ verificado |
+| C++ | Applicable | [`factory_method.cpp`](../src/Systems/C%2B%2B/factory_method.cpp) | C++20 warnings-as-errors | ✅ verificado |
 | Objective-C | Applicable | [`factory_method.m`](../src/Systems/Objective-C/factory_method.m) | macOS Clang/ARC/Foundation | ✅ verificado |
 | Java | Applicable | [`FactoryMethodExample.java`](../src/Enterprise/Java/FactoryMethodExample.java) | Java 25 `-Werror` compile/run | ✅ verificado |
-| Rust | Applicable | [`factory_method.rs`](../src/Systems/Rust/factory_method.rs) | rustfmt + rustc warnings-as-errors | ⏳ rerun mainstream |
+| Rust | Applicable | [`factory_method.rs`](../src/Systems/Rust/factory_method.rs) | rustfmt + rustc warnings-as-errors | ✅ verificado |
 | Zig | Applicable | [`factory_method.zig`](../src/Systems/Zig/factory_method.zig) | Zig fmt/run | ✅ verificado |
-| Go | Applicable | [`factory_method.go`](../src/Systems/Go/factory_method.go) | gofmt/vet/run | ⏳ rerun mainstream |
-| PHP | Applicable | [`factory_method.php`](../src/Scripting/PHP/factory_method.php) | PHP lint/run | ⏳ rerun mainstream |
+| Go | Applicable | [`factory_method.go`](../src/Systems/Go/factory_method.go) | gofmt/vet/run | ✅ verificado |
+| PHP | Applicable | [`factory_method.php`](../src/Scripting/PHP/factory_method.php) | PHP lint/run | ✅ verificado |
 | Nim | Applicable | [`factory_method.nim`](../src/Niche/Nim/factory_method.nim) | Nim compile/run | ✅ verificado |
 | Dart | Applicable | [`factory_method.dart`](../src/Web/Dart/factory_method.dart) | format/analyze/run | ✅ verificado |
-| Kotlin | Applicable | [`FactoryMethodExample.kt`](../src/Enterprise/Kotlin/FactoryMethodExample.kt) | kotlinc/JVM run | ⏳ rerun mainstream |
-| Swift | Applicable | [`factory_method.swift`](../src/Systems/Swift/factory_method.swift) | swiftc compile/run | ⏳ rerun mainstream |
-| F# | Applicable | [`factory_method.fsx`](../src/Functional/F%23/factory_method.fsx) | dotnet fsi | ⏳ rerun mainstream |
+| Kotlin | Applicable | [`FactoryMethodExample.kt`](../src/Enterprise/Kotlin/FactoryMethodExample.kt) | kotlinc/JVM run | ✅ verificado |
+| Swift | Applicable | [`factory_method.swift`](../src/Systems/Swift/factory_method.swift) | swiftc compile/run | ✅ verificado |
+| F# | Applicable | [`factory_method.fsx`](../src/Functional/F%23/factory_method.fsx) | dotnet fsi | ✅ verificado |
 | Crystal | Applicable | [`factory_method.cr`](../src/Niche/Crystal/factory_method.cr) | format/build/run | ✅ verificado |
-| Lua | Applicable | [`factory_method.lua`](../src/Scripting/Lua/factory_method.lua) | Lua 5.4 run | ⏳ rerun mainstream |
+| Lua | Applicable | [`factory_method.lua`](../src/Scripting/Lua/factory_method.lua) | Lua 5.4 run | ✅ verificado |
 | Haskell | Applicable | [`FactoryMethod.hs`](../src/Functional/Haskell/FactoryMethod.hs) | runghc `-Wall -Werror` | ✅ verificado |
 | COBOL | Applicable | [`factory_method.cbl`](../src/Historical/Cobol/factory_method.cbl) | GnuCOBOL compile/run | ✅ verificado |
 | Scala | Applicable | [`FactoryMethod.scala`](../src/Functional/Scala/FactoryMethod.scala) | scalac/run | ✅ verificado |
 | Groovy | Applicable | [`factory_method.groovy`](../src/Scripting/Groovy/factory_method.groovy) | groovyc/run | ✅ verificado |
-| Ruby | Applicable | [`factory_method.rb`](../src/Scripting/RubyRB/factory_method.rb) | syntax/run | ⏳ rerun mainstream |
-| C | Applicable | [`factory_method.c`](../src/Systems/C/factory_method.c) | C17 warnings-as-errors | ⏳ rerun mainstream |
+| Ruby | Applicable | [`factory_method.rb`](../src/Scripting/RubyRB/factory_method.rb) | syntax/run | ✅ verificado |
+| C | Applicable | [`factory_method.c`](../src/Systems/C/factory_method.c) | C17 warnings-as-errors | ✅ verificado |
 | OCaml | Applicable | [`factory_method.ml`](../src/Functional/OCaml/factory_method.ml) | ocamlc warnings-as-errors | ✅ verificado |
 | Julia | Applicable | [`factory_method.jl`](../src/DataScience/Julia/factory_method.jl) | Julia run | ✅ verificado |
 | VBA | Applicable | [`factory_method.bas`](../src/Shell/VBA/factory_method.bas) + class modules | source contract sobre VBA real | ✅ verificado |
@@ -217,10 +217,10 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | MATLAB | Applicable | [`factory_method.m`](../src/DataScience/MATLAB/factory_method.m) | MathWorks Actions | ✅ verificado |
 | Perl | Applicable | [`factory_method.pl`](../src/Scripting/Perl/factory_method.pl) | Perl syntax/run | ✅ verificado |
 | R | Applicable | [`factory_method.R`](../src/DataScience/R/factory_method.R) | Rscript | ✅ verificado |
-| PowerShell | Applicable | [`factory_method.ps1`](../src/Shell/PowerShell/factory_method.ps1) | pwsh strict/run | ⏳ rerun mainstream |
+| PowerShell | Applicable | [`factory_method.ps1`](../src/Shell/PowerShell/factory_method.ps1) | pwsh strict/run | ✅ verificado |
 | Assembly | Applicable | [`factory_method.asm`](../src/LowLevel/Assembly/factory_method.asm) | NASM + ld + run | ✅ verificado |
 | Elixir | Applicable | [`factory_method.exs`](../src/Functional/Elixir/factory_method.exs) | elixirc warnings-as-errors + run | ✅ verificado |
-| Shell | Applicable | [`factory_method.sh`](../src/Shell/Bash/factory_method.sh) | bash syntax/run | ⏳ rerun mainstream |
+| Shell | Applicable | [`factory_method.sh`](../src/Shell/Bash/factory_method.sh) | bash syntax/run | ✅ verificado |
 | Erlang | Applicable | [`factory_method.erl`](../src/Functional/Erlang/factory_method.erl) | erlc `-Werror` + run | ✅ verificado |
 | Clojure | Applicable | [`factory_method.clj`](../src/Functional/Clojure/factory_method.clj) | Clojure run | ✅ verificado |
 | Common Lisp | Applicable | [`factory_method.lisp`](../src/Functional/Lisp/factory_method.lisp) | SBCL load/run | ✅ verificado |
@@ -233,7 +233,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | SQL | N/A | — | SQL declarativo; no se fuerza un dialecto procedural bajo la etiqueta SQL. | N/A |
 | CSS | N/A | — | Presentación declarativa; no expresa por sí sola una operación runtime con creación sustituible. | N/A |
 
-La página permanece `in-progress` hasta que **implemented == applicable == 48**.
+Factory Method alcanza **implemented == applicable == 48** con evidencia proporcional completa.
 
 ## Comprueba que lo entendiste
 
