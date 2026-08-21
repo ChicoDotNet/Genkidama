@@ -222,12 +222,12 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Setup PHP
+      - name: Setup portable Adapter runtimes
         shell: bash
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y php-cli
+          sudo apt-get install --no-install-recommends -y php-cli ruby lua5.4 ghc scala perl fp-compiler
 
       - name: Validate Adapter mainstream examples
         shell: bash
@@ -281,6 +281,52 @@ jobs:
           assert_adapter "$("$work/adapter-swift")"
 
           assert_adapter "$(dotnet fsi 'src/Functional/F#/adapter.fsx')"
+
+      - name: Validate Adapter portable examples
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          assert_adapter() {
+            local output="$1"
+            grep -Fxq 'legacy=86F' <<<"$output"
+            grep -Fxq 'adapted=30C' <<<"$output"
+          }
+
+          work="$(mktemp -d)"
+
+          vb="$work/vb"
+          dotnet new console --language VB --framework net10.0 --output "$vb" --force >/dev/null
+          cp src/Enterprise/VisualBasic/AdapterExample.vb "$vb/Program.vb"
+          assert_adapter "$(dotnet run --project "$vb" --configuration Release)"
+
+          gcc -std=c17 -Wall -Wextra -Werror src/Systems/C/adapter.c -o "$work/adapter-c"
+          assert_adapter "$("$work/adapter-c")"
+
+          ruby -cw src/Scripting/RubyRB/adapter.rb
+          assert_adapter "$(ruby src/Scripting/RubyRB/adapter.rb)"
+
+          assert_adapter "$(lua5.4 src/Scripting/Lua/adapter.lua)"
+
+          bash -n src/Shell/Bash/adapter.sh
+          assert_adapter "$(bash src/Shell/Bash/adapter.sh)"
+
+          assert_adapter "$(pwsh -NoLogo -NoProfile -NonInteractive -File src/Shell/PowerShell/adapter.ps1)"
+
+          assert_adapter "$(runghc -Wall -Werror src/Functional/Haskell/Adapter.hs)"
+
+          scala_out="$work/scala"
+          mkdir -p "$scala_out"
+          scalac -deprecation -feature -unchecked src/Functional/Scala/Adapter.scala -d "$scala_out"
+          assert_adapter "$(scala -cp "$scala_out" Adapter)"
+
+          perl -c src/Scripting/Perl/adapter.pl
+          assert_adapter "$(perl src/Scripting/Perl/adapter.pl)"
+
+          pascal_out="$work/pascal"
+          mkdir -p "$pascal_out"
+          fpc -Mobjfpc -O2 -Sew -FE"$pascal_out" src/Historical/Pascal/adapter.pas >/dev/null
+          assert_adapter "$("$pascal_out/adapter")"
 
   objective-c-abstract-factory:
     if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'patterns/')
