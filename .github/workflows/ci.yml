@@ -251,40 +251,106 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y fp-compiler ghc lua5.4 perl ruby scala
 
-      - name: Validate Bridge mainstream examples
+      - name: Validate Bridge C#
         shell: bash
         run: |
           set -euo pipefail
           expected="$(printf 'basic-tv=TV:on\nbasic-radio=Radio:on\nmute-tv=TV:muted\nmute-radio=Radio:muted')"
-          assert_output() { test "$1" = "$expected"; }
           work="$(mktemp -d)"
+          dotnet new console --framework net10.0 --output "$work" --force >/dev/null
+          cp 'src/Enterprise/C#/BridgeExample.cs' "$work/Program.cs"
+          test "$(dotnet run --project "$work" --configuration Release)" = "$expected"
 
-          dotnet new console --framework net10.0 --output "$work/csharp" --force >/dev/null
-          cp 'src/Enterprise/C#/BridgeExample.cs' "$work/csharp/Program.cs"
-          assert_output "$(dotnet run --project "$work/csharp" --configuration Release)"
+      - name: Validate Bridge Python
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(printf 'basic-tv=TV:on\nbasic-radio=Radio:on\nmute-tv=TV:muted\nmute-radio=Radio:muted')"
           python -m py_compile src/Scripting/PythonPY/bridge.py
-          assert_output "$(python src/Scripting/PythonPY/bridge.py)"
+          test "$(python src/Scripting/PythonPY/bridge.py)" = "$expected"
+
+      - name: Validate Bridge JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(printf 'basic-tv=TV:on\nbasic-radio=Radio:on\nmute-tv=TV:muted\nmute-radio=Radio:muted')"
           node --check src/Web/JavaScriptJS/bridge.js
-          assert_output "$(node src/Web/JavaScriptJS/bridge.js)"
-          npx --yes --package typescript@6.0.3 tsc src/Web/TypeScriptTS/bridge.ts --strict --target ES2024 --module commonjs --outDir "$work/typescript"
-          assert_output "$(node "$work/typescript/bridge.js")"
-          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/bridge.cpp' -o "$work/bridge-cpp"
-          assert_output "$("$work/bridge-cpp")"
-          javac -Xlint:all -Werror -d "$work/java" src/Enterprise/Java/BridgeExample.java
-          assert_output "$(java -cp "$work/java" BridgeExample)"
+          test "$(node src/Web/JavaScriptJS/bridge.js)" = "$expected"
+
+      - name: Validate Bridge TypeScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(printf 'basic-tv=TV:on\nbasic-radio=Radio:on\nmute-tv=TV:muted\nmute-radio=Radio:muted')"
+          work="$(mktemp -d)"
+          npx --yes --package typescript@6.0.3 tsc src/Web/TypeScriptTS/bridge.ts --strict --target ES2024 --module commonjs --outDir "$work"
+          test "$(node "$work/bridge.js")" = "$expected"
+
+      - name: Validate Bridge C++
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(printf 'basic-tv=TV:on\nbasic-radio=Radio:on\nmute-tv=TV:muted\nmute-radio=Radio:muted')"
+          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/bridge.cpp' -o /tmp/bridge-cpp
+          test "$(/tmp/bridge-cpp)" = "$expected"
+
+      - name: Validate Bridge Java
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(printf 'basic-tv=TV:on\nbasic-radio=Radio:on\nmute-tv=TV:muted\nmute-radio=Radio:muted')"
+          work="$(mktemp -d)"
+          javac -Xlint:all -Werror -d "$work" src/Enterprise/Java/BridgeExample.java
+          test "$(java -cp "$work" BridgeExample)" = "$expected"
+
+      - name: Validate Bridge Go
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(printf 'basic-tv=TV:on\nbasic-radio=Radio:on\nmute-tv=TV:muted\nmute-radio=Radio:muted')"
           test -z "$(gofmt -d src/Systems/Go/bridge.go)"
           go vet src/Systems/Go/bridge.go
-          assert_output "$(go run src/Systems/Go/bridge.go)"
+          test "$(go run src/Systems/Go/bridge.go)" = "$expected"
+
+      - name: Validate Bridge Rust
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(printf 'basic-tv=TV:on\nbasic-radio=Radio:on\nmute-tv=TV:muted\nmute-radio=Radio:muted')"
           rustfmt --check src/Systems/Rust/bridge.rs
-          rustc -D warnings src/Systems/Rust/bridge.rs -o "$work/bridge-rust"
-          assert_output "$("$work/bridge-rust")"
+          rustc -D warnings src/Systems/Rust/bridge.rs -o /tmp/bridge-rust
+          test "$(/tmp/bridge-rust)" = "$expected"
+
+      - name: Validate Bridge PHP
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(printf 'basic-tv=TV:on\nbasic-radio=Radio:on\nmute-tv=TV:muted\nmute-radio=Radio:muted')"
           php -l src/Scripting/PHP/bridge.php >/dev/null
-          assert_output "$(php src/Scripting/PHP/bridge.php)"
-          kotlinc src/Enterprise/Kotlin/BridgeExample.kt -include-runtime -d "$work/bridge-kotlin.jar"
-          assert_output "$(java -jar "$work/bridge-kotlin.jar")"
-          swiftc src/Systems/Swift/bridge.swift -o "$work/bridge-swift"
-          assert_output "$("$work/bridge-swift")"
-          assert_output "$(dotnet fsi 'src/Functional/F#/bridge.fsx')"
+          test "$(php src/Scripting/PHP/bridge.php)" = "$expected"
+
+      - name: Validate Bridge Kotlin
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(printf 'basic-tv=TV:on\nbasic-radio=Radio:on\nmute-tv=TV:muted\nmute-radio=Radio:muted')"
+          kotlinc src/Enterprise/Kotlin/BridgeExample.kt -include-runtime -d /tmp/bridge-kotlin.jar
+          test "$(java -jar /tmp/bridge-kotlin.jar)" = "$expected"
+
+      - name: Validate Bridge Swift
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(printf 'basic-tv=TV:on\nbasic-radio=Radio:on\nmute-tv=TV:muted\nmute-radio=Radio:muted')"
+          swiftc src/Systems/Swift/bridge.swift -o /tmp/bridge-swift
+          test "$(/tmp/bridge-swift)" = "$expected"
+
+      - name: Validate Bridge F#
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(printf 'basic-tv=TV:on\nbasic-radio=Radio:on\nmute-tv=TV:muted\nmute-radio=Radio:muted')"
+          test "$(dotnet fsi 'src/Functional/F#/bridge.fsx')" = "$expected"
 
       - name: Validate Bridge portable examples
         shell: bash
