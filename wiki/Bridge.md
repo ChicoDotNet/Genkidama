@@ -148,7 +148,7 @@ Si sólo existe una implementación estable y no hay evidencia de otra dimensió
 
 ## Implementaciones por lenguaje
 
-La tabla es autoritativa para la completitud de lenguaje. El universo canónico mantiene **51 targets**: **48 Applicable** y **3 N/A**. Hay **22/48 ejemplos materializados**; permanecen sin promover hasta que el gate registrado termine verde.
+La tabla es autoritativa para la completitud de lenguaje. El universo canónico mantiene **51 targets**: **48 Applicable** y **3 N/A**. Hay **32/48 ejemplos materializados**; permanecen sin promover hasta que sus gates terminen verdes.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -174,16 +174,16 @@ La tabla es autoritativa para la completitud de lenguaje. El universo canónico 
 | Scala | Applicable | [Bridge.scala](../src/Functional/Scala/Bridge.scala) | candidato — CI Bridge portable | traits + composición |
 | Perl | Applicable | [bridge.pl](../src/Scripting/Perl/bridge.pl) | candidato — CI Bridge portable | hashes + closures |
 | Pascal | Applicable | [bridge.pas](../src/Historical/Pascal/bridge.pas) | candidato — CI Bridge portable | clases + method references |
-| R | Applicable | — | pendiente de implementación | closures/listas |
-| GNU Octave | Applicable | — | pendiente de implementación | function handles/structs |
-| Julia | Applicable | — | pendiente de implementación | multiple dispatch/composición |
-| OCaml | Applicable | — | pendiente de implementación | modules/records de funciones |
-| Common Lisp | Applicable | — | pendiente de implementación | closures/structures |
-| Clojure | Applicable | — | pendiente de implementación | maps/protocol-like functions |
-| Elixir | Applicable | — | pendiente de implementación | behaviours/modules |
-| Erlang | Applicable | — | pendiente de implementación | modules/tuples |
-| Prolog | Applicable | — | pendiente de implementación | predicates/terms |
-| Groovy | Applicable | — | pendiente de implementación | interfaces/duck typing |
+| R | Applicable | [bridge.R](../src/DataScience/R/bridge.R) | candidato — Pattern Bridge Functional | closures/listas |
+| GNU Octave | Applicable | [bridge.m](../src/DataScience/Octave/bridge.m) | candidato — Pattern Bridge Functional | function handles/structs |
+| Julia | Applicable | [bridge.jl](../src/DataScience/Julia/bridge.jl) | candidato — Pattern Bridge Functional | named tuples + closures |
+| OCaml | Applicable | [bridge.ml](../src/Functional/OCaml/bridge.ml) | candidato — Pattern Bridge Functional | records de funciones |
+| Common Lisp | Applicable | [bridge.lisp](../src/Functional/Lisp/bridge.lisp) | candidato — Pattern Bridge Functional | structures + closures |
+| Clojure | Applicable | [bridge.clj](../src/Functional/Clojure/bridge.clj) | candidato — Pattern Bridge Functional | maps + funciones |
+| Elixir | Applicable | [bridge.exs](../src/Functional/Elixir/bridge.exs) | candidato — Pattern Bridge Functional | maps + funciones |
+| Erlang | Applicable | [bridge.erl](../src/Functional/Erlang/bridge.erl) | candidato — Pattern Bridge Functional | maps + funs |
+| Prolog | Applicable | [bridge.pl](../src/Niche/Prolog/bridge.pl) | candidato — Pattern Bridge Functional | predicates/terms |
+| Groovy | Applicable | [bridge.groovy](../src/Scripting/Groovy/bridge.groovy) | candidato — Pattern Bridge Functional | maps/closures |
 | Ada | Applicable | — | pendiente de implementación | tagged types/access operations |
 | Solidity | Applicable | — | pendiente de implementación | interfaces/contracts |
 | Fortran | Applicable | — | pendiente de implementación | derived types/procedure pointers |
