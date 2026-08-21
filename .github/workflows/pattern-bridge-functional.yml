@@ -1,0 +1,75 @@
+name: Pattern Bridge Functional
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-bridge-functional.yml'
+      - 'src/DataScience/R/bridge.R'
+      - 'src/DataScience/Octave/bridge.m'
+      - 'src/DataScience/Julia/bridge.jl'
+      - 'src/Functional/OCaml/bridge.ml'
+      - 'src/Functional/Lisp/bridge.lisp'
+      - 'src/Functional/Clojure/bridge.clj'
+      - 'src/Functional/Elixir/bridge.exs'
+      - 'src/Functional/Erlang/bridge.erl'
+      - 'src/Niche/Prolog/bridge.pl'
+      - 'src/Scripting/Groovy/bridge.groovy'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Erlang and Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '28.5.0.4'
+          elixir-version: '1.19.1'
+
+      - name: Setup Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: '1'
+
+      - name: Setup functional runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y octave r-base ocaml sbcl clojure swi-prolog-nox groovy
+
+      - name: Validate Bridge functional examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(printf 'basic-tv=TV:on\nbasic-radio=Radio:on\nmute-tv=TV:muted\nmute-radio=Radio:muted')"
+          assert_output() { test "$1" = "$expected"; }
+
+          assert_output "$(Rscript --vanilla src/DataScience/R/bridge.R)"
+          assert_output "$(octave --no-gui --quiet --eval "addpath('src/DataScience/Octave'); bridge();")"
+          assert_output "$(julia --startup-file=no src/DataScience/Julia/bridge.jl)"
+
+          ocamlc -w +A-70 -warn-error +A-70 src/Functional/OCaml/bridge.ml -o /tmp/bridge-ocaml
+          assert_output "$(/tmp/bridge-ocaml)"
+
+          assert_output "$(sbcl --noinform --non-interactive --load src/Functional/Lisp/bridge.lisp)"
+          assert_output "$(clojure src/Functional/Clojure/bridge.clj)"
+
+          elixir_out="$(mktemp -d)"
+          elixirc --warnings-as-errors -o "$elixir_out" src/Functional/Elixir/bridge.exs >/dev/null
+          assert_output "$(elixir src/Functional/Elixir/bridge.exs)"
+
+          erlang_out="$(mktemp -d)"
+          erlc -Werror -o "$erlang_out" src/Functional/Erlang/bridge.erl
+          assert_output "$(erl -noshell -pa "$erlang_out" -eval 'bridge:main(), halt().')"
+
+          assert_output "$(swipl -q -s src/Niche/Prolog/bridge.pl -g run -t halt)"
+
+          groovyc -d /tmp/bridge-groovy src/Scripting/Groovy/bridge.groovy
+          assert_output "$(groovy src/Scripting/Groovy/bridge.groovy)"
