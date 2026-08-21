@@ -1,4 +1,4 @@
-Mirror takes factory
+Render takes factory
 Rock products
 Products at "description" is factory at "description"
 Give back products
@@ -7,7 +7,7 @@ Yeah
 Rock original
 Original at "description" is "original=orders: metrics"
 
-Call Mirror with original into canary
+Call Render with original into canary
 Canary at "description" is "clone=orders-canary: metrics,tracing"
 
 Print original at "description"
