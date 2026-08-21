@@ -1,0 +1,118 @@
+name: Pattern Adapter
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-adapter.yml'
+      - 'src/Enterprise/C#/AdapterExample.cs'
+      - 'src/Enterprise/Java/AdapterExample.java'
+      - 'src/Enterprise/Kotlin/AdapterExample.kt'
+      - 'src/Functional/F#/adapter.fsx'
+      - 'src/Scripting/PHP/adapter.php'
+      - 'src/Scripting/PythonPY/adapter.py'
+      - 'src/Systems/C++/adapter.cpp'
+      - 'src/Systems/Go/adapter.go'
+      - 'src/Systems/Rust/adapter.rs'
+      - 'src/Systems/Swift/adapter.swift'
+      - 'src/Web/JavaScriptJS/adapter.js'
+      - 'src/Web/TypeScriptTS/adapter.ts'
+      - 'wiki/Adapter.md'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.26.5'
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup PHP
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y php-cli
+
+      - name: Validate Adapter examples
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          assert_adapter() {
+            local output="$1"
+            grep -Fxq 'legacy=86F' <<<"$output"
+            grep -Fxq 'adapted=30C' <<<"$output"
+          }
+
+          work="$(mktemp -d)"
+
+          dotnet new console --framework net10.0 --output "$work/csharp" --force >/dev/null
+          cp 'src/Enterprise/C#/AdapterExample.cs' "$work/csharp/Program.cs"
+          assert_adapter "$(dotnet run --project "$work/csharp" --configuration Release)"
+
+          python -m py_compile src/Scripting/PythonPY/adapter.py
+          assert_adapter "$(python src/Scripting/PythonPY/adapter.py)"
+
+          node --check src/Web/JavaScriptJS/adapter.js
+          assert_adapter "$(node src/Web/JavaScriptJS/adapter.js)"
+
+          npx --yes --package typescript@6.0.3 tsc src/Web/TypeScriptTS/adapter.ts --strict --target ES2024 --module commonjs --outDir "$work/typescript"
+          assert_adapter "$(node "$work/typescript/adapter.js")"
+
+          test -z "$(gofmt -d src/Systems/Go/adapter.go)"
+          go vet src/Systems/Go/adapter.go
+          assert_adapter "$(go run src/Systems/Go/adapter.go)"
+
+          rustfmt --check src/Systems/Rust/adapter.rs
+          rustc -D warnings src/Systems/Rust/adapter.rs -o "$work/adapter-rust"
+          assert_adapter "$("$work/adapter-rust")"
+
+          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/adapter.cpp' -o "$work/adapter-cpp"
+          assert_adapter "$("$work/adapter-cpp")"
+
+          javac -Xlint:all -Werror -d "$work/java" src/Enterprise/Java/AdapterExample.java
+          assert_adapter "$(java -cp "$work/java" AdapterExample)"
+
+          php -l src/Scripting/PHP/adapter.php
+          assert_adapter "$(php src/Scripting/PHP/adapter.php)"
+
+          command -v kotlinc >/dev/null
+          kotlinc src/Enterprise/Kotlin/AdapterExample.kt -include-runtime -d "$work/adapter-kotlin.jar"
+          assert_adapter "$(java -jar "$work/adapter-kotlin.jar")"
+
+          command -v swiftc >/dev/null
+          swiftc src/Systems/Swift/adapter.swift -o "$work/adapter-swift"
+          assert_adapter "$("$work/adapter-swift")"
+
+          assert_adapter "$(dotnet fsi 'src/Functional/F#/adapter.fsx')"
