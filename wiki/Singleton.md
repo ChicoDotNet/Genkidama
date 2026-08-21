@@ -142,19 +142,67 @@ Acumular muchas dependencias detrás de un Singleton convierte el acceso global 
 - La documentación declara el alcance de la unicidad.
 - La prueba no se limita a nombres como `Singleton` o `Instance`.
 
-## Matriz de implementaciones
+## Implementaciones por lenguaje
 
-El universo canónico mantiene **51 targets**. Esta primera clasificación considera **48 Applicable** y **3 N/A provisionales**.
+La fuente canónica de targets mantiene **51 lenguajes**: 48 `Applicable` y 3 `N/A` provisionales. En este primer tranche hay **12 ejemplos materializados y 0 promovidos** hasta que cierre la evidencia CI del head actual.
 
-| Estado | Cantidad | Criterio |
-|---|---:|---|
-| Applicable | 48 | El target puede expresar una única autoridad lógica por módulo/proceso/runtime mediante mecanismos idiomáticos. |
-| N/A | 3 | HTML, CSS y SQL declarativo no definen por sí mismos un ciclo de vida de instancia runtime. |
-| Verified | 0 | Ninguna fila se promueve sin ejemplo real y evidencia proporcional. |
+| Lenguaje | Aplicabilidad | Ejemplo | Validación actual | Nota |
+|---|---|---|---|---|
+| C# | Applicable | [`SingletonExample.cs`](../src/Enterprise/C%23/SingletonExample.cs) | ⏳ pendiente CI | `Lazy<T>` + constructor privado; alcance de proceso. |
+| TypeScript | Applicable | [`singleton.ts`](../src/Web/TypeScriptTS/singleton.ts) | ⏳ pendiente CI | Instancia estática privada y acceso controlado. |
+| Ada | Applicable | pendiente | ⏳ pendiente | Se expresará con package/elaboration o access value idiomático. |
+| Solidity | Applicable | pendiente | ⏳ pendiente | Requiere justificar alcance de contrato, no unicidad global de blockchain. |
+| Fortran | Applicable | pendiente | ⏳ pendiente | Módulo con estado único dentro del programa/runtime. |
+| Pascal | Applicable | pendiente | ⏳ pendiente | Inicialización de unidad + acceso controlado. |
+| Python | Applicable | [`singleton.py`](../src/Scripting/PythonPY/singleton.py) | ⏳ pendiente CI | `__new__` controla la única instancia de proceso. |
+| Visual Basic .NET | Applicable | pendiente | ⏳ pendiente | `Shared` + constructor privado. |
+| C++ | Applicable | [`singleton.cpp`](../src/Systems/C%2B%2B/singleton.cpp) | ⏳ pendiente CI | Function-local static; inicialización segura desde C++11. |
+| Objective-C | Applicable | pendiente | ⏳ pendiente | `dispatch_once`/static shared instance. |
+| Java | Applicable | [`SingletonExample.java`](../src/Enterprise/Java/SingletonExample.java) | ⏳ pendiente CI | Initialization-on-demand holder idiom. |
+| Rust | Applicable | [`singleton.rs`](../src/Systems/Rust/singleton.rs) | ⏳ pendiente CI | `OnceLock<Mutex<_>>` para estado compartido de proceso. |
+| Zig | Applicable | pendiente | ⏳ pendiente | Binding global controlado dentro del ejecutable. |
+| Go | Applicable | [`singleton.go`](../src/Systems/Go/singleton.go) | ⏳ pendiente CI | `sync.Once` + package state. |
+| PHP | Applicable | [`singleton.php`](../src/Scripting/PHP/singleton.php) | ⏳ pendiente CI | Propiedad estática y constructor privado por proceso/request runtime. |
+| Nim | Applicable | pendiente | ⏳ pendiente | Global/once-style initialization idiomática. |
+| Dart | Applicable | pendiente | ⏳ pendiente | Factory constructor/static final compartido. |
+| Kotlin | Applicable | [`SingletonExample.kt`](../src/Enterprise/Kotlin/SingletonExample.kt) | ⏳ pendiente CI | `object` nativo. |
+| Swift | Applicable | [`singleton.swift`](../src/Systems/Swift/singleton.swift) | ⏳ pendiente CI | `static let shared`; inicialización segura del runtime. |
+| F# | Applicable | [`singleton.fsx`](../src/Functional/F%23/singleton.fsx) | ⏳ pendiente CI | Static binding privado + acceso único. |
+| Crystal | Applicable | pendiente | ⏳ pendiente | Class variable/constant initialization. |
+| Lua | Applicable | pendiente | ⏳ pendiente | Módulo que retorna la misma tabla cerrada. |
+| Haskell | Applicable | pendiente | ⏳ pendiente | Única autoridad lógica vía binding/module cell cuando hay estado; evitar falsear identidad OO. |
+| COBOL | Applicable | pendiente | ⏳ pendiente | Working-storage/program scope con acceso controlado. |
+| Scala | Applicable | pendiente | ⏳ pendiente | `object` nativo. |
+| Groovy | Applicable | pendiente | ⏳ pendiente | Static holder o `@Singleton` sólo si el ejemplo muestra intención, no sólo anotación. |
+| Ruby | Applicable | pendiente | ⏳ pendiente | Módulo `Singleton`/constructor privado con alcance de proceso. |
+| C | Applicable | pendiente | ⏳ pendiente | File-static state + accessor; alcance de proceso. |
+| OCaml | Applicable | pendiente | ⏳ pendiente | Module binding/ref compartida. |
+| Julia | Applicable | pendiente | ⏳ pendiente | Module-level binding/ref compartida. |
+| VBA | Applicable | pendiente | ⏳ pendiente | Módulo/clase real de VBA con source-contract proporcional. |
+| GDScript | Applicable | pendiente | ⏳ pendiente | Autoload es mecanismo natural de singleton de escena/proyecto. |
+| JavaScript | Applicable | [`singleton.js`](../src/Web/JavaScriptJS/singleton.js) | ⏳ pendiente CI | Constructor retorna instancia compartida. |
+| MATLAB | Applicable | pendiente | ⏳ pendiente | `persistent` dentro de accessor o handle class. |
+| Perl | Applicable | pendiente | ⏳ pendiente | Lexical package state + accessor. |
+| R | Applicable | pendiente | ⏳ pendiente | Environment/closure compartido dentro del proceso. |
+| PowerShell | Applicable | pendiente | ⏳ pendiente | Script/module scoped state + accessor bajo StrictMode. |
+| HTML | N/A | — | — | Markup declarativo; cualquier Singleton ejecutable pertenece al runtime. |
+| Assembly | Applicable | pendiente | ⏳ pendiente | Símbolo/buffer único en imagen de proceso + accessor. |
+| Elixir | Applicable | pendiente | ⏳ pendiente | Proceso registrado/GenServer con nombre único dentro de la VM. |
+| Shell | Applicable | pendiente | ⏳ pendiente | Estado del proceso shell; requiere explicar alcance y evitar confundir variable global con patrón. |
+| Erlang | Applicable | pendiente | ⏳ pendiente | Proceso registrado único dentro de la VM/supervision scope. |
+| Clojure | Applicable | pendiente | ⏳ pendiente | `defonce`/atom con alcance de runtime. |
+| Common Lisp | Applicable | pendiente | ⏳ pendiente | Special/global cell encapsulada por accessor. |
+| Prolog | Applicable | pendiente | ⏳ pendiente | Predicado dinámico único/estado del proceso con accessor lógico. |
+| Delphi | Applicable | pendiente | ⏳ pendiente | Class var/class function + constructor controlado; source-contract proporcional si DCC no está disponible. |
+| GNU Octave | Applicable | pendiente | ⏳ pendiente | `persistent` dentro de función accessor. |
+| SQL | N/A | — | — | Unicidad de filas/datos no equivale a una instancia runtime Singleton. |
+| CSS | N/A | — | — | Reglas declarativas sin ciclo de vida de instancia runtime. |
+| MicroPython | Applicable | pendiente | ⏳ pendiente | Módulo/cache de instancia ejecutado en Unix port oficial. |
+| Rockstar | Applicable | pendiente | ⏳ pendiente | Estado único mediante variables/arrays del runtime sin forzar forma OO. |
 
-### N/A provisionales
+### Clasificación N/A provisional
 
-- **HTML:** markup declarativo; cualquier singleton ejecutable pertenece al runtime que lo consume.
+- **HTML:** markup declarativo; cualquier Singleton ejecutable pertenece al runtime que lo consume.
 - **CSS:** reglas declarativas de estilo; no define una instancia runtime compartida.
 - **SQL declarativo:** puede imponer unicidad de datos, pero eso no equivale al patrón Singleton de instancia/ciclo de vida; no se usará un dialecto procedural para forzarlo.
 
@@ -175,6 +223,6 @@ La ausencia de clases nunca se usa como razón de N/A. Módulos, bindings, closu
 
 ## Referencias
 
-- Gamma, Helm, Johnson y Vlissides, *Design Patterns: Elements of Reusable Object-Oriented Software*.
+- Gamma, Helm, Johnson y Vlissides, *Design Patterns: Elements of Reusable Object-Oriented Software* — Singleton.
 - [Patterns as Living Examples](../docs/philosophy/001-patterns-as-living-examples.md).
 - [Canonical Design Pattern Authoring Standard](../docs/kb/catalog/pattern-authoring-standard.md).
