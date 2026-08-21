@@ -147,7 +147,7 @@ Duplicar IDs únicos, sockets, handles, locks o conexiones puede producir dos ob
 
 ## Implementaciones por lenguaje
 
-La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 45 lenguajes v1 y 6 adicionales. La clasificación provisional mantiene 48 `Applicable` y 3 `N/A`. Hay **12 ejemplos materializados**; ninguno se promueve todavía hasta observar CI verde sobre el head correspondiente.
+La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 45 lenguajes v1 y 6 adicionales. La clasificación provisional mantiene 48 `Applicable` y 3 `N/A`. Hay **22 ejemplos materializados**; ninguno se promueve todavía hasta observar CI verde sobre el head correspondiente.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -156,9 +156,9 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Ada | Applicable | — | pendiente | Records y operaciones de copia pueden expresar el contrato. |
 | Solidity | Applicable | — | pendiente | Structs/contratos pueden copiar estado significativo dentro de sus límites de storage/memory. |
 | Fortran | Applicable | — | pendiente | Derived types y asignación controlada permiten copiar estado. |
-| Pascal | Applicable | — | pendiente | Records/classes permiten copia explícita. |
+| Pascal | Applicable | [`prototype.pas`](../src/Historical/Pascal/prototype.pas) | pendiente de CI | Record con copia explícita del array dinámico. |
 | Python | Applicable | [`prototype.py`](../src/Scripting/PythonPY/prototype.py) | pendiente de CI | `deepcopy` encapsulado por el prototipo. |
-| Visual Basic .NET | Applicable | — | pendiente | Clases/records y copia explícita. |
+| Visual Basic .NET | Applicable | [`PrototypeExample.vb`](../src/Enterprise/VisualBasic/PrototypeExample.vb) | pendiente de CI | Nueva instancia + nueva `List(Of String)`. |
 | C++ | Applicable | [`prototype.cpp`](../src/Systems/C%2B%2B/prototype.cpp) | pendiente de CI | `clone()` virtual + `unique_ptr`; vector copiado por valor. |
 | Objective-C | Applicable | — | pendiente | `NSCopying`/copy idiomático. |
 | Java | Applicable | [`PrototypeExample.java`](../src/Enterprise/Java/PrototypeExample.java) | pendiente de CI | Contrato `Prototype<T>` + nueva colección. |
@@ -172,26 +172,26 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Swift | Applicable | [`prototype.swift`](../src/Systems/Swift/prototype.swift) | pendiente de CI | Value semantics + copy-on-write de `Array`. |
 | F# | Applicable | [`prototype.fsx`](../src/Functional/F%23/prototype.fsx) | pendiente de CI | Record + lista inmutable para derivar la variante. |
 | Crystal | Applicable | — | pendiente | Objetos/structs con duplicación controlada. |
-| Lua | Applicable | — | pendiente | Tables + función de deep copy/prototipo. |
-| Haskell | Applicable | — | pendiente | Valores inmutables permiten derivar variantes desde una plantilla. |
+| Lua | Applicable | [`prototype.lua`](../src/Scripting/Lua/prototype.lua) | pendiente de CI | Table clone con nuevo array de features. |
+| Haskell | Applicable | [`Prototype.hs`](../src/Functional/Haskell/Prototype.hs) | pendiente de CI | Valor inmutable derivado desde la plantilla. |
 | COBOL | Applicable | — | pendiente | Records y rutinas de copia pueden preservar el movimiento de diseño. |
-| Scala | Applicable | — | pendiente | Case classes/copy idiomático. |
+| Scala | Applicable | [`Prototype.scala`](../src/Functional/Scala/Prototype.scala) | pendiente de CI | Case class + `copy` sobre `Vector` inmutable. |
 | Groovy | Applicable | — | pendiente | Objetos/maps y copia explícita. |
-| Ruby | Applicable | — | pendiente | `dup`/`clone` más copia de estado mutable. |
-| C | Applicable | — | pendiente | Structs + función clone con buffers propios. |
+| Ruby | Applicable | [`prototype.rb`](../src/Scripting/RubyRB/prototype.rb) | pendiente de CI | `dup` + `initialize_copy` para duplicar estado mutable. |
+| C | Applicable | [`prototype.c`](../src/Systems/C/prototype.c) | pendiente de CI | Struct por valor con buffers propios. |
 | OCaml | Applicable | — | pendiente | Records y actualización funcional desde una plantilla. |
 | Julia | Applicable | — | pendiente | `copy`/`deepcopy` y structs configurados. |
 | VBA | Applicable | — | pendiente | Class modules + operación de copia explícita. |
 | GDScript | Applicable | — | pendiente | `duplicate`/Dictionary deep duplication según representación. |
 | JavaScript | Applicable | [`prototype.js`](../src/Web/JavaScriptJS/prototype.js) | pendiente de CI | Prototipo nativo + copia independiente de array mutable. |
 | MATLAB | Applicable | — | pendiente | Structs/handle/value classes permiten copia significativa. |
-| Perl | Applicable | — | pendiente | Hashes/arrays + clonación explícita. |
+| Perl | Applicable | [`prototype.pl`](../src/Scripting/Perl/prototype.pl) | pendiente de CI | Hash + nuevo array para el clon. |
 | R | Applicable | — | pendiente | Listas/objetos permiten derivar copias configuradas. |
-| PowerShell | Applicable | — | pendiente | PSCustomObject/hashtables + copia controlada. |
+| PowerShell | Applicable | [`prototype.ps1`](../src/Shell/PowerShell/prototype.ps1) | pendiente de CI | PSCustomObject + nueva lista genérica. |
 | HTML | N/A | — | — | HTML describe markup; una rutina de clonación ejecutable pertenece al runtime que la implementa. |
 | Assembly | Applicable | — | pendiente | Copia explícita de estructuras/buffers puede preservar el patrón. |
 | Elixir | Applicable | — | pendiente | Datos inmutables permiten derivar variantes desde una plantilla. |
-| Shell | Applicable | — | pendiente | Arrays/variables pueden copiar configuración mediante funciones, con límites explícitos. |
+| Shell | Applicable | [`prototype.sh`](../src/Shell/Bash/prototype.sh) | pendiente de CI | Arrays copiados mediante referencias por nombre, sin compartir estado. |
 | Erlang | Applicable | — | pendiente | Maps/records inmutables permiten derivar copias. |
 | Clojure | Applicable | — | pendiente | Persistent data structures permiten partir de un prototipo inmutable. |
 | Common Lisp | Applicable | — | pendiente | Estructuras/listas y copy-tree/copia explícita. |
