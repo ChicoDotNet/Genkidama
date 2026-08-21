@@ -2,9 +2,9 @@
 
 > **Familia:** Creational  
 > **Intención:** asegurar una única instancia lógica dentro de un alcance definido y ofrecer un punto de acceso controlado cuando esa unicidad resuelve una presión real.  
-> **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `12/48`  
-> **Cobertura de pruebas:** N/A — catálogo multilenguaje heterogéneo; se usará evidencia proporcional por target.  
+> **Estado:** `validated`  
+> **Implementaciones de lenguaje:** `48/48`  
+> **Cobertura de pruebas:** N/A — catálogo multilenguaje heterogéneo; se usa evidencia proporcional por target.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
 ## En una frase
@@ -144,61 +144,61 @@ Acumular muchas dependencias detrás de un Singleton convierte el acceso global 
 
 ## Implementaciones por lenguaje
 
-La fuente canónica de targets mantiene **51 lenguajes**: 48 `Applicable` y 3 `N/A`. Los **48 ejemplos Applicable ya están materializados y enlazados**. Los 12 del tranche mainstream están promovidos con CI verde; los tranches portable, functional y final permanecen pendientes de evidencia fresca donde corresponda.
+La fuente canónica mantiene **51 targets**: 48 `Applicable` y 3 `N/A`. Los **48 Applicable tienen un ejemplo real, enlazado y verificado** mediante el runtime, compilador, analizador o source-contract proporcional más fuerte razonablemente disponible.
 
 | Lenguaje | Aplicabilidad | Ejemplo | Validación actual | Nota |
 |---|---|---|---|---|
 | C# | Applicable | [`SingletonExample.cs`](../src/Enterprise/C%23/SingletonExample.cs) | ✅ verificado | `Lazy<T>` + constructor privado; alcance de proceso. |
 | TypeScript | Applicable | [`singleton.ts`](../src/Web/TypeScriptTS/singleton.ts) | ✅ verificado | Instancia estática privada y acceso controlado. |
-| Ada | Applicable | [`singleton.adb`](../src/Historical/Ada/singleton.adb) | ⏳ pendiente CI | Package state + access value canónico dentro del proceso. |
-| Solidity | Applicable | [`Singleton.sol`](../src/Niche/Solidity/Singleton.sol) | ⏳ pendiente CI | La unicidad está acotada a una instancia de contrato, no a toda la blockchain. |
-| Fortran | Applicable | [`singleton.f90`](../src/Historical/Fortran/singleton.f90) | ⏳ pendiente CI | Módulo con `save` + pointer a un único estado. |
-| Pascal | Applicable | [`singleton.pas`](../src/Historical/Pascal/singleton.pas) | ⏳ pendiente CI | Inicialización controlada mediante class var + accessor. |
+| Ada | Applicable | [`singleton.adb`](../src/Historical/Ada/singleton.adb) | ✅ verificado | Package state + access value canónico dentro del proceso. |
+| Solidity | Applicable | [`Singleton.sol`](../src/Niche/Solidity/Singleton.sol) | ✅ verificado | La unicidad está acotada a una instancia de contrato, no a toda la blockchain. |
+| Fortran | Applicable | [`singleton.f90`](../src/Historical/Fortran/singleton.f90) | ✅ verificado | Módulo con `save` + pointer a un único estado. |
+| Pascal | Applicable | [`singleton.pas`](../src/Historical/Pascal/singleton.pas) | ✅ verificado | Registry process-scoped y accessor que devuelve siempre el mismo puntero. |
 | Python | Applicable | [`singleton.py`](../src/Scripting/PythonPY/singleton.py) | ✅ verificado | `__new__` controla la única instancia de proceso. |
-| Visual Basic .NET | Applicable | [`SingletonExample.vb`](../src/Enterprise/VisualBasic/SingletonExample.vb) | ⏳ pendiente CI | `Shared` + constructor privado. |
+| Visual Basic .NET | Applicable | [`SingletonExample.vb`](../src/Enterprise/VisualBasic/SingletonExample.vb) | ✅ verificado | `Shared` + constructor privado. |
 | C++ | Applicable | [`singleton.cpp`](../src/Systems/C%2B%2B/singleton.cpp) | ✅ verificado | Function-local static; inicialización segura desde C++11. |
-| Objective-C | Applicable | [`singleton.m`](../src/Systems/Objective-C/singleton.m) | ⏳ pendiente CI | `dispatch_once` controla una única instancia de proceso. |
+| Objective-C | Applicable | [`singleton.m`](../src/Systems/Objective-C/singleton.m) | ✅ verificado | `dispatch_once` controla una única instancia de proceso. |
 | Java | Applicable | [`SingletonExample.java`](../src/Enterprise/Java/SingletonExample.java) | ✅ verificado | Initialization-on-demand holder idiom. |
 | Rust | Applicable | [`singleton.rs`](../src/Systems/Rust/singleton.rs) | ✅ verificado | `OnceLock<Mutex<_>>` para estado compartido de proceso. |
-| Zig | Applicable | [`singleton.zig`](../src/Systems/Zig/singleton.zig) | ⏳ pendiente CI | Binding global encapsulado por accessor. |
+| Zig | Applicable | [`singleton.zig`](../src/Systems/Zig/singleton.zig) | ✅ verificado | Binding global encapsulado por accessor. |
 | Go | Applicable | [`singleton.go`](../src/Systems/Go/singleton.go) | ✅ verificado | `sync.Once` + package state. |
 | PHP | Applicable | [`singleton.php`](../src/Scripting/PHP/singleton.php) | ✅ verificado | Propiedad estática y constructor privado por proceso/request runtime. |
-| Nim | Applicable | [`singleton.nim`](../src/Niche/Nim/singleton.nim) | ⏳ pendiente CI | Estado global y accessor a una única dirección. |
-| Dart | Applicable | [`singleton.dart`](../src/Web/Dart/singleton.dart) | ⏳ pendiente CI | Factory constructor + `static final`. |
+| Nim | Applicable | [`singleton.nim`](../src/Niche/Nim/singleton.nim) | ✅ verificado | Estado global y accessor a una única dirección. |
+| Dart | Applicable | [`singleton.dart`](../src/Web/Dart/singleton.dart) | ✅ verificado | Factory constructor + `static final`. |
 | Kotlin | Applicable | [`SingletonExample.kt`](../src/Enterprise/Kotlin/SingletonExample.kt) | ✅ verificado | `object` nativo. |
 | Swift | Applicable | [`singleton.swift`](../src/Systems/Swift/singleton.swift) | ✅ verificado | `static let shared`; inicialización segura del runtime. |
 | F# | Applicable | [`singleton.fsx`](../src/Functional/F%23/singleton.fsx) | ✅ verificado | Static binding privado + acceso único. |
-| Crystal | Applicable | [`singleton.cr`](../src/Niche/Crystal/singleton.cr) | ⏳ pendiente CI | Class variable encapsulada y constructor privado. |
-| Lua | Applicable | [`singleton.lua`](../src/Scripting/Lua/singleton.lua) | ⏳ pendiente CI | Módulo/binding devuelve la misma tabla del proceso. |
-| Haskell | Applicable | [`Singleton.hs`](../src/Functional/Haskell/Singleton.hs) | ⏳ pendiente CI | Binding `NOINLINE` con `IORef` canónica de proceso. |
-| COBOL | Applicable | [`singleton.cbl`](../src/Historical/Cobol/singleton.cbl) | ⏳ pendiente CI | Working-storage único dentro del programa. |
-| Scala | Applicable | [`Singleton.scala`](../src/Functional/Scala/Singleton.scala) | ⏳ pendiente CI | `object` nativo. |
-| Groovy | Applicable | [`singleton.groovy`](../src/Scripting/Groovy/singleton.groovy) | ⏳ pendiente CI | Static holder explícito; no depende sólo de una anotación. |
-| Ruby | Applicable | [`singleton.rb`](../src/Scripting/RubyRB/singleton.rb) | ⏳ pendiente CI | Módulo estándar `Singleton`; constructor controlado. |
-| C | Applicable | [`singleton.c`](../src/Systems/C/singleton.c) | ⏳ pendiente CI | File-static state + accessor; alcance de proceso. |
-| OCaml | Applicable | [`singleton.ml`](../src/Functional/OCaml/singleton.ml) | ⏳ pendiente CI | Module binding con `ref` compartida. |
-| Julia | Applicable | [`singleton.jl`](../src/DataScience/Julia/singleton.jl) | ⏳ pendiente CI | Binding `const` con `Ref` compartida. |
-| VBA | Applicable | [`singleton.bas`](../src/Shell/VBA/singleton.bas) | ⏳ pendiente CI | Módulo VBA real con estado privado y accessor; source-contract proporcional. |
-| GDScript | Applicable | [`singleton.gd`](../src/Niche/GDScript/singleton.gd) | ⏳ pendiente CI | Una única instancia de script/árbol representa el alcance del ejemplo; Autoload es el mecanismo de proyecto habitual. |
+| Crystal | Applicable | [`singleton.cr`](../src/Niche/Crystal/singleton.cr) | ✅ verificado | Class variable encapsulada y constructor privado. |
+| Lua | Applicable | [`singleton.lua`](../src/Scripting/Lua/singleton.lua) | ✅ verificado | Módulo/binding devuelve la misma tabla del proceso. |
+| Haskell | Applicable | [`Singleton.hs`](../src/Functional/Haskell/Singleton.hs) | ✅ verificado | Binding `NOINLINE` con `IORef` canónica de proceso. |
+| COBOL | Applicable | [`singleton.cbl`](../src/Historical/Cobol/singleton.cbl) | ✅ verificado | Dos pointers apuntan al mismo working-storage registry del programa. |
+| Scala | Applicable | [`Singleton.scala`](../src/Functional/Scala/Singleton.scala) | ✅ verificado | `object` nativo. |
+| Groovy | Applicable | [`singleton.groovy`](../src/Scripting/Groovy/singleton.groovy) | ✅ verificado | Static holder explícito; no depende sólo de una anotación. |
+| Ruby | Applicable | [`singleton.rb`](../src/Scripting/RubyRB/singleton.rb) | ✅ verificado | Módulo estándar `Singleton`; constructor controlado. |
+| C | Applicable | [`singleton.c`](../src/Systems/C/singleton.c) | ✅ verificado | File-static state + accessor; alcance de proceso. |
+| OCaml | Applicable | [`singleton.ml`](../src/Functional/OCaml/singleton.ml) | ✅ verificado | Module binding con `ref` compartida. |
+| Julia | Applicable | [`singleton.jl`](../src/DataScience/Julia/singleton.jl) | ✅ verificado | Binding `const` con `Ref` compartida. |
+| VBA | Applicable | [`singleton.bas`](../src/Shell/VBA/singleton.bas) | ✅ verificado | Módulo VBA real con estado privado y accessor; source-contract proporcional. |
+| GDScript | Applicable | [`singleton.gd`](../src/Niche/GDScript/singleton.gd) | ✅ verificado | Una única instancia de script/árbol representa el alcance del ejemplo; Autoload es el mecanismo de proyecto habitual. |
 | JavaScript | Applicable | [`singleton.js`](../src/Web/JavaScriptJS/singleton.js) | ✅ verificado | Constructor retorna instancia compartida. |
-| MATLAB | Applicable | [`singleton.m`](../src/DataScience/MATLAB/singleton.m) | ⏳ pendiente CI | `persistent` conserva una única handle instance. |
-| Perl | Applicable | [`singleton.pl`](../src/Scripting/Perl/singleton.pl) | ⏳ pendiente CI | Lexical package state + accessor. |
-| R | Applicable | [`singleton.R`](../src/DataScience/R/singleton.R) | ⏳ pendiente CI | Environment compartido dentro del proceso. |
-| PowerShell | Applicable | [`singleton.ps1`](../src/Shell/PowerShell/singleton.ps1) | ⏳ pendiente CI | Script-scoped state + accessor bajo StrictMode. |
+| MATLAB | Applicable | [`singleton.m`](../src/DataScience/MATLAB/singleton.m) | ✅ verificado | `persistent` conserva una única handle instance. |
+| Perl | Applicable | [`singleton.pl`](../src/Scripting/Perl/singleton.pl) | ✅ verificado | Lexical package state + accessor. |
+| R | Applicable | [`singleton.R`](../src/DataScience/R/singleton.R) | ✅ verificado | Environment compartido dentro del proceso. |
+| PowerShell | Applicable | [`singleton.ps1`](../src/Shell/PowerShell/singleton.ps1) | ✅ verificado | Script-scoped state + accessor bajo StrictMode. |
 | HTML | N/A | — | — | Markup declarativo; cualquier Singleton ejecutable pertenece al runtime. |
-| Assembly | Applicable | [`singleton.asm`](../src/LowLevel/Assembly/singleton.asm) | ⏳ pendiente CI | Símbolo/buffer único en la imagen del proceso + accessor. |
-| Elixir | Applicable | [`singleton.exs`](../src/Functional/Elixir/singleton.exs) | ⏳ pendiente CI | `Agent` registrado por nombre dentro de la VM. |
-| Shell | Applicable | [`singleton.sh`](../src/Shell/Bash/singleton.sh) | ⏳ pendiente CI | Binding único dentro del proceso shell con accessor explícito. |
-| Erlang | Applicable | [`singleton.erl`](../src/Functional/Erlang/singleton.erl) | ⏳ pendiente CI | Proceso registrado único dentro de la VM. |
-| Clojure | Applicable | [`singleton.clj`](../src/Functional/Clojure/singleton.clj) | ⏳ pendiente CI | `defonce` + `atom` compartida en el runtime. |
-| Common Lisp | Applicable | [`singleton.lisp`](../src/Functional/Lisp/singleton.lisp) | ⏳ pendiente CI | Cell global encapsulada por accessor. |
-| Prolog | Applicable | [`singleton.pl`](../src/Niche/Prolog/singleton.pl) | ⏳ pendiente CI | Predicado dinámico único + accessor lógico. |
-| Delphi | Applicable | [`SingletonExample.pas`](../src/Enterprise/Delphi/SingletonExample.pas) | ⏳ pendiente CI | Class var + class function + constructor controlado; source-contract proporcional si DCC no está disponible. |
-| GNU Octave | Applicable | [`singleton.m`](../src/DataScience/Octave/singleton.m) | ⏳ pendiente CI | `persistent` encapsulado por accessor/operaciones. |
+| Assembly | Applicable | [`singleton.asm`](../src/LowLevel/Assembly/singleton.asm) | ✅ verificado | Símbolo/buffer único en la imagen del proceso + accessor. |
+| Elixir | Applicable | [`singleton.exs`](../src/Functional/Elixir/singleton.exs) | ✅ verificado | `Agent` registrado por nombre dentro de la VM. |
+| Shell | Applicable | [`singleton.sh`](../src/Shell/Bash/singleton.sh) | ✅ verificado | Binding único dentro del proceso shell con accessor explícito. |
+| Erlang | Applicable | [`singleton.erl`](../src/Functional/Erlang/singleton.erl) | ✅ verificado | Proceso registrado único dentro de la VM. |
+| Clojure | Applicable | [`singleton.clj`](../src/Functional/Clojure/singleton.clj) | ✅ verificado | `defonce` + `atom` compartida en el runtime. |
+| Common Lisp | Applicable | [`singleton.lisp`](../src/Functional/Lisp/singleton.lisp) | ✅ verificado | Cell global encapsulada por accessor. |
+| Prolog | Applicable | [`singleton.pl`](../src/Niche/Prolog/singleton.pl) | ✅ verificado | Predicado dinámico único + accessor lógico. |
+| Delphi | Applicable | [`SingletonExample.pas`](../src/Enterprise/Delphi/SingletonExample.pas) | ✅ verificado | Class var + class function + constructor controlado; source-contract proporcional cuando DCC no está disponible. |
+| GNU Octave | Applicable | [`singleton.m`](../src/DataScience/Octave/singleton.m) | ✅ verificado | `persistent` encapsulado por accessor/operaciones. |
 | SQL | N/A | — | — | Unicidad de filas/datos no equivale a una instancia runtime Singleton. |
 | CSS | N/A | — | — | Reglas declarativas sin ciclo de vida de instancia runtime. |
-| MicroPython | Applicable | [`singleton.py`](../src/Other/MicroPython/singleton.py) | ⏳ pendiente CI | Cache de instancia ejecutada en Unix port oficial. |
-| Rockstar | Applicable | [`singleton.rock`](../src/Other/Rockstar/singleton.rock) | ⏳ pendiente CI | Estado único mediante keyed array del runtime y accessor. |
+| MicroPython | Applicable | [`singleton.py`](../src/Other/MicroPython/singleton.py) | ✅ verificado | Cache de instancia ejecutada en Unix port oficial 1.28.0. |
+| Rockstar | Applicable | [`singleton.rock`](../src/Other/Rockstar/singleton.rock) | ✅ verificado | Estado único mediante keyed array del runtime y accessor. |
 
 ### Clasificación N/A
 
