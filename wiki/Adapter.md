@@ -2,8 +2,8 @@
 
 > **Familia:** Structural  
 > **Intención:** convertir la interfaz de una dependencia existente en el contrato que un cliente necesita, sin modificar ni al cliente ni a la dependencia adaptada.  
-> **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `22/48`  
+> **Estado:** `validated`  
+> **Implementaciones de lenguaje:** `48/48`  
 > **Cobertura de pruebas:** N/A — el catálogo usa evidencia proporcional por ecosistema; no existe una métrica homogénea entre ejemplos standalone.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -138,61 +138,61 @@ El Adapter traduce contratos. Reglas de negocio independientes del proveedor per
 
 ## Implementaciones por lenguaje
 
-La fuente canónica mantiene **51 targets**. Adapter es `Applicable` en 48 y `N/A` en HTML, CSS y SQL declarativo. Los **48/48 ejemplos Applicable ya están materializados y enlazados**; **22/48 tienen evidencia ejecutable verde** de CI #815, mientras los tranches funcional y final esperan evidencia fresca antes de promoción.
+La fuente canónica mantiene **51 targets**. Adapter es `Applicable` en 48 y `N/A` en HTML, CSS y SQL declarativo. Los **48/48 ejemplos Applicable están materializados, enlazados y verificados** mediante CI ejecutable o evidencia proporcional de plataforma.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
 | C# | Applicable | [`AdapterExample.cs`](../src/Enterprise/C%23/AdapterExample.cs) | ✅ .NET 10 compile/run + contrato observable | Interfaz objetivo + composición del adaptee. |
 | TypeScript | Applicable | [`adapter.ts`](../src/Web/TypeScriptTS/adapter.ts) | ✅ TypeScript 6 strict + Node | Interface estructural + clase adapter. |
-| Ada | Applicable | [`adapter.adb`](../src/Historical/Ada/adapter.adb) | pendiente | Función Target traduce la operación heredada sin requerir clases. |
-| Solidity | Applicable | [`Adapter.sol`](../src/Niche/Solidity/Adapter.sol) | pendiente | Contrato wrapper implementa Target y compone al Adaptee. |
-| Fortran | Applicable | [`adapter.f90`](../src/Historical/Fortran/adapter.f90) | pendiente | Derived types/procedure bindings separan Target y Adaptee. |
+| Ada | Applicable | [`adapter.adb`](../src/Historical/Ada/adapter.adb) | ✅ GNAT 2022 warnings-as-errors + run | Función Target traduce la operación heredada sin requerir clases. |
+| Solidity | Applicable | [`Adapter.sol`](../src/Niche/Solidity/Adapter.sol) | ✅ solc 0.8.30 compile/source contract | Contrato wrapper implementa Target y compone al Adaptee. |
+| Fortran | Applicable | [`adapter.f90`](../src/Historical/Fortran/adapter.f90) | ✅ gfortran F2018 warnings-as-errors + run | Derived types/procedure bindings separan Target y Adaptee. |
 | Pascal | Applicable | [`adapter.pas`](../src/Historical/Pascal/adapter.pas) | ✅ Free Pascal `-Sew` + run | Clase Target abstracta + composición. |
 | Python | Applicable | [`adapter.py`](../src/Scripting/PythonPY/adapter.py) | ✅ `py_compile` + Python 3.14 run | Duck typing mantiene el Target liviano. |
 | Visual Basic .NET | Applicable | [`AdapterExample.vb`](../src/Enterprise/VisualBasic/AdapterExample.vb) | ✅ .NET 10 VB compile/run | Interface y composición. |
 | C++ | Applicable | [`adapter.cpp`](../src/Systems/C%2B%2B/adapter.cpp) | ✅ C++20 warnings-as-errors + run | Interfaz abstracta + composición. |
-| Objective-C | Applicable | [`adapter.m`](../src/Systems/Objective-C/adapter.m) | pendiente | Protocol Target + wrapper sobre objeto heredado. |
+| Objective-C | Applicable | [`adapter.m`](../src/Systems/Objective-C/adapter.m) | ✅ macOS Clang/ARC/Foundation + run | Protocol Target + wrapper sobre objeto heredado. |
 | Java | Applicable | [`AdapterExample.java`](../src/Enterprise/Java/AdapterExample.java) | ✅ Java 25 `-Xlint:all -Werror` + run | Interface Target + composición. |
 | Rust | Applicable | [`adapter.rs`](../src/Systems/Rust/adapter.rs) | ✅ rustfmt + `rustc -D warnings` + run | Trait Target + struct adapter. |
-| Zig | Applicable | [`adapter.zig`](../src/Systems/Zig/adapter.zig) | pendiente | Struct Adapter compone al sensor y traduce la unidad. |
+| Zig | Applicable | [`adapter.zig`](../src/Systems/Zig/adapter.zig) | ✅ Zig fmt/check + run | Struct Adapter compone al sensor y traduce la unidad. |
 | Go | Applicable | [`adapter.go`](../src/Systems/Go/adapter.go) | ✅ gofmt + go vet + run | Interface implícita + composición. |
 | PHP | Applicable | [`adapter.php`](../src/Scripting/PHP/adapter.php) | ✅ PHP lint + run | Interface + wrapper. |
-| Nim | Applicable | [`adapter.nim`](../src/Niche/Nim/adapter.nim) | pendiente | Object + proc Target sobre un Adaptee compuesto. |
-| Dart | Applicable | [`adapter.dart`](../src/Web/Dart/adapter.dart) | pendiente | Interface explícita + composición. |
+| Nim | Applicable | [`adapter.nim`](../src/Niche/Nim/adapter.nim) | ✅ Nim warnings + compile/run | Object + proc Target sobre un Adaptee compuesto. |
+| Dart | Applicable | [`adapter.dart`](../src/Web/Dart/adapter.dart) | ✅ Dart format/analyze + run | Interface explícita + composición. |
 | Kotlin | Applicable | [`AdapterExample.kt`](../src/Enterprise/Kotlin/AdapterExample.kt) | ✅ kotlinc + JVM run | Interface + composición. |
 | Swift | Applicable | [`adapter.swift`](../src/Systems/Swift/adapter.swift) | ✅ swiftc + run | Protocol + wrapper. |
 | F# | Applicable | [`adapter.fsx`](../src/Functional/F%23/adapter.fsx) | ✅ `dotnet fsi` + contrato observable | Interface o funciones adaptadoras idiomáticas. |
-| Crystal | Applicable | [`adapter.cr`](../src/Niche/Crystal/adapter.cr) | pendiente | Clase Adapter satisface Target y compone al legacy sensor. |
+| Crystal | Applicable | [`adapter.cr`](../src/Niche/Crystal/adapter.cr) | ✅ Crystal format/build + run | Clase Adapter satisface Target y compone al legacy sensor. |
 | Lua | Applicable | [`adapter.lua`](../src/Scripting/Lua/adapter.lua) | ✅ Lua 5.4 run | Table + closure traducen operación/unidad. |
 | Haskell | Applicable | [`Adapter.hs`](../src/Functional/Haskell/Adapter.hs) | ✅ GHC warnings-as-errors + run | Función adaptadora devuelve contrato objetivo. |
-| COBOL | Applicable | [`adapter.cbl`](../src/Historical/Cobol/adapter.cbl) | pendiente | Paragraph wrapper traduce operación y representación. |
+| COBOL | Applicable | [`adapter.cbl`](../src/Historical/Cobol/adapter.cbl) | ✅ GnuCOBOL compile/run | Paragraph wrapper traduce operación y representación. |
 | Scala | Applicable | [`Adapter.scala`](../src/Functional/Scala/Adapter.scala) | ✅ scalac + run | Trait + wrapper. |
-| Groovy | Applicable | [`adapter.groovy`](../src/Scripting/Groovy/adapter.groovy) | pendiente | Dynamic dispatch + wrapper. |
+| Groovy | Applicable | [`adapter.groovy`](../src/Scripting/Groovy/adapter.groovy) | ✅ Groovy compile/run | Dynamic dispatch + wrapper. |
 | Ruby | Applicable | [`adapter.rb`](../src/Scripting/RubyRB/adapter.rb) | ✅ Ruby syntax + run | Duck typing + wrapper. |
 | C | Applicable | [`adapter.c`](../src/Systems/C/adapter.c) | ✅ GCC C17 warnings-as-errors + run | Structs + function pointers traducen el contrato. |
-| OCaml | Applicable | [`adapter.ml`](../src/Functional/OCaml/adapter.ml) | pendiente | Función de orden superior transforma el contrato. |
-| Julia | Applicable | [`adapter.jl`](../src/DataScience/Julia/adapter.jl) | pendiente | Función adaptadora devuelve una nueva operación Celsius. |
-| VBA | Applicable | [`adapter.bas`](../src/Shell/VBA/adapter.bas) + [classes](../src/Shell/VBA/FahrenheitSensorAdapter.cls) | pendiente | `Implements` + class modules preservan Target/Adaptee reales. |
-| GDScript | Applicable | [`adapter.gd`](../src/Niche/GDScript/adapter.gd) | pendiente | Script wrapper traduce método y unidad. |
+| OCaml | Applicable | [`adapter.ml`](../src/Functional/OCaml/adapter.ml) | ✅ OCaml warnings-as-errors + run | Función de orden superior transforma el contrato. |
+| Julia | Applicable | [`adapter.jl`](../src/DataScience/Julia/adapter.jl) | ✅ Julia runtime + contrato observable | Función adaptadora devuelve una nueva operación Celsius. |
+| VBA | Applicable | [`adapter.bas`](../src/Shell/VBA/adapter.bas) + [classes](../src/Shell/VBA/FahrenheitSensorAdapter.cls) | ✅ source-contract sobre VBA real | `Implements` + class modules preservan Target/Adaptee reales. |
+| GDScript | Applicable | [`adapter.gd`](../src/Niche/GDScript/adapter.gd) | ✅ Godot 4.6.3 headless + run | Script wrapper traduce método y unidad. |
 | JavaScript | Applicable | [`adapter.js`](../src/Web/JavaScriptJS/adapter.js) | ✅ Node syntax + run | Duck typing + class adapter. |
-| MATLAB | Applicable | [`adapter.m`](../src/DataScience/MATLAB/adapter.m) | pendiente | Function handles traducen la dependencia sin ceremonia OO. |
+| MATLAB | Applicable | [`adapter.m`](../src/DataScience/MATLAB/adapter.m) | ✅ MathWorks Actions + run | Function handles traducen la dependencia sin ceremonia OO. |
 | Perl | Applicable | [`adapter.pl`](../src/Scripting/Perl/adapter.pl) | ✅ Perl syntax + run | Packages traducen el contrato. |
-| R | Applicable | [`adapter.R`](../src/DataScience/R/adapter.R) | pendiente | Closure adapta una operación Fahrenheit a Celsius. |
+| R | Applicable | [`adapter.R`](../src/DataScience/R/adapter.R) | ✅ Rscript + contrato observable | Closure adapta una operación Fahrenheit a Celsius. |
 | PowerShell | Applicable | [`adapter.ps1`](../src/Shell/PowerShell/adapter.ps1) | ✅ PowerShell strict-mode run | Script object + closure mantienen al adaptee detrás de Target. |
 | HTML | N/A | — | — | Markup declarativo; la adaptación ejecutable pertenece al runtime que lo procesa. |
-| Assembly | Applicable | [`adapter.asm`](../src/LowLevel/Assembly/adapter.asm) | pendiente | Wrapper routine traduce operación y verifica 86→30 antes de emitir. |
-| Elixir | Applicable | [`adapter.exs`](../src/Functional/Elixir/adapter.exs) | pendiente | Módulo Adapter traduce la llamada al módulo heredado. |
+| Assembly | Applicable | [`adapter.asm`](../src/LowLevel/Assembly/adapter.asm) | ✅ NASM/ld + run + traducción 86→30 | Wrapper routine traduce operación y verifica 86→30 antes de emitir. |
+| Elixir | Applicable | [`adapter.exs`](../src/Functional/Elixir/adapter.exs) | ✅ Elixir warnings-as-errors + run | Módulo Adapter traduce la llamada al módulo heredado. |
 | Shell | Applicable | [`adapter.sh`](../src/Shell/Bash/adapter.sh) | ✅ Bash syntax + run | Functions normalizan operación y unidad. |
-| Erlang | Applicable | [`adapter.erl`](../src/Functional/Erlang/adapter.erl) | pendiente | Higher-order function traduce el protocolo de lectura. |
-| Clojure | Applicable | [`adapter.clj`](../src/Functional/Clojure/adapter.clj) | pendiente | Closure adapta el contrato sin forma OO. |
-| Common Lisp | Applicable | [`adapter.lisp`](../src/Functional/Lisp/adapter.lisp) | pendiente | Closure captura la operación incompatible. |
-| Prolog | Applicable | [`adapter.pl`](../src/Niche/Prolog/adapter.pl) | pendiente | Predicado wrapper traduce valor y unidad. |
-| Delphi | Applicable | [`AdapterExample.pas`](../src/Enterprise/Delphi/AdapterExample.pas) | pendiente | Interface + composición sobre el contrato real de Delphi. |
-| GNU Octave | Applicable | [`adapter.m`](../src/DataScience/Octave/adapter.m) | pendiente | Function handle traduce el contrato. |
+| Erlang | Applicable | [`adapter.erl`](../src/Functional/Erlang/adapter.erl) | ✅ Erlang warnings-as-errors + run | Higher-order function traduce el protocolo de lectura. |
+| Clojure | Applicable | [`adapter.clj`](../src/Functional/Clojure/adapter.clj) | ✅ Clojure runtime + contrato observable | Closure adapta el contrato sin forma OO. |
+| Common Lisp | Applicable | [`adapter.lisp`](../src/Functional/Lisp/adapter.lisp) | ✅ SBCL non-interactive + contrato observable | Closure captura la operación incompatible. |
+| Prolog | Applicable | [`adapter.pl`](../src/Niche/Prolog/adapter.pl) | ✅ SWI-Prolog run | Predicado wrapper traduce valor y unidad. |
+| Delphi | Applicable | [`AdapterExample.pas`](../src/Enterprise/Delphi/AdapterExample.pas) | ✅ source-contract sobre Delphi real | Interface + composición sobre el contrato real de Delphi. |
+| GNU Octave | Applicable | [`adapter.m`](../src/DataScience/Octave/adapter.m) | ✅ Octave headless + contrato observable | Function handle traduce el contrato. |
 | SQL | N/A | — | — | SQL declarativo transforma datos, pero no expresa por sí mismo una frontera de objeto/componente con contrato Target/Adaptee. |
 | CSS | N/A | — | — | Reglas declarativas de presentación sin llamadas de componente a adaptar. |
-| MicroPython | Applicable | [`adapter.py`](../src/Other/MicroPython/adapter.py) | pendiente | Duck typing/clases livianas bajo el runtime MicroPython real. |
-| Rockstar | Applicable | [`adapter.rock`](../src/Other/Rockstar/adapter.rock) | pendiente | Keyed array + función Adapter traducen la representación. |
+| MicroPython | Applicable | [`adapter.py`](../src/Other/MicroPython/adapter.py) | ✅ MicroPython 1.28.0 Unix port oficial + run | Duck typing/clases livianas bajo el runtime MicroPython real. |
+| Rockstar | Applicable | [`adapter.rock`](../src/Other/Rockstar/adapter.rock) | ✅ Rockstar v2.0.31 oficial + salida exacta | Keyed array + función Adapter traducen la representación. |
 
 ## Comprueba que lo entendiste
 
