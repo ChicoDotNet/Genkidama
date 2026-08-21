@@ -16,5 +16,5 @@ main = do
   second <- registryInstance
   atomicModifyIORef' first (\count -> (count + 1, ()))
   count <- readIORef second
-  putStrLn $ "same=" ++ show (first == second)
+  putStrLn $ "same=" ++ if first == second then "true" else "false"
   putStrLn $ "count=" ++ show count
