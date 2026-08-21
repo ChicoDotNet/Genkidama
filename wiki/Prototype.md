@@ -2,8 +2,8 @@
 
 > **Familia:** Creational  
 > **Intención:** crear nuevos objetos copiando una instancia prototipo existente cuando reutilizar su estado configurado resulta más claro o económico que reconstruirlo desde cero.  
-> **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `41/48`  
+> **Estado:** `validated`  
+> **Implementaciones de lenguaje:** `48/48`  
 > **Cobertura de pruebas:** N/A — no existe una métrica homogénea entre los ejemplos standalone; se usará la evidencia más fuerte razonablemente disponible por target.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -147,15 +147,15 @@ Duplicar IDs únicos, sockets, handles, locks o conexiones puede producir dos ob
 
 ## Implementaciones por lenguaje
 
-La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 45 lenguajes v1 y 6 adicionales. La clasificación mantiene 48 `Applicable` y 3 `N/A`. Hay **48 ejemplos materializados y 41 verificados**; Ada, Fortran, Zig, Dart, Assembly, MicroPython y Rockstar siguen bajo validación fresca.
+La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 45 lenguajes v1 y 6 adicionales. La clasificación mantiene 48 `Applicable` y 3 `N/A`. Hay **48 ejemplos materializados y 48 verificados**.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
 | C# | Applicable | [`PrototypeExample.cs`](../src/Enterprise/C%23/PrototypeExample.cs) | ✅ .NET 10 compile/run | Contrato explícito + copia profunda de colección. |
 | TypeScript | Applicable | [`prototype.ts`](../src/Web/TypeScriptTS/prototype.ts) | ✅ TypeScript 6 strict + Node | Contrato genérico + copia independiente del array. |
-| Ada | Applicable | [`prototype.adb`](../src/Historical/Ada/prototype.adb) | pendiente | Record con copia independiente; espera evidencia fresca del gate aislado. |
+| Ada | Applicable | [`prototype.adb`](../src/Historical/Ada/prototype.adb) | ✅ GNAT 2022 warnings-as-errors compile/run | Record con copia independiente. |
 | Solidity | Applicable | [`Prototype.sol`](../src/Niche/Solidity/Prototype.sol) | ✅ solc 0.8.30 + source contract | Copia explícita de struct/array dentro del contrato. |
-| Fortran | Applicable | [`prototype.f90`](../src/Historical/Fortran/prototype.f90) | pendiente | Derived type con allocatable independiente; reparación bajo `-Werror` espera rerun. |
+| Fortran | Applicable | [`prototype.f90`](../src/Historical/Fortran/prototype.f90) | ✅ gfortran F2018 warnings-as-errors compile/run | Derived type con allocatable independiente. |
 | Pascal | Applicable | [`prototype.pas`](../src/Historical/Pascal/prototype.pas) | ✅ FPC strict compile/run | Record con copia explícita del array dinámico. |
 | Python | Applicable | [`prototype.py`](../src/Scripting/PythonPY/prototype.py) | ✅ Python compile/run | `deepcopy` encapsulado por el prototipo. |
 | Visual Basic .NET | Applicable | [`PrototypeExample.vb`](../src/Enterprise/VisualBasic/PrototypeExample.vb) | ✅ .NET 10 VB compile/run | Nueva instancia + nueva `List(Of String)`. |
@@ -163,11 +163,11 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Objective-C | Applicable | [`prototype.m`](../src/Systems/Objective-C/prototype.m) | ✅ Clang/ARC/Foundation | `NSCopying` con colección independiente. |
 | Java | Applicable | [`PrototypeExample.java`](../src/Enterprise/Java/PrototypeExample.java) | ✅ Java 25 `-Werror` | Contrato `Prototype<T>` + nueva colección. |
 | Rust | Applicable | [`prototype.rs`](../src/Systems/Rust/prototype.rs) | ✅ rustfmt + `rustc -D warnings` | `Clone` idiomático duplica `Vec<String>`. |
-| Zig | Applicable | [`prototype.zig`](../src/Systems/Zig/prototype.zig) | pendiente | Struct por valor con buffers propios; formatter 0.16 reparado, espera rerun. |
+| Zig | Applicable | [`prototype.zig`](../src/Systems/Zig/prototype.zig) | ✅ Zig 0.16 fmt + run | Struct por valor con buffers propios. |
 | Go | Applicable | [`prototype.go`](../src/Systems/Go/prototype.go) | ✅ gofmt + vet + run | Método `Clone` duplica el slice mutable. |
 | PHP | Applicable | [`prototype.php`](../src/Scripting/PHP/prototype.php) | ✅ lint/run | `clone`; arrays usan copy-on-write y divergen al modificar la copia. |
 | Nim | Applicable | [`prototype.nim`](../src/Niche/Nim/prototype.nim) | ✅ Nim compile/run | Object con nueva secuencia de features. |
-| Dart | Applicable | [`prototype.dart`](../src/Web/Dart/prototype.dart) | pendiente | Copia explícita de lista; formatter reparado, espera rerun. |
+| Dart | Applicable | [`prototype.dart`](../src/Web/Dart/prototype.dart) | ✅ Dart format + analyze + run | Copia explícita de lista. |
 | Kotlin | Applicable | [`PrototypeExample.kt`](../src/Enterprise/Kotlin/PrototypeExample.kt) | ✅ kotlinc/JVM | `copy` + `toMutableList` evita compartir estado mutable. |
 | Swift | Applicable | [`prototype.swift`](../src/Systems/Swift/prototype.swift) | ✅ swiftc compile/run | Value semantics + copy-on-write de `Array`. |
 | F# | Applicable | [`prototype.fsx`](../src/Functional/F%23/prototype.fsx) | ✅ `dotnet fsi` | Record + lista inmutable para derivar la variante. |
@@ -189,7 +189,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | R | Applicable | [`prototype.R`](../src/DataScience/R/prototype.R) | ✅ Rscript | Lista derivada con vector independiente. |
 | PowerShell | Applicable | [`prototype.ps1`](../src/Shell/PowerShell/prototype.ps1) | ✅ pwsh StrictMode/run | PSCustomObject + nueva lista genérica. |
 | HTML | N/A | — | — | HTML describe markup; una rutina de clonación ejecutable pertenece al runtime que la implementa. |
-| Assembly | Applicable | [`prototype.asm`](../src/LowLevel/Assembly/prototype.asm) | pendiente | Copia explícita de buffers; gate aislado ya instala NASM y espera rerun. |
+| Assembly | Applicable | [`prototype.asm`](../src/LowLevel/Assembly/prototype.asm) | ✅ NASM/ld compile/run | Copia explícita de buffers. |
 | Elixir | Applicable | [`prototype.exs`](../src/Functional/Elixir/prototype.exs) | ✅ Elixir compile/run | Datos inmutables derivados desde la plantilla. |
 | Shell | Applicable | [`prototype.sh`](../src/Shell/Bash/prototype.sh) | ✅ bash syntax/run | Arrays copiados mediante referencias por nombre, sin compartir estado. |
 | Erlang | Applicable | [`prototype.erl`](../src/Functional/Erlang/prototype.erl) | ✅ Erlang compile/run | Map inmutable derivado desde el prototipo. |
@@ -200,8 +200,8 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | GNU Octave | Applicable | [`prototype.m`](../src/DataScience/Octave/prototype.m) | ✅ Octave run | Struct copiado y especializado. |
 | SQL | N/A | — | — | SQL declarativo puede duplicar datos, pero no expresa por sí mismo un objeto runtime responsable de clonarse dentro de este catálogo. |
 | CSS | N/A | — | — | CSS define reglas de presentación; no expresa una operación runtime de clonación de objetos. |
-| MicroPython | Applicable | [`prototype.py`](../src/Other/MicroPython/prototype.py) | pendiente | Copia explícita en MicroPython 1.28.0; espera evidencia fresca del Unix port oficial. |
-| Rockstar | Applicable | [`prototype.rock`](../src/Other/Rockstar/prototype.rock) | pendiente | Keyed arrays copiados campo a campo con runtime v2.0.31; espera rerun. |
+| MicroPython | Applicable | [`prototype.py`](../src/Other/MicroPython/prototype.py) | ✅ MicroPython 1.28.0 Unix port | Copia explícita ejecutada en el Unix port oficial. |
+| Rockstar | Applicable | [`prototype.rock`](../src/Other/Rockstar/prototype.rock) | ✅ Rockstar v2.0.31 runtime | Keyed arrays copiados campo a campo con el runtime oficial fijado por SHA-256. |
 
 ## Comprueba que lo entendiste
 
