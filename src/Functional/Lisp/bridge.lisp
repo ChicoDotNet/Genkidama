@@ -1,9 +1,11 @@
-(defstruct device power-on mute)
+(defstruct (device (:constructor %make-device (power-on mute)))
+  power-on
+  mute)
 
-(defun make-device (name)
-  (make-device
-   :power-on (lambda () (format nil "~A:on" name))
-   :mute (lambda () (format nil "~A:muted" name))))
+(defun create-device (name)
+  (%make-device
+   (lambda () (format nil "~A:on" name))
+   (lambda () (format nil "~A:muted" name))))
 
 (defun activate-basic (device)
   (funcall (device-power-on device)))
@@ -11,8 +13,8 @@
 (defun activate-mute (device)
   (funcall (device-mute device)))
 
-(let ((tv (make-device "TV"))
-      (radio (make-device "Radio")))
+(let ((tv (create-device "TV"))
+      (radio (create-device "Radio")))
   (format t "basic-tv=~A~%" (activate-basic tv))
   (format t "basic-radio=~A~%" (activate-basic radio))
   (format t "mute-tv=~A~%" (activate-mute tv))
