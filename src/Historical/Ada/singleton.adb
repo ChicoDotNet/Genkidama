@@ -17,6 +17,8 @@ procedure Singleton is
       end Instance;
    end Registry;
 
+   use type Registry.State_Access;
+
    First  : constant Registry.State_Access := Registry.Instance;
    Second : constant Registry.State_Access := Registry.Instance;
 begin
