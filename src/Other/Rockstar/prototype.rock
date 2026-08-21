@@ -1,13 +1,13 @@
-Clone takes source
+Duplicate takes template
 Rock result
-Result at "description" is source at "description"
+Result at "description" is template at "description"
 Give back result
 Yeah
 
 Rock original
 Original at "description" is "original=orders: metrics"
 
-Call Clone with original into canary
+Call Duplicate with original into canary
 Canary at "description" is "clone=orders-canary: metrics,tracing"
 
 Print original at "description"
