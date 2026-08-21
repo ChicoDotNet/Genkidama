@@ -2,6 +2,7 @@ module temperature_adapter
   implicit none
 
   type :: legacy_fahrenheit_sensor
+    integer :: fahrenheit = 86
   contains
     procedure :: read_fahrenheit
   end type legacy_fahrenheit_sensor
@@ -16,7 +17,7 @@ contains
 
   integer function read_fahrenheit(self)
     class(legacy_fahrenheit_sensor), intent(in) :: self
-    read_fahrenheit = 86
+    read_fahrenheit = self%fahrenheit
   end function read_fahrenheit
 
   integer function read_celsius(self)
