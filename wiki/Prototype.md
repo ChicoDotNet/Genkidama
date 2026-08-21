@@ -3,7 +3,7 @@
 > **Familia:** Creational  
 > **Intención:** crear nuevos objetos copiando una instancia prototipo existente cuando reutilizar su estado configurado resulta más claro o económico que reconstruirlo desde cero.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `0/48`  
+> **Implementaciones de lenguaje:** `22/48`  
 > **Cobertura de pruebas:** N/A — no existe una métrica homogénea entre los ejemplos standalone; se usará la evidencia más fuerte razonablemente disponible por target.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -147,51 +147,51 @@ Duplicar IDs únicos, sockets, handles, locks o conexiones puede producir dos ob
 
 ## Implementaciones por lenguaje
 
-La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 45 lenguajes v1 y 6 adicionales. La clasificación provisional mantiene 48 `Applicable` y 3 `N/A`. Hay **22 ejemplos materializados**; ninguno se promueve todavía hasta observar CI verde sobre el head correspondiente.
+La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 45 lenguajes v1 y 6 adicionales. La clasificación provisional mantiene 48 `Applicable` y 3 `N/A`. Hay **22 ejemplos materializados y verificados** en dos tranches ejecutables; los 26 Applicable restantes siguen pendientes.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
-| C# | Applicable | [`PrototypeExample.cs`](../src/Enterprise/C%23/PrototypeExample.cs) | pendiente de CI | Contrato explícito + copia profunda de colección. |
-| TypeScript | Applicable | [`prototype.ts`](../src/Web/TypeScriptTS/prototype.ts) | pendiente de CI | Contrato genérico + copia independiente del array. |
+| C# | Applicable | [`PrototypeExample.cs`](../src/Enterprise/C%23/PrototypeExample.cs) | ✅ .NET 10 compile/run | Contrato explícito + copia profunda de colección. |
+| TypeScript | Applicable | [`prototype.ts`](../src/Web/TypeScriptTS/prototype.ts) | ✅ TypeScript 6 strict + Node | Contrato genérico + copia independiente del array. |
 | Ada | Applicable | — | pendiente | Records y operaciones de copia pueden expresar el contrato. |
 | Solidity | Applicable | — | pendiente | Structs/contratos pueden copiar estado significativo dentro de sus límites de storage/memory. |
 | Fortran | Applicable | — | pendiente | Derived types y asignación controlada permiten copiar estado. |
-| Pascal | Applicable | [`prototype.pas`](../src/Historical/Pascal/prototype.pas) | pendiente de CI | Record con copia explícita del array dinámico. |
-| Python | Applicable | [`prototype.py`](../src/Scripting/PythonPY/prototype.py) | pendiente de CI | `deepcopy` encapsulado por el prototipo. |
-| Visual Basic .NET | Applicable | [`PrototypeExample.vb`](../src/Enterprise/VisualBasic/PrototypeExample.vb) | pendiente de CI | Nueva instancia + nueva `List(Of String)`. |
-| C++ | Applicable | [`prototype.cpp`](../src/Systems/C%2B%2B/prototype.cpp) | pendiente de CI | `clone()` virtual + `unique_ptr`; vector copiado por valor. |
+| Pascal | Applicable | [`prototype.pas`](../src/Historical/Pascal/prototype.pas) | ✅ FPC strict compile/run | Record con copia explícita del array dinámico. |
+| Python | Applicable | [`prototype.py`](../src/Scripting/PythonPY/prototype.py) | ✅ Python compile/run | `deepcopy` encapsulado por el prototipo. |
+| Visual Basic .NET | Applicable | [`PrototypeExample.vb`](../src/Enterprise/VisualBasic/PrototypeExample.vb) | ✅ .NET 10 VB compile/run | Nueva instancia + nueva `List(Of String)`. |
+| C++ | Applicable | [`prototype.cpp`](../src/Systems/C%2B%2B/prototype.cpp) | ✅ C++20 warnings-as-errors | `clone()` virtual + `unique_ptr`; vector copiado por valor. |
 | Objective-C | Applicable | — | pendiente | `NSCopying`/copy idiomático. |
-| Java | Applicable | [`PrototypeExample.java`](../src/Enterprise/Java/PrototypeExample.java) | pendiente de CI | Contrato `Prototype<T>` + nueva colección. |
-| Rust | Applicable | [`prototype.rs`](../src/Systems/Rust/prototype.rs) | pendiente de CI | `Clone` idiomático duplica `Vec<String>`. |
+| Java | Applicable | [`PrototypeExample.java`](../src/Enterprise/Java/PrototypeExample.java) | ✅ Java 25 `-Werror` | Contrato `Prototype<T>` + nueva colección. |
+| Rust | Applicable | [`prototype.rs`](../src/Systems/Rust/prototype.rs) | ✅ rustfmt + `rustc -D warnings` | `Clone` idiomático duplica `Vec<String>`. |
 | Zig | Applicable | — | pendiente | Structs y copia explícita con ownership controlado. |
-| Go | Applicable | [`prototype.go`](../src/Systems/Go/prototype.go) | pendiente de CI | Método `Clone` duplica el slice mutable. |
-| PHP | Applicable | [`prototype.php`](../src/Scripting/PHP/prototype.php) | pendiente de CI | `clone`; arrays usan copy-on-write y divergen al modificar la copia. |
+| Go | Applicable | [`prototype.go`](../src/Systems/Go/prototype.go) | ✅ gofmt + vet + run | Método `Clone` duplica el slice mutable. |
+| PHP | Applicable | [`prototype.php`](../src/Scripting/PHP/prototype.php) | ✅ lint/run | `clone`; arrays usan copy-on-write y divergen al modificar la copia. |
 | Nim | Applicable | — | pendiente | Objects/ref objects con copia explícita. |
 | Dart | Applicable | — | pendiente | `copyWith`/copia explícita puede preservar intención. |
-| Kotlin | Applicable | [`PrototypeExample.kt`](../src/Enterprise/Kotlin/PrototypeExample.kt) | pendiente de CI | `copy` + `toMutableList` evita compartir estado mutable. |
-| Swift | Applicable | [`prototype.swift`](../src/Systems/Swift/prototype.swift) | pendiente de CI | Value semantics + copy-on-write de `Array`. |
-| F# | Applicable | [`prototype.fsx`](../src/Functional/F%23/prototype.fsx) | pendiente de CI | Record + lista inmutable para derivar la variante. |
+| Kotlin | Applicable | [`PrototypeExample.kt`](../src/Enterprise/Kotlin/PrototypeExample.kt) | ✅ kotlinc/JVM | `copy` + `toMutableList` evita compartir estado mutable. |
+| Swift | Applicable | [`prototype.swift`](../src/Systems/Swift/prototype.swift) | ✅ swiftc compile/run | Value semantics + copy-on-write de `Array`. |
+| F# | Applicable | [`prototype.fsx`](../src/Functional/F%23/prototype.fsx) | ✅ `dotnet fsi` | Record + lista inmutable para derivar la variante. |
 | Crystal | Applicable | — | pendiente | Objetos/structs con duplicación controlada. |
-| Lua | Applicable | [`prototype.lua`](../src/Scripting/Lua/prototype.lua) | pendiente de CI | Table clone con nuevo array de features. |
-| Haskell | Applicable | [`Prototype.hs`](../src/Functional/Haskell/Prototype.hs) | pendiente de CI | Valor inmutable derivado desde la plantilla. |
+| Lua | Applicable | [`prototype.lua`](../src/Scripting/Lua/prototype.lua) | ✅ Lua 5.4 run | Table clone con nuevo array de features. |
+| Haskell | Applicable | [`Prototype.hs`](../src/Functional/Haskell/Prototype.hs) | ✅ GHC warnings-as-errors | Valor inmutable derivado desde la plantilla. |
 | COBOL | Applicable | — | pendiente | Records y rutinas de copia pueden preservar el movimiento de diseño. |
-| Scala | Applicable | [`Prototype.scala`](../src/Functional/Scala/Prototype.scala) | pendiente de CI | Case class + `copy` sobre `Vector` inmutable. |
+| Scala | Applicable | [`Prototype.scala`](../src/Functional/Scala/Prototype.scala) | ✅ scalac/run | Case class + `copy` sobre `Vector` inmutable. |
 | Groovy | Applicable | — | pendiente | Objetos/maps y copia explícita. |
-| Ruby | Applicable | [`prototype.rb`](../src/Scripting/RubyRB/prototype.rb) | pendiente de CI | `dup` + `initialize_copy` para duplicar estado mutable. |
-| C | Applicable | [`prototype.c`](../src/Systems/C/prototype.c) | pendiente de CI | Struct por valor con buffers propios. |
+| Ruby | Applicable | [`prototype.rb`](../src/Scripting/RubyRB/prototype.rb) | ✅ syntax/run | `dup` + `initialize_copy` para duplicar estado mutable. |
+| C | Applicable | [`prototype.c`](../src/Systems/C/prototype.c) | ✅ C17 warnings-as-errors | Struct por valor con buffers propios. |
 | OCaml | Applicable | — | pendiente | Records y actualización funcional desde una plantilla. |
 | Julia | Applicable | — | pendiente | `copy`/`deepcopy` y structs configurados. |
 | VBA | Applicable | — | pendiente | Class modules + operación de copia explícita. |
 | GDScript | Applicable | — | pendiente | `duplicate`/Dictionary deep duplication según representación. |
-| JavaScript | Applicable | [`prototype.js`](../src/Web/JavaScriptJS/prototype.js) | pendiente de CI | Prototipo nativo + copia independiente de array mutable. |
+| JavaScript | Applicable | [`prototype.js`](../src/Web/JavaScriptJS/prototype.js) | ✅ Node syntax/run | Prototipo nativo + copia independiente de array mutable. |
 | MATLAB | Applicable | — | pendiente | Structs/handle/value classes permiten copia significativa. |
-| Perl | Applicable | [`prototype.pl`](../src/Scripting/Perl/prototype.pl) | pendiente de CI | Hash + nuevo array para el clon. |
+| Perl | Applicable | [`prototype.pl`](../src/Scripting/Perl/prototype.pl) | ✅ syntax/run | Hash + nuevo array para el clon. |
 | R | Applicable | — | pendiente | Listas/objetos permiten derivar copias configuradas. |
-| PowerShell | Applicable | [`prototype.ps1`](../src/Shell/PowerShell/prototype.ps1) | pendiente de CI | PSCustomObject + nueva lista genérica. |
+| PowerShell | Applicable | [`prototype.ps1`](../src/Shell/PowerShell/prototype.ps1) | ✅ pwsh StrictMode/run | PSCustomObject + nueva lista genérica. |
 | HTML | N/A | — | — | HTML describe markup; una rutina de clonación ejecutable pertenece al runtime que la implementa. |
 | Assembly | Applicable | — | pendiente | Copia explícita de estructuras/buffers puede preservar el patrón. |
 | Elixir | Applicable | — | pendiente | Datos inmutables permiten derivar variantes desde una plantilla. |
-| Shell | Applicable | [`prototype.sh`](../src/Shell/Bash/prototype.sh) | pendiente de CI | Arrays copiados mediante referencias por nombre, sin compartir estado. |
+| Shell | Applicable | [`prototype.sh`](../src/Shell/Bash/prototype.sh) | ✅ bash syntax/run | Arrays copiados mediante referencias por nombre, sin compartir estado. |
 | Erlang | Applicable | — | pendiente | Maps/records inmutables permiten derivar copias. |
 | Clojure | Applicable | — | pendiente | Persistent data structures permiten partir de un prototipo inmutable. |
 | Common Lisp | Applicable | — | pendiente | Estructuras/listas y copy-tree/copia explícita. |
