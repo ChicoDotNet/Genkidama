@@ -1,0 +1,71 @@
+name: Pattern Prototype
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-prototype.yml'
+      - 'src/Enterprise/C#/PrototypeExample.cs'
+      - 'src/Scripting/PythonPY/prototype.py'
+      - 'src/Web/JavaScriptJS/prototype.js'
+      - 'src/Systems/Go/prototype.go'
+      - 'wiki/Prototype.md'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.26.5'
+
+      - name: Validate Prototype examples
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          assert_output() {
+            local output="$1"
+            grep -Fq 'original=orders: metrics' <<<"$output"
+            grep -Fq 'clone=orders-canary: metrics,tracing' <<<"$output"
+            if grep -Fq 'original=orders: metrics,tracing' <<<"$output"; then
+              echo 'Prototype clone shares mutable feature state with the original.' >&2
+              exit 1
+            fi
+          }
+
+          work="$(mktemp -d)"
+          dotnet new console --framework net10.0 --output "$work/csharp" --force >/dev/null
+          cp 'src/Enterprise/C#/PrototypeExample.cs' "$work/csharp/Program.cs"
+          assert_output "$(dotnet run --project "$work/csharp" --configuration Release)"
+
+          python -m py_compile src/Scripting/PythonPY/prototype.py
+          assert_output "$(python src/Scripting/PythonPY/prototype.py)"
+
+          node --check src/Web/JavaScriptJS/prototype.js
+          assert_output "$(node src/Web/JavaScriptJS/prototype.js)"
+
+          test -z "$(gofmt -d src/Systems/Go/prototype.go)"
+          go vet src/Systems/Go/prototype.go
+          assert_output "$(go run src/Systems/Go/prototype.go)"
