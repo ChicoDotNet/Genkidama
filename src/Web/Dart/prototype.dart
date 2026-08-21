@@ -1,6 +1,6 @@
 class ServiceProfile {
   ServiceProfile(this.name, List<String> features)
-      : features = List<String>.of(features);
+    : features = List<String>.of(features);
 
   String name;
   final List<String> features;
