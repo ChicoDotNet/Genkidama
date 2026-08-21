@@ -1,0 +1,14 @@
+Clone takes source
+Rock result
+Result at "description" is source at "description"
+Give back result
+Yeah
+
+Rock original
+Original at "description" is "original=orders: metrics"
+
+Call Clone with original into canary
+Canary at "description" is "clone=orders-canary: metrics,tracing"
+
+Print original at "description"
+Print canary at "description"
