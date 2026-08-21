@@ -1,13 +1,13 @@
-Duplicate takes template
+Mirror takes factory
 Rock result
-Result at "description" is template at "description"
+Result at "description" is factory at "description"
 Give back result
 Yeah
 
 Rock original
 Original at "description" is "original=orders: metrics"
 
-Call Duplicate with original into canary
+Call Mirror with original into canary
 Canary at "description" is "clone=orders-canary: metrics,tracing"
 
 Print original at "description"
