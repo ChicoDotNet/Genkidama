@@ -163,6 +163,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - name: Setup NASM
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y nasm
       - name: Validate Assembly Prototype
         shell: bash
         run: |
