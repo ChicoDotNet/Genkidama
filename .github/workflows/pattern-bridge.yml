@@ -9,9 +9,19 @@ on:
       - 'src/Enterprise/C#/BridgeExample.cs'
       - 'src/Enterprise/Java/BridgeExample.java'
       - 'src/Enterprise/Kotlin/BridgeExample.kt'
+      - 'src/Enterprise/VisualBasic/BridgeExample.vb'
       - 'src/Functional/F#/bridge.fsx'
+      - 'src/Functional/Haskell/Bridge.hs'
+      - 'src/Functional/Scala/Bridge.scala'
+      - 'src/Historical/Pascal/bridge.pas'
+      - 'src/Scripting/Lua/bridge.lua'
       - 'src/Scripting/PHP/bridge.php'
+      - 'src/Scripting/Perl/bridge.pl'
       - 'src/Scripting/PythonPY/bridge.py'
+      - 'src/Scripting/RubyRB/bridge.rb'
+      - 'src/Shell/Bash/bridge.sh'
+      - 'src/Shell/PowerShell/bridge.ps1'
+      - 'src/Systems/C/bridge.c'
       - 'src/Systems/C++/bridge.cpp'
       - 'src/Systems/Go/bridge.go'
       - 'src/Systems/Rust/bridge.rs'
@@ -57,6 +67,13 @@ jobs:
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup portable runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y fp-compiler ghc lua5.4 perl ruby scala
 
       - name: Validate Bridge mainstream examples
         shell: bash
@@ -109,3 +126,45 @@ jobs:
           assert_output "$("$work/bridge-swift")"
 
           assert_output "$(dotnet fsi 'src/Functional/F#/bridge.fsx')"
+
+      - name: Validate Bridge portable examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(printf 'basic-tv=TV:on\nbasic-radio=Radio:on\nmute-tv=TV:muted\nmute-radio=Radio:muted')"
+          assert_output() {
+            local output="$1"
+            test "$output" = "$expected"
+          }
+
+          work="$(mktemp -d)"
+
+          dotnet new console --language VB --framework net10.0 --output "$work/vb" --force >/dev/null
+          cp src/Enterprise/VisualBasic/BridgeExample.vb "$work/vb/Program.vb"
+          assert_output "$(dotnet run --project "$work/vb" --configuration Release)"
+
+          gcc -std=c17 -Wall -Wextra -Werror src/Systems/C/bridge.c -o "$work/bridge-c"
+          assert_output "$("$work/bridge-c")"
+
+          ruby -cw src/Scripting/RubyRB/bridge.rb >/dev/null
+          assert_output "$(ruby src/Scripting/RubyRB/bridge.rb)"
+
+          assert_output "$(lua5.4 src/Scripting/Lua/bridge.lua)"
+
+          bash -n src/Shell/Bash/bridge.sh
+          assert_output "$(bash src/Shell/Bash/bridge.sh)"
+
+          assert_output "$(pwsh -NoLogo -NoProfile -NonInteractive -File src/Shell/PowerShell/bridge.ps1)"
+
+          assert_output "$(runghc -Wall -Werror src/Functional/Haskell/Bridge.hs)"
+
+          scala_out="$(mktemp -d)"
+          scalac -deprecation -feature -unchecked src/Functional/Scala/Bridge.scala -d "$scala_out"
+          assert_output "$(scala -cp "$scala_out" Bridge)"
+
+          perl -c src/Scripting/Perl/bridge.pl >/dev/null
+          assert_output "$(perl src/Scripting/Perl/bridge.pl)"
+
+          pascal_out="$(mktemp -d)"
+          fpc -Mobjfpc -O2 -Sew -FE"$pascal_out" src/Historical/Pascal/bridge.pas >/dev/null
+          assert_output "$("$pascal_out/bridge")"
