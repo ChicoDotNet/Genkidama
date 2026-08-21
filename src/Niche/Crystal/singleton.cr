@@ -7,7 +7,7 @@ class Registry
   end
 
   def self.instance : Registry
-    @@instance ||= Registry.new
+    @@instance ||= new
   end
 
   def increment
