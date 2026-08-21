@@ -6,5 +6,5 @@
 (let ((first (registry-instance))
       (second (registry-instance)))
   (incf (getf first :count))
-  (format t "same=~(~a~)~%" (eq first second))
+  (format t "same=~a~%" (if (eq first second) "true" "false"))
   (format t "count=~d~%" (getf second :count)))
