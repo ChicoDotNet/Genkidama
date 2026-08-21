@@ -2,50 +2,36 @@ program SingletonExample;
 
 {$mode objfpc}{$H+}
 
-uses
-  SysUtils;
-
 type
-  TRegistry = class
-  private
-    class var FInstance: TRegistry;
-    FCount: Integer;
-    constructor CreatePrivate;
-  public
-    class function Instance: TRegistry; static;
-    procedure Increment;
-    property Count: Integer read FCount;
+  PRegistry = ^TRegistry;
+  TRegistry = record
+    Count: Integer;
   end;
 
-constructor TRegistry.CreatePrivate;
+var
+  SharedRegistry: TRegistry;
+
+function Instance: PRegistry;
 begin
-  inherited Create;
-  FCount := 0;
+  Result := @SharedRegistry;
 end;
 
-class function TRegistry.Instance: TRegistry;
+procedure Increment(Registry: PRegistry);
 begin
-  if FInstance = nil then
-    FInstance := TRegistry.CreatePrivate;
-  Result := FInstance;
-end;
-
-procedure TRegistry.Increment;
-begin
-  Inc(FCount);
+  Inc(Registry^.Count);
 end;
 
 var
-  FirstRegistry: TRegistry;
-  SecondRegistry: TRegistry;
+  FirstRegistry: PRegistry;
+  SecondRegistry: PRegistry;
 begin
-  FirstRegistry := TRegistry.Instance;
-  SecondRegistry := TRegistry.Instance;
-  FirstRegistry.Increment;
+  FirstRegistry := Instance;
+  SecondRegistry := Instance;
+  Increment(FirstRegistry);
 
   if FirstRegistry = SecondRegistry then
     WriteLn('same=true')
   else
     WriteLn('same=false');
-  WriteLn('count=', SecondRegistry.Count);
+  WriteLn('count=', SecondRegistry^.Count);
 end.
