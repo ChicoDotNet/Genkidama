@@ -2,10 +2,9 @@
 
 const serviceProfilePrototype = {
   clone() {
-    return {
-      ...this,
+    return Object.assign(Object.create(Object.getPrototypeOf(this)), this, {
       features: [...this.features],
-    };
+    });
   },
 
   describe() {
