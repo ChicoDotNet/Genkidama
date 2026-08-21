@@ -5,13 +5,29 @@ const Device = struct {
     mute: *const fn () []const u8,
 };
 
-fn tvOn() []const u8 { return "TV:on"; }
-fn tvMute() []const u8 { return "TV:muted"; }
-fn radioOn() []const u8 { return "Radio:on"; }
-fn radioMute() []const u8 { return "Radio:muted"; }
+fn tvOn() []const u8 {
+    return "TV:on";
+}
 
-fn activateBasic(device: Device) []const u8 { return device.power_on(); }
-fn activateMute(device: Device) []const u8 { return device.mute(); }
+fn tvMute() []const u8 {
+    return "TV:muted";
+}
+
+fn radioOn() []const u8 {
+    return "Radio:on";
+}
+
+fn radioMute() []const u8 {
+    return "Radio:muted";
+}
+
+fn activateBasic(device: Device) []const u8 {
+    return device.power_on();
+}
+
+fn activateMute(device: Device) []const u8 {
+    return device.mute();
+}
 
 pub fn main() void {
     const tv = Device{ .power_on = tvOn, .mute = tvMute };
