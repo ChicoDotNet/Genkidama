@@ -168,3 +168,63 @@ jobs:
           pascal_out="$(mktemp -d)"
           fpc -Mobjfpc -O2 -Sew -FE"$pascal_out" src/Historical/Pascal/singleton.pas >/dev/null
           assert_singleton "$("$pascal_out/singleton")"
+
+  functional:
+    if: github.head_ref == 'patterns/singleton-kb006'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Erlang and Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '28.5.0.4'
+          elixir-version: '1.19.1'
+
+      - name: Setup Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: '1'
+
+      - name: Setup functional runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y r-base octave ocaml sbcl clojure swi-prolog-nox groovy
+
+      - name: Validate functional Singleton examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          assert_singleton() {
+            local output="$1"
+            grep -Fq 'same=true' <<<"$output"
+            grep -Fq 'count=1' <<<"$output"
+          }
+
+          assert_singleton "$(Rscript --vanilla src/DataScience/R/singleton.R)"
+          assert_singleton "$(octave --no-gui --quiet --eval "addpath('src/DataScience/Octave'); singleton();")"
+          assert_singleton "$(julia --startup-file=no src/DataScience/Julia/singleton.jl)"
+
+          ocaml_out="$(mktemp -d)"
+          ocamlc -w +A-70 -warn-error +A-70 src/Functional/OCaml/singleton.ml -o "$ocaml_out/singleton"
+          assert_singleton "$("$ocaml_out/singleton")"
+
+          assert_singleton "$(sbcl --noinform --non-interactive --load src/Functional/Lisp/singleton.lisp)"
+          assert_singleton "$(clojure src/Functional/Clojure/singleton.clj)"
+
+          elixir_out="$(mktemp -d)"
+          elixirc --warnings-as-errors -o "$elixir_out" src/Functional/Elixir/singleton.exs >/dev/null
+          assert_singleton "$(elixir src/Functional/Elixir/singleton.exs)"
+
+          erlang_out="$(mktemp -d)"
+          erlc -Werror -o "$erlang_out" src/Functional/Erlang/singleton.erl
+          assert_singleton "$(erl -noshell -pa "$erlang_out" -eval 'singleton:main(), halt().')"
+
+          assert_singleton "$(swipl -q -s src/Niche/Prolog/singleton.pl -g run -t halt)"
+
+          groovyc -d /tmp/singleton-groovy src/Scripting/Groovy/singleton.groovy
+          assert_singleton "$(groovy src/Scripting/Groovy/singleton.groovy)"
