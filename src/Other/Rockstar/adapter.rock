@@ -1,0 +1,16 @@
+Adapt takes Sensor
+Put Sensor at "fahrenheit" minus 32 into Shifted
+Put Shifted times 5 into Scaled
+Put Scaled over 9 into Celsius
+Give back Celsius
+Yeah
+
+Rock Legacy
+Legacy at "fahrenheit" is 86
+Call Adapt with Legacy into Celsius
+If Celsius is 30
+Print "legacy=86F"
+Print "adapted=30C"
+Else
+Print "adapter-error"
+Yeah
