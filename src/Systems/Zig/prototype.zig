@@ -31,12 +31,16 @@ const ServiceProfile = struct {
     fn addFeature(self: *ServiceProfile, value: []const u8) void {
         self.features[self.features_len] = ',';
         self.features_len += 1;
-        @memcpy(self.features[self.features_len..self.features_len + value.len], value);
+        @memcpy(self.features[self.features_len .. self.features_len + value.len], value);
         self.features_len += value.len;
     }
 
     fn print(self: ServiceProfile, label: []const u8) void {
-        std.debug.print("{s}={s}: {s}\n", .{ label, self.name[0..self.name_len], self.features[0..self.features_len] });
+        std.debug.print("{s}={s}: {s}\n", .{
+            label,
+            self.name[0..self.name_len],
+            self.features[0..self.features_len],
+        });
     }
 };
 
