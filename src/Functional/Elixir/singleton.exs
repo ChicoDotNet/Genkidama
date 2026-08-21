@@ -1,4 +1,4 @@
-defmodule Registry do
+defmodule SingletonRegistry do
   @name __MODULE__
 
   def start_link do
@@ -10,10 +10,10 @@ defmodule Registry do
   def count, do: Agent.get(@name, & &1)
 end
 
-{:ok, _pid} = Registry.start_link()
-first = Registry.instance()
-second = Registry.instance()
-Registry.increment()
+{:ok, _pid} = SingletonRegistry.start_link()
+first = SingletonRegistry.instance()
+second = SingletonRegistry.instance()
+SingletonRegistry.increment()
 
 IO.puts("same=#{if first == second, do: "true", else: "false"}")
-IO.puts("count=#{Registry.count()}")
+IO.puts("count=#{SingletonRegistry.count()}")
