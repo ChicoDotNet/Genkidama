@@ -8,17 +8,21 @@ type Device interface {
 }
 
 type TvDevice struct{}
+
 func (TvDevice) PowerOn() string { return "TV:on" }
-func (TvDevice) Mute() string { return "TV:muted" }
+func (TvDevice) Mute() string    { return "TV:muted" }
 
 type RadioDevice struct{}
+
 func (RadioDevice) PowerOn() string { return "Radio:on" }
-func (RadioDevice) Mute() string { return "Radio:muted" }
+func (RadioDevice) Mute() string    { return "Radio:muted" }
 
 type BasicRemote struct{ device Device }
+
 func (r BasicRemote) Activate() string { return r.device.PowerOn() }
 
 type MuteRemote struct{ device Device }
+
 func (r MuteRemote) Activate() string { return r.device.Mute() }
 
 func main() {
