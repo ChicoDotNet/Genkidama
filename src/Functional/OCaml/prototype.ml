@@ -13,9 +13,10 @@ let () =
   let original = { name = "orders"; features = ["metrics"] } in
   let copy = clone_profile original in
   let canary =
-    { copy with
+    {
       name = "orders-canary";
-      features = copy.features @ ["tracing"] }
+      features = copy.features @ ["tracing"];
+    }
   in
   Printf.printf "original=%s\n" (describe original);
   Printf.printf "clone=%s\n" (describe canary)
