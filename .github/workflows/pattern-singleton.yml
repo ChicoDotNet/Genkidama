@@ -106,3 +106,65 @@ jobs:
           assert_singleton "$("$work/singleton-swift")"
 
           assert_singleton "$(dotnet fsi 'src/Functional/F#/singleton.fsx')"
+
+  portable:
+    if: github.head_ref == 'patterns/singleton-kb006'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Setup portable runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y fp-compiler lua5.4 ghc scala ruby
+
+      - name: Validate portable Singleton examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          assert_singleton() {
+            local output="$1"
+            grep -Fq 'same=true' <<<"$output"
+            grep -Fq 'count=1' <<<"$output"
+          }
+
+          work="$(mktemp -d)"
+
+          dotnet new console --language VB --framework net10.0 --output "$work/vb" --force >/dev/null
+          cp src/Enterprise/VisualBasic/SingletonExample.vb "$work/vb/Program.vb"
+          assert_singleton "$(dotnet run --project "$work/vb" --configuration Release)"
+
+          gcc -std=c17 -Wall -Wextra -Werror src/Systems/C/singleton.c -o "$work/singleton-c"
+          assert_singleton "$("$work/singleton-c")"
+
+          ruby -cw src/Scripting/RubyRB/singleton.rb
+          assert_singleton "$(ruby src/Scripting/RubyRB/singleton.rb)"
+
+          assert_singleton "$(lua5.4 src/Scripting/Lua/singleton.lua)"
+
+          bash -n src/Shell/Bash/singleton.sh
+          assert_singleton "$(bash src/Shell/Bash/singleton.sh)"
+
+          assert_singleton "$(pwsh -NoLogo -NoProfile -NonInteractive -File src/Shell/PowerShell/singleton.ps1)"
+
+          assert_singleton "$(runghc -Wall -Werror src/Functional/Haskell/Singleton.hs)"
+
+          scala_out="$(mktemp -d)"
+          scalac -deprecation -feature -unchecked src/Functional/Scala/Singleton.scala -d "$scala_out"
+          assert_singleton "$(scala -cp "$scala_out" Singleton)"
+
+          perl -c src/Scripting/Perl/singleton.pl
+          assert_singleton "$(perl src/Scripting/Perl/singleton.pl)"
+
+          pascal_out="$(mktemp -d)"
+          fpc -Mobjfpc -O2 -Sew -FE"$pascal_out" src/Historical/Pascal/singleton.pas >/dev/null
+          assert_singleton "$("$pascal_out/singleton")"
