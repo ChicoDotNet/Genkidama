@@ -1,0 +1,108 @@
+name: Pattern Singleton
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-singleton.yml'
+      - 'src/**/singleton*'
+      - 'src/**/SingletonExample.*'
+      - 'wiki/Singleton.md'
+
+jobs:
+  mainstream:
+    if: github.head_ref == 'patterns/singleton-kb006'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.26.5'
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup lightweight runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y php-cli
+
+      - name: Validate mainstream Singleton examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          assert_singleton() {
+            local output="$1"
+            grep -Fq 'same=true' <<<"$output"
+            grep -Fq 'count=1' <<<"$output"
+          }
+
+          work="$(mktemp -d)"
+
+          dotnet new console --framework net10.0 --output "$work/csharp" --force >/dev/null
+          cp 'src/Enterprise/C#/SingletonExample.cs' "$work/csharp/Program.cs"
+          assert_singleton "$(dotnet run --project "$work/csharp" --configuration Release)"
+
+          python -m py_compile src/Scripting/PythonPY/singleton.py
+          assert_singleton "$(python src/Scripting/PythonPY/singleton.py)"
+
+          node --check src/Web/JavaScriptJS/singleton.js
+          assert_singleton "$(node src/Web/JavaScriptJS/singleton.js)"
+
+          npx --yes --package typescript@6.0.3 tsc src/Web/TypeScriptTS/singleton.ts --strict --target ES2024 --module commonjs --outDir "$work/typescript"
+          assert_singleton "$(node "$work/typescript/singleton.js")"
+
+          test -z "$(gofmt -d src/Systems/Go/singleton.go)"
+          go vet src/Systems/Go/singleton.go
+          assert_singleton "$(go run src/Systems/Go/singleton.go)"
+
+          rustfmt --check src/Systems/Rust/singleton.rs
+          rustc -D warnings src/Systems/Rust/singleton.rs -o "$work/singleton-rust"
+          assert_singleton "$("$work/singleton-rust")"
+
+          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/singleton.cpp' -o "$work/singleton-cpp"
+          assert_singleton "$("$work/singleton-cpp")"
+
+          javac -Xlint:all -Werror -d "$work/java" src/Enterprise/Java/SingletonExample.java
+          assert_singleton "$(java -cp "$work/java" SingletonExample)"
+
+          php -l src/Scripting/PHP/singleton.php
+          assert_singleton "$(php src/Scripting/PHP/singleton.php)"
+
+          command -v kotlinc >/dev/null
+          kotlinc src/Enterprise/Kotlin/SingletonExample.kt -include-runtime -d "$work/singleton-kotlin.jar"
+          assert_singleton "$(java -jar "$work/singleton-kotlin.jar")"
+
+          command -v swiftc >/dev/null
+          swiftc src/Systems/Swift/singleton.swift -o "$work/singleton-swift"
+          assert_singleton "$("$work/singleton-swift")"
+
+          assert_singleton "$(dotnet fsi 'src/Functional/F#/singleton.fsx')"
