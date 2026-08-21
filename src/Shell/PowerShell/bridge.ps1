@@ -3,8 +3,8 @@ $ErrorActionPreference = 'Stop'
 
 function New-Device([string]$Name) {
     @{
-        TurnOn = { "$Name:on" }.GetNewClosure()
-        Mute   = { "$Name:muted" }.GetNewClosure()
+        TurnOn = { "${Name}:on" }.GetNewClosure()
+        Mute   = { "${Name}:muted" }.GetNewClosure()
     }
 }
 
