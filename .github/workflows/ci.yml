@@ -64,6 +64,59 @@ jobs:
       - name: Test
         run: dotnet test Genkidama.slnx --configuration Release --no-build --collect:"XPlat Code Coverage" --logger trx --results-directory TestResults
 
+      - name: Validate Composite mainstream examples
+        if: github.event_name == 'pull_request' && github.head_ref == 'patterns/composite-kb006'
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          assert_output() {
+            local output="$1"
+            grep -Fxq 'leaf=2' <<<"$output"
+            grep -Fxq 'docs=8' <<<"$output"
+            grep -Fxq 'root=10' <<<"$output"
+          }
+
+          dotnet new console --framework net10.0 --output "$work/csharp" --force >/dev/null
+          cp 'src/Enterprise/C#/CompositeExample.cs' "$work/csharp/Program.cs"
+          assert_output "$(dotnet run --project "$work/csharp" --configuration Release)"
+
+          python -m py_compile src/Scripting/PythonPY/composite.py
+          assert_output "$(python src/Scripting/PythonPY/composite.py)"
+
+          node --check src/Web/JavaScriptJS/composite.js
+          assert_output "$(node src/Web/JavaScriptJS/composite.js)"
+
+          npx --yes --package typescript@6.0.3 tsc src/Web/TypeScriptTS/composite.ts --strict --target ES2024 --module commonjs --outDir "$work/typescript"
+          assert_output "$(node "$work/typescript/composite.js")"
+
+          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/composite.cpp' -o "$work/composite-cpp"
+          assert_output "$("$work/composite-cpp")"
+
+          javac -Xlint:all -Werror -d "$work/java" src/Enterprise/Java/CompositeExample.java
+          assert_output "$(java -cp "$work/java" CompositeExample)"
+
+          test -z "$(gofmt -d src/Systems/Go/composite.go)"
+          go vet src/Systems/Go/composite.go
+          assert_output "$(go run src/Systems/Go/composite.go)"
+
+          rustfmt --check src/Systems/Rust/composite.rs
+          rustc -D warnings src/Systems/Rust/composite.rs -o "$work/composite-rust"
+          assert_output "$("$work/composite-rust")"
+
+          php -l src/Scripting/PHP/composite.php >/dev/null
+          assert_output "$(php src/Scripting/PHP/composite.php)"
+
+          command -v kotlinc >/dev/null
+          kotlinc src/Enterprise/Kotlin/CompositeExample.kt -include-runtime -d "$work/composite-kotlin.jar"
+          assert_output "$(java -jar "$work/composite-kotlin.jar")"
+
+          command -v swiftc >/dev/null
+          swiftc src/Systems/Swift/composite.swift -o "$work/composite-swift"
+          assert_output "$("$work/composite-swift")"
+
+          assert_output "$(dotnet fsi 'src/Functional/F#/composite.fsx')"
+
       - name: Validate portable Abstract Factory examples
         if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'patterns/')
         shell: bash
