@@ -1,0 +1,94 @@
+name: Pattern Prototype Portable
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-prototype-portable.yml'
+      - 'src/Web/TypeScriptTS/prototype.ts'
+      - 'src/Enterprise/Java/PrototypeExample.java'
+      - 'src/Systems/Rust/prototype.rs'
+      - 'src/Systems/C++/prototype.cpp'
+      - 'src/Scripting/PHP/prototype.php'
+      - 'src/Enterprise/Kotlin/PrototypeExample.kt'
+      - 'src/Systems/Swift/prototype.swift'
+      - 'src/Functional/F#/prototype.fsx'
+      - 'wiki/Prototype.md'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup PHP
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y php-cli
+
+      - name: Validate portable Prototype examples
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          assert_output() {
+            local output="$1"
+            grep -Fq 'original=orders: metrics' <<<"$output"
+            grep -Fq 'clone=orders-canary: metrics,tracing' <<<"$output"
+            if grep -Fq 'original=orders: metrics,tracing' <<<"$output"; then
+              echo 'Prototype clone shares mutable feature state with the original.' >&2
+              exit 1
+            fi
+          }
+
+          work="$(mktemp -d)"
+
+          npx --yes --package typescript@6.0.3 tsc src/Web/TypeScriptTS/prototype.ts --strict --target ES2024 --module commonjs --outDir "$work/typescript"
+          assert_output "$(node "$work/typescript/prototype.js")"
+
+          javac -Xlint:all -Werror -d "$work/java" src/Enterprise/Java/PrototypeExample.java
+          assert_output "$(java -cp "$work/java" PrototypeExample)"
+
+          rustfmt --check src/Systems/Rust/prototype.rs
+          rustc -D warnings src/Systems/Rust/prototype.rs -o "$work/prototype-rust"
+          assert_output "$("$work/prototype-rust")"
+
+          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/prototype.cpp' -o "$work/prototype-cpp"
+          assert_output "$("$work/prototype-cpp")"
+
+          php -l src/Scripting/PHP/prototype.php
+          assert_output "$(php src/Scripting/PHP/prototype.php)"
+
+          command -v kotlinc >/dev/null
+          kotlinc src/Enterprise/Kotlin/PrototypeExample.kt -include-runtime -d "$work/prototype-kotlin.jar"
+          assert_output "$(java -jar "$work/prototype-kotlin.jar")"
+
+          command -v swiftc >/dev/null
+          swiftc src/Systems/Swift/prototype.swift -o "$work/prototype-swift"
+          assert_output "$("$work/prototype-swift")"
+
+          assert_output "$(dotnet fsi 'src/Functional/F#/prototype.fsx')"
