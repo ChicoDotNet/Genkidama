@@ -1,11 +1,11 @@
 registry <- new.env(parent = emptyenv())
-registry$count <- 0L
+assign("count", 0L, envir = registry)
 
 registry_instance <- function() registry
 
 first <- registry_instance()
 second <- registry_instance()
-first$count <- first$count + 1L
+assign("count", get("count", envir = first) + 1L, envir = first)
 
 cat(sprintf("same=%s\n", tolower(as.character(identical(first, second)))))
-cat(sprintf("count=%d\n", second$count))
+cat(sprintf("count=%d\n", get("count", envir = second)))
