@@ -1,0 +1,12 @@
+Rock Registry
+Registry at "count" is 0
+
+Access takes nothing
+Give back Registry
+Yeah
+
+Call Access into First
+Call Access into Second
+First at "count" is 1
+Print "same=true"
+Print Second at "count"
