@@ -1,0 +1,82 @@
+name: Pattern Adapter Functional
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-adapter-functional.yml'
+      - 'src/DataScience/R/adapter.R'
+      - 'src/DataScience/Octave/adapter.m'
+      - 'src/DataScience/Julia/adapter.jl'
+      - 'src/Functional/OCaml/adapter.ml'
+      - 'src/Functional/Lisp/adapter.lisp'
+      - 'src/Functional/Clojure/adapter.clj'
+      - 'src/Functional/Elixir/adapter.exs'
+      - 'src/Functional/Erlang/adapter.erl'
+      - 'src/Niche/Prolog/adapter.pl'
+      - 'src/Scripting/Groovy/adapter.groovy'
+      - 'wiki/Adapter.md'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: '1'
+
+      - name: Setup Erlang and Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '28.5.0.4'
+          elixir-version: '1.19.1'
+
+      - name: Setup functional Adapter runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y r-base octave ocaml sbcl clojure swi-prolog-nox groovy
+
+      - name: Validate functional Adapter examples
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          assert_adapter() {
+            local output="$1"
+            grep -Fxq 'legacy=86F' <<<"$output"
+            grep -Fxq 'adapted=30C' <<<"$output"
+          }
+
+          assert_adapter "$(Rscript --vanilla src/DataScience/R/adapter.R)"
+          assert_adapter "$(octave --no-gui --quiet --eval "addpath('src/DataScience/Octave'); adapter();")"
+          assert_adapter "$(julia --startup-file=no src/DataScience/Julia/adapter.jl)"
+
+          ocaml_out="$(mktemp -d)"
+          ocamlc -w +A-70 -warn-error +A-70 src/Functional/OCaml/adapter.ml -o "$ocaml_out/adapter"
+          assert_adapter "$("$ocaml_out/adapter")"
+
+          assert_adapter "$(sbcl --noinform --non-interactive --load src/Functional/Lisp/adapter.lisp)"
+          assert_adapter "$(clojure src/Functional/Clojure/adapter.clj)"
+
+          elixir_out="$(mktemp -d)"
+          elixirc --warnings-as-errors -o "$elixir_out" src/Functional/Elixir/adapter.exs >/dev/null
+          assert_adapter "$(elixir src/Functional/Elixir/adapter.exs)"
+
+          erlang_out="$(mktemp -d)"
+          erlc -Werror -o "$erlang_out" src/Functional/Erlang/adapter.erl
+          assert_adapter "$(erl -noshell -pa "$erlang_out" -eval 'adapter:main(), halt().')"
+
+          assert_adapter "$(swipl -q -s src/Niche/Prolog/adapter.pl -g run -t halt)"
+
+          groovy_out="$(mktemp -d)"
+          groovyc -d "$groovy_out" src/Scripting/Groovy/adapter.groovy
+          assert_adapter "$(groovy src/Scripting/Groovy/adapter.groovy)"
