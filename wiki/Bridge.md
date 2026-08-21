@@ -3,7 +3,7 @@
 > **Familia:** Structural  
 > **Intención:** separar una abstracción de su implementación para que ambas dimensiones puedan variar y evolucionar de forma independiente.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `0/48`  
+> **Implementaciones de lenguaje:** `17/48`  
 > **Cobertura de pruebas:** N/A — los ejemplos standalone se validan con compile/run/análisis proporcional; no existe una métrica homogénea defendible entre ecosistemas.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -76,10 +76,10 @@ El punto importante es la composición `RemoteControl → Device`: las dos jerar
 tv = TvDevice()
 radio = RadioDevice()
 
-print(BasicRemote(tv).activate())   // TV:on
+print(BasicRemote(tv).activate())    // TV:on
 print(BasicRemote(radio).activate()) // Radio:on
-print(MuteRemote(tv).activate())    // TV:muted
-print(MuteRemote(radio).activate()) // Radio:muted
+print(MuteRemote(tv).activate())     // TV:muted
+print(MuteRemote(radio).activate())  // Radio:muted
 ```
 
 ## Aplicación real
@@ -148,22 +148,22 @@ Si sólo existe una implementación estable y no hay evidencia de otra dimensió
 
 ## Implementaciones por lenguaje
 
-La tabla es autoritativa para la completitud de lenguaje. El universo canónico mantiene **51 targets**: **48 Applicable** y **3 N/A**. Hay **32/48 ejemplos materializados**; permanecen sin promover hasta que sus gates terminen verdes.
+La tabla es autoritativa para la completitud de lenguaje. El universo canónico mantiene **51 targets**: **48 Applicable** y **3 N/A**. Los **48/48 ejemplos están materializados** y **17/48 cuentan con evidencia verde observada**; el resto permanece candidato hasta que sus gates concluyan.
 
-| Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
+| Lenguaje | Aplicabilidad | Ejemplo | Validación | Nota |
 |---|---|---|---|---|
-| C# | Applicable | [BridgeExample.cs](../src/Enterprise/C%23/BridgeExample.cs) | candidato — CI Bridge | interfaces + composición |
-| TypeScript | Applicable | [bridge.ts](../src/Web/TypeScriptTS/bridge.ts) | candidato — CI Bridge | structural typing |
-| Python | Applicable | [bridge.py](../src/Scripting/PythonPY/bridge.py) | candidato — CI Bridge | protocols por duck typing |
-| C++ | Applicable | [bridge.cpp](../src/Systems/C++/bridge.cpp) | candidato — CI Bridge | interfaces abstractas + referencias |
-| Java | Applicable | [BridgeExample.java](../src/Enterprise/Java/BridgeExample.java) | candidato — CI Bridge | interfaces + composición |
-| Rust | Applicable | [bridge.rs](../src/Systems/Rust/bridge.rs) | candidato — CI Bridge | trait + generic bridge |
-| Go | Applicable | [bridge.go](../src/Systems/Go/bridge.go) | candidato — CI Bridge | interfaces implícitas |
+| C# | Applicable | [BridgeExample.cs](../src/Enterprise/C%23/BridgeExample.cs) | ✅ CI Bridge | interfaces + composición |
+| TypeScript | Applicable | [bridge.ts](../src/Web/TypeScriptTS/bridge.ts) | ✅ CI Bridge strict | structural typing |
+| Python | Applicable | [bridge.py](../src/Scripting/PythonPY/bridge.py) | ✅ CI Bridge | duck typing |
+| C++ | Applicable | [bridge.cpp](../src/Systems/C++/bridge.cpp) | ✅ CI Bridge | interfaces abstractas + referencias |
+| Java | Applicable | [BridgeExample.java](../src/Enterprise/Java/BridgeExample.java) | ✅ CI Bridge | interfaces + composición |
+| Rust | Applicable | [bridge.rs](../src/Systems/Rust/bridge.rs) | candidato — rerun tras rustfmt | trait + generic bridge |
+| Go | Applicable | [bridge.go](../src/Systems/Go/bridge.go) | ✅ CI Bridge gofmt/vet/run | interfaces implícitas |
 | PHP | Applicable | [bridge.php](../src/Scripting/PHP/bridge.php) | candidato — CI Bridge | interfaces + composición |
 | Kotlin | Applicable | [BridgeExample.kt](../src/Enterprise/Kotlin/BridgeExample.kt) | candidato — CI Bridge | interfaces + composición |
 | Swift | Applicable | [bridge.swift](../src/Systems/Swift/bridge.swift) | candidato — CI Bridge | protocols + composición |
 | F# | Applicable | [bridge.fsx](../src/Functional/F%23/bridge.fsx) | candidato — CI Bridge | records de funciones |
-| JavaScript | Applicable | [bridge.js](../src/Web/JavaScriptJS/bridge.js) | candidato — CI Bridge | objetos por composición |
+| JavaScript | Applicable | [bridge.js](../src/Web/JavaScriptJS/bridge.js) | ✅ CI Bridge | objetos por composición |
 | Visual Basic .NET | Applicable | [BridgeExample.vb](../src/Enterprise/VisualBasic/BridgeExample.vb) | candidato — CI Bridge portable | interfaces + composición |
 | C | Applicable | [bridge.c](../src/Systems/C/bridge.c) | candidato — CI Bridge portable | structs + function pointers |
 | Ruby | Applicable | [bridge.rb](../src/Scripting/RubyRB/bridge.rb) | candidato — CI Bridge portable | duck typing/composición |
@@ -174,33 +174,33 @@ La tabla es autoritativa para la completitud de lenguaje. El universo canónico 
 | Scala | Applicable | [Bridge.scala](../src/Functional/Scala/Bridge.scala) | candidato — CI Bridge portable | traits + composición |
 | Perl | Applicable | [bridge.pl](../src/Scripting/Perl/bridge.pl) | candidato — CI Bridge portable | hashes + closures |
 | Pascal | Applicable | [bridge.pas](../src/Historical/Pascal/bridge.pas) | candidato — CI Bridge portable | clases + method references |
-| R | Applicable | [bridge.R](../src/DataScience/R/bridge.R) | candidato — Pattern Bridge Functional | closures/listas |
-| GNU Octave | Applicable | [bridge.m](../src/DataScience/Octave/bridge.m) | candidato — Pattern Bridge Functional | function handles/structs |
-| Julia | Applicable | [bridge.jl](../src/DataScience/Julia/bridge.jl) | candidato — Pattern Bridge Functional | named tuples + closures |
-| OCaml | Applicable | [bridge.ml](../src/Functional/OCaml/bridge.ml) | candidato — Pattern Bridge Functional | records de funciones |
-| Common Lisp | Applicable | [bridge.lisp](../src/Functional/Lisp/bridge.lisp) | candidato — Pattern Bridge Functional | structures + closures |
-| Clojure | Applicable | [bridge.clj](../src/Functional/Clojure/bridge.clj) | candidato — Pattern Bridge Functional | maps + funciones |
-| Elixir | Applicable | [bridge.exs](../src/Functional/Elixir/bridge.exs) | candidato — Pattern Bridge Functional | maps + funciones |
-| Erlang | Applicable | [bridge.erl](../src/Functional/Erlang/bridge.erl) | candidato — Pattern Bridge Functional | maps + funs |
-| Prolog | Applicable | [bridge.pl](../src/Niche/Prolog/bridge.pl) | candidato — Pattern Bridge Functional | predicates/terms |
-| Groovy | Applicable | [bridge.groovy](../src/Scripting/Groovy/bridge.groovy) | candidato — Pattern Bridge Functional | maps/closures |
-| Ada | Applicable | — | pendiente de implementación | tagged types/access operations |
-| Solidity | Applicable | — | pendiente de implementación | interfaces/contracts |
-| Fortran | Applicable | — | pendiente de implementación | derived types/procedure pointers |
-| Objective-C | Applicable | — | pendiente de implementación | protocols/composition |
-| Zig | Applicable | — | pendiente de implementación | structs/function pointers |
-| Nim | Applicable | — | pendiente de implementación | objects/procs |
-| Dart | Applicable | — | pendiente de implementación | abstract classes/composition |
-| Crystal | Applicable | — | pendiente de implementación | abstract classes/composition |
-| COBOL | Applicable | — | pendiente de implementación | records + dynamic calls |
-| VBA | Applicable | — | pendiente de implementación | class modules/interfaces |
-| GDScript | Applicable | — | pendiente de implementación | objects/composition |
-| MATLAB | Applicable | — | pendiente de implementación | handle/value objects/function handles |
-| Assembly | Applicable | — | pendiente de implementación | tables + function pointers |
-| Delphi | Applicable | — | pendiente de implementación | interfaces/classes |
-| MicroPython | Applicable | — | pendiente de implementación | objects/composition |
-| Rockstar | Applicable | — | pendiente de implementación | keyed arrays + explicit dispatch |
-| HTML | N/A | — | — | markup declarativo; cualquier bridge ejecutable pertenece al runtime que lo procesa. |
+| R | Applicable | [bridge.R](../src/DataScience/R/bridge.R) | ✅ Pattern Bridge Functional | closures/listas |
+| GNU Octave | Applicable | [bridge.m](../src/DataScience/Octave/bridge.m) | ✅ Pattern Bridge Functional | function handles/structs |
+| Julia | Applicable | [bridge.jl](../src/DataScience/Julia/bridge.jl) | ✅ Pattern Bridge Functional | named tuples + closures |
+| OCaml | Applicable | [bridge.ml](../src/Functional/OCaml/bridge.ml) | ✅ Pattern Bridge Functional | records de funciones |
+| Common Lisp | Applicable | [bridge.lisp](../src/Functional/Lisp/bridge.lisp) | ✅ Pattern Bridge Functional | structures + closures |
+| Clojure | Applicable | [bridge.clj](../src/Functional/Clojure/bridge.clj) | ✅ Pattern Bridge Functional | maps + funciones |
+| Elixir | Applicable | [bridge.exs](../src/Functional/Elixir/bridge.exs) | ✅ Pattern Bridge Functional | maps + funciones |
+| Erlang | Applicable | [bridge.erl](../src/Functional/Erlang/bridge.erl) | ✅ Pattern Bridge Functional | maps + funs |
+| Prolog | Applicable | [bridge.pl](../src/Niche/Prolog/bridge.pl) | ✅ Pattern Bridge Functional | predicates/terms |
+| Groovy | Applicable | [bridge.groovy](../src/Scripting/Groovy/bridge.groovy) | ✅ Pattern Bridge Functional | maps/closures |
+| Ada | Applicable | [bridge.adb](../src/Historical/Ada/bridge.adb) | candidato — Pattern Bridge Final | access-to-function record |
+| Solidity | Applicable | [Bridge.sol](../src/Niche/Solidity/Bridge.sol) | candidato — solc/source contract | interfaces/contracts |
+| Fortran | Applicable | [bridge.f90](../src/Historical/Fortran/bridge.f90) | candidato — Pattern Bridge Final | derived type + procedure pointers |
+| Objective-C | Applicable | [bridge.m](../src/Systems/Objective-C/bridge.m) | candidato — Clang/ARC/Foundation | protocols/composition |
+| Zig | Applicable | [bridge.zig](../src/Systems/Zig/bridge.zig) | candidato — Pattern Bridge Final | structs/function pointers |
+| Nim | Applicable | [bridge.nim](../src/Niche/Nim/bridge.nim) | candidato — Pattern Bridge Final | object + proc callbacks |
+| Dart | Applicable | [bridge.dart](../src/Web/Dart/bridge.dart) | candidato — format/analyze/run | abstract classes/composition |
+| Crystal | Applicable | [bridge.cr](../src/Niche/Crystal/bridge.cr) | candidato — format/build/run | abstract classes/composition |
+| COBOL | Applicable | [bridge.cbl](../src/Historical/Cobol/bridge.cbl) | candidato — GnuCOBOL | procedimientos + estado separado |
+| VBA | Applicable | [bridge.bas](../src/Shell/VBA/bridge.bas) | candidato — source-contract real | class modules/interfaces |
+| GDScript | Applicable | [bridge.gd](../src/Niche/GDScript/bridge.gd) | candidato — Godot 4.6.3 | objects/composition |
+| MATLAB | Applicable | [bridge.m](../src/DataScience/MATLAB/bridge.m) | candidato — MathWorks Actions | structs + function handles |
+| Assembly | Applicable | [bridge.asm](../src/LowLevel/Assembly/bridge.asm) | candidato — NASM/run | device table + remote function pointers |
+| Delphi | Applicable | [BridgeExample.pas](../src/Enterprise/Delphi/BridgeExample.pas) | candidato — source-contract real | interfaces/classes |
+| MicroPython | Applicable | [bridge.py](../src/Other/MicroPython/bridge.py) | candidato — MicroPython 1.28.0 Unix | objects/composition |
+| Rockstar | Applicable | [bridge.rock](../src/Other/Rockstar/bridge.rock) | candidato — Rockstar v2.0.31 | keyed arrays + action key |
+| HTML | N/A | — | — | markup declarativo; cualquier Bridge ejecutable pertenece al runtime que lo procesa. |
 | CSS | N/A | — | — | reglas declarativas de presentación sin abstracciones/runtime calls que desacoplar. |
 | SQL | N/A | — | — | SQL declarativo transforma/consulta datos, pero no expresa por sí solo dos dimensiones runtime de abstracción e implementación. |
 
@@ -216,7 +216,7 @@ La tabla es autoritativa para la completitud de lenguaje. El universo canónico 
 - **Movimiento:** una abstracción compone un implementador en vez de heredar cada combinación.
 - **Trade-off:** más indirección a cambio de evolución independiente.
 - **Relación clave:** Adapter corrige incompatibilidades; Bridge separa dimensiones desde el diseño.
-- **Portabilidad:** clases no son requisito; records de funciones, modules, closures, traits o tablas pueden preservar la intención.
+- **Portabilidad:** clases no son requisito; records de funciones, módulos, closures, traits o tablas pueden preservar la intención.
 
 ## Referencias
 
