@@ -18,20 +18,22 @@
 - (instancetype)initWithSensor:(LegacyFahrenheitSensor *)sensor;
 @end
 
-@implementation FahrenheitSensorAdapter {
-    LegacyFahrenheitSensor *_adaptee;
-}
+@interface FahrenheitSensorAdapter ()
+@property(nonatomic, strong) LegacyFahrenheitSensor *adaptee;
+@end
+
+@implementation FahrenheitSensorAdapter
 
 - (instancetype)initWithSensor:(LegacyFahrenheitSensor *)sensor {
     self = [super init];
     if (self) {
-        _adaptee = sensor;
+        self.adaptee = sensor;
     }
     return self;
 }
 
 - (NSInteger)readCelsius {
-    NSInteger fahrenheit = [_adaptee readFahrenheit];
+    NSInteger fahrenheit = [self.adaptee readFahrenheit];
     return ((fahrenheit - 32) * 5) / 9;
 }
 @end
