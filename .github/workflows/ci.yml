@@ -205,3 +205,112 @@ jobs:
           grep -Fq 'Dark Checkbox' <<<"$output"
           grep -Fq 'Light Button' <<<"$output"
           grep -Fq 'Light Checkbox' <<<"$output"
+
+  bridge-validation:
+    if: github.event_name == 'pull_request' && github.head_ref == 'patterns/bridge-kb006'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.26.5'
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup portable runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y fp-compiler ghc lua5.4 perl ruby scala
+
+      - name: Validate Bridge mainstream examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(printf 'basic-tv=TV:on\nbasic-radio=Radio:on\nmute-tv=TV:muted\nmute-radio=Radio:muted')"
+          assert_output() { test "$1" = "$expected"; }
+          work="$(mktemp -d)"
+
+          dotnet new console --framework net10.0 --output "$work/csharp" --force >/dev/null
+          cp 'src/Enterprise/C#/BridgeExample.cs' "$work/csharp/Program.cs"
+          assert_output "$(dotnet run --project "$work/csharp" --configuration Release)"
+          python -m py_compile src/Scripting/PythonPY/bridge.py
+          assert_output "$(python src/Scripting/PythonPY/bridge.py)"
+          node --check src/Web/JavaScriptJS/bridge.js
+          assert_output "$(node src/Web/JavaScriptJS/bridge.js)"
+          npx --yes --package typescript@6.0.3 tsc src/Web/TypeScriptTS/bridge.ts --strict --target ES2024 --module commonjs --outDir "$work/typescript"
+          assert_output "$(node "$work/typescript/bridge.js")"
+          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/bridge.cpp' -o "$work/bridge-cpp"
+          assert_output "$("$work/bridge-cpp")"
+          javac -Xlint:all -Werror -d "$work/java" src/Enterprise/Java/BridgeExample.java
+          assert_output "$(java -cp "$work/java" BridgeExample)"
+          test -z "$(gofmt -d src/Systems/Go/bridge.go)"
+          go vet src/Systems/Go/bridge.go
+          assert_output "$(go run src/Systems/Go/bridge.go)"
+          rustfmt --check src/Systems/Rust/bridge.rs
+          rustc -D warnings src/Systems/Rust/bridge.rs -o "$work/bridge-rust"
+          assert_output "$("$work/bridge-rust")"
+          php -l src/Scripting/PHP/bridge.php >/dev/null
+          assert_output "$(php src/Scripting/PHP/bridge.php)"
+          kotlinc src/Enterprise/Kotlin/BridgeExample.kt -include-runtime -d "$work/bridge-kotlin.jar"
+          assert_output "$(java -jar "$work/bridge-kotlin.jar")"
+          swiftc src/Systems/Swift/bridge.swift -o "$work/bridge-swift"
+          assert_output "$("$work/bridge-swift")"
+          assert_output "$(dotnet fsi 'src/Functional/F#/bridge.fsx')"
+
+      - name: Validate Bridge portable examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(printf 'basic-tv=TV:on\nbasic-radio=Radio:on\nmute-tv=TV:muted\nmute-radio=Radio:muted')"
+          assert_output() { test "$1" = "$expected"; }
+          work="$(mktemp -d)"
+
+          dotnet new console --language VB --framework net10.0 --output "$work/vb" --force >/dev/null
+          cp src/Enterprise/VisualBasic/BridgeExample.vb "$work/vb/Program.vb"
+          assert_output "$(dotnet run --project "$work/vb" --configuration Release)"
+          gcc -std=c17 -Wall -Wextra -Werror src/Systems/C/bridge.c -o "$work/bridge-c"
+          assert_output "$("$work/bridge-c")"
+          ruby -cw src/Scripting/RubyRB/bridge.rb >/dev/null
+          assert_output "$(ruby src/Scripting/RubyRB/bridge.rb)"
+          assert_output "$(lua5.4 src/Scripting/Lua/bridge.lua)"
+          bash -n src/Shell/Bash/bridge.sh
+          assert_output "$(bash src/Shell/Bash/bridge.sh)"
+          assert_output "$(pwsh -NoLogo -NoProfile -NonInteractive -File src/Shell/PowerShell/bridge.ps1)"
+          assert_output "$(runghc -Wall -Werror src/Functional/Haskell/Bridge.hs)"
+          scala_out="$(mktemp -d)"
+          scalac -deprecation -feature -unchecked src/Functional/Scala/Bridge.scala -d "$scala_out"
+          assert_output "$(scala -cp "$scala_out" Bridge)"
+          perl -c src/Scripting/Perl/bridge.pl >/dev/null
+          assert_output "$(perl src/Scripting/Perl/bridge.pl)"
+          pascal_out="$(mktemp -d)"
+          fpc -Mobjfpc -O2 -Sew -FE"$pascal_out" src/Historical/Pascal/bridge.pas >/dev/null
+          assert_output "$("$pascal_out/bridge")"
