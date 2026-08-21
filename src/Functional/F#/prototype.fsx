@@ -7,7 +7,8 @@ let clone profile =
     { profile with Features = List.ofSeq profile.Features }
 
 let describe profile =
-    $"{profile.Name}: {System.String.Join(",", profile.Features)}"
+    let features = System.String.Join(",", profile.Features)
+    $"{profile.Name}: {features}"
 
 let original = {
     Name = "orders"
