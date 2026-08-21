@@ -3,7 +3,7 @@
 > **Familia:** Structural  
 > **Intención:** convertir la interfaz de una dependencia existente en el contrato que un cliente necesita, sin modificar ni al cliente ni a la dependencia adaptada.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `0/48`  
+> **Implementaciones de lenguaje:** `22/48`  
 > **Cobertura de pruebas:** N/A — el catálogo usa evidencia proporcional por ecosistema; no existe una métrica homogénea entre ejemplos standalone.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -138,57 +138,57 @@ El Adapter traduce contratos. Reglas de negocio independientes del proveedor per
 
 ## Implementaciones por lenguaje
 
-La fuente canónica mantiene **51 targets**. Adapter es provisionalmente `Applicable` en 48 y `N/A` en HTML, CSS y SQL declarativo. Hay **22/48 ejemplos materializados**; las filas sólo se promueven a verificadas después de evidencia ejecutable o proporcional sobre el archivo enlazado.
+La fuente canónica mantiene **51 targets**. Adapter es provisionalmente `Applicable` en 48 y `N/A` en HTML, CSS y SQL declarativo. Hay **32/48 ejemplos materializados**; **22/48 ya tienen evidencia ejecutable verde** del CI #815 y los diez funcionales nuevos esperan su gate específico antes de promoción.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
-| C# | Applicable | [`AdapterExample.cs`](../src/Enterprise/C%23/AdapterExample.cs) | pendiente | Interfaz objetivo + composición del adaptee. |
-| TypeScript | Applicable | [`adapter.ts`](../src/Web/TypeScriptTS/adapter.ts) | pendiente | Interface estructural + clase adapter. |
+| C# | Applicable | [`AdapterExample.cs`](../src/Enterprise/C%23/AdapterExample.cs) | ✅ .NET 10 compile/run + contrato observable | Interfaz objetivo + composición del adaptee. |
+| TypeScript | Applicable | [`adapter.ts`](../src/Web/TypeScriptTS/adapter.ts) | ✅ TypeScript 6 strict + Node | Interface estructural + clase adapter. |
 | Ada | Applicable | — | pendiente | Records tagged, access values o funciones pueden traducir contratos. |
 | Solidity | Applicable | — | pendiente | Contrato wrapper puede adaptar otra interfaz de contrato. |
 | Fortran | Applicable | — | pendiente | Derived types/procedure bindings permiten traducción de operaciones. |
-| Pascal | Applicable | [`adapter.pas`](../src/Historical/Pascal/adapter.pas) | pendiente | Clase Target abstracta + composición. |
-| Python | Applicable | [`adapter.py`](../src/Scripting/PythonPY/adapter.py) | pendiente | Duck typing mantiene el Target liviano. |
-| Visual Basic .NET | Applicable | [`AdapterExample.vb`](../src/Enterprise/VisualBasic/AdapterExample.vb) | pendiente | Interface y composición. |
-| C++ | Applicable | [`adapter.cpp`](../src/Systems/C%2B%2B/adapter.cpp) | pendiente | Interfaz abstracta + composición. |
+| Pascal | Applicable | [`adapter.pas`](../src/Historical/Pascal/adapter.pas) | ✅ Free Pascal `-Sew` + run | Clase Target abstracta + composición. |
+| Python | Applicable | [`adapter.py`](../src/Scripting/PythonPY/adapter.py) | ✅ `py_compile` + Python 3.14 run | Duck typing mantiene el Target liviano. |
+| Visual Basic .NET | Applicable | [`AdapterExample.vb`](../src/Enterprise/VisualBasic/AdapterExample.vb) | ✅ .NET 10 VB compile/run | Interface y composición. |
+| C++ | Applicable | [`adapter.cpp`](../src/Systems/C%2B%2B/adapter.cpp) | ✅ C++20 warnings-as-errors + run | Interfaz abstracta + composición. |
 | Objective-C | Applicable | — | pendiente | Protocol + wrapper sobre objeto heredado. |
-| Java | Applicable | [`AdapterExample.java`](../src/Enterprise/Java/AdapterExample.java) | pendiente | Interface Target + composición. |
-| Rust | Applicable | [`adapter.rs`](../src/Systems/Rust/adapter.rs) | pendiente | Trait Target + struct adapter. |
+| Java | Applicable | [`AdapterExample.java`](../src/Enterprise/Java/AdapterExample.java) | ✅ Java 25 `-Xlint:all -Werror` + run | Interface Target + composición. |
+| Rust | Applicable | [`adapter.rs`](../src/Systems/Rust/adapter.rs) | ✅ rustfmt + `rustc -D warnings` + run | Trait Target + struct adapter. |
 | Zig | Applicable | — | pendiente | Struct + function pointers/funciones de traducción. |
-| Go | Applicable | [`adapter.go`](../src/Systems/Go/adapter.go) | pendiente | Interface implícita + composición. |
-| PHP | Applicable | [`adapter.php`](../src/Scripting/PHP/adapter.php) | pendiente | Interface + wrapper. |
+| Go | Applicable | [`adapter.go`](../src/Systems/Go/adapter.go) | ✅ gofmt + go vet + run | Interface implícita + composición. |
+| PHP | Applicable | [`adapter.php`](../src/Scripting/PHP/adapter.php) | ✅ PHP lint + run | Interface + wrapper. |
 | Nim | Applicable | — | pendiente | Objects/procs pueden traducir contratos. |
 | Dart | Applicable | — | pendiente | Interface implícita/clase adapter. |
-| Kotlin | Applicable | [`AdapterExample.kt`](../src/Enterprise/Kotlin/AdapterExample.kt) | pendiente | Interface + composición. |
-| Swift | Applicable | [`adapter.swift`](../src/Systems/Swift/adapter.swift) | pendiente | Protocol + wrapper. |
-| F# | Applicable | [`adapter.fsx`](../src/Functional/F%23/adapter.fsx) | pendiente | Interface o funciones adaptadoras idiomáticas. |
+| Kotlin | Applicable | [`AdapterExample.kt`](../src/Enterprise/Kotlin/AdapterExample.kt) | ✅ kotlinc + JVM run | Interface + composición. |
+| Swift | Applicable | [`adapter.swift`](../src/Systems/Swift/adapter.swift) | ✅ swiftc + run | Protocol + wrapper. |
+| F# | Applicable | [`adapter.fsx`](../src/Functional/F%23/adapter.fsx) | ✅ `dotnet fsi` + contrato observable | Interface o funciones adaptadoras idiomáticas. |
 | Crystal | Applicable | — | pendiente | Clases/módulos con composición. |
-| Lua | Applicable | [`adapter.lua`](../src/Scripting/Lua/adapter.lua) | pendiente | Table + closure traducen operación/unidad. |
-| Haskell | Applicable | [`Adapter.hs`](../src/Functional/Haskell/Adapter.hs) | pendiente | Función adaptadora devuelve contrato objetivo. |
+| Lua | Applicable | [`adapter.lua`](../src/Scripting/Lua/adapter.lua) | ✅ Lua 5.4 run | Table + closure traducen operación/unidad. |
+| Haskell | Applicable | [`Adapter.hs`](../src/Functional/Haskell/Adapter.hs) | ✅ GHC warnings-as-errors + run | Función adaptadora devuelve contrato objetivo. |
 | COBOL | Applicable | — | pendiente | Program wrappers y records pueden traducir contratos. |
-| Scala | Applicable | [`Adapter.scala`](../src/Functional/Scala/Adapter.scala) | pendiente | Trait + wrapper. |
-| Groovy | Applicable | — | pendiente | Dynamic dispatch + wrapper. |
-| Ruby | Applicable | [`adapter.rb`](../src/Scripting/RubyRB/adapter.rb) | pendiente | Duck typing + wrapper. |
-| C | Applicable | [`adapter.c`](../src/Systems/C/adapter.c) | pendiente | Structs + function pointers traducen el contrato. |
-| OCaml | Applicable | — | pendiente | Modules/records/functions traducen contratos. |
-| Julia | Applicable | — | pendiente | Multiple dispatch/functions pueden adaptar representaciones. |
+| Scala | Applicable | [`Adapter.scala`](../src/Functional/Scala/Adapter.scala) | ✅ scalac + run | Trait + wrapper. |
+| Groovy | Applicable | [`adapter.groovy`](../src/Scripting/Groovy/adapter.groovy) | pendiente | Dynamic dispatch + wrapper. |
+| Ruby | Applicable | [`adapter.rb`](../src/Scripting/RubyRB/adapter.rb) | ✅ Ruby syntax + run | Duck typing + wrapper. |
+| C | Applicable | [`adapter.c`](../src/Systems/C/adapter.c) | ✅ GCC C17 warnings-as-errors + run | Structs + function pointers traducen el contrato. |
+| OCaml | Applicable | [`adapter.ml`](../src/Functional/OCaml/adapter.ml) | pendiente | Función de orden superior transforma el contrato. |
+| Julia | Applicable | [`adapter.jl`](../src/DataScience/Julia/adapter.jl) | pendiente | Función adaptadora devuelve una nueva operación Celsius. |
 | VBA | Applicable | — | pendiente | Class module/interface-by-convention + wrapper. |
 | GDScript | Applicable | — | pendiente | Script wrapper traduce métodos/datos. |
-| JavaScript | Applicable | [`adapter.js`](../src/Web/JavaScriptJS/adapter.js) | pendiente | Duck typing + class adapter. |
+| JavaScript | Applicable | [`adapter.js`](../src/Web/JavaScriptJS/adapter.js) | ✅ Node syntax + run | Duck typing + class adapter. |
 | MATLAB | Applicable | — | pendiente | Handle/value classes o funciones wrapper. |
-| Perl | Applicable | [`adapter.pl`](../src/Scripting/Perl/adapter.pl) | pendiente | Packages traducen el contrato. |
-| R | Applicable | — | pendiente | Closures/environments/S3 functions adaptan contratos. |
-| PowerShell | Applicable | [`adapter.ps1`](../src/Shell/PowerShell/adapter.ps1) | pendiente | Script object + closure mantienen al adaptee detrás de Target. |
+| Perl | Applicable | [`adapter.pl`](../src/Scripting/Perl/adapter.pl) | ✅ Perl syntax + run | Packages traducen el contrato. |
+| R | Applicable | [`adapter.R`](../src/DataScience/R/adapter.R) | pendiente | Closure adapta una operación Fahrenheit a Celsius. |
+| PowerShell | Applicable | [`adapter.ps1`](../src/Shell/PowerShell/adapter.ps1) | ✅ PowerShell strict-mode run | Script object + closure mantienen al adaptee detrás de Target. |
 | HTML | N/A | — | — | Markup declarativo; la adaptación ejecutable pertenece al runtime que lo procesa. |
 | Assembly | Applicable | — | pendiente | Wrapper routines pueden traducir ABI/representación. |
-| Elixir | Applicable | — | pendiente | Modules/functions traducen mensajes y resultados. |
-| Shell | Applicable | [`adapter.sh`](../src/Shell/Bash/adapter.sh) | pendiente | Functions normalizan operación y unidad. |
-| Erlang | Applicable | — | pendiente | Modules/process messages pueden traducir protocolos. |
-| Clojure | Applicable | — | pendiente | Protocols/maps/functions pueden adaptar contratos. |
-| Common Lisp | Applicable | — | pendiente | Generic functions/closures pueden traducir contratos. |
-| Prolog | Applicable | — | pendiente | Predicados wrapper pueden traducir términos/relaciones. |
+| Elixir | Applicable | [`adapter.exs`](../src/Functional/Elixir/adapter.exs) | pendiente | Módulo Adapter traduce la llamada al módulo heredado. |
+| Shell | Applicable | [`adapter.sh`](../src/Shell/Bash/adapter.sh) | ✅ Bash syntax + run | Functions normalizan operación y unidad. |
+| Erlang | Applicable | [`adapter.erl`](../src/Functional/Erlang/adapter.erl) | pendiente | Higher-order function traduce el protocolo de lectura. |
+| Clojure | Applicable | [`adapter.clj`](../src/Functional/Clojure/adapter.clj) | pendiente | Closure adapta el contrato sin forma OO. |
+| Common Lisp | Applicable | [`adapter.lisp`](../src/Functional/Lisp/adapter.lisp) | pendiente | Closure captura la operación incompatible. |
+| Prolog | Applicable | [`adapter.pl`](../src/Niche/Prolog/adapter.pl) | pendiente | Predicado wrapper traduce valor y unidad. |
 | Delphi | Applicable | — | pendiente | Interfaces/classes y composición sobre DCC real. |
-| GNU Octave | Applicable | — | pendiente | Functions/structs/classes wrapper. |
+| GNU Octave | Applicable | [`adapter.m`](../src/DataScience/Octave/adapter.m) | pendiente | Function handle traduce el contrato. |
 | SQL | N/A | — | — | SQL declarativo transforma datos, pero no expresa por sí mismo una frontera de objeto/componente con contrato Target/Adaptee. |
 | CSS | N/A | — | — | Reglas declarativas de presentación sin llamadas de componente a adaptar. |
 | MicroPython | Applicable | — | pendiente | Duck typing/clases livianas igual que Python, dentro del runtime MicroPython. |
