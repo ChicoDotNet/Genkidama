@@ -31,7 +31,7 @@ const ServiceProfile = struct {
     fn addFeature(self: *ServiceProfile, value: []const u8) void {
         self.features[self.features_len] = ',';
         self.features_len += 1;
-        @memcpy(self.features[self.features_len .. self.features_len + value.len], value);
+        @memcpy(self.features[self.features_len..self.features_len + value.len], value);
         self.features_len += value.len;
     }
 
