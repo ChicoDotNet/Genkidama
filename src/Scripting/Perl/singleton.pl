@@ -26,5 +26,5 @@ my $first = Registry::instance();
 my $second = Registry::instance();
 $first->increment();
 
-print 'same=', refaddr($first) == refaddr($second) ? 'true' : 'false', "\n";
+print 'same=', (refaddr($first) == refaddr($second) ? 'true' : 'false'), "\n";
 print 'count=', $second->count(), "\n";
