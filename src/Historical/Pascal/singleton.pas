@@ -48,6 +48,4 @@ begin
   else
     WriteLn('same=false');
   WriteLn('count=', SecondRegistry.Count);
-
-  TRegistry.FInstance.Free;
 end.
