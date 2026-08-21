@@ -1,0 +1,18 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. SINGLETON.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 REGISTRY-COUNT PIC 9(4) VALUE 0.
+       01 FIRST-INSTANCE PIC X VALUE 'R'.
+       01 SECOND-INSTANCE PIC X VALUE 'R'.
+
+       PROCEDURE DIVISION.
+           ADD 1 TO REGISTRY-COUNT
+           IF FIRST-INSTANCE = SECOND-INSTANCE
+               DISPLAY 'same=true'
+           ELSE
+               DISPLAY 'same=false'
+           END-IF
+           DISPLAY 'count=' REGISTRY-COUNT
+           STOP RUN.
