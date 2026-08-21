@@ -50,10 +50,13 @@ contains
     character(len=256) :: text
     integer :: i
 
-    text = trim(profile%name) // ': '
+    text = trim(profile%name) // ':'
     do i = 1, size(profile%features)
-       if (i > 1) text = trim(text) // ','
-       text = trim(text) // trim(profile%features(i))
+       if (i == 1) then
+          text = trim(text) // ' ' // trim(profile%features(i))
+       else
+          text = trim(text) // ',' // trim(profile%features(i))
+       end if
     end do
   end function describe
 
