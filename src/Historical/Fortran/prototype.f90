@@ -26,7 +26,10 @@ contains
     type(service_profile) :: copy
 
     copy%name = source%name
-    copy%features = source%features
+    if (allocated(source%features)) then
+       allocate(copy%features(size(source%features)))
+       copy%features = source%features
+    end if
   end function clone_profile
 
   subroutine add_feature(profile, feature)
