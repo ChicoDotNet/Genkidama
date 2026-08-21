@@ -1,5 +1,6 @@
 Adapt takes Sensor
-Put Sensor at "fahrenheit" minus 32 into Shifted
+Put Sensor at "fahrenheit" into Fahrenheit
+Put Fahrenheit minus 32 into Shifted
 Put Shifted times 5 into Scaled
 Put Scaled over 9 into Celsius
 Give back Celsius
