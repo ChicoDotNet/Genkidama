@@ -148,32 +148,32 @@ Si sólo existe una implementación estable y no hay evidencia de otra dimensió
 
 ## Implementaciones por lenguaje
 
-La tabla es autoritativa para la completitud de lenguaje. El universo canónico mantiene **51 targets**: **48 Applicable** y **3 N/A**.
+La tabla es autoritativa para la completitud de lenguaje. El universo canónico mantiene **51 targets**: **48 Applicable** y **3 N/A**. Hay **22/48 ejemplos materializados**; permanecen sin promover hasta que el gate registrado termine verde.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
-| C# | Applicable | [BridgeExample.cs](../src/Enterprise/C%23/BridgeExample.cs) | candidato — gate inicial | interfaces + composición |
-| TypeScript | Applicable | [bridge.ts](../src/Web/TypeScriptTS/bridge.ts) | candidato — gate inicial | structural typing |
-| Python | Applicable | [bridge.py](../src/Scripting/PythonPY/bridge.py) | candidato — gate inicial | protocols por duck typing |
-| C++ | Applicable | [bridge.cpp](../src/Systems/C++/bridge.cpp) | candidato — gate inicial | interfaces abstractas + referencias |
-| Java | Applicable | [BridgeExample.java](../src/Enterprise/Java/BridgeExample.java) | candidato — gate inicial | interfaces + composición |
-| Rust | Applicable | [bridge.rs](../src/Systems/Rust/bridge.rs) | candidato — gate inicial | trait + generic bridge |
-| Go | Applicable | [bridge.go](../src/Systems/Go/bridge.go) | candidato — gate inicial | interfaces implícitas |
-| PHP | Applicable | [bridge.php](../src/Scripting/PHP/bridge.php) | candidato — gate inicial | interfaces + composición |
-| Kotlin | Applicable | [BridgeExample.kt](../src/Enterprise/Kotlin/BridgeExample.kt) | candidato — gate inicial | interfaces + composición |
-| Swift | Applicable | [bridge.swift](../src/Systems/Swift/bridge.swift) | candidato — gate inicial | protocols + composición |
-| F# | Applicable | [bridge.fsx](../src/Functional/F%23/bridge.fsx) | candidato — gate inicial | records de funciones |
-| JavaScript | Applicable | [bridge.js](../src/Web/JavaScriptJS/bridge.js) | candidato — gate inicial | objetos por composición |
-| Visual Basic .NET | Applicable | — | pendiente de implementación | interfaces/clases |
-| C | Applicable | — | pendiente de implementación | structs + function pointers |
-| Ruby | Applicable | — | pendiente de implementación | duck typing/composición |
-| Lua | Applicable | — | pendiente de implementación | tables + closures |
-| Bash | Applicable | — | pendiente de implementación | funciones + dispatch explícito |
-| PowerShell | Applicable | — | pendiente de implementación | scriptblocks/objetos |
-| Haskell | Applicable | — | pendiente de implementación | records de funciones |
-| Scala | Applicable | — | pendiente de implementación | traits + composición |
-| Perl | Applicable | — | pendiente de implementación | packages/closures |
-| Pascal | Applicable | — | pendiente de implementación | interfaces/records procedurales |
+| C# | Applicable | [BridgeExample.cs](../src/Enterprise/C%23/BridgeExample.cs) | candidato — CI Bridge | interfaces + composición |
+| TypeScript | Applicable | [bridge.ts](../src/Web/TypeScriptTS/bridge.ts) | candidato — CI Bridge | structural typing |
+| Python | Applicable | [bridge.py](../src/Scripting/PythonPY/bridge.py) | candidato — CI Bridge | protocols por duck typing |
+| C++ | Applicable | [bridge.cpp](../src/Systems/C++/bridge.cpp) | candidato — CI Bridge | interfaces abstractas + referencias |
+| Java | Applicable | [BridgeExample.java](../src/Enterprise/Java/BridgeExample.java) | candidato — CI Bridge | interfaces + composición |
+| Rust | Applicable | [bridge.rs](../src/Systems/Rust/bridge.rs) | candidato — CI Bridge | trait + generic bridge |
+| Go | Applicable | [bridge.go](../src/Systems/Go/bridge.go) | candidato — CI Bridge | interfaces implícitas |
+| PHP | Applicable | [bridge.php](../src/Scripting/PHP/bridge.php) | candidato — CI Bridge | interfaces + composición |
+| Kotlin | Applicable | [BridgeExample.kt](../src/Enterprise/Kotlin/BridgeExample.kt) | candidato — CI Bridge | interfaces + composición |
+| Swift | Applicable | [bridge.swift](../src/Systems/Swift/bridge.swift) | candidato — CI Bridge | protocols + composición |
+| F# | Applicable | [bridge.fsx](../src/Functional/F%23/bridge.fsx) | candidato — CI Bridge | records de funciones |
+| JavaScript | Applicable | [bridge.js](../src/Web/JavaScriptJS/bridge.js) | candidato — CI Bridge | objetos por composición |
+| Visual Basic .NET | Applicable | [BridgeExample.vb](../src/Enterprise/VisualBasic/BridgeExample.vb) | candidato — CI Bridge portable | interfaces + composición |
+| C | Applicable | [bridge.c](../src/Systems/C/bridge.c) | candidato — CI Bridge portable | structs + function pointers |
+| Ruby | Applicable | [bridge.rb](../src/Scripting/RubyRB/bridge.rb) | candidato — CI Bridge portable | duck typing/composición |
+| Lua | Applicable | [bridge.lua](../src/Scripting/Lua/bridge.lua) | candidato — CI Bridge portable | tables + closures |
+| Bash | Applicable | [bridge.sh](../src/Shell/Bash/bridge.sh) | candidato — CI Bridge portable | funciones + dispatch explícito |
+| PowerShell | Applicable | [bridge.ps1](../src/Shell/PowerShell/bridge.ps1) | candidato — CI Bridge portable | scriptblocks/objetos |
+| Haskell | Applicable | [Bridge.hs](../src/Functional/Haskell/Bridge.hs) | candidato — CI Bridge portable | records + funciones |
+| Scala | Applicable | [Bridge.scala](../src/Functional/Scala/Bridge.scala) | candidato — CI Bridge portable | traits + composición |
+| Perl | Applicable | [bridge.pl](../src/Scripting/Perl/bridge.pl) | candidato — CI Bridge portable | hashes + closures |
+| Pascal | Applicable | [bridge.pas](../src/Historical/Pascal/bridge.pas) | candidato — CI Bridge portable | clases + method references |
 | R | Applicable | — | pendiente de implementación | closures/listas |
 | GNU Octave | Applicable | — | pendiente de implementación | function handles/structs |
 | Julia | Applicable | — | pendiente de implementación | multiple dispatch/composición |
