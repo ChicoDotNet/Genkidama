@@ -138,7 +138,7 @@ El Adapter traduce contratos. Reglas de negocio independientes del proveedor per
 
 ## Implementaciones por lenguaje
 
-La fuente canónica mantiene **51 targets**. Adapter es provisionalmente `Applicable` en 48 y `N/A` en HTML, CSS y SQL declarativo. Las filas sólo se promueven a verificadas después de evidencia ejecutable o proporcional sobre el archivo enlazado.
+La fuente canónica mantiene **51 targets**. Adapter es provisionalmente `Applicable` en 48 y `N/A` en HTML, CSS y SQL declarativo. Hay **22/48 ejemplos materializados**; las filas sólo se promueven a verificadas después de evidencia ejecutable o proporcional sobre el archivo enlazado.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -147,9 +147,9 @@ La fuente canónica mantiene **51 targets**. Adapter es provisionalmente `Applic
 | Ada | Applicable | — | pendiente | Records tagged, access values o funciones pueden traducir contratos. |
 | Solidity | Applicable | — | pendiente | Contrato wrapper puede adaptar otra interfaz de contrato. |
 | Fortran | Applicable | — | pendiente | Derived types/procedure bindings permiten traducción de operaciones. |
-| Pascal | Applicable | — | pendiente | Interfaces/records/procedural variables pueden adaptar contratos. |
+| Pascal | Applicable | [`adapter.pas`](../src/Historical/Pascal/adapter.pas) | pendiente | Clase Target abstracta + composición. |
 | Python | Applicable | [`adapter.py`](../src/Scripting/PythonPY/adapter.py) | pendiente | Duck typing mantiene el Target liviano. |
-| Visual Basic .NET | Applicable | — | pendiente | Interfaces y composición. |
+| Visual Basic .NET | Applicable | [`AdapterExample.vb`](../src/Enterprise/VisualBasic/AdapterExample.vb) | pendiente | Interface y composición. |
 | C++ | Applicable | [`adapter.cpp`](../src/Systems/C%2B%2B/adapter.cpp) | pendiente | Interfaz abstracta + composición. |
 | Objective-C | Applicable | — | pendiente | Protocol + wrapper sobre objeto heredado. |
 | Java | Applicable | [`AdapterExample.java`](../src/Enterprise/Java/AdapterExample.java) | pendiente | Interface Target + composición. |
@@ -163,26 +163,26 @@ La fuente canónica mantiene **51 targets**. Adapter es provisionalmente `Applic
 | Swift | Applicable | [`adapter.swift`](../src/Systems/Swift/adapter.swift) | pendiente | Protocol + wrapper. |
 | F# | Applicable | [`adapter.fsx`](../src/Functional/F%23/adapter.fsx) | pendiente | Interface o funciones adaptadoras idiomáticas. |
 | Crystal | Applicable | — | pendiente | Clases/módulos con composición. |
-| Lua | Applicable | — | pendiente | Tables/closures pueden traducir mensajes. |
-| Haskell | Applicable | — | pendiente | Records/typeclasses/functions pueden adaptar contratos. |
+| Lua | Applicable | [`adapter.lua`](../src/Scripting/Lua/adapter.lua) | pendiente | Table + closure traducen operación/unidad. |
+| Haskell | Applicable | [`Adapter.hs`](../src/Functional/Haskell/Adapter.hs) | pendiente | Función adaptadora devuelve contrato objetivo. |
 | COBOL | Applicable | — | pendiente | Program wrappers y records pueden traducir contratos. |
-| Scala | Applicable | — | pendiente | Trait + wrapper o funciones adaptadoras. |
+| Scala | Applicable | [`Adapter.scala`](../src/Functional/Scala/Adapter.scala) | pendiente | Trait + wrapper. |
 | Groovy | Applicable | — | pendiente | Dynamic dispatch + wrapper. |
-| Ruby | Applicable | — | pendiente | Duck typing + wrapper. |
-| C | Applicable | — | pendiente | Structs + function pointers/wrapper functions. |
+| Ruby | Applicable | [`adapter.rb`](../src/Scripting/RubyRB/adapter.rb) | pendiente | Duck typing + wrapper. |
+| C | Applicable | [`adapter.c`](../src/Systems/C/adapter.c) | pendiente | Structs + function pointers traducen el contrato. |
 | OCaml | Applicable | — | pendiente | Modules/records/functions traducen contratos. |
 | Julia | Applicable | — | pendiente | Multiple dispatch/functions pueden adaptar representaciones. |
 | VBA | Applicable | — | pendiente | Class module/interface-by-convention + wrapper. |
 | GDScript | Applicable | — | pendiente | Script wrapper traduce métodos/datos. |
 | JavaScript | Applicable | [`adapter.js`](../src/Web/JavaScriptJS/adapter.js) | pendiente | Duck typing + class adapter. |
 | MATLAB | Applicable | — | pendiente | Handle/value classes o funciones wrapper. |
-| Perl | Applicable | — | pendiente | Packages/closures traducen contratos. |
+| Perl | Applicable | [`adapter.pl`](../src/Scripting/Perl/adapter.pl) | pendiente | Packages traducen el contrato. |
 | R | Applicable | — | pendiente | Closures/environments/S3 functions adaptan contratos. |
-| PowerShell | Applicable | — | pendiente | Functions/objects wrapper bajo contrato script. |
+| PowerShell | Applicable | [`adapter.ps1`](../src/Shell/PowerShell/adapter.ps1) | pendiente | Script object + closure mantienen al adaptee detrás de Target. |
 | HTML | N/A | — | — | Markup declarativo; la adaptación ejecutable pertenece al runtime que lo procesa. |
 | Assembly | Applicable | — | pendiente | Wrapper routines pueden traducir ABI/representación. |
 | Elixir | Applicable | — | pendiente | Modules/functions traducen mensajes y resultados. |
-| Shell | Applicable | — | pendiente | Functions pueden normalizar comandos, argumentos y salida. |
+| Shell | Applicable | [`adapter.sh`](../src/Shell/Bash/adapter.sh) | pendiente | Functions normalizan operación y unidad. |
 | Erlang | Applicable | — | pendiente | Modules/process messages pueden traducir protocolos. |
 | Clojure | Applicable | — | pendiente | Protocols/maps/functions pueden adaptar contratos. |
 | Common Lisp | Applicable | — | pendiente | Generic functions/closures pueden traducir contratos. |
