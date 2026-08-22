@@ -41,7 +41,7 @@ Escribe una prueba que envíe más de `ContactTransfer::MAX_BYTES`. Debe fallar 
 
 ## Siguiente paso
 
-En la lección 12 usaremos pruebas, logs y reproducción mínima para diagnosticar fallos sin adivinar.
+Continúa con [Lección 12 — debugging con evidencia](12-debugging-con-evidencia.md).
 
 ## Referencias
 
