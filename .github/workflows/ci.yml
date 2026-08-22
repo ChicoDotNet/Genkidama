@@ -295,3 +295,66 @@ jobs:
           assert_output "$("$work/decorator-swift")"
 
           assert_output "$(dotnet fsi 'src/Functional/F#/decorator.fsx')"
+
+  decorator-portable:
+    if: github.event_name == 'pull_request' && github.head_ref == 'patterns/decorator-kb006'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install portable runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y fp-compiler lua5.4 ghc scala perl powershell ruby
+
+      - name: Validate Decorator portable examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          assert_output() {
+            local output="$1"
+            grep -Fxq 'base=alert' <<<"$output"
+            grep -Fxq 'audit=audit(alert)' <<<"$output"
+            grep -Fxq 'encrypted=enc(alert)' <<<"$output"
+            grep -Fxq 'stacked=audit(enc(alert))' <<<"$output"
+          }
+
+          work="$(mktemp -d)"
+          dotnet new console --language VB --framework net10.0 --output "$work/vb" --force >/dev/null
+          cp src/Enterprise/VisualBasic/DecoratorExample.vb "$work/vb/Program.vb"
+          assert_output "$(dotnet run --project "$work/vb" --configuration Release)"
+
+          gcc -std=c17 -Wall -Wextra -Werror src/Systems/C/decorator.c -o "$work/decorator-c"
+          assert_output "$("$work/decorator-c")"
+
+          ruby -cw src/Scripting/RubyRB/decorator.rb
+          assert_output "$(ruby src/Scripting/RubyRB/decorator.rb)"
+
+          assert_output "$(lua5.4 src/Scripting/Lua/decorator.lua)"
+
+          bash -n src/Shell/Bash/decorator.sh
+          assert_output "$(bash src/Shell/Bash/decorator.sh)"
+
+          assert_output "$(pwsh -NoLogo -NoProfile -NonInteractive -File src/Shell/PowerShell/decorator.ps1)"
+
+          assert_output "$(runghc -Wall -Werror src/Functional/Haskell/Decorator.hs)"
+
+          scala_out="$(mktemp -d)"
+          scalac -deprecation -feature -unchecked src/Functional/Scala/Decorator.scala -d "$scala_out"
+          assert_output "$(scala -cp "$scala_out" Decorator)"
+
+          perl -c src/Scripting/Perl/decorator.pl
+          assert_output "$(perl src/Scripting/Perl/decorator.pl)"
+
+          pascal_out="$(mktemp -d)"
+          fpc -Mobjfpc -O2 -Sew -FE"$pascal_out" src/Historical/Pascal/decorator.pas >/dev/null
+          assert_output "$("$pascal_out/decorator")"
