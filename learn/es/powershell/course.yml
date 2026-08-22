@@ -4,7 +4,7 @@ language: PowerShell
 locale: es
 source_locale: es
 title: Curso de PowerShell desde cero — Construye un auditor de estaciones de trabajo
-status: in_progress
+status: complete
 canonical_app:
   name: WorkstationAudit
   summary: Auditor local que recopila señales del equipo, genera hallazgos y exporta un reporte de diagnóstico.
