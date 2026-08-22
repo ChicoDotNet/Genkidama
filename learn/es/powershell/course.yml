@@ -1,0 +1,35 @@
+schema_version: 1
+slug: powershell
+language: PowerShell
+locale: es
+source_locale: es
+title: Curso de PowerShell desde cero — Construye un auditor de estaciones de trabajo
+status: in_progress
+canonical_app:
+  name: WorkstationAudit
+  summary: Auditor local que recopila señales del equipo, genera hallazgos y exporta un reporte de diagnóstico.
+audience: beginner
+prerequisites: []
+lesson_count: 17
+toolchain:
+  verified_on: '2026-08-22'
+  version_tested: 'PowerShell 7.x; patch exacto emitido por CI hospedado'
+  runtime_or_compiler: 'PowerShell 7.6 LTS objetivo'
+  package_or_build_tool: 'módulo PowerShell + Pester 5'
+  operating_systems_tested:
+    - github-windows-runner
+    - github-ubuntu-runner
+ci:
+  supported: true
+  workflow: .github/workflows/learn-powershell.yml
+career_context:
+  uses:
+    - automatización y administración de Windows
+    - diagnóstico de estaciones de trabajo y servidores
+    - operaciones de TI y soporte técnico
+    - scripting para plataformas Microsoft y tareas multiplataforma
+  market_note: PowerShell es especialmente relevante en entornos Windows, Microsoft 365 y Azure; aprenderlo no garantiza empleo y muchas funciones operativas requieren conocimientos adicionales de sistemas, identidad y redes.
+official_references:
+  - https://learn.microsoft.com/powershell/
+  - https://learn.microsoft.com/powershell/scripting/install/powershell-support-lifecycle
+  - https://pester.dev/
