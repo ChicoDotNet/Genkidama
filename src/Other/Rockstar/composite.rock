@@ -1,0 +1,34 @@
+Rock Readme
+Readme at "kind" is "file"
+Readme at "bytes" is 2
+
+Rock Api
+Api at "kind" is "file"
+Api at "bytes" is 3
+
+Rock Guide
+Guide at "kind" is "file"
+Guide at "bytes" is 5
+
+Put Api at "bytes" into ApiSize
+Put Guide at "bytes" into GuideSize
+Put ApiSize plus GuideSize into DocsSize
+
+Rock Docs
+Docs at "kind" is "folder"
+Docs at "left" is Api
+Docs at "right" is Guide
+Put DocsSize into Docs at "bytes"
+
+Put Readme at "bytes" into ReadmeSize
+Put ReadmeSize plus DocsSize into RootSize
+
+Rock Root
+Root at "kind" is "folder"
+Root at "left" is Readme
+Root at "right" is Docs
+Put RootSize into Root at "bytes"
+
+Print "leaf=" plus ReadmeSize
+Print "docs=" plus DocsSize
+Print "root=" plus RootSize
