@@ -105,3 +105,47 @@ Describe 'Reportes y comparación' {
         { Compare-WorkstationAudit -Baseline $a -Current $b } | Should -Throw '*equipos diferentes*'
     }
 }
+
+Describe 'Alcance, fan-out, profiling y contrato' {
+    It 'trata localhost como destino local sin cambios de configuración' {
+        $target = Resolve-AuditTarget -ComputerName localhost
+        $target.Mode | Should -Be 'Local'
+        $target.RequiresRemoting | Should -BeFalse
+        $target.ChangesSystemConfiguration | Should -BeFalse
+    }
+    It 'requiere opt-in explícito para un destino remoto' {
+        { Resolve-AuditTarget -ComputerName 'server-01' } | Should -Throw '*-AllowRemote*'
+        (Resolve-AuditTarget -ComputerName 'server-01' -AllowRemote).Mode | Should -Be 'Remote'
+    }
+    It 'resume múltiples reportes igual en secuencial y paralelo' {
+        $paths = @()
+        foreach ($item in @(@{Name='B';Severity='Warning'}, @{Name='A';Severity='Critical'}, @{Name='C';Severity='Info'})) {
+            $path = Join-Path $TestDrive "$($item.Name).json"
+            [pscustomobject]@{ SchemaVersion = 2; Snapshot = [pscustomobject]@{ ComputerName = $item.Name }; Findings = @([pscustomobject]@{ Code='fixture'; Severity=$item.Severity }) } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $path
+            $paths += $path
+        }
+        $serial = Get-AuditFleetSummary -Path $paths -ThrottleLimit 1
+        $parallel = Get-AuditFleetSummary -Path $paths -ThrottleLimit 2
+        $serial.ReportCount | Should -Be 3
+        $parallel.TotalFindings | Should -Be $serial.TotalFindings
+        $parallel.Critical | Should -Be 1
+        $parallel.Warning | Should -Be 1
+        @($parallel.Reports.ComputerName) | Should -Be @('A','B','C')
+    }
+    It 'mide sin imponer un umbral de rendimiento' {
+        $measurement = Measure-AuditOperation -Name fixture -Operation { 42 }
+        $measurement.Result | Should -Be 42
+        $measurement.ElapsedMilliseconds | Should -BeGreaterOrEqual 0
+    }
+    It 'valida contrato y semántica de severidad' {
+        $valid = [pscustomobject]@{ SchemaVersion=2; Snapshot=[pscustomobject]@{ComputerName='fixture'}; Findings=@([pscustomobject]@{Code='x';Severity='Info'}) }
+        ($valid | Test-WorkstationAuditContract).IsValid | Should -BeTrue
+        $invalid = [pscustomobject]@{ SchemaVersion=2; Snapshot=[pscustomobject]@{ComputerName='fixture'}; Findings=@([pscustomobject]@{Code='';Severity='Boom'}) }
+        ($invalid | Test-WorkstationAuditContract).IsValid | Should -BeFalse
+    }
+    It 'traduce severidad a códigos de salida automatizables' {
+        Get-WorkstationAuditExitCode -Audit ([pscustomobject]@{Summary=[pscustomobject]@{Critical=1;Warning=0}}) | Should -Be 2
+        Get-WorkstationAuditExitCode -Audit ([pscustomobject]@{Summary=[pscustomobject]@{Critical=0;Warning=1}}) | Should -Be 1
+        Get-WorkstationAuditExitCode -Audit ([pscustomobject]@{Summary=[pscustomobject]@{Critical=0;Warning=0}}) | Should -Be 0
+    }
+}
