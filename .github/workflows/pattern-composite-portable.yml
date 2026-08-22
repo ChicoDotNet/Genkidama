@@ -6,6 +6,18 @@ on:
       - dev
     paths:
       - '.github/workflows/pattern-composite-portable.yml'
+      - 'src/Enterprise/C#/CompositeExample.cs'
+      - 'src/Web/TypeScriptTS/composite.ts'
+      - 'src/Scripting/PythonPY/composite.py'
+      - 'src/Systems/C++/composite.cpp'
+      - 'src/Enterprise/Java/CompositeExample.java'
+      - 'src/Systems/Rust/composite.rs'
+      - 'src/Systems/Go/composite.go'
+      - 'src/Scripting/PHP/composite.php'
+      - 'src/Enterprise/Kotlin/CompositeExample.kt'
+      - 'src/Systems/Swift/composite.swift'
+      - 'src/Functional/F#/composite.fsx'
+      - 'src/Web/JavaScriptJS/composite.js'
       - 'src/Enterprise/VisualBasic/CompositeExample.vb'
       - 'src/Systems/C/composite.c'
       - 'src/Scripting/RubyRB/composite.rb'
@@ -19,7 +31,102 @@ on:
       - 'wiki/Composite.md'
 
 jobs:
-  validate:
+  validate-mainstream:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.26.5'
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup PHP
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y php-cli
+
+      - name: Validate Composite mainstream examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          assert_output() {
+            local output="$1"
+            grep -Fxq 'leaf=2' <<<"$output"
+            grep -Fxq 'docs=8' <<<"$output"
+            grep -Fxq 'root=10' <<<"$output"
+          }
+
+          dotnet new console --framework net10.0 --output "$work/csharp" --force >/dev/null
+          cp 'src/Enterprise/C#/CompositeExample.cs' "$work/csharp/Program.cs"
+          assert_output "$(dotnet run --project "$work/csharp" --configuration Release)"
+
+          python -m py_compile src/Scripting/PythonPY/composite.py
+          assert_output "$(python src/Scripting/PythonPY/composite.py)"
+
+          node --check src/Web/JavaScriptJS/composite.js
+          assert_output "$(node src/Web/JavaScriptJS/composite.js)"
+
+          npx --yes --package typescript@6.0.3 tsc src/Web/TypeScriptTS/composite.ts --strict --target ES2024 --module commonjs --outDir "$work/typescript"
+          assert_output "$(node "$work/typescript/composite.js")"
+
+          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/composite.cpp' -o "$work/composite-cpp"
+          assert_output "$("$work/composite-cpp")"
+
+          mkdir -p "$work/java"
+          javac -Xlint:all -Werror -d "$work/java" src/Enterprise/Java/CompositeExample.java
+          assert_output "$(java -cp "$work/java" CompositeExample)"
+
+          test -z "$(gofmt -d src/Systems/Go/composite.go)"
+          go vet src/Systems/Go/composite.go
+          assert_output "$(go run src/Systems/Go/composite.go)"
+
+          rustfmt --check src/Systems/Rust/composite.rs
+          rustc -D warnings src/Systems/Rust/composite.rs -o "$work/composite-rust"
+          assert_output "$("$work/composite-rust")"
+
+          php -l src/Scripting/PHP/composite.php >/dev/null
+          assert_output "$(php src/Scripting/PHP/composite.php)"
+
+          kotlinc src/Enterprise/Kotlin/CompositeExample.kt -include-runtime -d "$work/composite-kotlin.jar"
+          assert_output "$(java -jar "$work/composite-kotlin.jar")"
+
+          swiftc src/Systems/Swift/composite.swift -o "$work/composite-swift"
+          assert_output "$("$work/composite-swift")"
+
+          assert_output "$(dotnet fsi 'src/Functional/F#/composite.fsx')"
+
+  validate-portable:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
