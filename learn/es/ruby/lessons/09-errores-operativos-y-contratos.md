@@ -39,7 +39,7 @@ bin/rails test
 
 ## Siguiente paso
 
-En la lección 10 convertiremos el intercambio CSV en una operación atómica y reproducible.
+Continúa con [Lección 10 — CSV, transacciones y datos externos](10-csv-transacciones-y-datos-externos.md).
 
 ## Referencias
 
