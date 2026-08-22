@@ -18,7 +18,7 @@ proc folderNode(children: varargs[Node]): Node =
 proc size(node: Node): int =
   case node.kind
   of nkFile:
-    node.bytes
+    result = node.bytes
   of nkFolder:
     for child in node.children:
       result += child.size()
