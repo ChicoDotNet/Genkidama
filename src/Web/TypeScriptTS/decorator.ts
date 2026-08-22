@@ -9,7 +9,7 @@ class PlainMessage implements Component {
 }
 
 abstract class ComponentDecorator implements Component {
-  protected constructor(protected readonly inner: Component) {}
+  constructor(protected readonly inner: Component) {}
   abstract render(): string;
 }
 
