@@ -1,10 +1,24 @@
 typedef Render = String Function();
 
-String plain() => 'alert';
+String plain() {
+  return 'alert';
+}
 
-Render audit(Render inner) => () => 'audit(${inner()})';
+Render audit(Render inner) {
+  String audited() {
+    return 'audit(${inner()})';
+  }
 
-Render encrypt(Render inner) => () => 'enc(${inner()})';
+  return audited;
+}
+
+Render encrypt(Render inner) {
+  String encrypted() {
+    return 'enc(${inner()})';
+  }
+
+  return encrypted;
+}
 
 void main() {
   final Render base = plain;
