@@ -242,8 +242,13 @@ jobs:
       - name: Validate Rockstar Composite
         shell: bash
         run: |
-          set -euo pipefail
-          output="$("$ROCKSTAR" src/Other/Rockstar/composite.rock)"
+          set -uo pipefail
+          set +e
+          output="$("$ROCKSTAR" src/Other/Rockstar/composite.rock 2>&1)"
+          status=$?
+          set -e
+          printf '%s\n' "$output"
+          test "$status" -eq 0
           grep -Fxq 'leaf=2' <<<"$output"
           grep -Fxq 'docs=8' <<<"$output"
           grep -Fxq 'root=10' <<<"$output"
