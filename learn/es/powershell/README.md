@@ -1,33 +1,24 @@
 # Curso de PowerShell desde cero — Construye un auditor de estaciones de trabajo
 
-PowerShell es un shell y lenguaje de automatización orientado a objetos, muy usado para administrar Windows y servicios Microsoft y también disponible en Linux y macOS. **Puedes empezar desde cero aquí**: aprenderás el lenguaje construyendo **WorkstationAudit**, un auditor local que convierte señales del equipo en hallazgos y un reporte JSON explicable.
+PowerShell es un shell y lenguaje de automatización orientado a objetos, muy usado para administrar Windows y servicios Microsoft y también disponible en Linux y macOS. **Puedes empezar desde cero aquí**: aprenderás el lenguaje construyendo **WorkstationAudit**, un auditor local que convierte señales del equipo en hallazgos y reportes explicables.
 
 ## Qué vas a construir
 
-WorkstationAudit inspecciona plataforma, versión de PowerShell, almacenamiento y señales Windows cuando están disponibles; transforma datos en hallazgos con severidad, maneja errores de recolección y evoluciona hacia un diagnóstico reproducible sin modificar el equipo auditado.
+WorkstationAudit inspecciona plataforma, almacenamiento, señales Windows, inventario acotado y contexto de ejecución; transforma datos en hallazgos, exporta JSON/texto y compara ejecuciones sin modificar el equipo auditado.
 
-El curso enseña PowerShell 7 moderno. Al 22 de agosto de 2026 Microsoft identifica **PowerShell 7.6 como la línea LTS vigente**. Windows PowerShell 5.1 aparece cuando sea necesario para explicar compatibilidad, no como runtime principal del curso.
+El curso enseña PowerShell 7 moderno. Al 22 de agosto de 2026 Microsoft identifica **PowerShell 7.6 como la línea LTS vigente**. Windows PowerShell 5.1 aparece sólo cuando sea necesario para explicar compatibilidad.
 
 ## Requisitos
-
 - PowerShell 7.6 LTS recomendado.
 - Windows 11 para la experiencia objetivo del auditor.
-- Linux actual sirve para practicar las capacidades portables y las pruebas del núcleo.
+- Linux actual sirve para practicar capacidades portables y pruebas del núcleo.
 - VS Code es opcional.
-
-Comprueba tu versión:
-
-```powershell
-$PSVersionTable.PSVersion
-```
 
 ## Ejecutar la aplicación
 
-Desde esta carpeta:
-
 ```powershell
-./app/Invoke-Audit.ps1 -OutputPath ./audit.json
-Get-Content ./audit.json
+./app/Invoke-Audit.ps1 -OutputPath ./audit.json -TextOutputPath ./audit.txt
+./app/Invoke-Audit.ps1 -CompareWith ./audit.json
 ```
 
 ## Ejecutar pruebas
@@ -37,11 +28,9 @@ Install-Module Pester -MinimumVersion 5.7.1 -Scope CurrentUser
 Invoke-Pester ./app/tests
 ```
 
-Pester es la dependencia de desarrollo; la aplicación usa capacidades incluidas en PowerShell/.NET.
-
 ## Avance
 
-**8/17 lecciones implementadas.** Los dos primeros checkpoints cubren diagnóstico portable, configuración, fronteras Windows y reglas testeables.
+**12/17 lecciones implementadas.** Tres checkpoints cubren diagnóstico reproducible, fronteras Windows, política configurable, inventario acotado, privilegios, reportes y comparación semántica.
 
 1. [Lección 01 — Ejecuta tu primer auditor](lessons/01-ejecuta-tu-primer-auditor.md)
 2. [Lección 02 — Trabaja con objetos y pipeline](lessons/02-objetos-y-pipeline.md)
@@ -51,57 +40,50 @@ Pester es la dependencia de desarrollo; la aplicación usa capacidades incluidas
 6. [Lección 06 — Consulta Windows con CIM](lessons/06-consulta-windows-con-cim.md)
 7. [Lección 07 — Reglas reutilizables de memoria](lessons/07-reglas-reutilizables-de-memoria.md)
 8. [Lección 08 — Compón un diagnóstico reproducible](lessons/08-compone-un-diagnostico-reproducible.md)
-9. Próximo: inventario de software/servicios con límites explícitos.
-10. Próximo: seguridad de ejecución y privilegios.
-11. Próximo: reportes humanos y JSON.
-12. Próximo: persistencia/comparación entre ejecuciones.
+9. [Lección 09 — Inventario acotado](lessons/09-inventario-acotado.md)
+10. [Lección 10 — Privilegios y seguridad](lessons/10-privilegios-y-seguridad.md)
+11. [Lección 11 — Reportes humanos y JSON](lessons/11-reportes-humanos-y-json.md)
+12. [Lección 12 — Compara auditorías](lessons/12-compara-auditorias.md)
 13. Próximo: remoting y alcance seguro.
 14. Próximo: concurrencia sólo donde aporte valor.
 15. Próximo: debugging y profiling.
 16. Próximo: hardening y entrega.
 17. Próximo: evaluación final autónoma.
 
-[Checkpoint 01](exercises/checkpoint-01.md) · [Solución 01](solutions/checkpoint-01.md) · [Checkpoint 02](exercises/checkpoint-02.md) · [Solución 02](solutions/checkpoint-02.md)
+[Checkpoint 01](exercises/checkpoint-01.md) · [Solución 01](solutions/checkpoint-01.md) · [Checkpoint 02](exercises/checkpoint-02.md) · [Solución 02](solutions/checkpoint-02.md) · [Checkpoint 03](exercises/checkpoint-03.md) · [Solución 03](solutions/checkpoint-03.md)
 
 ## Qué sabrás hacer al terminar
-
-Leer y escribir scripts PowerShell idiomáticos, trabajar con objetos y pipelines, diseñar funciones avanzadas, validar parámetros, manejar errores, importar módulos, consultar el sistema, producir reportes estructurados, escribir pruebas con Pester, depurar scripts y automatizar tareas operativas sin esconder efectos secundarios.
+Leer y escribir scripts PowerShell idiomáticos, trabajar con objetos/pipelines, diseñar funciones, validar parámetros, manejar errores, importar módulos, consultar el sistema, producir reportes estructurados, escribir pruebas con Pester, depurar scripts y automatizar tareas operativas sin esconder efectos secundarios.
 
 ## Empleabilidad
-
-PowerShell aparece con frecuencia en administración Windows, soporte/operaciones, Microsoft 365, Azure y automatización interna. Un puesto junior suele exigir además fundamentos de sistema operativo, permisos, redes, directorio/identidad o nube. Este curso prepara capacidades demostrables; no promete una vacante.
+PowerShell aparece con frecuencia en administración Windows, soporte/operaciones, Microsoft 365, Azure y automatización interna. Un puesto junior suele exigir además fundamentos de sistema operativo, permisos, redes, identidad o nube. Este curso prepara capacidades demostrables; no promete una vacante.
 
 ## Preguntas frecuentes
+**¿Esto es lo mismo que CMD?** No. PowerShell transporta objetos por el pipeline y tiene un lenguaje completo.
 
-**¿Esto es lo mismo que CMD?** No. PowerShell transporta objetos por el pipeline y tiene un lenguaje completo, módulos, funciones, errores estructurados y acceso a .NET.
+**¿Necesito Windows para empezar?** No. El curso marca explícitamente las capacidades que sí dependen de Windows.
 
-**¿Necesito Windows para empezar?** No para las primeras lecciones. El curso marca explícitamente las capacidades que sí dependen de Windows.
+**¿Windows PowerShell 5.1 o PowerShell 7?** Aprendemos PowerShell 7.6 LTS.
 
-**¿Windows PowerShell 5.1 o PowerShell 7?** Aprendemos PowerShell 7.6 LTS. 5.1 sigue existiendo en Windows y se tratará como compatibilidad cuando corresponda.
-
-**¿El auditor cambia configuración del equipo?** No. La aplicación canónica empieza como herramienta de lectura/diagnóstico. Las acciones que cambian estado no se mezclan silenciosamente con una auditoría.
+**¿El auditor cambia configuración del equipo?** No. La aplicación canónica es de lectura/diagnóstico; las acciones que cambian estado no se mezclan silenciosamente.
 
 ## Glosario inicial
-
 - **Cmdlet:** comando PowerShell que recibe y devuelve objetos.
-- **Pipeline:** composición de comandos mediante `|`, pasando objetos, no sólo texto.
-- **Objeto:** valor con propiedades y métodos.
-- **Módulo:** unidad reutilizable de funciones/comandos PowerShell.
-- **Pester:** framework de pruebas habitual del ecosistema PowerShell.
-- **Finding / hallazgo:** conclusión diagnóstica respaldada por evidencia observable.
-- **CIM:** modelo/interfaz de administración usada por PowerShell para consultar información de sistema, especialmente en Windows.
+- **Pipeline:** composición mediante `|`, pasando objetos.
+- **Módulo:** unidad reutilizable de funciones PowerShell.
+- **Finding:** conclusión diagnóstica respaldada por evidencia.
+- **CIM:** modelo/interfaz de administración usada para consultar información de sistema.
+- **Execution Policy:** configuración de condiciones de ejecución; no sustituye autorización ni otras fronteras de seguridad.
+- **Baseline:** auditoría persistida usada como referencia para detectar cambios posteriores.
 
 ## Cómo hablar de este proyecto en una entrevista
-
-Explica qué señales recopila WorkstationAudit, cómo separas recolección de reglas diagnósticas, qué haces cuando una consulta falla, por qué el reporte es estructurado y cómo pruebas reglas sin depender del hardware exacto del runner.
+Explica cómo separas recolección, política, findings y presentación; por qué el inventario tiene límites; cómo haces visible la elevación; por qué JSON y texto nacen del mismo objeto; y cómo comparas findings sin depender de frases de presentación.
 
 ## Referencias oficiales
-
-- [Documentación de PowerShell](https://learn.microsoft.com/powershell/)
-- [Ciclo de soporte de PowerShell](https://learn.microsoft.com/powershell/scripting/install/powershell-support-lifecycle)
-- [Get-CimInstance](https://learn.microsoft.com/powershell/module/cimcmdlets/get-ciminstance)
-- [Pester](https://pester.dev/)
+- https://learn.microsoft.com/powershell/
+- https://learn.microsoft.com/powershell/scripting/install/powershell-support-lifecycle
+- https://learn.microsoft.com/powershell/module/cimcmdlets/get-ciminstance
+- https://pester.dev/
 
 ## Siguiente paso
-
 Empieza con la lección 1 y llega a cada checkpoint sin copiar la solución antes de intentarlo. Para control de versiones y colaboración, usa el [curso transversal de Git](../git/).

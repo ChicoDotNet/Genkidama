@@ -9,7 +9,7 @@ Un auditor real toca el sistema; una prueba estable no debe exigir que el runner
 ## Concepto
 `Get-WorkstationAudit` acepta proveedores inyectables para plataforma y sistema. Producción usa los proveedores reales; Pester usa fixtures.
 
-[DEMO] Revisa el test que compone dos unidades y un snapshot de memoria artificial. La salida tiene tres findings y un resumen predecible.
+[DEMO] Revisa el test que compone unidades y un snapshot de memoria artificial. La salida y el resumen son predecibles.
 
 ## Qué acaba de pasar
 La frontera no existe para presumir arquitectura. Existe porque permite probar reglas, simular fallos y conservar I/O en el borde.
@@ -23,7 +23,7 @@ La frontera no existe para presumir arquitectura. Existe porque permite probar r
 Completa Checkpoint 02 antes de mirar la solución.
 
 ## Siguiente paso
-Después del checkpoint avanzaremos a persistencia de configuración, severidades agregadas y diagnóstico operativo.
+Continúa con [Lección 09 — Inventario acotado de software y servicios](09-inventario-acotado.md).
 
 ## Referencias
 - https://pester.dev/docs/usage/mocking
