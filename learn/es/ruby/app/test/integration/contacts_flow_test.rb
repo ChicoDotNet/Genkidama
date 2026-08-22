@@ -12,8 +12,10 @@ class ContactsFlowTest < ActionDispatch::IntegrationTest
     assert_redirected_to contacts_path
   end
 
-  test "returns 422 for invalid contact" do
+  test "returns 422 from model validation for invalid contact" do
     post contacts_path, params: { contact: { name: "", email: "bad", status: "lead" } }
+
     assert_response :unprocessable_entity
+    assert_includes response.body, "Revisa los datos"
   end
 end
