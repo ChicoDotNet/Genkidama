@@ -148,8 +148,8 @@ courses:
     status: in_progress
     lessons_complete: 8
     lessons_total: 17
-    ci: pending
-    last_green_executable_sha: 6eda773a5f0ebf267fb2eadad73edb0110f3c75e
+    ci: green
+    last_green_executable_sha: ee0e5e861ba98a1b005ee5c5c650973df43c4441
     pr: 70
   html: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   assembly: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
