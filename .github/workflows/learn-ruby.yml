@@ -36,4 +36,4 @@ jobs:
       - name: Run tests
         run: bundle exec rails test
       - name: Smoke application
-        run: bundle exec rails runner 'raise "Contact model unavailable" unless defined?(Contact)'
+        run: bundle exec rails runner script/smoke.rb
