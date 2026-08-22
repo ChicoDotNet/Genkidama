@@ -163,6 +163,8 @@ Si no existe presión real de combinación dinámica, una función o composició
 
 El universo canónico mantiene **51 targets**. Decorator clasifica provisionalmente **48 como Applicable** y **HTML, CSS y SQL declarativo como N/A**. La falta de clases no excluye ningún lenguaje: closures, higher-order functions, records, modules, predicates, tables, callbacks y otros mecanismos son válidos si preservan el contrato y la composición.
 
+Actualmente existen **22/48 ejemplos materializados**. Ninguno se promueve todavía mientras el rerun del tranche mainstream no cierre verde; existencia de archivo no equivale a evidencia verificada.
+
 | Lenguaje / target | Aplicabilidad | Ejemplo | Estado |
 |---|---|---|---|
 | C# | Applicable | [`src/Enterprise/C#/DecoratorExample.cs`](../src/Enterprise/C%23/DecoratorExample.cs) | candidato |
@@ -177,16 +179,16 @@ El universo canónico mantiene **51 targets**. Decorator clasifica provisionalme
 | Swift | Applicable | [`src/Systems/Swift/decorator.swift`](../src/Systems/Swift/decorator.swift) | candidato |
 | F# | Applicable | [`src/Functional/F#/decorator.fsx`](../src/Functional/F%23/decorator.fsx) | candidato |
 | JavaScript | Applicable | [`src/Web/JavaScriptJS/decorator.js`](../src/Web/JavaScriptJS/decorator.js) | candidato |
-| Visual Basic .NET | Applicable | — | pendiente |
-| C | Applicable | — | pendiente |
-| Ruby | Applicable | — | pendiente |
-| Lua | Applicable | — | pendiente |
-| Bash | Applicable | — | pendiente |
-| PowerShell | Applicable | — | pendiente |
-| Haskell | Applicable | — | pendiente |
-| Scala | Applicable | — | pendiente |
-| Perl | Applicable | — | pendiente |
-| Pascal | Applicable | — | pendiente |
+| Visual Basic .NET | Applicable | [`src/Enterprise/VisualBasic/DecoratorExample.vb`](../src/Enterprise/VisualBasic/DecoratorExample.vb) | candidato |
+| C | Applicable | [`src/Systems/C/decorator.c`](../src/Systems/C/decorator.c) | candidato |
+| Ruby | Applicable | [`src/Scripting/RubyRB/decorator.rb`](../src/Scripting/RubyRB/decorator.rb) | candidato |
+| Lua | Applicable | [`src/Scripting/Lua/decorator.lua`](../src/Scripting/Lua/decorator.lua) | candidato |
+| Bash | Applicable | [`src/Shell/Bash/decorator.sh`](../src/Shell/Bash/decorator.sh) | candidato |
+| PowerShell | Applicable | [`src/Shell/PowerShell/decorator.ps1`](../src/Shell/PowerShell/decorator.ps1) | candidato |
+| Haskell | Applicable | [`src/Functional/Haskell/Decorator.hs`](../src/Functional/Haskell/Decorator.hs) | candidato |
+| Scala | Applicable | [`src/Functional/Scala/Decorator.scala`](../src/Functional/Scala/Decorator.scala) | candidato |
+| Perl | Applicable | [`src/Scripting/Perl/decorator.pl`](../src/Scripting/Perl/decorator.pl) | candidato |
+| Pascal | Applicable | [`src/Historical/Pascal/decorator.pas`](../src/Historical/Pascal/decorator.pas) | candidato |
 | R | Applicable | — | pendiente |
 | GNU Octave | Applicable | — | pendiente |
 | Julia | Applicable | — | pendiente |
