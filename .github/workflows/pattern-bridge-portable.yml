@@ -6,6 +6,18 @@ on:
       - dev
     paths:
       - '.github/workflows/pattern-bridge-portable.yml'
+      - 'src/Enterprise/C#/BridgeExample.cs'
+      - 'src/Web/TypeScriptTS/bridge.ts'
+      - 'src/Scripting/PythonPY/bridge.py'
+      - 'src/Systems/C++/bridge.cpp'
+      - 'src/Enterprise/Java/BridgeExample.java'
+      - 'src/Systems/Rust/bridge.rs'
+      - 'src/Systems/Go/bridge.go'
+      - 'src/Scripting/PHP/bridge.php'
+      - 'src/Enterprise/Kotlin/BridgeExample.kt'
+      - 'src/Systems/Swift/bridge.swift'
+      - 'src/Functional/F#/bridge.fsx'
+      - 'src/Web/JavaScriptJS/bridge.js'
       - 'src/Enterprise/VisualBasic/BridgeExample.vb'
       - 'src/Systems/C/bridge.c'
       - 'src/Scripting/RubyRB/bridge.rb'
@@ -16,9 +28,100 @@ on:
       - 'src/Functional/Scala/Bridge.scala'
       - 'src/Scripting/Perl/bridge.pl'
       - 'src/Historical/Pascal/bridge.pas'
+      - 'wiki/Bridge.md'
 
 jobs:
-  validate:
+  validate-mainstream:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.26.5'
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup PHP
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y php-cli
+
+      - name: Validate Bridge mainstream examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(printf 'basic-tv=TV:on\nbasic-radio=Radio:on\nmute-tv=TV:muted\nmute-radio=Radio:muted')"
+          work="$(mktemp -d)"
+
+          dotnet new console --framework net10.0 --output "$work/csharp" --force >/dev/null
+          cp 'src/Enterprise/C#/BridgeExample.cs' "$work/csharp/Program.cs"
+          test "$(dotnet run --project "$work/csharp" --configuration Release)" = "$expected"
+
+          python -m py_compile src/Scripting/PythonPY/bridge.py
+          test "$(python src/Scripting/PythonPY/bridge.py)" = "$expected"
+
+          node --check src/Web/JavaScriptJS/bridge.js
+          test "$(node src/Web/JavaScriptJS/bridge.js)" = "$expected"
+
+          npx --yes --package typescript@6.0.3 tsc src/Web/TypeScriptTS/bridge.ts --strict --target ES2024 --module commonjs --outDir "$work/typescript"
+          test "$(node "$work/typescript/bridge.js")" = "$expected"
+
+          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/bridge.cpp' -o "$work/bridge-cpp"
+          test "$("$work/bridge-cpp")" = "$expected"
+
+          mkdir -p "$work/java"
+          javac -Xlint:all -Werror -d "$work/java" src/Enterprise/Java/BridgeExample.java
+          test "$(java -cp "$work/java" BridgeExample)" = "$expected"
+
+          test -z "$(gofmt -d src/Systems/Go/bridge.go)"
+          go vet src/Systems/Go/bridge.go
+          test "$(go run src/Systems/Go/bridge.go)" = "$expected"
+
+          rustfmt --check src/Systems/Rust/bridge.rs
+          rustc -D warnings src/Systems/Rust/bridge.rs -o "$work/bridge-rust"
+          test "$("$work/bridge-rust")" = "$expected"
+
+          php -l src/Scripting/PHP/bridge.php >/dev/null
+          test "$(php src/Scripting/PHP/bridge.php)" = "$expected"
+
+          kotlinc src/Enterprise/Kotlin/BridgeExample.kt -include-runtime -d "$work/bridge-kotlin.jar"
+          test "$(java -jar "$work/bridge-kotlin.jar")" = "$expected"
+
+          swiftc src/Systems/Swift/bridge.swift -o "$work/bridge-swift"
+          test "$("$work/bridge-swift")" = "$expected"
+
+          test "$(dotnet fsi 'src/Functional/F#/bridge.fsx')" = "$expected"
+
+  validate-portable:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
