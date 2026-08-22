@@ -1,0 +1,267 @@
+name: Pattern Adapter Functional
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-adapter-functional.yml'
+      - 'src/Enterprise/C#/AdapterExample.cs'
+      - 'src/Web/TypeScriptTS/adapter.ts'
+      - 'src/Scripting/PythonPY/adapter.py'
+      - 'src/Systems/C++/adapter.cpp'
+      - 'src/Enterprise/Java/AdapterExample.java'
+      - 'src/Systems/Rust/adapter.rs'
+      - 'src/Systems/Go/adapter.go'
+      - 'src/Scripting/PHP/adapter.php'
+      - 'src/Enterprise/Kotlin/AdapterExample.kt'
+      - 'src/Systems/Swift/adapter.swift'
+      - 'src/Functional/F#/adapter.fsx'
+      - 'src/Web/JavaScriptJS/adapter.js'
+      - 'src/Enterprise/VisualBasic/AdapterExample.vb'
+      - 'src/Systems/C/adapter.c'
+      - 'src/Scripting/RubyRB/adapter.rb'
+      - 'src/Scripting/Lua/adapter.lua'
+      - 'src/Shell/Bash/adapter.sh'
+      - 'src/Shell/PowerShell/adapter.ps1'
+      - 'src/Functional/Haskell/Adapter.hs'
+      - 'src/Functional/Scala/Adapter.scala'
+      - 'src/Scripting/Perl/adapter.pl'
+      - 'src/Historical/Pascal/adapter.pas'
+      - 'src/DataScience/R/adapter.R'
+      - 'src/DataScience/Octave/adapter.m'
+      - 'src/DataScience/Julia/adapter.jl'
+      - 'src/Functional/OCaml/adapter.ml'
+      - 'src/Functional/Lisp/adapter.lisp'
+      - 'src/Functional/Clojure/adapter.clj'
+      - 'src/Functional/Elixir/adapter.exs'
+      - 'src/Functional/Erlang/adapter.erl'
+      - 'src/Niche/Prolog/adapter.pl'
+      - 'src/Scripting/Groovy/adapter.groovy'
+      - 'wiki/Adapter.md'
+
+jobs:
+  validate-mainstream:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.26.5'
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup PHP
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y php-cli
+
+      - name: Validate Adapter mainstream examples
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          assert_adapter() {
+            local output="$1"
+            grep -Fxq 'legacy=86F' <<<"$output"
+            grep -Fxq 'adapted=30C' <<<"$output"
+          }
+
+          work="$(mktemp -d)"
+
+          dotnet new console --framework net10.0 --output "$work/csharp" --force >/dev/null
+          cp 'src/Enterprise/C#/AdapterExample.cs' "$work/csharp/Program.cs"
+          assert_adapter "$(dotnet run --project "$work/csharp" --configuration Release)"
+
+          python -m py_compile src/Scripting/PythonPY/adapter.py
+          assert_adapter "$(python src/Scripting/PythonPY/adapter.py)"
+
+          node --check src/Web/JavaScriptJS/adapter.js
+          assert_adapter "$(node src/Web/JavaScriptJS/adapter.js)"
+
+          npx --yes --package typescript@6.0.3 tsc src/Web/TypeScriptTS/adapter.ts --strict --target ES2024 --module commonjs --outDir "$work/typescript"
+          assert_adapter "$(node "$work/typescript/adapter.js")"
+
+          test -z "$(gofmt -d src/Systems/Go/adapter.go)"
+          go vet src/Systems/Go/adapter.go
+          assert_adapter "$(go run src/Systems/Go/adapter.go)"
+
+          rustfmt --check src/Systems/Rust/adapter.rs
+          rustc -D warnings src/Systems/Rust/adapter.rs -o "$work/adapter-rust"
+          assert_adapter "$("$work/adapter-rust")"
+
+          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/adapter.cpp' -o "$work/adapter-cpp"
+          assert_adapter "$("$work/adapter-cpp")"
+
+          javac -Xlint:all -Werror -d "$work/java" src/Enterprise/Java/AdapterExample.java
+          assert_adapter "$(java -cp "$work/java" AdapterExample)"
+
+          php -l src/Scripting/PHP/adapter.php >/dev/null
+          assert_adapter "$(php src/Scripting/PHP/adapter.php)"
+
+          command -v kotlinc >/dev/null
+          kotlinc src/Enterprise/Kotlin/AdapterExample.kt -include-runtime -d "$work/adapter-kotlin.jar"
+          assert_adapter "$(java -jar "$work/adapter-kotlin.jar")"
+
+          command -v swiftc >/dev/null
+          swiftc src/Systems/Swift/adapter.swift -o "$work/adapter-swift"
+          assert_adapter "$("$work/adapter-swift")"
+
+          assert_adapter "$(dotnet fsi 'src/Functional/F#/adapter.fsx')"
+
+  validate-portable:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Setup portable Adapter runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y ruby lua5.4 ghc scala perl fp-compiler
+
+      - name: Validate Adapter portable examples
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          assert_adapter() {
+            local output="$1"
+            grep -Fxq 'legacy=86F' <<<"$output"
+            grep -Fxq 'adapted=30C' <<<"$output"
+          }
+
+          work="$(mktemp -d)"
+
+          vb="$work/vb"
+          dotnet new console --language VB --framework net10.0 --output "$vb" --force >/dev/null
+          cp src/Enterprise/VisualBasic/AdapterExample.vb "$vb/Program.vb"
+          assert_adapter "$(dotnet run --project "$vb" --configuration Release)"
+
+          gcc -std=c17 -Wall -Wextra -Werror src/Systems/C/adapter.c -o "$work/adapter-c"
+          assert_adapter "$("$work/adapter-c")"
+
+          ruby -cw src/Scripting/RubyRB/adapter.rb
+          assert_adapter "$(ruby src/Scripting/RubyRB/adapter.rb)"
+
+          assert_adapter "$(lua5.4 src/Scripting/Lua/adapter.lua)"
+
+          bash -n src/Shell/Bash/adapter.sh
+          assert_adapter "$(bash src/Shell/Bash/adapter.sh)"
+
+          assert_adapter "$(pwsh -NoLogo -NoProfile -NonInteractive -File src/Shell/PowerShell/adapter.ps1)"
+
+          assert_adapter "$(runghc -Wall -Werror src/Functional/Haskell/Adapter.hs)"
+
+          scala_out="$work/scala"
+          mkdir -p "$scala_out"
+          scalac -deprecation -feature -unchecked src/Functional/Scala/Adapter.scala -d "$scala_out"
+          assert_adapter "$(scala -cp "$scala_out" Adapter)"
+
+          perl -c src/Scripting/Perl/adapter.pl
+          assert_adapter "$(perl src/Scripting/Perl/adapter.pl)"
+
+          pascal_out="$work/pascal"
+          mkdir -p "$pascal_out"
+          fpc -Mobjfpc -O2 -Sew -FE"$pascal_out" src/Historical/Pascal/adapter.pas >/dev/null
+          assert_adapter "$("$pascal_out/adapter")"
+
+  validate-functional:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: '1'
+
+      - name: Setup Erlang and Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '28.5.0.4'
+          elixir-version: '1.19.1'
+
+      - name: Setup functional Adapter runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y r-base octave ocaml sbcl clojure swi-prolog-nox groovy
+
+      - name: Validate functional Adapter examples
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          assert_adapter() {
+            local output="$1"
+            grep -Fxq 'legacy=86F' <<<"$output"
+            grep -Fxq 'adapted=30C' <<<"$output"
+          }
+
+          assert_adapter "$(Rscript --vanilla src/DataScience/R/adapter.R)"
+          assert_adapter "$(octave --no-gui --quiet --eval "addpath('src/DataScience/Octave'); adapter();")"
+          assert_adapter "$(julia --startup-file=no src/DataScience/Julia/adapter.jl)"
+
+          ocaml_out="$(mktemp -d)"
+          ocamlc -w +A-70 -warn-error +A-70 src/Functional/OCaml/adapter.ml -o "$ocaml_out/adapter"
+          assert_adapter "$("$ocaml_out/adapter")"
+
+          assert_adapter "$(sbcl --noinform --non-interactive --load src/Functional/Lisp/adapter.lisp)"
+          assert_adapter "$(clojure src/Functional/Clojure/adapter.clj)"
+
+          elixir_out="$(mktemp -d)"
+          elixirc --warnings-as-errors -o "$elixir_out" src/Functional/Elixir/adapter.exs >/dev/null
+          assert_adapter "$(elixir src/Functional/Elixir/adapter.exs)"
+
+          erlang_out="$(mktemp -d)"
+          erlc -Werror -o "$erlang_out" src/Functional/Erlang/adapter.erl
+          assert_adapter "$(erl -noshell -pa "$erlang_out" -eval 'adapter:main(), halt().')"
+
+          assert_adapter "$(swipl -q -s src/Niche/Prolog/adapter.pl -g run -t halt)"
+
+          groovy_out="$(mktemp -d)"
+          groovyc -d "$groovy_out" src/Scripting/Groovy/adapter.groovy
+          assert_adapter "$(groovy src/Scripting/Groovy/adapter.groovy)"
