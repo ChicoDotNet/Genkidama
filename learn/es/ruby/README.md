@@ -34,15 +34,20 @@ Abre `http://localhost:3000`.
 6. [Editar sin duplicar formularios](lessons/06-editar-sin-duplicar-formularios.md)
 7. [Asociaciones y notas de seguimiento](lessons/07-asociaciones-y-notas.md)
 8. [Encadenar consultas y probar comportamiento](lessons/08-encadenar-consultas-y-probar.md)
+9. [Errores operativos y contratos explícitos](lessons/09-errores-operativos-y-contratos.md)
+10. [CSV, transacciones y datos externos](lessons/10-csv-transacciones-y-datos-externos.md)
+11. [Seguridad web y límites de entrada](lessons/11-seguridad-web-y-limites.md)
+12. [Debugging con evidencia](lessons/12-debugging-con-evidencia.md)
 
 ### Checkpoints
 
 - [Checkpoint 01 — extiende la ficha del contacto](exercises/checkpoint-01.md)
 - [Checkpoint 02 — seguimiento de contactos](exercises/checkpoint-02.md)
+- [Checkpoint 03 — intercambio seguro de contactos](exercises/checkpoint-03.md)
 
 ## Estado
 
-Segundo incremento: **8/17 lecciones**. ContactDesk ya permite buscar y filtrar, editar contactos y registrar notas asociadas con pruebas de modelo e integración.
+Tercer incremento: **12/17 lecciones**. ContactDesk ya permite buscar y filtrar, editar, registrar notas, exportar contactos e importar CSV de forma acotada, validada y transaccional.
 
 ## Qué aprenderás al completar el curso
 
