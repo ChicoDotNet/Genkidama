@@ -1,0 +1,18 @@
+<% if contact.errors.any? %>
+  <div>
+    <h2>Revisa los datos</h2>
+    <ul>
+      <% contact.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_with model: contact do |form| %>
+  <p><%= form.label :name, "Nombre" %><br><%= form.text_field :name, required: true %></p>
+  <p><%= form.label :email, "Email" %><br><%= form.email_field :email, required: true %></p>
+  <p><%= form.label :company, "Empresa" %><br><%= form.text_field :company %></p>
+  <p><%= form.label :status, "Estado" %><br><%= form.select :status, [["Prospecto", "lead"], ["Cliente", "active"], ["Archivado", "archived"]] %></p>
+  <%= form.submit "Guardar" %>
+<% end %>

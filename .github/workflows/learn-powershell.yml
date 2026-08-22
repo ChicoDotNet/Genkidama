@@ -1,0 +1,44 @@
+name: Learn PowerShell
+
+on:
+  pull_request:
+    paths:
+      - 'learn/es/powershell/**'
+      - '.github/workflows/learn-powershell.yml'
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Show PowerShell version
+        shell: pwsh
+        run: |
+          $PSVersionTable | Format-List | Out-String | Write-Host
+          if ($PSVersionTable.PSVersion.Major -lt 7) {
+            throw 'Genkidama Learn requiere PowerShell 7 o posterior.'
+          }
+
+      - name: Install Pester
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module Pester -MinimumVersion 5.7.1 -Scope CurrentUser -Force -SkipPublisherCheck
+
+      - name: Run tests
+        shell: pwsh
+        run: Invoke-Pester -Path ./learn/es/powershell/app/tests -CI -Output Detailed
+
+      - name: Smoke test auditor
+        shell: pwsh
+        run: |
+          $report = Join-Path $env:RUNNER_TEMP 'workstation-audit.json'
+          ./learn/es/powershell/app/Invoke-Audit.ps1 -OutputPath $report
+          if (-not (Test-Path -LiteralPath $report)) { throw 'No se generó el reporte.' }
+          Get-Content -LiteralPath $report -Raw | ConvertFrom-Json | Out-Null
