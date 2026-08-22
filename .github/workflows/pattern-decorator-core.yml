@@ -1,0 +1,61 @@
+name: Pattern Decorator Core
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-decorator-core.yml'
+      - 'src/Enterprise/C#/DecoratorExample.cs'
+      - 'src/Enterprise/VisualBasic/DecoratorExample.vb'
+      - 'src/Enterprise/Java/DecoratorExample.java'
+      - 'src/Enterprise/Kotlin/DecoratorExample.kt'
+      - 'src/Web/TypeScriptTS/decorator.ts'
+      - 'src/Web/JavaScriptJS/decorator.js'
+      - 'src/Scripting/PythonPY/decorator.py'
+      - 'src/Systems/C++/decorator.cpp'
+      - 'src/Systems/C/decorator.c'
+      - 'src/Systems/Rust/decorator.rs'
+      - 'src/Systems/Go/decorator.go'
+      - 'src/Scripting/PHP/decorator.php'
+      - 'src/Systems/Swift/decorator.swift'
+      - 'src/Functional/F#/decorator.fsx'
+      - 'src/Scripting/RubyRB/decorator.rb'
+      - 'src/Scripting/Lua/decorator.lua'
+      - 'src/Shell/Bash/decorator.sh'
+      - 'src/Shell/PowerShell/decorator.ps1'
+      - 'src/Functional/Haskell/Decorator.hs'
+      - 'src/Functional/Scala/Decorator.scala'
+      - 'src/Scripting/Perl/decorator.pl'
+      - 'src/Historical/Pascal/decorator.pas'
+      - 'src/DataScience/R/decorator.R'
+      - 'src/DataScience/Octave/decorator.m'
+      - 'src/DataScience/Julia/decorator.jl'
+      - 'src/Functional/OCaml/decorator.ml'
+      - 'src/Functional/Lisp/decorator.lisp'
+      - 'src/Functional/Clojure/decorator.clj'
+      - 'src/Functional/Elixir/decorator.exs'
+      - 'src/Functional/Erlang/decorator.erl'
+      - 'src/Niche/Prolog/decorator.pl'
+      - 'src/Scripting/Groovy/decorator.groovy'
+      - 'wiki/Decorator.md'
+
+jobs:
+  source-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Guard shared Decorator behavior contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq 'base=alert' wiki/Decorator.md
+          grep -Fq 'audit=audit(alert)' wiki/Decorator.md
+          grep -Fq 'encrypted=enc(alert)' wiki/Decorator.md
+          grep -Fq 'stacked=audit(enc(alert))' wiki/Decorator.md
+          test -f 'src/Enterprise/C#/DecoratorExample.cs'
+          test -f src/Web/TypeScriptTS/decorator.ts
+          test -f src/Scripting/PythonPY/decorator.py
+          test -f 'src/Systems/C++/decorator.cpp'
+          test -f src/Functional/Haskell/Decorator.hs
+          test -f src/Functional/Elixir/decorator.exs
