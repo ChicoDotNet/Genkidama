@@ -15,7 +15,10 @@ impl Node {
 fn main() {
     let readme = Node::File(2);
     let docs = Node::Folder(vec![Node::File(3), Node::File(5)]);
-    let root = Node::Folder(vec![Node::File(2), Node::Folder(vec![Node::File(3), Node::File(5)])]);
+    let root = Node::Folder(vec![
+        Node::File(2),
+        Node::Folder(vec![Node::File(3), Node::File(5)]),
+    ]);
 
     println!("leaf={}", readme.size());
     println!("docs={}", docs.size());
