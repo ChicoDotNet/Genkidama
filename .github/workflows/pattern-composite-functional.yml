@@ -104,7 +104,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          output="$(elixir --warnings-as-errors src/Functional/Elixir/composite.exs)"
+          work="$(mktemp -d)"
+          elixirc --warnings-as-errors -o "$work" src/Functional/Elixir/composite.exs >/dev/null
+          output="$(elixir src/Functional/Elixir/composite.exs)"
           grep -Fxq 'leaf=2' <<<"$output"
           grep -Fxq 'docs=8' <<<"$output"
           grep -Fxq 'root=10' <<<"$output"
