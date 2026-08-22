@@ -1,8 +1,8 @@
 alias Render = Proc(String)
 
-plain = ->{ "alert" }
-audit = ->(inner : Render) { ->{ "audit(#{inner.call})" } }
-encrypt = ->(inner : Render) { ->{ "enc(#{inner.call})" } }
+plain = -> { "alert" }
+audit = ->(inner : Render) { -> { "audit(#{inner.call})" } }
+encrypt = ->(inner : Render) { -> { "enc(#{inner.call})" } }
 
 audited = audit.call(plain)
 encrypted = encrypt.call(plain)
