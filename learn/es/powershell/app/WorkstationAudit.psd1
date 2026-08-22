@@ -1,5 +1,5 @@
 @{
-    RootModule = 'WorkstationAudit.Root.psm1'
+    NestedModules = @('WorkstationAudit.psm1', 'WorkstationAudit.Advanced.psm1')
     ModuleVersion = '0.4.0'
     GUID = '7f476ac1-f32c-450a-a2f1-15107150d434'
     Author = 'Genkidama Learn'
