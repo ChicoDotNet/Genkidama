@@ -28,6 +28,6 @@ try {
     }
 }
 catch {
-    Write-Error "WorkstationAudit no pudo completar el diagnóstico: $($_.Exception.Message)"
+    Write-Error "WorkstationAudit no pudo completar el diagnóstico: $($_.Exception.ToString())"
     exit 1
 }
