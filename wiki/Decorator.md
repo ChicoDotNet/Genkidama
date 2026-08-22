@@ -3,7 +3,7 @@
 > **Familia:** Structural  
 > **Intención:** añadir responsabilidades a un objeto de forma componible, envolviéndolo con objetos que conservan el mismo contrato observable.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `12/48`  
+> **Implementaciones de lenguaje:** `22/48`  
 > **Cobertura de pruebas:** N/A — la completitud de lenguajes se valida por comportamiento/toolchain; no existe una métrica homogénea entre 48 ecosistemas standalone.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -163,7 +163,7 @@ Si no existe presión real de combinación dinámica, una función o composició
 
 El universo canónico mantiene **51 targets**. Decorator clasifica provisionalmente **48 como Applicable** y **HTML, CSS y SQL declarativo como N/A**. La falta de clases no excluye ningún lenguaje: closures, higher-order functions, records, modules, predicates, tables, callbacks y otros mecanismos son válidos si preservan el contrato y la composición.
 
-Actualmente existen **32/48 ejemplos materializados** y **12/48 verificados**. El tranche mainstream quedó verde con TypeScript 6 strict, `gofmt/go vet`, `rustfmt`, warnings-as-errors y ejecución real. Los diez portables y diez funcionales permanecen candidatos hasta obtener su propia evidencia.
+Actualmente existen **32/48 ejemplos materializados** y **22/48 verificados**. Mainstream y portable están verdes con sus toolchains reales; los diez funcionales permanecen candidatos hasta obtener su propia evidencia.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo | Estado |
 |---|---|---|---|
@@ -179,16 +179,16 @@ Actualmente existen **32/48 ejemplos materializados** y **12/48 verificados**. E
 | Swift | Applicable | [`src/Systems/Swift/decorator.swift`](../src/Systems/Swift/decorator.swift) | ✅ verificado |
 | F# | Applicable | [`src/Functional/F#/decorator.fsx`](../src/Functional/F%23/decorator.fsx) | ✅ verificado |
 | JavaScript | Applicable | [`src/Web/JavaScriptJS/decorator.js`](../src/Web/JavaScriptJS/decorator.js) | ✅ verificado |
-| Visual Basic .NET | Applicable | [`src/Enterprise/VisualBasic/DecoratorExample.vb`](../src/Enterprise/VisualBasic/DecoratorExample.vb) | candidato |
-| C | Applicable | [`src/Systems/C/decorator.c`](../src/Systems/C/decorator.c) | candidato |
-| Ruby | Applicable | [`src/Scripting/RubyRB/decorator.rb`](../src/Scripting/RubyRB/decorator.rb) | candidato |
-| Lua | Applicable | [`src/Scripting/Lua/decorator.lua`](../src/Scripting/Lua/decorator.lua) | candidato |
-| Bash | Applicable | [`src/Shell/Bash/decorator.sh`](../src/Shell/Bash/decorator.sh) | candidato |
-| PowerShell | Applicable | [`src/Shell/PowerShell/decorator.ps1`](../src/Shell/PowerShell/decorator.ps1) | candidato |
-| Haskell | Applicable | [`src/Functional/Haskell/Decorator.hs`](../src/Functional/Haskell/Decorator.hs) | candidato |
-| Scala | Applicable | [`src/Functional/Scala/Decorator.scala`](../src/Functional/Scala/Decorator.scala) | candidato |
-| Perl | Applicable | [`src/Scripting/Perl/decorator.pl`](../src/Scripting/Perl/decorator.pl) | candidato |
-| Pascal | Applicable | [`src/Historical/Pascal/decorator.pas`](../src/Historical/Pascal/decorator.pas) | candidato |
+| Visual Basic .NET | Applicable | [`src/Enterprise/VisualBasic/DecoratorExample.vb`](../src/Enterprise/VisualBasic/DecoratorExample.vb) | ✅ verificado |
+| C | Applicable | [`src/Systems/C/decorator.c`](../src/Systems/C/decorator.c) | ✅ verificado |
+| Ruby | Applicable | [`src/Scripting/RubyRB/decorator.rb`](../src/Scripting/RubyRB/decorator.rb) | ✅ verificado |
+| Lua | Applicable | [`src/Scripting/Lua/decorator.lua`](../src/Scripting/Lua/decorator.lua) | ✅ verificado |
+| Bash | Applicable | [`src/Shell/Bash/decorator.sh`](../src/Shell/Bash/decorator.sh) | ✅ verificado |
+| PowerShell | Applicable | [`src/Shell/PowerShell/decorator.ps1`](../src/Shell/PowerShell/decorator.ps1) | ✅ verificado |
+| Haskell | Applicable | [`src/Functional/Haskell/Decorator.hs`](../src/Functional/Haskell/Decorator.hs) | ✅ verificado |
+| Scala | Applicable | [`src/Functional/Scala/Decorator.scala`](../src/Functional/Scala/Decorator.scala) | ✅ verificado |
+| Perl | Applicable | [`src/Scripting/Perl/decorator.pl`](../src/Scripting/Perl/decorator.pl) | ✅ verificado |
+| Pascal | Applicable | [`src/Historical/Pascal/decorator.pas`](../src/Historical/Pascal/decorator.pas) | ✅ verificado |
 | R | Applicable | [`src/DataScience/R/decorator.R`](../src/DataScience/R/decorator.R) | candidato |
 | GNU Octave | Applicable | [`src/DataScience/Octave/decorator.m`](../src/DataScience/Octave/decorator.m) | candidato |
 | Julia | Applicable | [`src/DataScience/Julia/decorator.jl`](../src/DataScience/Julia/decorator.jl) | candidato |
