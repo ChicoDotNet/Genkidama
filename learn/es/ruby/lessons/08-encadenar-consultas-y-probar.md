@@ -41,7 +41,7 @@ Completa [Checkpoint 02 — seguimiento de contactos](../exercises/checkpoint-02
 
 ## Siguiente paso
 
-El siguiente incremento añadirá manejo de errores operativos, importación/exportación y fronteras de seguridad sobre ContactDesk.
+Continúa con [Lección 09 — errores operativos y contratos explícitos](09-errores-operativos-y-contratos.md).
 
 ## Referencias
 
