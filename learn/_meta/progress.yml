@@ -146,9 +146,9 @@ courses:
   r: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   powershell:
     status: in_progress
-    lessons_complete: 4
+    lessons_complete: 8
     lessons_total: 17
-    ci: green
+    ci: pending
     last_green_executable_sha: 6eda773a5f0ebf267fb2eadad73edb0110f3c75e
     pr: 70
   html: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
