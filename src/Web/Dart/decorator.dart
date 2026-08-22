@@ -3,6 +3,7 @@ typedef Render = String Function();
 String plain() => 'alert';
 
 Render audit(Render inner) => () => 'audit(${inner()})';
+
 Render encrypt(Render inner) => () => 'enc(${inner()})';
 
 void main() {
