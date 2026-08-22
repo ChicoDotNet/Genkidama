@@ -1,57 +1,33 @@
 program composite
   implicit none
 
-  type :: node
-    logical :: is_file = .false.
-    integer :: bytes = 0
-    type(node), allocatable :: children(:)
-  end type node
+  integer, parameter :: node_count = 5
+  logical :: is_file(node_count)
+  integer :: bytes(node_count)
+  integer :: left_child(node_count)
+  integer :: right_child(node_count)
 
-  type(node) :: readme, docs, root
+  is_file = [.true., .true., .true., .false., .false.]
+  bytes = [2, 3, 5, 0, 0]
+  left_child = [0, 0, 0, 2, 1]
+  right_child = [0, 0, 0, 3, 4]
 
-  readme = file_node(2)
-  docs = folder_node([file_node(3), file_node(5)])
-  root = folder_node([readme, docs])
-
-  print '(A,I0)', 'leaf=', node_size(readme)
-  print '(A,I0)', 'docs=', node_size(docs)
-  print '(A,I0)', 'root=', node_size(root)
+  print '(A,I0)', 'leaf=', node_size(1)
+  print '(A,I0)', 'docs=', node_size(4)
+  print '(A,I0)', 'root=', node_size(5)
 
 contains
 
-  function file_node(bytes) result(item)
-    integer, intent(in) :: bytes
-    type(node) :: item
-    item%is_file = .true.
-    item%bytes = bytes
-  end function file_node
-
-  function folder_node(children) result(item)
-    type(node), intent(in) :: children(:)
-    type(node) :: item
-    integer :: child_count
-
-    item%is_file = .false.
-    item%bytes = 0
-    child_count = size(children)
-    allocate(item%children(child_count))
-    item%children = children
-  end function folder_node
-
-  recursive function node_size(item) result(total)
-    type(node), intent(in) :: item
+  recursive function node_size(node_id) result(total)
+    integer, intent(in) :: node_id
     integer :: total
-    integer :: index
 
-    if (item%is_file) then
-      total = item%bytes
+    if (is_file(node_id)) then
+      total = bytes(node_id)
       return
     end if
 
-    total = 0
-    do index = 1, size(item%children)
-      total = total + node_size(item%children(index))
-    end do
+    total = node_size(left_child(node_id)) + node_size(right_child(node_id))
   end function node_size
 
 end program composite
