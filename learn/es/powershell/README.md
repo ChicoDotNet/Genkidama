@@ -30,7 +30,7 @@ Invoke-Pester ./app/tests
 
 ## Avance
 
-**16/17 lecciones implementadas.** Cuatro checkpoints cubren diagnóstico reproducible, fronteras Windows, política configurable, inventario, privilegios, reportes, comparación semántica, alcance remoto explícito, concurrencia acotada, medición y hardening.
+**17/17 lecciones implementadas.** Cuatro checkpoints y una evaluación final autónoma cubren diagnóstico reproducible, fronteras Windows, política configurable, inventario, privilegios, reportes, comparación semántica, alcance remoto explícito, concurrencia acotada, medición y hardening.
 
 1. [Lección 01 — Ejecuta tu primer auditor](lessons/01-ejecuta-tu-primer-auditor.md)
 2. [Lección 02 — Trabaja con objetos y pipeline](lessons/02-objetos-y-pipeline.md)
@@ -48,9 +48,9 @@ Invoke-Pester ./app/tests
 14. [Lección 14 — Fan-out con concurrencia acotada](lessons/14-concurrencia-acotada.md)
 15. [Lección 15 — Mide antes de optimizar](lessons/15-mide-antes-de-optimizar.md)
 16. [Lección 16 — Hardening y contrato de entrega](lessons/16-hardening-y-entrega.md)
-17. Próximo: evaluación final autónoma.
+17. [Lección 17 — Evaluación final autónoma](lessons/17-evaluacion-final.md)
 
-[Checkpoint 01](exercises/checkpoint-01.md) · [Solución 01](solutions/checkpoint-01.md) · [Checkpoint 02](exercises/checkpoint-02.md) · [Solución 02](solutions/checkpoint-02.md) · [Checkpoint 03](exercises/checkpoint-03.md) · [Solución 03](solutions/checkpoint-03.md) · [Checkpoint 04](exercises/checkpoint-04.md) · [Solución 04](solutions/checkpoint-04.md)
+[Checkpoint 01](exercises/checkpoint-01.md) · [Solución 01](solutions/checkpoint-01.md) · [Checkpoint 02](exercises/checkpoint-02.md) · [Solución 02](solutions/checkpoint-02.md) · [Checkpoint 03](exercises/checkpoint-03.md) · [Solución 03](solutions/checkpoint-03.md) · [Checkpoint 04](exercises/checkpoint-04.md) · [Solución 04](solutions/checkpoint-04.md) · [Evaluación final](exercises/final-workstationaudit.md) · [Referencia final](solutions/final-workstationaudit.md)
 
 ## Qué sabrás hacer al terminar
 Leer y escribir scripts PowerShell idiomáticos, trabajar con objetos/pipelines, diseñar funciones, validar parámetros, manejar errores, importar módulos, consultar el sistema, producir reportes estructurados, escribir pruebas con Pester, depurar scripts y automatizar tareas operativas sin esconder efectos secundarios.
@@ -78,7 +78,7 @@ PowerShell aparece con frecuencia en administración Windows, soporte/operacione
 - **Throttle:** límite de trabajo concurrente activo.
 
 ## Cómo hablar de este proyecto en una entrevista
-Explica cómo separas recolección, política, findings y presentación; por qué el inventario tiene límites; cómo haces visible la elevación; por qué JSON y texto nacen del mismo objeto; cómo comparas findings por identidad; y por qué el remoting requiere opt-in en lugar de modificar WinRM automáticamente.
+Explica cómo separas recolección, política, findings y presentación; por qué el inventario tiene límites; cómo haces visible la elevación; por qué JSON y texto nacen del mismo objeto; cómo comparas findings por identidad; y por qué el remoting requiere opt-in en lugar de modificar WinRM automáticamente. La lección 17 incluye una guía completa para explicar problema, arquitectura, trade-offs, pruebas y mejora futura sin inflar tu experiencia.
 
 ## Referencias oficiales
 - https://learn.microsoft.com/powershell/
@@ -88,4 +88,4 @@ Explica cómo separas recolección, política, findings y presentación; por qu�
 - https://pester.dev/
 
 ## Siguiente paso
-Empieza con la lección 1 y llega a cada checkpoint sin copiar la solución antes de intentarlo. Para control de versiones y colaboración, usa el [curso transversal de Git](../git/).
+Completa la evaluación final sin copiar la referencia. Para control de versiones y colaboración, usa el [curso transversal de Git](../git/). Después puedes continuar con el siguiente curso del roadmap de Genkidama Learn.
