@@ -1,0 +1,17 @@
+<h1>ContactDesk</h1>
+<p>CRM local para clientes y prospectos.</p>
+<p><%= link_to "Nuevo contacto", new_contact_path %></p>
+
+<table>
+  <thead><tr><th>Nombre</th><th>Email</th><th>Empresa</th><th>Estado</th></tr></thead>
+  <tbody>
+    <% @contacts.each do |contact| %>
+      <tr>
+        <td><%= contact.name %></td>
+        <td><%= contact.email %></td>
+        <td><%= contact.company %></td>
+        <td><%= contact.status %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
