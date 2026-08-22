@@ -1,0 +1,84 @@
+name: Pattern Builder
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-builder.yml'
+      - 'src/Enterprise/C#/BuilderExample.cs'
+      - 'src/Scripting/PythonPY/builder.py'
+      - 'src/Web/JavaScriptJS/builder.js'
+      - 'src/Systems/Go/builder.go'
+      - 'wiki/Builder.md'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.26.5'
+
+      - name: Validate C# Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          dotnet new console --framework net10.0 --output "$work" --force >/dev/null
+          cp 'src/Enterprise/C#/BuilderExample.cs' "$work/Program.cs"
+          output="$(dotnet run --project "$work" --configuration Release)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
+
+      - name: Validate Python Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile src/Scripting/PythonPY/builder.py
+          output="$(python src/Scripting/PythonPY/builder.py)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
+
+      - name: Validate JavaScript Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check src/Web/JavaScriptJS/builder.js
+          output="$(node src/Web/JavaScriptJS/builder.js)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
+
+      - name: Validate Go Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(gofmt -d src/Systems/Go/builder.go)"
+          go vet src/Systems/Go/builder.go
+          output="$(go run src/Systems/Go/builder.go)"
+          grep -Fq '# Service status' <<<"$output"
+          grep -Fq '<h1>Service status</h1>' <<<"$output"
+          grep -Fq '99.95%' <<<"$output"
