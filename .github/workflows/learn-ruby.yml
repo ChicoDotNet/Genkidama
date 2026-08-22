@@ -37,3 +37,5 @@ jobs:
         run: bundle exec rails test
       - name: Smoke application
         run: bundle exec rails runner script/smoke.rb
+        env:
+          RAILS_ENV: test
