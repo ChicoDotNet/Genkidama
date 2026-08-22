@@ -2,10 +2,10 @@ schema_version: 1
 initiative:
   status: pilots_complete
   source_locale: es
-  last_updated: '2026-08-15'
-  active_work: cpp_course
+  last_updated: '2026-08-22'
+  active_work: ruby_course
   v1_courses_total: 45
-  v1_courses_complete: 12
+  v1_courses_complete: 14
 foundation:
   status: complete
   catalog: complete
@@ -60,7 +60,13 @@ courses:
     pr: 35
     pilot_order: 2
   vbnet: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
-  cpp: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  cpp:
+    status: complete
+    lessons_complete: 17
+    lessons_total: 17
+    ci: green
+    last_green_executable_sha: f940558c1b7bace5e773c24fb95c061021cc23c0
+    pr: 58
   objective-c: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   java:
     status: complete
@@ -138,7 +144,13 @@ courses:
   matlab: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   perl: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   r: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
-  powershell: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  powershell:
+    status: complete
+    lessons_complete: 17
+    lessons_total: 17
+    ci: green
+    last_green_executable_sha: 9f105725c3157c34bc75b1c6ee67713beb6a0f9a
+    pr: 70
   html: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   assembly: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   elixir: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
