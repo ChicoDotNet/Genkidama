@@ -3,7 +3,7 @@
 > **Familia:** Structural  
 > **Intención:** componer objetos en estructuras árbol para que clientes puedan tratar hojas y grupos mediante el mismo contrato.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `0/48`  
+> **Implementaciones de lenguaje:** `10/48`  
 > **Cobertura de pruebas:** N/A — los ejemplos standalone se validan con evidencia proporcional por ecosistema; no existe una métrica homogénea defendible.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -157,7 +157,7 @@ Decorator suele envolver un solo componente para modificar responsabilidad; Comp
 
 ## Implementaciones por lenguaje
 
-La tabla es autoritativa para la completitud. El universo canónico mantiene **51 targets**: **48 Applicable** y **3 N/A provisionales**. Existen **22/48 ejemplos materializados** —12 mainstream y 10 portable—; ninguna fila se promueve hasta observar evidencia verde del head correspondiente.
+La tabla es autoritativa para la completitud. El universo canónico mantiene **51 targets**: **48 Applicable** y **3 N/A provisionales**. Existen **22/48 ejemplos materializados**; el tranche portable está **10/10 verificado** y el tranche mainstream espera evidencia fresca después del fix `rustfmt`.
 
 | Lenguaje | Aplicabilidad | Ejemplo | Validación | Nota |
 |---|---|---|---|---|
@@ -173,16 +173,16 @@ La tabla es autoritativa para la completitud. El universo canónico mantiene **5
 | Swift | Applicable | [composite.swift](../src/Systems/Swift/composite.swift) | ⏳ pendiente | protocol + recursive nodes |
 | F# | Applicable | [composite.fsx](../src/Functional/F%23/composite.fsx) | ⏳ pendiente | discriminated union + recursion |
 | JavaScript | Applicable | [composite.js](../src/Web/JavaScriptJS/composite.js) | ⏳ pendiente | objects + recursive children |
-| Visual Basic .NET | Applicable | [CompositeExample.vb](../src/Enterprise/VisualBasicNET/CompositeExample.vb) | ⏳ pendiente | interface + List(Of Component) |
-| C | Applicable | [composite.c](../src/Systems/C/composite.c) | ⏳ pendiente | tagged node + recursive operation |
-| Ruby | Applicable | [composite.rb](../src/Scripting/RubyRB/composite.rb) | ⏳ pendiente | duck typing |
-| Lua | Applicable | [composite.lua](../src/Scripting/Lua/composite.lua) | ⏳ pendiente | tables + closures |
-| Bash | Applicable | [composite.sh](../src/Shell/Bash/composite.sh) | ⏳ pendiente | node identifiers + recursive function |
-| PowerShell | Applicable | [composite.ps1](../src/Shell/PowerShell/composite.ps1) | ⏳ pendiente | objects + captured scriptblocks |
-| Haskell | Applicable | [Composite.hs](../src/Functional/Haskell/Composite.hs) | ⏳ pendiente | algebraic data type + recursion |
-| Scala | Applicable | [Composite.scala](../src/Functional/Scala/Composite.scala) | ⏳ pendiente | sealed trait + recursive nodes |
-| Perl | Applicable | [composite.pl](../src/Scripting/Perl/composite.pl) | ⏳ pendiente | packages + hashes |
-| Pascal | Applicable | [composite.pas](../src/Historical/Pascal/composite.pas) | ⏳ pendiente | abstract component + recursive ownership |
+| Visual Basic .NET | Applicable | [CompositeExample.vb](../src/Enterprise/VisualBasicNET/CompositeExample.vb) | ✅ verificado | interface + List(Of Component) |
+| C | Applicable | [composite.c](../src/Systems/C/composite.c) | ✅ verificado | tagged node + recursive operation |
+| Ruby | Applicable | [composite.rb](../src/Scripting/RubyRB/composite.rb) | ✅ verificado | duck typing |
+| Lua | Applicable | [composite.lua](../src/Scripting/Lua/composite.lua) | ✅ verificado | tables + closures |
+| Bash | Applicable | [composite.sh](../src/Shell/Bash/composite.sh) | ✅ verificado | node identifiers + recursive function |
+| PowerShell | Applicable | [composite.ps1](../src/Shell/PowerShell/composite.ps1) | ✅ verificado | objects + captured scriptblocks |
+| Haskell | Applicable | [Composite.hs](../src/Functional/Haskell/Composite.hs) | ✅ verificado | algebraic data type + recursion |
+| Scala | Applicable | [Composite.scala](../src/Functional/Scala/Composite.scala) | ✅ verificado | sealed trait + recursive nodes |
+| Perl | Applicable | [composite.pl](../src/Scripting/Perl/composite.pl) | ✅ verificado | packages + hashes |
+| Pascal | Applicable | [composite.pas](../src/Historical/Pascal/composite.pas) | ✅ verificado | abstract component + recursive ownership |
 | R | Applicable | — | ⏳ pendiente | lists + recursive function |
 | GNU Octave | Applicable | — | ⏳ pendiente | structs/cells + recursion |
 | Julia | Applicable | — | ⏳ pendiente | abstract type + recursive nodes |
