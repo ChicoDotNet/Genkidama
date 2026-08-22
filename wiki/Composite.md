@@ -2,8 +2,8 @@
 
 > **Familia:** Structural  
 > **Intención:** componer objetos en estructuras árbol para tratar hojas y grupos mediante el mismo contrato.  
-> **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `28/48`  
+> **Estado:** `validated`  
+> **Implementaciones de lenguaje:** `48/48`  
 > **Cobertura de pruebas:** N/A — los ejemplos standalone usan evidencia proporcional por ecosistema; no existe una métrica homogénea defendible.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -147,7 +147,7 @@ Decorator agrega responsabilidad alrededor de un componente; Composite agrega re
 
 ## Implementaciones por lenguaje
 
-El universo canónico mantiene **51 targets**: **48 Applicable** y **3 N/A**. Los **48 Applicable ya tienen ejemplo real enlazado**. Hay **28/48 verificados**: 12 mainstream, 10 portable y seis funcionales (R, Octave, Julia, OCaml, Common Lisp y Clojure). El resto espera los reruns Functional/Final del head actual.
+El universo canónico mantiene **51 targets**: **48 Applicable** y **3 N/A**. Los **48 Applicable tienen ejemplo real enlazado y evidencia verificada**. Los gates usan compile/run, warnings estrictos, formatters, runtimes oficiales o source-contract proporcional según el ecosistema.
 
 | Lenguaje | Aplicabilidad | Ejemplo | Validación |
 |---|---|---|---|
@@ -179,26 +179,26 @@ El universo canónico mantiene **51 targets**: **48 Applicable** y **3 N/A**. Lo
 | OCaml | Applicable | [composite.ml](../src/Functional/OCaml/composite.ml) | ✅ verificado |
 | Common Lisp | Applicable | [composite.lisp](../src/Functional/Lisp/composite.lisp) | ✅ verificado |
 | Clojure | Applicable | [composite.clj](../src/Functional/Clojure/composite.clj) | ✅ verificado |
-| Elixir | Applicable | [composite.exs](../src/Functional/Elixir/composite.exs) | ⏳ pendiente |
-| Erlang | Applicable | [composite.erl](../src/Functional/Erlang/composite.erl) | ⏳ pendiente |
-| Prolog | Applicable | [composite.pl](../src/Niche/Prolog/composite.pl) | ⏳ pendiente |
-| Groovy | Applicable | [composite.groovy](../src/Scripting/Groovy/composite.groovy) | ⏳ pendiente |
-| Ada | Applicable | [composite.adb](../src/Historical/Ada/composite.adb) | ⏳ pendiente |
-| Solidity | Applicable | [Composite.sol](../src/Niche/Solidity/Composite.sol) | ⏳ pendiente |
-| Fortran | Applicable | [composite.f90](../src/Historical/Fortran/composite.f90) | ⏳ pendiente |
-| Objective-C | Applicable | [composite.m](../src/Systems/Objective-C/composite.m) | ⏳ pendiente |
-| Zig | Applicable | [composite.zig](../src/Systems/Zig/composite.zig) | ⏳ pendiente |
-| Nim | Applicable | [composite.nim](../src/Niche/Nim/composite.nim) | ⏳ pendiente |
-| Dart | Applicable | [composite.dart](../src/Web/Dart/composite.dart) | ⏳ pendiente |
-| Crystal | Applicable | [composite.cr](../src/Niche/Crystal/composite.cr) | ⏳ pendiente |
-| COBOL | Applicable | [composite.cbl](../src/Historical/Cobol/composite.cbl) | ⏳ pendiente |
-| VBA | Applicable | [composite.bas](../src/Shell/VBA/composite.bas) | ⏳ pendiente |
-| GDScript | Applicable | [composite.gd](../src/Niche/GDScript/composite.gd) | ⏳ pendiente |
-| MATLAB | Applicable | [composite.m](../src/DataScience/MATLAB/composite.m) | ⏳ pendiente |
-| Assembly | Applicable | [composite.asm](../src/LowLevel/Assembly/composite.asm) | ⏳ pendiente |
-| Delphi | Applicable | [CompositeExample.pas](../src/Enterprise/Delphi/CompositeExample.pas) | ⏳ pendiente |
-| MicroPython | Applicable | [composite.py](../src/Other/MicroPython/composite.py) | ⏳ pendiente |
-| Rockstar | Applicable | [composite.rock](../src/Other/Rockstar/composite.rock) | ⏳ pendiente |
+| Elixir | Applicable | [composite.exs](../src/Functional/Elixir/composite.exs) | ✅ verificado |
+| Erlang | Applicable | [composite.erl](../src/Functional/Erlang/composite.erl) | ✅ verificado |
+| Prolog | Applicable | [composite.pl](../src/Niche/Prolog/composite.pl) | ✅ verificado |
+| Groovy | Applicable | [composite.groovy](../src/Scripting/Groovy/composite.groovy) | ✅ verificado |
+| Ada | Applicable | [composite.adb](../src/Historical/Ada/composite.adb) | ✅ verificado |
+| Solidity | Applicable | [Composite.sol](../src/Niche/Solidity/Composite.sol) | ✅ verificado |
+| Fortran | Applicable | [composite.f90](../src/Historical/Fortran/composite.f90) | ✅ verificado |
+| Objective-C | Applicable | [composite.m](../src/Systems/Objective-C/composite.m) | ✅ verificado |
+| Zig | Applicable | [composite.zig](../src/Systems/Zig/composite.zig) | ✅ verificado |
+| Nim | Applicable | [composite.nim](../src/Niche/Nim/composite.nim) | ✅ verificado |
+| Dart | Applicable | [composite.dart](../src/Web/Dart/composite.dart) | ✅ verificado |
+| Crystal | Applicable | [composite.cr](../src/Niche/Crystal/composite.cr) | ✅ verificado |
+| COBOL | Applicable | [composite.cbl](../src/Historical/Cobol/composite.cbl) | ✅ verificado |
+| VBA | Applicable | [composite.bas](../src/Shell/VBA/composite.bas) | ✅ verificado |
+| GDScript | Applicable | [composite.gd](../src/Niche/GDScript/composite.gd) | ✅ verificado |
+| MATLAB | Applicable | [composite.m](../src/DataScience/MATLAB/composite.m) | ✅ verificado |
+| Assembly | Applicable | [composite.asm](../src/LowLevel/Assembly/composite.asm) | ✅ verificado |
+| Delphi | Applicable | [CompositeExample.pas](../src/Enterprise/Delphi/CompositeExample.pas) | ✅ verificado |
+| MicroPython | Applicable | [composite.py](../src/Other/MicroPython/composite.py) | ✅ verificado |
+| Rockstar | Applicable | [composite.rock](../src/Other/Rockstar/composite.rock) | ✅ verificado |
 | HTML | N/A | — | markup declarativo; la operación ejecutable pertenece al runtime. |
 | CSS | N/A | — | reglas declarativas; no expresan por sí mismas una operación uniforme runtime parte-todo. |
 | SQL | N/A | — | SQL declarativo consulta jerarquías, pero no representa por sí mismo objetos `Component` con comportamiento uniforme. |
