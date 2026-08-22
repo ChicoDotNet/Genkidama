@@ -3,7 +3,7 @@
 > **Familia:** Structural  
 > **Intención:** componer objetos en estructuras árbol para que clientes puedan tratar hojas y grupos mediante el mismo contrato.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `10/48`  
+> **Implementaciones de lenguaje:** `21/48`  
 > **Cobertura de pruebas:** N/A — los ejemplos standalone se validan con evidencia proporcional por ecosistema; no existe una métrica homogénea defendible.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -157,23 +157,23 @@ Decorator suele envolver un solo componente para modificar responsabilidad; Comp
 
 ## Implementaciones por lenguaje
 
-La tabla es autoritativa para la completitud. El universo canónico mantiene **51 targets**: **48 Applicable** y **3 N/A provisionales**. Existen **22/48 ejemplos materializados**; el tranche portable está **10/10 verificado** y el tranche mainstream espera evidencia fresca después del fix `rustfmt`.
+La tabla es autoritativa para la completitud. El universo canónico mantiene **51 targets**: **48 Applicable** y **3 N/A provisionales**. Existen **32/48 ejemplos materializados**: 12 mainstream verificados, 9 portable que conservan evidencia verde, VB.NET reubicado a la ruta canónica y pendiente de revalidación, y 10 funcionales recién materializados esperando su gate.
 
 | Lenguaje | Aplicabilidad | Ejemplo | Validación | Nota |
 |---|---|---|---|---|
-| C# | Applicable | [CompositeExample.cs](../src/Enterprise/C%23/CompositeExample.cs) | ⏳ pendiente | interface + lista de Component |
-| TypeScript | Applicable | [composite.ts](../src/Web/TypeScriptTS/composite.ts) | ⏳ pendiente | structural contract |
-| Python | Applicable | [composite.py](../src/Scripting/PythonPY/composite.py) | ⏳ pendiente | duck typing |
-| C++ | Applicable | [composite.cpp](../src/Systems/C++/composite.cpp) | ⏳ pendiente | abstract base + unique ownership |
-| Java | Applicable | [CompositeExample.java](../src/Enterprise/Java/CompositeExample.java) | ⏳ pendiente | interface + List<Component> |
-| Rust | Applicable | [composite.rs](../src/Systems/Rust/composite.rs) | ⏳ pendiente | enum + recursive aggregation |
-| Go | Applicable | [composite.go](../src/Systems/Go/composite.go) | ⏳ pendiente | implicit interface |
-| PHP | Applicable | [composite.php](../src/Scripting/PHP/composite.php) | ⏳ pendiente | interface + arrays |
-| Kotlin | Applicable | [CompositeExample.kt](../src/Enterprise/Kotlin/CompositeExample.kt) | ⏳ pendiente | sealed/interface composition |
-| Swift | Applicable | [composite.swift](../src/Systems/Swift/composite.swift) | ⏳ pendiente | protocol + recursive nodes |
-| F# | Applicable | [composite.fsx](../src/Functional/F%23/composite.fsx) | ⏳ pendiente | discriminated union + recursion |
-| JavaScript | Applicable | [composite.js](../src/Web/JavaScriptJS/composite.js) | ⏳ pendiente | objects + recursive children |
-| Visual Basic .NET | Applicable | [CompositeExample.vb](../src/Enterprise/VisualBasicNET/CompositeExample.vb) | ✅ verificado | interface + List(Of Component) |
+| C# | Applicable | [CompositeExample.cs](../src/Enterprise/C%23/CompositeExample.cs) | ✅ verificado | interface + lista de Component |
+| TypeScript | Applicable | [composite.ts](../src/Web/TypeScriptTS/composite.ts) | ✅ verificado | structural contract |
+| Python | Applicable | [composite.py](../src/Scripting/PythonPY/composite.py) | ✅ verificado | duck typing |
+| C++ | Applicable | [composite.cpp](../src/Systems/C++/composite.cpp) | ✅ verificado | abstract base + unique ownership |
+| Java | Applicable | [CompositeExample.java](../src/Enterprise/Java/CompositeExample.java) | ✅ verificado | interface + List<Component> |
+| Rust | Applicable | [composite.rs](../src/Systems/Rust/composite.rs) | ✅ verificado | enum + recursive aggregation |
+| Go | Applicable | [composite.go](../src/Systems/Go/composite.go) | ✅ verificado | implicit interface |
+| PHP | Applicable | [composite.php](../src/Scripting/PHP/composite.php) | ✅ verificado | interface + arrays |
+| Kotlin | Applicable | [CompositeExample.kt](../src/Enterprise/Kotlin/CompositeExample.kt) | ✅ verificado | sealed/interface composition |
+| Swift | Applicable | [composite.swift](../src/Systems/Swift/composite.swift) | ✅ verificado | protocol + recursive nodes |
+| F# | Applicable | [composite.fsx](../src/Functional/F%23/composite.fsx) | ✅ verificado | discriminated union + recursion |
+| JavaScript | Applicable | [composite.js](../src/Web/JavaScriptJS/composite.js) | ✅ verificado | objects + recursive children |
+| Visual Basic .NET | Applicable | [CompositeExample.vb](../src/Enterprise/VisualBasic/CompositeExample.vb) | ⏳ revalidación | interface + List(Of Component) |
 | C | Applicable | [composite.c](../src/Systems/C/composite.c) | ✅ verificado | tagged node + recursive operation |
 | Ruby | Applicable | [composite.rb](../src/Scripting/RubyRB/composite.rb) | ✅ verificado | duck typing |
 | Lua | Applicable | [composite.lua](../src/Scripting/Lua/composite.lua) | ✅ verificado | tables + closures |
@@ -183,16 +183,16 @@ La tabla es autoritativa para la completitud. El universo canónico mantiene **5
 | Scala | Applicable | [Composite.scala](../src/Functional/Scala/Composite.scala) | ✅ verificado | sealed trait + recursive nodes |
 | Perl | Applicable | [composite.pl](../src/Scripting/Perl/composite.pl) | ✅ verificado | packages + hashes |
 | Pascal | Applicable | [composite.pas](../src/Historical/Pascal/composite.pas) | ✅ verificado | abstract component + recursive ownership |
-| R | Applicable | — | ⏳ pendiente | lists + recursive function |
-| GNU Octave | Applicable | — | ⏳ pendiente | structs/cells + recursion |
-| Julia | Applicable | — | ⏳ pendiente | abstract type + recursive nodes |
-| OCaml | Applicable | — | ⏳ pendiente | variant + recursion |
-| Common Lisp | Applicable | — | ⏳ pendiente | structures/lists |
-| Clojure | Applicable | — | ⏳ pendiente | persistent maps/vectors |
-| Elixir | Applicable | — | ⏳ pendiente | tagged tuples/maps + recursion |
-| Erlang | Applicable | — | ⏳ pendiente | tagged terms + recursion |
-| Prolog | Applicable | — | ⏳ pendiente | recursive terms/predicates |
-| Groovy | Applicable | — | ⏳ pendiente | objects/closures |
+| R | Applicable | [composite.R](../src/DataScience/R/composite.R) | ⏳ pendiente | lists + recursive function |
+| GNU Octave | Applicable | [composite.m](../src/DataScience/Octave/composite.m) | ⏳ pendiente | structs/cells + recursion |
+| Julia | Applicable | [composite.jl](../src/DataScience/Julia/composite.jl) | ⏳ pendiente | abstract type + recursive nodes |
+| OCaml | Applicable | [composite.ml](../src/Functional/OCaml/composite.ml) | ⏳ pendiente | variant + recursion |
+| Common Lisp | Applicable | [composite.lisp](../src/Functional/Lisp/composite.lisp) | ⏳ pendiente | structures/lists |
+| Clojure | Applicable | [composite.clj](../src/Functional/Clojure/composite.clj) | ⏳ pendiente | persistent maps/vectors |
+| Elixir | Applicable | [composite.exs](../src/Functional/Elixir/composite.exs) | ⏳ pendiente | tagged tuples + recursion |
+| Erlang | Applicable | [composite.erl](../src/Functional/Erlang/composite.erl) | ⏳ pendiente | tagged terms + recursion |
+| Prolog | Applicable | [composite.pl](../src/Niche/Prolog/composite.pl) | ⏳ pendiente | recursive terms/predicates |
+| Groovy | Applicable | [composite.groovy](../src/Scripting/Groovy/composite.groovy) | ⏳ pendiente | interface/classes |
 | Ada | Applicable | — | ⏳ pendiente | tagged/access types |
 | Solidity | Applicable | — | ⏳ pendiente | contracts/struct tree |
 | Fortran | Applicable | — | ⏳ pendiente | derived types + recursive allocation |
