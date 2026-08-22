@@ -29,7 +29,12 @@ contains
   function folder_node(children) result(item)
     type(node), intent(in) :: children(:)
     type(node) :: item
+    integer :: child_count
+
     item%is_file = .false.
+    item%bytes = 0
+    child_count = size(children)
+    allocate(item%children(child_count))
     item%children = children
   end function folder_node
 
