@@ -1,52 +1,48 @@
 # Composite
 
 > **Familia:** Structural  
-> **Intención:** componer objetos en estructuras árbol para que clientes puedan tratar hojas y grupos mediante el mismo contrato.  
+> **Intención:** componer objetos en estructuras árbol para tratar hojas y grupos mediante el mismo contrato.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `21/48`  
-> **Cobertura de pruebas:** N/A — los ejemplos standalone se validan con evidencia proporcional por ecosistema; no existe una métrica homogénea defendible.  
+> **Implementaciones de lenguaje:** `28/48`  
+> **Cobertura de pruebas:** N/A — los ejemplos standalone usan evidencia proporcional por ecosistema; no existe una métrica homogénea defendible.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
 ## En una frase
 
-Composite permite pedir la misma operación a un elemento individual o a un grupo de elementos sin obligar al cliente a distinguirlos.
+Composite permite pedir la misma operación a un elemento individual o a un grupo recursivo sin obligar al cliente a distinguirlos.
 
 ## El problema
 
-Una estructura jerárquica contiene elementos simples y grupos que a su vez contienen otros elementos. Si el cliente debe preguntar constantemente si está frente a una hoja o un grupo para calcular, renderizar, validar o recorrer la estructura, la lógica del árbol se dispersa en cada consumidor.
-
-El problema no es simplemente tener una colección: es necesitar **composición recursiva** y una operación que tenga sentido tanto para una parte como para el conjunto.
+Una jerarquía contiene elementos simples y grupos que contienen otros elementos. Si cada cliente debe preguntar si está frente a una hoja o un grupo antes de calcular, renderizar o validar, la lógica del árbol se duplica y se acopla a tipos concretos.
 
 ## Fuerzas que compiten
 
-- Hojas y grupos tienen distinta estructura interna, pero el cliente necesita tratarlos uniformemente.
-- Un grupo debe poder contener hojas y otros grupos recursivamente.
-- La operación agregada debe conservar una semántica clara al atravesar el árbol.
-- Exponer mutación indiscriminada en todas las hojas puede crear APIs engañosas.
-- Para una colección plana, introducir Composite añade complejidad sin beneficio.
+- Hojas y grupos tienen estructura distinta, pero necesitan una operación común.
+- Los grupos deben poder contener hojas y otros grupos recursivamente.
+- La agregación debe conservar una semántica clara a cualquier profundidad.
+- Una API demasiado transparente puede exponer `add/remove` donde no tiene sentido.
+- Para una colección plana, Composite sería ceremonia innecesaria.
 
 ## La solución
 
-Definir un contrato común `Component` para la operación que comparten hojas y compuestos. Una hoja resuelve la operación directamente; un compuesto delega en sus hijos y combina sus resultados. El cliente conoce el contrato, no necesita ramificar por tipo concreto.
-
-La gestión de hijos puede vivir sólo en el compuesto (**interfaz segura**) o también en el contrato común (**interfaz transparente**). Genkidama no declara una variante universalmente superior: la elección debe reflejar el dominio.
+Definir un contrato `Component` compartido. Una hoja resuelve la operación directamente; un compuesto ejecuta esa misma operación sobre sus hijos y agrega los resultados. El cliente conoce `Component`, no los tipos concretos.
 
 ## Participantes y responsabilidades
 
 | Participante | Responsabilidad |
 |---|---|
-| `Component` | Define la operación uniforme que el cliente puede pedir a cualquier nodo. |
-| `Leaf` | Representa un elemento indivisible y resuelve la operación directamente. |
-| `Composite` | Contiene hijos `Component` y combina recursivamente sus resultados. |
-| Cliente | Trabaja contra `Component` sin distinguir hoja de grupo para la operación común. |
+| `Component` | Define la operación uniforme. |
+| `Leaf` | Resuelve la operación localmente. |
+| `Composite` | Contiene `Component` y agrega recursivamente. |
+| Cliente | Usa el contrato común sin ramificar por tipo. |
 
 ## Cómo funciona
 
-1. El cliente obtiene un `Component`.
-2. Si es una hoja, la operación devuelve su resultado local.
-3. Si es un compuesto, ejecuta la misma operación sobre sus hijos.
-4. El compuesto agrega los resultados y los devuelve bajo el mismo contrato.
-5. La recursión permite árboles de profundidad arbitraria sin duplicar lógica en el cliente.
+1. El cliente recibe un `Component`.
+2. Una hoja devuelve su resultado local.
+3. Un compuesto invoca la misma operación en sus hijos.
+4. El compuesto agrega los resultados.
+5. Otro compuesto puede aparecer como hijo sin cambiar al cliente.
 
 ## Diagrama
 
@@ -69,15 +65,13 @@ classDiagram
     FolderComposite o-- Component : children
 ```
 
-La relación clave es recursiva: `FolderComposite` **es** un `Component` y al mismo tiempo **contiene** otros `Component`.
+La relación esencial es recursiva: `FolderComposite` es un `Component` y contiene otros `Component`.
 
 ## Ejemplo mínimo
 
 ```text
-readme = File("README", 2)
-api = File("api.md", 3)
-guide = File("guide.md", 5)
-docs = Folder(api, guide)
+readme = File(2)
+docs = Folder(File(3), File(5))
 root = Folder(readme, docs)
 
 readme.size() == 2
@@ -85,42 +79,38 @@ docs.size() == 8
 root.size() == 10
 ```
 
-El cliente llama `size()` igual sobre una hoja y sobre dos niveles de Composite.
-
 ## Aplicación real
 
 ### Árbol de artefactos
 
-Un generador necesita calcular costo, peso o tamaño de un árbol donde archivos son hojas y directorios o módulos son grupos. Composite permite que la operación agregada se implemente una sola vez por nodo y que nuevos niveles de agrupación no obliguen a reescribir cada consumidor.
-
-Si el conjunto siempre es plano, una lista y una función agregadora son más simples.
+Un generador puede calcular tamaño, costo o peso de un árbol de archivos y agrupaciones. La operación vive una vez por tipo de nodo y nuevos niveles de agrupación no obligan a reescribir consumidores.
 
 ## En Genkidama
 
-Genkidama no declara actualmente un uso productivo deliberado de Composite que deba presentarse como ejemplo canónico. El catálogo mantiene el patrón como referencia educativa y no modifica arquitectura productiva para fabricarlo.
+Genkidama no declara actualmente un uso productivo deliberado de Composite que deba presentarse como ejemplo canónico. No se modifica arquitectura productiva para fabricarlo.
 
 ## Cuándo usarlo
 
-- El dominio forma una jerarquía parte-todo recursiva.
-- La misma operación tiene sentido sobre una hoja y sobre un grupo.
-- Los clientes acumulan `if`/`switch` para distinguir elementos y contenedores.
-- Nuevos niveles de agrupación deberían reutilizar la misma lógica de recorrido/agregación.
+- Existe una relación parte-todo recursiva.
+- La misma operación tiene sentido sobre hoja y grupo.
+- Los clientes acumulan `if`/`switch` por tipo de nodo.
+- Nuevos niveles deberían reutilizar la misma lógica de agregación.
 
 ## Cuándo no usarlo
 
-- La colección es plana y una operación de colección resuelve el problema claramente.
+- La colección es plana.
 - Hojas y grupos no comparten una operación semánticamente honesta.
-- El árbol necesita invariantes de mutación tan distintas que un contrato uniforme ocultaría errores.
-- Sólo se desea reutilizar código entre objetos; composición común no implica Composite.
+- Las invariantes de mutación son demasiado distintas para un contrato común.
+- Sólo se busca reutilización de código; composición genérica no implica Composite.
 
 ## Consecuencias y trade-offs
 
 | A favor | Costo / riesgo |
 |---|---|
-| Simplifica clientes al unificar hojas y grupos. | Puede hacer demasiado genérico el contrato común. |
-| Hace natural la composición recursiva. | La gestión de hijos requiere decidir entre interfaz segura y transparente. |
-| Facilita añadir nuevos tipos de hoja o compuesto. | Restricciones sobre qué hijos son válidos pueden ser más difíciles de expresar. |
-| Centraliza operaciones agregadas sobre el árbol. | Un árbol muy profundo puede requerir atención a recursión/stack según el runtime. |
+| Simplifica clientes. | Puede volver demasiado genérico el contrato. |
+| Hace natural la recursión. | Requiere decidir interfaz segura vs. transparente. |
+| Facilita nuevos nodos. | Restricciones de hijos pueden ser más difíciles de expresar. |
+| Centraliza agregación. | Árboles muy profundos pueden requerir cuidado con stack/runtime. |
 
 ## Patrones relacionados
 
@@ -128,104 +118,104 @@ Genkidama no declara actualmente un uso productivo deliberado de Composite que d
 
 | Patrón | Relación | Por qué importa |
 |---|---|---|
-| [Iterator](Iterator.md) | collaborates with | Iterator puede desacoplar el recorrido externo de una estructura Composite. |
-| [Visitor](Visitor.md) | collaborates with | Visitor agrega nuevas operaciones sobre un árbol estable sin llenar cada nodo de métodos. |
-| [Decorator](Decorator.md) | often confused with | Ambos comparten contratos recursivos; Decorator suele envolver un componente para añadir responsabilidad, Composite agrega varios hijos. |
-| [Flyweight](Flyweight.md) | collaborates with | Árboles enormes pueden compartir estado intrínseco de hojas mediante Flyweight. |
+| [Iterator](Iterator.md) | collaborates with | Puede desacoplar recorridos externos del árbol. |
+| [Visitor](Visitor.md) | collaborates with | Añade operaciones sobre una estructura estable. |
+| [Decorator](Decorator.md) | often confused with | Decorator envuelve normalmente un componente; Composite agrega varios hijos. |
+| [Flyweight](Flyweight.md) | collaborates with | Árboles grandes pueden compartir estado intrínseco. |
 
 ## Errores comunes y confusiones
 
-### Llamar Composite a cualquier objeto con hijos
+### Cualquier objeto con hijos no es Composite
 
-Tener una colección interna no basta. El compuesto debe participar en el mismo contrato que sus elementos y la composición debe representar una relación parte-todo recursiva.
+Debe existir un contrato uniforme compartido y una relación parte-todo recursiva.
 
-### Forzar `add/remove` en hojas
+### Forzar gestión de hijos en hojas
 
-Una interfaz totalmente transparente puede obligar a las hojas a exponer operaciones que no tienen sentido. Cuando eso degrada seguridad, es preferible que sólo el compuesto administre hijos.
+Si `add/remove` no tiene sentido para una hoja, una interfaz segura que reserve esas operaciones al compuesto suele ser más honesta.
 
-### Confundir Composite con Decorator
+### Confundirlo con Decorator
 
-Decorator suele envolver un solo componente para modificar responsabilidad; Composite combina cero o más hijos y agrega su comportamiento como conjunto.
+Decorator agrega responsabilidad alrededor de un componente; Composite agrega resultados de múltiples hijos bajo el mismo contrato.
 
 ## Cómo comprobar una implementación
 
-- La misma operación se invoca sobre una hoja y sobre un compuesto sin ramificar por tipo en el cliente.
-- Un compuesto puede contener otro compuesto y la operación sigue funcionando recursivamente.
-- El resultado agregado es observable y correcto para más de un nivel del árbol.
-- El cliente no conoce tipos concretos para ejecutar la operación común.
-- La validación prueba comportamiento (`2`, `8`, `10` en el escenario canónico), no nombres de clases.
+- La misma operación funciona sobre hoja y compuesto.
+- Un compuesto puede contener otro compuesto.
+- La agregación de más de un nivel es correcta.
+- El cliente no ramifica por tipo concreto.
+- La validación observa `leaf=2`, `docs=8`, `root=10`, no nombres de clases.
 
 ## Implementaciones por lenguaje
 
-La tabla es autoritativa para la completitud. El universo canónico mantiene **51 targets**: **48 Applicable** y **3 N/A provisionales**. Existen **32/48 ejemplos materializados**: 12 mainstream verificados, 9 portable que conservan evidencia verde, VB.NET reubicado a la ruta canónica y pendiente de revalidación, y 10 funcionales recién materializados esperando su gate.
+El universo canónico mantiene **51 targets**: **48 Applicable** y **3 N/A**. Los **48 Applicable ya tienen ejemplo real enlazado**. Hay **28/48 verificados**: 12 mainstream, 10 portable y seis funcionales (R, Octave, Julia, OCaml, Common Lisp y Clojure). El resto espera los reruns Functional/Final del head actual.
 
-| Lenguaje | Aplicabilidad | Ejemplo | Validación | Nota |
-|---|---|---|---|---|
-| C# | Applicable | [CompositeExample.cs](../src/Enterprise/C%23/CompositeExample.cs) | ✅ verificado | interface + lista de Component |
-| TypeScript | Applicable | [composite.ts](../src/Web/TypeScriptTS/composite.ts) | ✅ verificado | structural contract |
-| Python | Applicable | [composite.py](../src/Scripting/PythonPY/composite.py) | ✅ verificado | duck typing |
-| C++ | Applicable | [composite.cpp](../src/Systems/C++/composite.cpp) | ✅ verificado | abstract base + unique ownership |
-| Java | Applicable | [CompositeExample.java](../src/Enterprise/Java/CompositeExample.java) | ✅ verificado | interface + List<Component> |
-| Rust | Applicable | [composite.rs](../src/Systems/Rust/composite.rs) | ✅ verificado | enum + recursive aggregation |
-| Go | Applicable | [composite.go](../src/Systems/Go/composite.go) | ✅ verificado | implicit interface |
-| PHP | Applicable | [composite.php](../src/Scripting/PHP/composite.php) | ✅ verificado | interface + arrays |
-| Kotlin | Applicable | [CompositeExample.kt](../src/Enterprise/Kotlin/CompositeExample.kt) | ✅ verificado | sealed/interface composition |
-| Swift | Applicable | [composite.swift](../src/Systems/Swift/composite.swift) | ✅ verificado | protocol + recursive nodes |
-| F# | Applicable | [composite.fsx](../src/Functional/F%23/composite.fsx) | ✅ verificado | discriminated union + recursion |
-| JavaScript | Applicable | [composite.js](../src/Web/JavaScriptJS/composite.js) | ✅ verificado | objects + recursive children |
-| Visual Basic .NET | Applicable | [CompositeExample.vb](../src/Enterprise/VisualBasic/CompositeExample.vb) | ⏳ revalidación | interface + List(Of Component) |
-| C | Applicable | [composite.c](../src/Systems/C/composite.c) | ✅ verificado | tagged node + recursive operation |
-| Ruby | Applicable | [composite.rb](../src/Scripting/RubyRB/composite.rb) | ✅ verificado | duck typing |
-| Lua | Applicable | [composite.lua](../src/Scripting/Lua/composite.lua) | ✅ verificado | tables + closures |
-| Bash | Applicable | [composite.sh](../src/Shell/Bash/composite.sh) | ✅ verificado | node identifiers + recursive function |
-| PowerShell | Applicable | [composite.ps1](../src/Shell/PowerShell/composite.ps1) | ✅ verificado | objects + captured scriptblocks |
-| Haskell | Applicable | [Composite.hs](../src/Functional/Haskell/Composite.hs) | ✅ verificado | algebraic data type + recursion |
-| Scala | Applicable | [Composite.scala](../src/Functional/Scala/Composite.scala) | ✅ verificado | sealed trait + recursive nodes |
-| Perl | Applicable | [composite.pl](../src/Scripting/Perl/composite.pl) | ✅ verificado | packages + hashes |
-| Pascal | Applicable | [composite.pas](../src/Historical/Pascal/composite.pas) | ✅ verificado | abstract component + recursive ownership |
-| R | Applicable | [composite.R](../src/DataScience/R/composite.R) | ⏳ pendiente | lists + recursive function |
-| GNU Octave | Applicable | [composite.m](../src/DataScience/Octave/composite.m) | ⏳ pendiente | structs/cells + recursion |
-| Julia | Applicable | [composite.jl](../src/DataScience/Julia/composite.jl) | ⏳ pendiente | abstract type + recursive nodes |
-| OCaml | Applicable | [composite.ml](../src/Functional/OCaml/composite.ml) | ⏳ pendiente | variant + recursion |
-| Common Lisp | Applicable | [composite.lisp](../src/Functional/Lisp/composite.lisp) | ⏳ pendiente | structures/lists |
-| Clojure | Applicable | [composite.clj](../src/Functional/Clojure/composite.clj) | ⏳ pendiente | persistent maps/vectors |
-| Elixir | Applicable | [composite.exs](../src/Functional/Elixir/composite.exs) | ⏳ pendiente | tagged tuples + recursion |
-| Erlang | Applicable | [composite.erl](../src/Functional/Erlang/composite.erl) | ⏳ pendiente | tagged terms + recursion |
-| Prolog | Applicable | [composite.pl](../src/Niche/Prolog/composite.pl) | ⏳ pendiente | recursive terms/predicates |
-| Groovy | Applicable | [composite.groovy](../src/Scripting/Groovy/composite.groovy) | ⏳ pendiente | interface/classes |
-| Ada | Applicable | — | ⏳ pendiente | tagged/access types |
-| Solidity | Applicable | — | ⏳ pendiente | contracts/struct tree |
-| Fortran | Applicable | — | ⏳ pendiente | derived types + recursive allocation |
-| Objective-C | Applicable | — | ⏳ pendiente | protocol + NSArray children |
-| Zig | Applicable | — | ⏳ pendiente | tagged union + slices |
-| Nim | Applicable | — | ⏳ pendiente | ref object variant |
-| Dart | Applicable | — | ⏳ pendiente | abstract class + list |
-| Crystal | Applicable | — | ⏳ pendiente | abstract class + array |
-| COBOL | Applicable | — | ⏳ pendiente | records/procedures + hierarchy table |
-| VBA | Applicable | — | ⏳ pendiente | class modules/Collection |
-| GDScript | Applicable | — | ⏳ pendiente | objects/Array children |
-| MATLAB | Applicable | — | ⏳ pendiente | structs/cells + recursion |
-| Assembly | Applicable | — | ⏳ pendiente | explicit node table + aggregation |
-| Delphi | Applicable | — | ⏳ pendiente | interfaces/classes |
-| MicroPython | Applicable | — | ⏳ pendiente | objects/lists |
-| Rockstar | Applicable | — | ⏳ pendiente | keyed arrays + recursive data |
-| HTML | N/A | — | — | markup declarativo; cualquier Composite ejecutable pertenece al runtime que procesa la estructura. |
-| CSS | N/A | — | — | reglas declarativas; no expresan por sí mismas una jerarquía runtime con operación uniforme parte-todo. |
-| SQL | N/A | — | — | SQL declarativo puede consultar jerarquías, pero no representa por sí mismo objetos Component que ejecuten una operación uniforme. |
+| Lenguaje | Aplicabilidad | Ejemplo | Validación |
+|---|---|---|---|
+| C# | Applicable | [CompositeExample.cs](../src/Enterprise/C%23/CompositeExample.cs) | ✅ verificado |
+| TypeScript | Applicable | [composite.ts](../src/Web/TypeScriptTS/composite.ts) | ✅ verificado |
+| Python | Applicable | [composite.py](../src/Scripting/PythonPY/composite.py) | ✅ verificado |
+| C++ | Applicable | [composite.cpp](../src/Systems/C++/composite.cpp) | ✅ verificado |
+| Java | Applicable | [CompositeExample.java](../src/Enterprise/Java/CompositeExample.java) | ✅ verificado |
+| Rust | Applicable | [composite.rs](../src/Systems/Rust/composite.rs) | ✅ verificado |
+| Go | Applicable | [composite.go](../src/Systems/Go/composite.go) | ✅ verificado |
+| PHP | Applicable | [composite.php](../src/Scripting/PHP/composite.php) | ✅ verificado |
+| Kotlin | Applicable | [CompositeExample.kt](../src/Enterprise/Kotlin/CompositeExample.kt) | ✅ verificado |
+| Swift | Applicable | [composite.swift](../src/Systems/Swift/composite.swift) | ✅ verificado |
+| F# | Applicable | [composite.fsx](../src/Functional/F%23/composite.fsx) | ✅ verificado |
+| JavaScript | Applicable | [composite.js](../src/Web/JavaScriptJS/composite.js) | ✅ verificado |
+| Visual Basic .NET | Applicable | [CompositeExample.vb](../src/Enterprise/VisualBasic/CompositeExample.vb) | ✅ verificado |
+| C | Applicable | [composite.c](../src/Systems/C/composite.c) | ✅ verificado |
+| Ruby | Applicable | [composite.rb](../src/Scripting/RubyRB/composite.rb) | ✅ verificado |
+| Lua | Applicable | [composite.lua](../src/Scripting/Lua/composite.lua) | ✅ verificado |
+| Bash | Applicable | [composite.sh](../src/Shell/Bash/composite.sh) | ✅ verificado |
+| PowerShell | Applicable | [composite.ps1](../src/Shell/PowerShell/composite.ps1) | ✅ verificado |
+| Haskell | Applicable | [Composite.hs](../src/Functional/Haskell/Composite.hs) | ✅ verificado |
+| Scala | Applicable | [Composite.scala](../src/Functional/Scala/Composite.scala) | ✅ verificado |
+| Perl | Applicable | [composite.pl](../src/Scripting/Perl/composite.pl) | ✅ verificado |
+| Pascal | Applicable | [composite.pas](../src/Historical/Pascal/composite.pas) | ✅ verificado |
+| R | Applicable | [composite.R](../src/DataScience/R/composite.R) | ✅ verificado |
+| GNU Octave | Applicable | [composite.m](../src/DataScience/Octave/composite.m) | ✅ verificado |
+| Julia | Applicable | [composite.jl](../src/DataScience/Julia/composite.jl) | ✅ verificado |
+| OCaml | Applicable | [composite.ml](../src/Functional/OCaml/composite.ml) | ✅ verificado |
+| Common Lisp | Applicable | [composite.lisp](../src/Functional/Lisp/composite.lisp) | ✅ verificado |
+| Clojure | Applicable | [composite.clj](../src/Functional/Clojure/composite.clj) | ✅ verificado |
+| Elixir | Applicable | [composite.exs](../src/Functional/Elixir/composite.exs) | ⏳ pendiente |
+| Erlang | Applicable | [composite.erl](../src/Functional/Erlang/composite.erl) | ⏳ pendiente |
+| Prolog | Applicable | [composite.pl](../src/Niche/Prolog/composite.pl) | ⏳ pendiente |
+| Groovy | Applicable | [composite.groovy](../src/Scripting/Groovy/composite.groovy) | ⏳ pendiente |
+| Ada | Applicable | [composite.adb](../src/Historical/Ada/composite.adb) | ⏳ pendiente |
+| Solidity | Applicable | [Composite.sol](../src/Niche/Solidity/Composite.sol) | ⏳ pendiente |
+| Fortran | Applicable | [composite.f90](../src/Historical/Fortran/composite.f90) | ⏳ pendiente |
+| Objective-C | Applicable | [composite.m](../src/Systems/Objective-C/composite.m) | ⏳ pendiente |
+| Zig | Applicable | [composite.zig](../src/Systems/Zig/composite.zig) | ⏳ pendiente |
+| Nim | Applicable | [composite.nim](../src/Niche/Nim/composite.nim) | ⏳ pendiente |
+| Dart | Applicable | [composite.dart](../src/Web/Dart/composite.dart) | ⏳ pendiente |
+| Crystal | Applicable | [composite.cr](../src/Niche/Crystal/composite.cr) | ⏳ pendiente |
+| COBOL | Applicable | [composite.cbl](../src/Historical/Cobol/composite.cbl) | ⏳ pendiente |
+| VBA | Applicable | [composite.bas](../src/Shell/VBA/composite.bas) | ⏳ pendiente |
+| GDScript | Applicable | [composite.gd](../src/Niche/GDScript/composite.gd) | ⏳ pendiente |
+| MATLAB | Applicable | [composite.m](../src/DataScience/MATLAB/composite.m) | ⏳ pendiente |
+| Assembly | Applicable | [composite.asm](../src/LowLevel/Assembly/composite.asm) | ⏳ pendiente |
+| Delphi | Applicable | [CompositeExample.pas](../src/Enterprise/Delphi/CompositeExample.pas) | ⏳ pendiente |
+| MicroPython | Applicable | [composite.py](../src/Other/MicroPython/composite.py) | ⏳ pendiente |
+| Rockstar | Applicable | [composite.rock](../src/Other/Rockstar/composite.rock) | ⏳ pendiente |
+| HTML | N/A | — | markup declarativo; la operación ejecutable pertenece al runtime. |
+| CSS | N/A | — | reglas declarativas; no expresan por sí mismas una operación uniforme runtime parte-todo. |
+| SQL | N/A | — | SQL declarativo consulta jerarquías, pero no representa por sí mismo objetos `Component` con comportamiento uniforme. |
 
 ## Comprueba que lo entendiste
 
-1. ¿Qué hace que una colección de hijos sea Composite y no simplemente una lista dentro de un objeto?
-2. ¿Qué trade-off existe entre poner `add/remove` en `Component` y reservarlos para `Composite`?
-3. Si sólo necesitas sumar una lista plana de tamaños, ¿por qué Composite sería sobreingeniería?
+1. ¿Qué hace que una colección de hijos sea Composite y no simplemente una lista?
+2. ¿Qué trade-off existe entre exponer `add/remove` en `Component` y reservarlo para `Composite`?
+3. ¿Por qué una suma sobre una lista plana no justifica Composite?
 
 ## Resumen
 
-- **Presión:** clientes deben trabajar con partes individuales y grupos recursivos sin ramificar por tipo.
-- **Movimiento:** hojas y compuestos comparten una operación; el compuesto delega y agrega recursivamente.
-- **Trade-off:** clientes más simples a cambio de un contrato común y decisiones sobre mutación de hijos.
-- **Relación clave:** Iterator/Visitor complementan recorridos y operaciones; Decorator comparte forma recursiva pero resuelve otra fuerza.
-- **Portabilidad:** clases no son requisito; ADTs, records, closures, tagged unions, predicates o tablas pueden expresar el mismo árbol parte-todo.
+- **Presión:** trabajar con partes y grupos recursivos sin ramificar por tipo.
+- **Movimiento:** hoja y compuesto comparten operación; el compuesto agrega recursivamente.
+- **Trade-off:** clientes simples a cambio de un contrato común y decisiones de mutación.
+- **Relaciones:** Iterator/Visitor complementan recorridos/operaciones; Decorator se parece estructuralmente pero resuelve otra fuerza.
+- **Portabilidad:** clases no son requisito; ADTs, records, closures, tagged unions, términos y tablas pueden preservar la intención.
 
 ## Referencias
 
