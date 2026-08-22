@@ -1,13 +1,13 @@
-Size takes node
-Put node at "kind" into kind
-If kind is "file"
-Give back node at "bytes"
+Measure takes Node
+Put Node at "kind" into Kind
+If Kind is "file"
+Give back Node at "bytes"
 Otherwise
-Put node at "left" into left
-Put node at "right" into right
-Call Size with left into left size
-Call Size with right into right size
-Give back left size plus right size
+Put Node at "left" into LeftNode
+Put Node at "right" into RightNode
+Call Measure with LeftNode into LeftSize
+Call Measure with RightNode into RightSize
+Give back LeftSize plus RightSize
 Yeah
 
 Rock Readme
@@ -32,10 +32,10 @@ Root at "kind" is "folder"
 Root at "left" is Readme
 Root at "right" is Docs
 
-Call Size with Readme into leaf size
-Call Size with Docs into docs size
-Call Size with Root into root size
+Call Measure with Readme into LeafSize
+Call Measure with Docs into DocsSize
+Call Measure with Root into RootSize
 
-Print "leaf=" plus leaf size
-Print "docs=" plus docs size
-Print "root=" plus root size
+Print "leaf=" plus LeafSize
+Print "docs=" plus DocsSize
+Print "root=" plus RootSize
