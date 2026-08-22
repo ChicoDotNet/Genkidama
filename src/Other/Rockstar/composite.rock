@@ -1,0 +1,41 @@
+Size takes node
+Put node at "kind" into kind
+If kind is "file"
+Give back node at "bytes"
+Otherwise
+Put node at "left" into left
+Put node at "right" into right
+Call Size with left into left size
+Call Size with right into right size
+Give back left size plus right size
+Yeah
+
+Rock Readme
+Readme at "kind" is "file"
+Readme at "bytes" is 2
+
+Rock Api
+Api at "kind" is "file"
+Api at "bytes" is 3
+
+Rock Guide
+Guide at "kind" is "file"
+Guide at "bytes" is 5
+
+Rock Docs
+Docs at "kind" is "folder"
+Docs at "left" is Api
+Docs at "right" is Guide
+
+Rock Root
+Root at "kind" is "folder"
+Root at "left" is Readme
+Root at "right" is Docs
+
+Call Size with Readme into leaf size
+Call Size with Docs into docs size
+Call Size with Root into root size
+
+Print "leaf=" plus leaf size
+Print "docs=" plus docs size
+Print "root=" plus root size
