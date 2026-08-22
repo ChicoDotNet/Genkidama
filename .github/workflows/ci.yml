@@ -358,3 +358,64 @@ jobs:
           pascal_out="$(mktemp -d)"
           fpc -Mobjfpc -O2 -Sew -FE"$pascal_out" src/Historical/Pascal/decorator.pas >/dev/null
           assert_output "$("$pascal_out/decorator")"
+
+  decorator-functional:
+    if: github.event_name == 'pull_request' && github.head_ref == 'patterns/decorator-kb006'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Erlang and Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '28.5.0.4'
+          elixir-version: '1.19.1'
+
+      - name: Setup Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: '1'
+
+      - name: Install functional runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y r-base octave ocaml sbcl clojure swi-prolog-nox groovy
+
+      - name: Validate Decorator functional examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          assert_output() {
+            local output="$1"
+            grep -Fxq 'base=alert' <<<"$output"
+            grep -Fxq 'audit=audit(alert)' <<<"$output"
+            grep -Fxq 'encrypted=enc(alert)' <<<"$output"
+            grep -Fxq 'stacked=audit(enc(alert))' <<<"$output"
+          }
+
+          assert_output "$(Rscript --vanilla src/DataScience/R/decorator.R)"
+          assert_output "$(octave --no-gui --quiet --eval "addpath('src/DataScience/Octave'); decorator();")"
+          assert_output "$(julia --startup-file=no src/DataScience/Julia/decorator.jl)"
+
+          ocamlc -w +A-70 -warn-error +A-70 src/Functional/OCaml/decorator.ml -o /tmp/decorator-ocaml
+          assert_output "$(/tmp/decorator-ocaml)"
+
+          assert_output "$(sbcl --noinform --non-interactive --load src/Functional/Lisp/decorator.lisp)"
+          assert_output "$(clojure src/Functional/Clojure/decorator.clj)"
+
+          elixir_out="$(mktemp -d)"
+          elixirc --warnings-as-errors -o "$elixir_out" src/Functional/Elixir/decorator.exs >/dev/null
+          assert_output "$(elixir src/Functional/Elixir/decorator.exs)"
+
+          erlang_out="$(mktemp -d)"
+          erlc -Werror -o "$erlang_out" src/Functional/Erlang/decorator.erl
+          assert_output "$(erl -noshell -pa "$erlang_out" -eval 'decorator:main(), halt().')"
+
+          assert_output "$(swipl -q -s src/Niche/Prolog/decorator.pl -g run -t halt)"
+
+          groovyc -d /tmp/decorator-groovy src/Scripting/Groovy/decorator.groovy
+          assert_output "$(groovy src/Scripting/Groovy/decorator.groovy)"
