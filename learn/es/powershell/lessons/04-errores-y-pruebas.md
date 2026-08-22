@@ -1,61 +1,83 @@
-# Lección 04 — Maneja errores y prueba comportamiento
+# Lección 04 — Errores explícitos y pruebas que no dependen de tu PC
 
 ## Qué vas a conseguir
 
-Harás explícitos los fallos de recolección y ejecutarás pruebas Pester que protegen reglas sin depender del hardware real.
+Vas a hacer que WorkstationAudit falle con contexto útil y que sus reglas puedan probarse sin llenar tu disco a propósito.
+
+## Antes de empezar
+
+Debes haber completado las lecciones 01–03 y poder ejecutar el auditor.
 
 ## El problema
 
-Una consulta del sistema puede fallar por plataforma, permisos, proveedor o estado transitorio. Ocultar el error y entregar un reporte incompleto como si fuera correcto sería peor que fallar claramente.
+Una herramienta de diagnóstico deja de ser confiable si:
+
+- oculta un error de lectura;
+- depende de que el equipo de CI tenga cierto porcentaje de disco libre;
+- confunde “no tengo datos” con “todo está bien”.
 
 ## Concepto
 
-PowerShell tiene errores terminantes y no terminantes. En fronteras donde la operación completa requiere una señal, `try/catch` permite agregar contexto y conservar la excepción original como causa.
+PowerShell distingue errores terminantes y no terminantes. Para una frontera crítica de recolección, WorkstationAudit convierte el fallo en una excepción contextual con `try/catch`.
 
-Pester ejecuta escenarios automáticos. Una buena prueba protege comportamiento que puede romperse; no existe para inflar un porcentaje.
+Para las reglas, Pester usa snapshots artificiales. Eso permite comprobar 5%, 15%, 25% o capacidad cero sin depender del hardware real.
 
 ## Demostración
 
-```powershell
-Get-WorkstationAudit -SnapshotProvider { throw 'fallo simulado' }
-```
-
-Debe producir un error contextual: `No se pudo recopilar el snapshot...`.
-
-[EJECUTAR]
+[DEMO] Ejecuta las pruebas:
 
 ```powershell
-Invoke-Pester ./app/tests -Output Detailed
+Invoke-Pester -Path ./app/tests -Output Detailed
 ```
+
+Después inspecciona un caso:
+
+```powershell
+$drive = [pscustomobject]@{
+    Name = 'Fixture'
+    FreeBytes = 5
+    TotalBytes = 100
+}
+
+$drive | Get-StorageFinding
+```
+
+La severidad debe ser `Critical`.
 
 ## Código real
 
-`Get-WorkstationAudit` acepta un `SnapshotProvider` inyectable. En producción usa `Get-PlatformSnapshot`; en pruebas recibe fixtures deterministas.
+Ver:
 
-Esto no se presenta como un Design Pattern: es una frontera pequeña para poder probar reglas sin hardware específico.
+- `../app/WorkstationAudit.psm1`
+- `../app/tests/WorkstationAudit.Tests.ps1`
 
 ## Qué acaba de pasar
 
-La suite protege clasificación `Info/Warning/Critical`, capacidad desconocida, composición de auditoría, failure mode del proveedor y JSON exportable.
+El hardware es I/O y queda en un borde. La regla recibe objetos. Esa separación permite pruebas deterministas y evita mocks gigantes.
 
 ## Errores comunes
 
-- `catch {}` vacío.
-- Convertir todos los errores en `$null`.
-- Hacer pruebas que sólo verifican que una función existe.
-- Depender del porcentaje libre del runner para decidir si una prueba pasa.
+- usar `-ErrorAction SilentlyContinue` como estrategia general;
+- devolver `$null` ante un fallo sin distinguirlo de ausencia legítima;
+- hacer tests que dependen del espacio libre real;
+- afirmar que una prueba en un runner prueba todos los equipos Windows existentes.
 
 ## Buenas prácticas
 
-Prueba reglas con datos controlados y reserva el smoke test para demostrar que la integración con el sistema real funciona.
+- captura sólo donde puedas añadir contexto o recuperar;
+- conserva la excepción interna cuando sea útil;
+- prueba decisiones, límites y failure modes;
+- usa fixtures pequeños y legibles.
 
 ## Tu turno
 
-Cambia temporalmente un fixture de 5% a 25% y predice qué prueba debería fallar antes de ejecutarla. Revierte el cambio después del ejercicio.
+Completa el checkpoint y añade una prueba para el límite exacto de 10%.
 
 ## Cómo comprobar tu solución
 
-Una prueba útil debe fallar cuando rompes deliberadamente el contrato y volver a verde cuando restauras la regla.
+```powershell
+Invoke-Pester -Path ./app/tests -CI
+```
 
 ## Solución
 
@@ -71,7 +93,7 @@ WorkstationAudit ya tiene errores explícitos, pruebas deterministas y un smoke 
 
 ## Siguiente paso
 
-Completa [Checkpoint 01 — Añade una regla diagnóstica](../exercises/checkpoint-01.md). Después iniciaremos consultas de sistema y fronteras Windows.
+Completa [Checkpoint 01 — Añade una regla diagnóstica](../exercises/checkpoint-01.md) y continúa con [Lección 05 — Configura reglas sin editar código](05-configura-reglas-sin-editar-codigo.md).
 
 ## Referencias
 
