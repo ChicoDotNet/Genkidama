@@ -1,8 +1,14 @@
 class ContactsController < ApplicationController
+  PAGE_SIZE = 20
+
   before_action :set_contact, only: %i[show edit update]
 
   def index
-    @contacts = Contact.search(params[:q]).with_status(params[:status]).order(:name)
+    scope = Contact.search(params[:q]).with_status(params[:status]).order(:name)
+    @total_count = scope.count
+    @total_pages = [(@total_count.to_f / PAGE_SIZE).ceil, 1].max
+    @page = [[params.fetch(:page, 1).to_i, 1].max, @total_pages].min
+    @contacts = scope.offset((@page - 1) * PAGE_SIZE).limit(PAGE_SIZE)
   end
 
   def show

@@ -19,6 +19,8 @@
   <%= form.submit "Filtrar" %>
 <% end %>
 
+<p>Mostrando <%= @contacts.size %> de <%= @total_count %> contacto(s). Página <%= @page %> de <%= @total_pages %>.</p>
+
 <table>
   <thead><tr><th>Nombre</th><th>Email</th><th>Empresa</th><th>Estado</th><th>Acciones</th></tr></thead>
   <tbody>
@@ -33,3 +35,12 @@
     <% end %>
   </tbody>
 </table>
+
+<nav aria-label="Paginación de contactos">
+  <% if @page > 1 %>
+    <%= link_to "← Anterior", contacts_path(q: params[:q], status: params[:status], page: @page - 1) %>
+  <% end %>
+  <% if @page < @total_pages %>
+    <%= link_to "Siguiente →", contacts_path(q: params[:q], status: params[:status], page: @page + 1) %>
+  <% end %>
+</nav>

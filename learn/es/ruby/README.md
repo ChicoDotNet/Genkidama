@@ -38,20 +38,25 @@ Abre `http://localhost:3000`.
 10. [CSV, transacciones y datos externos](lessons/10-csv-transacciones-y-datos-externos.md)
 11. [Seguridad web y límites de entrada](lessons/11-seguridad-web-y-limites.md)
 12. [Debugging con evidencia](lessons/12-debugging-con-evidencia.md)
+13. [Paginar antes de cargarlo todo](lessons/13-paginar-antes-de-cargarlo-todo.md)
+14. [Tareas operativas sin tocar datos](lessons/14-tareas-operativas-sin-tocar-datos.md)
+15. [Observabilidad con health check y request ID](lessons/15-observabilidad-health-request-id.md)
+16. [Hardening: listo para operar no significa invulnerable](lessons/16-hardening-y-entrega.md)
 
 ### Checkpoints
 
 - [Checkpoint 01 — extiende la ficha del contacto](exercises/checkpoint-01.md)
 - [Checkpoint 02 — seguimiento de contactos](exercises/checkpoint-02.md)
 - [Checkpoint 03 — intercambio seguro de contactos](exercises/checkpoint-03.md)
+- [Checkpoint 04 — prepara ContactDesk para operación](exercises/checkpoint-04.md)
 
 ## Estado
 
-Tercer incremento: **12/17 lecciones**. ContactDesk ya permite buscar y filtrar, editar, registrar notas, exportar contactos e importar CSV de forma acotada, validada y transaccional.
+Cuarto incremento: **16/17 lecciones**. ContactDesk ya incorpora paginación acotada, diagnósticos operativos de sólo lectura, health check sin PII y una frontera explícita entre “funciona” y “está preparado para operar”. Falta la evaluación final autónoma.
 
 ## Qué aprenderás al completar el curso
 
-Ruby idiomático, colecciones, métodos, clases y módulos, errores, archivos y persistencia, HTTP, MVC en Rails, Active Record, pruebas, debugging, dependencias, seguridad básica web y mantenimiento de una aplicación existente.
+Ruby idiomático, colecciones, métodos, clases y módulos, errores, archivos y persistencia, HTTP, MVC en Rails, Active Record, pruebas, debugging, dependencias, seguridad básica web, observabilidad y mantenimiento de una aplicación existente.
 
 ## Referencias oficiales
 

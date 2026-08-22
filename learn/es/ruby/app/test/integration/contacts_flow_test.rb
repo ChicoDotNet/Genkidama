@@ -31,6 +31,16 @@ class ContactsFlowTest < ActionDispatch::IntegrationTest
     refute_includes response.body, "Beatriz Sur"
   end
 
+  test "paginates contacts with a bounded page size" do
+    25.times { |i| Contact.create!(name: format("Contacto %02d", i), email: "page#{i}@example.test", status: "lead") }
+
+    get contacts_path, params: { page: 2 }
+
+    assert_response :success
+    assert_includes response.body, "Página 2 de 2"
+    assert_includes response.body, "Mostrando 5 de 25 contacto(s)"
+  end
+
   test "updates an existing contact" do
     contact = Contact.create!(name: "Ana", email: "ana@example.com", status: "lead")
 
