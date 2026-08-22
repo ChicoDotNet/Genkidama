@@ -13,12 +13,12 @@ prerequisites: []
 lesson_count: 17
 toolchain:
   verified_on: '2026-08-22'
-  version_tested: 'PowerShell 7.x; patch exacto emitido por CI hospedado'
-  runtime_or_compiler: 'PowerShell 7.6 LTS objetivo'
-  package_or_build_tool: 'módulo PowerShell + Pester 5'
+  version_tested: 'PowerShell 7.6.5'
+  runtime_or_compiler: 'PowerShell 7.6 LTS'
+  package_or_build_tool: 'módulo PowerShell + Pester 6.1.0 observado en CI'
   operating_systems_tested:
-    - github-windows-runner
-    - github-ubuntu-runner
+    - 'Windows Server 2025 hosted runner (representative Windows validation)'
+    - 'Ubuntu 24.04.4 LTS hosted runner'
 ci:
   supported: true
   workflow: .github/workflows/learn-powershell.yml
