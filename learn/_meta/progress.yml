@@ -127,7 +127,13 @@ courses:
     pilot_order: 4
   scala: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   groovy: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
-  ruby: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  ruby:
+    status: in_progress
+    lessons_complete: 8
+    lessons_total: 17
+    ci: green
+    last_green_executable_sha: 1841f78f1f7196af98576aee3731f0ea10284dea
+    pr: 71
   c: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   ocaml: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   julia: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
