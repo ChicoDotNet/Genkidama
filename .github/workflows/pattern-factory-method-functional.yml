@@ -1,0 +1,130 @@
+name: Pattern Factory Method Functional
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-factory-method-functional.yml'
+      - 'src/Scripting/Perl/factory_method.pl'
+      - 'src/Functional/Erlang/factory_method.erl'
+      - 'src/DataScience/Octave/factory_method.m'
+      - 'src/DataScience/R/factory_method.R'
+      - 'src/DataScience/Julia/factory_method.jl'
+      - 'src/Functional/OCaml/factory_method.ml'
+      - 'src/Functional/Lisp/factory_method.lisp'
+      - 'src/Functional/Clojure/factory_method.clj'
+      - 'src/Functional/Elixir/factory_method.exs'
+      - 'src/Niche/Prolog/factory_method.pl'
+      - 'wiki/FactoryMethod.md'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Erlang and Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '28.5.0.4'
+          elixir-version: '1.19.1'
+
+      - name: Setup Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: '1'
+
+      - name: Setup runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y perl octave r-base ocaml sbcl clojure swi-prolog-nox
+
+      - name: Validate Perl
+        shell: bash
+        run: |
+          set -euo pipefail
+          perl -c src/Scripting/Perl/factory_method.pl
+          output="$(perl src/Scripting/Perl/factory_method.pl)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Erlang
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$(mktemp -d)"
+          erlc -Werror -o "$out" src/Functional/Erlang/factory_method.erl
+          output="$(erl -noshell -pa "$out" -eval 'factory_method:main(), halt().')"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Octave
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(octave --no-gui --quiet --eval "addpath('src/DataScience/Octave'); factory_method();")"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate R
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(Rscript --vanilla src/DataScience/R/factory_method.R)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Julia
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(julia --startup-file=no src/DataScience/Julia/factory_method.jl)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate OCaml
+        shell: bash
+        run: |
+          set -euo pipefail
+          ocamlc -w +A-70 -warn-error +A-70 src/Functional/OCaml/factory_method.ml -o /tmp/factory-method-ocaml
+          output="$(/tmp/factory-method-ocaml)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Common Lisp
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(sbcl --noinform --non-interactive --load src/Functional/Lisp/factory_method.lisp)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Clojure
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(clojure src/Functional/Clojure/factory_method.clj)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Elixir
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$(mktemp -d)"
+          elixirc --warnings-as-errors -o "$out" src/Functional/Elixir/factory_method.exs >/dev/null
+          output="$(elixir src/Functional/Elixir/factory_method.exs)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
+
+      - name: Validate Prolog
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(swipl -q -s src/Niche/Prolog/factory_method.pl -g run -t halt)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
