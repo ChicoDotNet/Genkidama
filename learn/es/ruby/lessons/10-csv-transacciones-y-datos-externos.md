@@ -45,7 +45,7 @@ bin/rails test test/services/contact_transfer_test.rb
 
 ## Siguiente paso
 
-En la lección 11 pondremos límites de seguridad a la superficie HTTP que recibe esos archivos.
+Continúa con [Lección 11 — seguridad web y límites de entrada](11-seguridad-web-y-limites.md).
 
 ## Referencias
 
