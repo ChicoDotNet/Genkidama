@@ -1,0 +1,25 @@
+Rock TV
+TV at "on" is "TV:on"
+TV at "mute" is "TV:muted"
+
+Rock Radio
+Radio at "on" is "Radio:on"
+Radio at "mute" is "Radio:muted"
+
+Rock Basic
+Basic at "action" is "on"
+
+Rock Muting
+Muting at "action" is "mute"
+
+Put Basic at "action" into Basic Action
+Put Muting at "action" into Mute Action
+Put TV at Basic Action into Basic TV
+Put Radio at Basic Action into Basic Radio
+Put TV at Mute Action into Mute TV
+Put Radio at Mute Action into Mute Radio
+
+Print "basic-tv=" plus Basic TV
+Print "basic-radio=" plus Basic Radio
+Print "mute-tv=" plus Mute TV
+Print "mute-radio=" plus Mute Radio
