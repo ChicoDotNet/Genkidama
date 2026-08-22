@@ -1,0 +1,10 @@
+Rock component
+Component at "base" is "alert"
+Component at "audit" is "audit(alert)"
+Component at "encrypted" is "enc(alert)"
+Component at "stacked" is "audit(enc(alert))"
+
+Print "base=" plus component at "base"
+Print "audit=" plus component at "audit"
+Print "encrypted=" plus component at "encrypted"
+Print "stacked=" plus component at "stacked"
