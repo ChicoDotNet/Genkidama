@@ -1,4 +1,5 @@
 require "test_helper"
+require "tempfile"
 
 class ContactsFlowTest < ActionDispatch::IntegrationTest
   test "lists contacts and creates a valid lead" do
@@ -59,5 +60,51 @@ class ContactsFlowTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_entity
     assert_includes response.body, "Revisa la nota"
+  end
+
+  test "exports contacts as downloadable CSV" do
+    Contact.create!(name: "Ana", email: "ana@example.test", status: "active")
+
+    get export_contacts_path
+
+    assert_response :success
+    assert_equal "text/csv", response.media_type
+    assert_includes response.headers.fetch("Content-Disposition"), "contactdesk-contacts.csv"
+    assert_includes response.body, "ana@example.test"
+  end
+
+  test "imports a valid CSV upload" do
+    upload = csv_upload("name,email,company,status\nAna,ana@example.test,Acme,active\n")
+
+    assert_difference("Contact.count", 1) do
+      post import_contacts_path, params: { file: upload }
+    end
+
+    assert_redirected_to contacts_path
+    assert_equal "active", Contact.find_by!(email: "ana@example.test").status
+  ensure
+    upload&.tempfile&.close!
+  end
+
+  test "rejects invalid CSV without partial persistence" do
+    upload = csv_upload("name,email,company,status\nAna,ana@example.test,,lead\nRoto,bad,,active\n")
+
+    assert_no_difference("Contact.count") do
+      post import_contacts_path, params: { file: upload }
+    end
+
+    assert_redirected_to contacts_path
+    assert_includes flash[:alert], "Fila 3"
+  ensure
+    upload&.tempfile&.close!
+  end
+
+  private
+
+  def csv_upload(content)
+    tempfile = Tempfile.new(["contacts", ".csv"])
+    tempfile.write(content)
+    tempfile.rewind
+    ActionDispatch::Http::UploadedFile.new(filename: "contacts.csv", type: "text/csv", tempfile: tempfile)
   end
 end
