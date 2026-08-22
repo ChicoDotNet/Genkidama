@@ -2,7 +2,7 @@ schema_version: 1
 initiative:
   status: pilots_complete
   source_locale: es
-  last_updated: '2026-08-16'
+  last_updated: '2026-08-22'
   active_work: powershell_course
   v1_courses_total: 45
   v1_courses_complete: 13
@@ -144,7 +144,12 @@ courses:
   matlab: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   perl: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   r: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
-  powershell: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  powershell:
+    status: in_progress
+    lessons_complete: 4
+    lessons_total: 17
+    ci: pending
+    pr: 70
   html: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   assembly: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   elixir: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
