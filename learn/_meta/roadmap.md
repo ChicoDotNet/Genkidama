@@ -50,7 +50,9 @@ Los pilotos estabilizaron:
 - CI;
 - experiencia Windows/Linux cuando corresponde.
 
-TypeScript, Java, Go, Rust, PHP, Kotlin y Swift ya completaron también su Course DoD como cursos posteriores a los pilotos. Kotlin cerró la evidencia Android prometida con un módulo compilable Room/Compose sobre AGP 9.3 y Built-in Kotlin. **Swift quedó completo en 17/17 lecciones** con TimeQuote como aplicación canónica: el núcleo SwiftPM portable cubre dominio, protocolos, persistencia JSON durable, concurrencia `async/await`, estado de aplicación aislado con `MainActor`, cuatro checkpoints y una evaluación final autónoma. El curso mantiene explícita la frontera de evidencia: no presenta una UI SwiftUI como compilada sin macOS/Xcode. **C++ es el siguiente curso a iniciar**, después de reconciliar cualquier avance concurrente en `dev`.
+TypeScript, Java, Go, Rust, PHP, Kotlin, Swift y C++ ya completaron también su Course DoD como cursos posteriores a los pilotos. Kotlin cerró la evidencia Android prometida con un módulo compilable Room/Compose sobre AGP 9.3 y Built-in Kotlin. **Swift quedó completo en 17/17 lecciones** con TimeQuote como aplicación canónica: el núcleo SwiftPM portable cubre dominio, protocolos, persistencia JSON durable, concurrencia `async/await`, estado de aplicación aislado con `MainActor`, cuatro checkpoints y una evaluación final autónoma. El curso mantiene explícita la frontera de evidencia: no presenta una UI SwiftUI como compilada sin macOS/Xcode.
+
+**C++ quedó completo en 17/17 lecciones** en PR #58. ThreadSeek cubre baseline secuencial, separación descubrimiento/índice, persistencia con RAII, medición, concurrencia acotada con `std::jthread`, cancelación cooperativa con `std::stop_token`, progreso, tolerancia a mutaciones del filesystem y una matriz real GCC/Clang/MSVC. La validación multiplataforma detectó y corrigió una diferencia de metadata cacheada de `directory_entry` en Windows sin debilitar los tests. Incluye cuatro checkpoints y evaluación final autónoma con rúbrica. **PowerShell es el siguiente curso a iniciar**; no se abre Ruby mientras PowerShell siga incompleto salvo motivo documentado.
 
 ## Orden v1 provisional
 
