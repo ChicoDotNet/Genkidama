@@ -1,0 +1,29 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DECORATOR.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 BASE-TEXT PIC X(32) VALUE "alert".
+       01 AUDIT-TEXT PIC X(64).
+       01 ENCRYPTED-TEXT PIC X(64).
+       01 STACKED-TEXT PIC X(96).
+       PROCEDURE DIVISION.
+           STRING "audit(" DELIMITED BY SIZE
+                  FUNCTION TRIM(BASE-TEXT) DELIMITED BY SIZE
+                  ")" DELIMITED BY SIZE
+             INTO AUDIT-TEXT
+           END-STRING
+           STRING "enc(" DELIMITED BY SIZE
+                  FUNCTION TRIM(BASE-TEXT) DELIMITED BY SIZE
+                  ")" DELIMITED BY SIZE
+             INTO ENCRYPTED-TEXT
+           END-STRING
+           STRING "audit(" DELIMITED BY SIZE
+                  FUNCTION TRIM(ENCRYPTED-TEXT) DELIMITED BY SIZE
+                  ")" DELIMITED BY SIZE
+             INTO STACKED-TEXT
+           END-STRING
+           DISPLAY "base=" FUNCTION TRIM(BASE-TEXT)
+           DISPLAY "audit=" FUNCTION TRIM(AUDIT-TEXT)
+           DISPLAY "encrypted=" FUNCTION TRIM(ENCRYPTED-TEXT)
+           DISPLAY "stacked=" FUNCTION TRIM(STACKED-TEXT)
+           STOP RUN.

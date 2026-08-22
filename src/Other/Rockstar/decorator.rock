@@ -1,0 +1,21 @@
+Audit takes Inner
+Give back "audit(" plus Inner plus ")"
+Yeah
+
+Encrypt takes Inner
+Give back "enc(" plus Inner plus ")"
+Yeah
+
+Rock Component
+Component at "base" is "alert"
+
+Put Component at "base" into Base
+Call Audit with Base into Audited
+Call Encrypt with Base into Encrypted
+Call Encrypt with Base into Inner Encrypted
+Call Audit with Inner Encrypted into Stacked
+
+Print "base=" plus Base
+Print "audit=" plus Audited
+Print "encrypted=" plus Encrypted
+Print "stacked=" plus Stacked
