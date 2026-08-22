@@ -1,0 +1,141 @@
+name: Pattern Composite Portable
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-composite-portable.yml'
+      - 'src/Enterprise/VisualBasicNET/CompositeExample.vb'
+      - 'src/Systems/C/composite.c'
+      - 'src/Scripting/RubyRB/composite.rb'
+      - 'src/Scripting/Lua/composite.lua'
+      - 'src/Shell/Bash/composite.sh'
+      - 'src/Shell/PowerShell/composite.ps1'
+      - 'src/Functional/Haskell/Composite.hs'
+      - 'src/Functional/Scala/Composite.scala'
+      - 'src/Scripting/Perl/composite.pl'
+      - 'src/Historical/Pascal/composite.pas'
+      - 'wiki/Composite.md'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Setup portable runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y fp-compiler lua5.4 ghc scala
+
+      - name: Validate VB.NET
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          dotnet new console --language VB --framework net10.0 --output "$work" --force >/dev/null
+          cp src/Enterprise/VisualBasicNET/CompositeExample.vb "$work/Program.vb"
+          output="$(dotnet run --project "$work" --configuration Release)"
+          grep -Fxq 'leaf=2' <<<"$output"
+          grep -Fxq 'docs=8' <<<"$output"
+          grep -Fxq 'root=10' <<<"$output"
+
+      - name: Validate C
+        shell: bash
+        run: |
+          set -euo pipefail
+          gcc -std=c17 -Wall -Wextra -Werror src/Systems/C/composite.c -o /tmp/composite-c
+          output="$(/tmp/composite-c)"
+          grep -Fxq 'leaf=2' <<<"$output"
+          grep -Fxq 'docs=8' <<<"$output"
+          grep -Fxq 'root=10' <<<"$output"
+
+      - name: Validate Ruby
+        shell: bash
+        run: |
+          set -euo pipefail
+          ruby -cw src/Scripting/RubyRB/composite.rb
+          output="$(ruby src/Scripting/RubyRB/composite.rb)"
+          grep -Fxq 'leaf=2' <<<"$output"
+          grep -Fxq 'docs=8' <<<"$output"
+          grep -Fxq 'root=10' <<<"$output"
+
+      - name: Validate Lua
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(lua5.4 src/Scripting/Lua/composite.lua)"
+          grep -Fxq 'leaf=2' <<<"$output"
+          grep -Fxq 'docs=8' <<<"$output"
+          grep -Fxq 'root=10' <<<"$output"
+
+      - name: Validate Bash
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash -n src/Shell/Bash/composite.sh
+          output="$(bash src/Shell/Bash/composite.sh)"
+          grep -Fxq 'leaf=2' <<<"$output"
+          grep -Fxq 'docs=8' <<<"$output"
+          grep -Fxq 'root=10' <<<"$output"
+
+      - name: Validate PowerShell
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(pwsh -NoLogo -NoProfile -NonInteractive -File src/Shell/PowerShell/composite.ps1)"
+          grep -Fxq 'leaf=2' <<<"$output"
+          grep -Fxq 'docs=8' <<<"$output"
+          grep -Fxq 'root=10' <<<"$output"
+
+      - name: Validate Haskell
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(runghc -Wall -Werror src/Functional/Haskell/Composite.hs)"
+          grep -Fxq 'leaf=2' <<<"$output"
+          grep -Fxq 'docs=8' <<<"$output"
+          grep -Fxq 'root=10' <<<"$output"
+
+      - name: Validate Scala
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          scalac -deprecation -feature -unchecked src/Functional/Scala/Composite.scala -d "$work"
+          output="$(scala -cp "$work" Composite)"
+          grep -Fxq 'leaf=2' <<<"$output"
+          grep -Fxq 'docs=8' <<<"$output"
+          grep -Fxq 'root=10' <<<"$output"
+
+      - name: Validate Perl
+        shell: bash
+        run: |
+          set -euo pipefail
+          perl -c src/Scripting/Perl/composite.pl
+          output="$(perl src/Scripting/Perl/composite.pl)"
+          grep -Fxq 'leaf=2' <<<"$output"
+          grep -Fxq 'docs=8' <<<"$output"
+          grep -Fxq 'root=10' <<<"$output"
+
+      - name: Validate Pascal
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          fpc -Mobjfpc -O2 -Sew -FE"$work" src/Historical/Pascal/composite.pas >/dev/null
+          output="$("$work/composite")"
+          grep -Fxq 'leaf=2' <<<"$output"
+          grep -Fxq 'docs=8' <<<"$output"
+          grep -Fxq 'root=10' <<<"$output"
