@@ -1,0 +1,23 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PROTOTYPE.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 ORIGINAL-PROFILE.
+          05 ORIGINAL-NAME       PIC X(20) VALUE "orders".
+          05 ORIGINAL-FEATURES   PIC X(40) VALUE "metrics".
+       01 CLONE-PROFILE.
+          05 CLONE-NAME          PIC X(20).
+          05 CLONE-FEATURES      PIC X(40).
+
+       PROCEDURE DIVISION.
+       MAIN-PROCEDURE.
+           MOVE ORIGINAL-PROFILE TO CLONE-PROFILE
+           MOVE "orders-canary" TO CLONE-NAME
+           MOVE "metrics,tracing" TO CLONE-FEATURES
+
+           DISPLAY "original=" FUNCTION TRIM(ORIGINAL-NAME)
+               ": " FUNCTION TRIM(ORIGINAL-FEATURES)
+           DISPLAY "clone=" FUNCTION TRIM(CLONE-NAME)
+               ": " FUNCTION TRIM(CLONE-FEATURES)
+           STOP RUN.
