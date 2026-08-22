@@ -3,7 +3,7 @@
 > **Familia:** Structural  
 > **Intención:** añadir responsabilidades a un objeto de forma componible, envolviéndolo con objetos que conservan el mismo contrato observable.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `0/48`  
+> **Implementaciones de lenguaje:** `12/48`  
 > **Cobertura de pruebas:** N/A — la completitud de lenguajes se valida por comportamiento/toolchain; no existe una métrica homogénea entre 48 ecosistemas standalone.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -163,22 +163,22 @@ Si no existe presión real de combinación dinámica, una función o composició
 
 El universo canónico mantiene **51 targets**. Decorator clasifica provisionalmente **48 como Applicable** y **HTML, CSS y SQL declarativo como N/A**. La falta de clases no excluye ningún lenguaje: closures, higher-order functions, records, modules, predicates, tables, callbacks y otros mecanismos son válidos si preservan el contrato y la composición.
 
-Actualmente existen **22/48 ejemplos materializados**. Ninguno se promueve todavía mientras el rerun del tranche mainstream no cierre verde; existencia de archivo no equivale a evidencia verificada.
+Actualmente existen **22/48 ejemplos materializados** y **12/48 verificados**. El tranche mainstream quedó verde con TypeScript 6 strict, `gofmt/go vet`, `rustfmt`, warnings-as-errors y ejecución real. Los diez ejemplos portables permanecen candidatos hasta obtener su propia evidencia.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo | Estado |
 |---|---|---|---|
-| C# | Applicable | [`src/Enterprise/C#/DecoratorExample.cs`](../src/Enterprise/C%23/DecoratorExample.cs) | candidato |
-| TypeScript | Applicable | [`src/Web/TypeScriptTS/decorator.ts`](../src/Web/TypeScriptTS/decorator.ts) | candidato |
-| Python | Applicable | [`src/Scripting/PythonPY/decorator.py`](../src/Scripting/PythonPY/decorator.py) | candidato |
-| C++ | Applicable | [`src/Systems/C++/decorator.cpp`](../src/Systems/C%2B%2B/decorator.cpp) | candidato |
-| Java | Applicable | [`src/Enterprise/Java/DecoratorExample.java`](../src/Enterprise/Java/DecoratorExample.java) | candidato |
-| Rust | Applicable | [`src/Systems/Rust/decorator.rs`](../src/Systems/Rust/decorator.rs) | candidato |
-| Go | Applicable | [`src/Systems/Go/decorator.go`](../src/Systems/Go/decorator.go) | candidato |
-| PHP | Applicable | [`src/Scripting/PHP/decorator.php`](../src/Scripting/PHP/decorator.php) | candidato |
-| Kotlin | Applicable | [`src/Enterprise/Kotlin/DecoratorExample.kt`](../src/Enterprise/Kotlin/DecoratorExample.kt) | candidato |
-| Swift | Applicable | [`src/Systems/Swift/decorator.swift`](../src/Systems/Swift/decorator.swift) | candidato |
-| F# | Applicable | [`src/Functional/F#/decorator.fsx`](../src/Functional/F%23/decorator.fsx) | candidato |
-| JavaScript | Applicable | [`src/Web/JavaScriptJS/decorator.js`](../src/Web/JavaScriptJS/decorator.js) | candidato |
+| C# | Applicable | [`src/Enterprise/C#/DecoratorExample.cs`](../src/Enterprise/C%23/DecoratorExample.cs) | ✅ verificado |
+| TypeScript | Applicable | [`src/Web/TypeScriptTS/decorator.ts`](../src/Web/TypeScriptTS/decorator.ts) | ✅ verificado |
+| Python | Applicable | [`src/Scripting/PythonPY/decorator.py`](../src/Scripting/PythonPY/decorator.py) | ✅ verificado |
+| C++ | Applicable | [`src/Systems/C++/decorator.cpp`](../src/Systems/C%2B%2B/decorator.cpp) | ✅ verificado |
+| Java | Applicable | [`src/Enterprise/Java/DecoratorExample.java`](../src/Enterprise/Java/DecoratorExample.java) | ✅ verificado |
+| Rust | Applicable | [`src/Systems/Rust/decorator.rs`](../src/Systems/Rust/decorator.rs) | ✅ verificado |
+| Go | Applicable | [`src/Systems/Go/decorator.go`](../src/Systems/Go/decorator.go) | ✅ verificado |
+| PHP | Applicable | [`src/Scripting/PHP/decorator.php`](../src/Scripting/PHP/decorator.php) | ✅ verificado |
+| Kotlin | Applicable | [`src/Enterprise/Kotlin/DecoratorExample.kt`](../src/Enterprise/Kotlin/DecoratorExample.kt) | ✅ verificado |
+| Swift | Applicable | [`src/Systems/Swift/decorator.swift`](../src/Systems/Swift/decorator.swift) | ✅ verificado |
+| F# | Applicable | [`src/Functional/F#/decorator.fsx`](../src/Functional/F%23/decorator.fsx) | ✅ verificado |
+| JavaScript | Applicable | [`src/Web/JavaScriptJS/decorator.js`](../src/Web/JavaScriptJS/decorator.js) | ✅ verificado |
 | Visual Basic .NET | Applicable | [`src/Enterprise/VisualBasic/DecoratorExample.vb`](../src/Enterprise/VisualBasic/DecoratorExample.vb) | candidato |
 | C | Applicable | [`src/Systems/C/decorator.c`](../src/Systems/C/decorator.c) | candidato |
 | Ruby | Applicable | [`src/Scripting/RubyRB/decorator.rb`](../src/Scripting/RubyRB/decorator.rb) | candidato |
