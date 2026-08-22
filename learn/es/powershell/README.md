@@ -4,7 +4,7 @@ PowerShell es un shell y lenguaje de automatización orientado a objetos, muy us
 
 ## Qué vas a construir
 
-WorkstationAudit inspecciona plataforma, almacenamiento, señales Windows, inventario acotado y contexto de ejecución; transforma datos en hallazgos, exporta JSON/texto y compara ejecuciones sin modificar el equipo auditado.
+WorkstationAudit inspecciona plataforma, almacenamiento, señales Windows, inventario acotado y contexto de ejecución; transforma datos en hallazgos, exporta JSON/texto, compara ejecuciones, resume múltiples reportes con concurrencia acotada y mantiene límites explícitos para remoting sin modificar el equipo auditado.
 
 El curso enseña PowerShell 7 moderno. Al 22 de agosto de 2026 Microsoft identifica **PowerShell 7.6 como la línea LTS vigente**. Windows PowerShell 5.1 aparece sólo cuando sea necesario para explicar compatibilidad.
 
@@ -30,7 +30,7 @@ Invoke-Pester ./app/tests
 
 ## Avance
 
-**12/17 lecciones implementadas.** Tres checkpoints cubren diagnóstico reproducible, fronteras Windows, política configurable, inventario acotado, privilegios, reportes y comparación semántica.
+**16/17 lecciones implementadas.** Cuatro checkpoints cubren diagnóstico reproducible, fronteras Windows, política configurable, inventario, privilegios, reportes, comparación semántica, alcance remoto explícito, concurrencia acotada, medición y hardening.
 
 1. [Lección 01 — Ejecuta tu primer auditor](lessons/01-ejecuta-tu-primer-auditor.md)
 2. [Lección 02 — Trabaja con objetos y pipeline](lessons/02-objetos-y-pipeline.md)
@@ -44,13 +44,13 @@ Invoke-Pester ./app/tests
 10. [Lección 10 — Privilegios y seguridad](lessons/10-privilegios-y-seguridad.md)
 11. [Lección 11 — Reportes humanos y JSON](lessons/11-reportes-humanos-y-json.md)
 12. [Lección 12 — Compara auditorías](lessons/12-compara-auditorias.md)
-13. Próximo: remoting y alcance seguro.
-14. Próximo: concurrencia sólo donde aporte valor.
-15. Próximo: debugging y profiling.
-16. Próximo: hardening y entrega.
+13. [Lección 13 — Remoting con alcance explícito](lessons/13-remoting-con-alcance-explicito.md)
+14. [Lección 14 — Fan-out con concurrencia acotada](lessons/14-concurrencia-acotada.md)
+15. [Lección 15 — Mide antes de optimizar](lessons/15-mide-antes-de-optimizar.md)
+16. [Lección 16 — Hardening y contrato de entrega](lessons/16-hardening-y-entrega.md)
 17. Próximo: evaluación final autónoma.
 
-[Checkpoint 01](exercises/checkpoint-01.md) · [Solución 01](solutions/checkpoint-01.md) · [Checkpoint 02](exercises/checkpoint-02.md) · [Solución 02](solutions/checkpoint-02.md) · [Checkpoint 03](exercises/checkpoint-03.md) · [Solución 03](solutions/checkpoint-03.md)
+[Checkpoint 01](exercises/checkpoint-01.md) · [Solución 01](solutions/checkpoint-01.md) · [Checkpoint 02](exercises/checkpoint-02.md) · [Solución 02](solutions/checkpoint-02.md) · [Checkpoint 03](exercises/checkpoint-03.md) · [Solución 03](solutions/checkpoint-03.md) · [Checkpoint 04](exercises/checkpoint-04.md) · [Solución 04](solutions/checkpoint-04.md)
 
 ## Qué sabrás hacer al terminar
 Leer y escribir scripts PowerShell idiomáticos, trabajar con objetos/pipelines, diseñar funciones, validar parámetros, manejar errores, importar módulos, consultar el sistema, producir reportes estructurados, escribir pruebas con Pester, depurar scripts y automatizar tareas operativas sin esconder efectos secundarios.
@@ -75,14 +75,16 @@ PowerShell aparece con frecuencia en administración Windows, soporte/operacione
 - **CIM:** modelo/interfaz de administración usada para consultar información de sistema.
 - **Execution Policy:** configuración de condiciones de ejecución; no sustituye autorización ni otras fronteras de seguridad.
 - **Baseline:** auditoría persistida usada como referencia para detectar cambios posteriores.
+- **Throttle:** límite de trabajo concurrente activo.
 
 ## Cómo hablar de este proyecto en una entrevista
-Explica cómo separas recolección, política, findings y presentación; por qué el inventario tiene límites; cómo haces visible la elevación; por qué JSON y texto nacen del mismo objeto; y cómo comparas findings sin depender de frases de presentación.
+Explica cómo separas recolección, política, findings y presentación; por qué el inventario tiene límites; cómo haces visible la elevación; por qué JSON y texto nacen del mismo objeto; cómo comparas findings por identidad; y por qué el remoting requiere opt-in en lugar de modificar WinRM automáticamente.
 
 ## Referencias oficiales
 - https://learn.microsoft.com/powershell/
 - https://learn.microsoft.com/powershell/scripting/install/powershell-support-lifecycle
 - https://learn.microsoft.com/powershell/module/cimcmdlets/get-ciminstance
+- https://learn.microsoft.com/powershell/module/microsoft.powershell.core/foreach-object
 - https://pester.dev/
 
 ## Siguiente paso
