@@ -1,0 +1,22 @@
+Postgres takes nothing
+Rock database
+Database at "connect" is "PostgreSQL connect"
+Database at "query" is "PostgreSQL query"
+Give back database
+Yeah
+
+Mysql takes nothing
+Rock database
+Database at "connect" is "MySQL connect"
+Database at "query" is "MySQL query"
+Give back database
+Yeah
+
+Use takes factory
+Call factory into database
+Print database at "connect"
+Print database at "query"
+Yeah
+
+Call Use with Postgres
+Call Use with Mysql

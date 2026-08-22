@@ -1,0 +1,15 @@
+Rock original
+Original at "service" is "orders"
+Original at "features" is "metrics"
+Original at "description" is "original=orders: metrics"
+
+Rock canary
+Put original at "service" into canary at "service"
+Put original at "features" into canary at "features"
+Put original at "description" into canary at "description"
+Canary at "service" is "orders-canary"
+Canary at "features" is "metrics,tracing"
+Canary at "description" is "clone=orders-canary: metrics,tracing"
+
+Print original at "description"
+Print canary at "description"

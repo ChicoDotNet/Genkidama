@@ -1,0 +1,179 @@
+name: Pattern Prototype Portable Final
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-prototype-portable-final.yml'
+      - 'src/Historical/Ada/prototype.adb'
+      - 'src/Niche/Solidity/Prototype.sol'
+      - 'src/Historical/Fortran/prototype.f90'
+      - 'src/Systems/Zig/prototype.zig'
+      - 'src/Niche/Nim/prototype.nim'
+      - 'src/Web/Dart/prototype.dart'
+      - 'src/Niche/Crystal/prototype.cr'
+      - 'src/Historical/Cobol/prototype.cbl'
+      - 'src/LowLevel/Assembly/prototype.asm'
+
+jobs:
+  ada:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Setup GNAT
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y gnat
+      - name: Validate Ada Prototype
+        shell: bash
+        run: |
+          set -euo pipefail
+          gnatmake -q -gnat2022 -gnatwa -gnatwe src/Historical/Ada/prototype.adb -o /tmp/prototype-ada
+          output="$(/tmp/prototype-ada)"
+          grep -Fq 'original=orders: metrics' <<<"$output"
+          grep -Fq 'clone=orders-canary: metrics,tracing' <<<"$output"
+          ! grep -Fq 'original=orders: metrics,tracing' <<<"$output"
+
+  solidity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate Solidity Prototype
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$(mktemp -d)"
+          npx --yes solc@0.8.30 --bin --abi src/Niche/Solidity/Prototype.sol -o "$out"
+          test -n "$(find "$out" -type f -name '*_Prototype.bin' -size +0c -print -quit)"
+          python - <<'PY'
+          from pathlib import Path
+          text = Path('src/Niche/Solidity/Prototype.sol').read_text(encoding='utf-8')
+          required = [
+              'original.features = new string[](1)',
+              'clone.features = new string[](2)',
+              'clone.features[0] = original.features[0]',
+              'clone.name = "orders-canary"',
+              'clone.features[1] = "tracing"',
+          ]
+          for fragment in required:
+              if fragment not in text:
+                  raise SystemExit(f'Missing Solidity Prototype source contract: {fragment}')
+          PY
+
+  fortran:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate Fortran Prototype
+        shell: bash
+        run: |
+          set -euo pipefail
+          gfortran -std=f2018 -Wall -Wextra -Werror src/Historical/Fortran/prototype.f90 -o /tmp/prototype-fortran
+          output="$(/tmp/prototype-fortran)"
+          grep -Fq 'original=orders: metrics' <<<"$output"
+          grep -Fq 'clone=orders-canary: metrics,tracing' <<<"$output"
+          ! grep -Fq 'original=orders: metrics,tracing' <<<"$output"
+
+  zig:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: mlugg/setup-zig@v2
+      - name: Validate Zig Prototype
+        shell: bash
+        run: |
+          set -euo pipefail
+          zig fmt --check src/Systems/Zig/prototype.zig
+          output="$(zig run src/Systems/Zig/prototype.zig 2>&1)"
+          grep -Fq 'original=orders: metrics' <<<"$output"
+          grep -Fq 'clone=orders-canary: metrics,tracing' <<<"$output"
+          ! grep -Fq 'original=orders: metrics,tracing' <<<"$output"
+
+  nim:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Setup Nim
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y nim
+      - name: Validate Nim Prototype
+        shell: bash
+        run: |
+          set -euo pipefail
+          nim c --hints:off --warnings:on -o:/tmp/prototype-nim src/Niche/Nim/prototype.nim
+          output="$(/tmp/prototype-nim)"
+          grep -Fq 'original=orders: metrics' <<<"$output"
+          grep -Fq 'clone=orders-canary: metrics,tracing' <<<"$output"
+          ! grep -Fq 'original=orders: metrics,tracing' <<<"$output"
+
+  dart:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dart-lang/setup-dart@v1
+      - name: Validate Dart Prototype
+        shell: bash
+        run: |
+          set -euo pipefail
+          dart format --output=none --set-exit-if-changed src/Web/Dart/prototype.dart
+          dart analyze --fatal-infos --fatal-warnings src/Web/Dart/prototype.dart
+          output="$(dart run src/Web/Dart/prototype.dart)"
+          grep -Fq 'original=orders: metrics' <<<"$output"
+          grep -Fq 'clone=orders-canary: metrics,tracing' <<<"$output"
+          ! grep -Fq 'original=orders: metrics,tracing' <<<"$output"
+
+  crystal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: crystal-lang/install-crystal@v1
+      - name: Validate Crystal Prototype
+        shell: bash
+        run: |
+          set -euo pipefail
+          crystal tool format src/Niche/Crystal/prototype.cr
+          test -z "$(git status --short -- src/Niche/Crystal/prototype.cr)"
+          crystal build --error-on-warnings src/Niche/Crystal/prototype.cr -o /tmp/prototype-crystal
+          output="$(/tmp/prototype-crystal)"
+          grep -Fq 'original=orders: metrics' <<<"$output"
+          grep -Fq 'clone=orders-canary: metrics,tracing' <<<"$output"
+          ! grep -Fq 'original=orders: metrics,tracing' <<<"$output"
+
+  cobol:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Setup GnuCOBOL
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y gnucobol3
+      - name: Validate COBOL Prototype
+        shell: bash
+        run: |
+          set -euo pipefail
+          cobc -x -Wall src/Historical/Cobol/prototype.cbl -o /tmp/prototype-cobol
+          output="$(/tmp/prototype-cobol)"
+          grep -Fq 'original=orders: metrics' <<<"$output"
+          grep -Fq 'clone=orders-canary: metrics,tracing' <<<"$output"
+          ! grep -Fq 'original=orders: metrics,tracing' <<<"$output"
+
+  assembly:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Setup NASM
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y nasm
+      - name: Validate Assembly Prototype
+        shell: bash
+        run: |
+          set -euo pipefail
+          nasm -f elf64 -Wall src/LowLevel/Assembly/prototype.asm -o /tmp/prototype-assembly.o
+          ld /tmp/prototype-assembly.o -o /tmp/prototype-assembly
+          output="$(/tmp/prototype-assembly)"
+          grep -Fq 'original=orders: metrics' <<<"$output"
+          grep -Fq 'clone=orders-canary: metrics,tracing' <<<"$output"
+          ! grep -Fq 'original=orders: metrics,tracing' <<<"$output"

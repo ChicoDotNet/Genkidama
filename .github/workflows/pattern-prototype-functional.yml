@@ -1,0 +1,80 @@
+name: Pattern Prototype Functional
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-prototype-functional.yml'
+      - 'src/DataScience/R/prototype.R'
+      - 'src/DataScience/Octave/prototype.m'
+      - 'src/DataScience/Julia/prototype.jl'
+      - 'src/Functional/OCaml/prototype.ml'
+      - 'src/Functional/Lisp/prototype.lisp'
+      - 'src/Functional/Clojure/prototype.clj'
+      - 'src/Functional/Elixir/prototype.exs'
+      - 'src/Functional/Erlang/prototype.erl'
+      - 'src/Niche/Prolog/prototype.pl'
+      - 'src/Scripting/Groovy/prototype.groovy'
+      - 'wiki/Prototype.md'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: '1'
+
+      - name: Setup Erlang and Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '28.5.0.4'
+          elixir-version: '1.19.1'
+
+      - name: Setup functional runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y r-base octave ocaml sbcl clojure swi-prolog-nox groovy
+
+      - name: Validate Prototype functional tranche
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          assert_output() {
+            local output="$1"
+            grep -Fq 'original=orders: metrics' <<<"$output"
+            grep -Fq 'clone=orders-canary: metrics,tracing' <<<"$output"
+            if grep -Fq 'original=orders: metrics,tracing' <<<"$output"; then
+              echo 'Prototype clone shares mutable feature state with the original.' >&2
+              exit 1
+            fi
+          }
+
+          assert_output "$(Rscript --vanilla src/DataScience/R/prototype.R)"
+          assert_output "$(octave --no-gui --quiet --eval "addpath('src/DataScience/Octave'); prototype();")"
+          assert_output "$(julia --startup-file=no src/DataScience/Julia/prototype.jl)"
+
+          ocamlc -w +A-70 -warn-error +A-70 src/Functional/OCaml/prototype.ml -o /tmp/prototype-ocaml
+          assert_output "$(/tmp/prototype-ocaml)"
+
+          assert_output "$(sbcl --noinform --non-interactive --load src/Functional/Lisp/prototype.lisp)"
+          assert_output "$(clojure src/Functional/Clojure/prototype.clj)"
+          assert_output "$(elixir src/Functional/Elixir/prototype.exs)"
+
+          erlang_out="$(mktemp -d)"
+          erlc -Werror -o "$erlang_out" src/Functional/Erlang/prototype.erl
+          assert_output "$(erl -noshell -pa "$erlang_out" -eval 'prototype:main(), halt().')"
+
+          assert_output "$(swipl -q -s src/Niche/Prolog/prototype.pl -g run -t halt)"
+
+          groovyc -d /tmp/prototype-groovy src/Scripting/Groovy/prototype.groovy
+          assert_output "$(groovy src/Scripting/Groovy/prototype.groovy)"

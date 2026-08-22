@@ -1,0 +1,279 @@
+name: Pattern Singleton Final
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-singleton-final.yml'
+      - 'src/Historical/Ada/singleton.adb'
+      - 'src/Niche/Solidity/Singleton.sol'
+      - 'src/Historical/Fortran/singleton.f90'
+      - 'src/Systems/Objective-C/singleton.m'
+      - 'src/Systems/Zig/singleton.zig'
+      - 'src/Niche/Nim/singleton.nim'
+      - 'src/Web/Dart/singleton.dart'
+      - 'src/Niche/Crystal/singleton.cr'
+      - 'src/Historical/Cobol/singleton.cbl'
+      - 'src/Shell/VBA/singleton.bas'
+      - 'src/Niche/GDScript/singleton.gd'
+      - 'src/DataScience/MATLAB/singleton.m'
+      - 'src/LowLevel/Assembly/singleton.asm'
+      - 'src/Enterprise/Delphi/SingletonExample.pas'
+      - 'src/Other/MicroPython/singleton.py'
+      - 'src/Other/Rockstar/singleton.rock'
+      - 'wiki/Singleton.md'
+
+jobs:
+  portable-final:
+    if: github.head_ref == 'patterns/singleton-kb006'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Zig
+        uses: mlugg/setup-zig@v2
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+
+      - name: Setup Crystal
+        uses: crystal-lang/install-crystal@v1
+
+      - name: Setup final portable runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y gnat gfortran nim gnucobol3 nasm
+
+      - name: Validate Ada Singleton
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          gnatmake -q -gnat2022 -gnatwa -gnatwe -D "$work" src/Historical/Ada/singleton.adb -o /tmp/singleton-ada
+          output="$(/tmp/singleton-ada | tr -d ' ')"
+          grep -Fxq 'same=TRUE' <<<"$output"
+          grep -Fxq 'count=1' <<<"$output"
+
+      - name: Validate Solidity Singleton source contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$(mktemp -d)"
+          npx --yes solc@0.8.30 --bin --abi src/Niche/Solidity/Singleton.sol -o "$out"
+          test -n "$(find "$out" -type f -name '*_Singleton.bin' -size +0c -print -quit)"
+          grep -Fq 'return address(this);' src/Niche/Solidity/Singleton.sol
+          grep -Fq 'count += 1;' src/Niche/Solidity/Singleton.sol
+
+      - name: Validate Fortran Singleton
+        shell: bash
+        run: |
+          set -euo pipefail
+          gfortran -std=f2018 -Wall -Wextra -Werror src/Historical/Fortran/singleton.f90 -o /tmp/singleton-fortran
+          output="$(/tmp/singleton-fortran)"
+          grep -Fxq 'same=true' <<<"$output"
+          grep -Fxq 'count=1' <<<"$output"
+
+      - name: Validate Zig Singleton
+        shell: bash
+        run: |
+          set -euo pipefail
+          zig fmt --check src/Systems/Zig/singleton.zig
+          output="$(zig run src/Systems/Zig/singleton.zig 2>&1)"
+          grep -Fxq 'same=true' <<<"$output"
+          grep -Fxq 'count=1' <<<"$output"
+
+      - name: Validate Nim Singleton
+        shell: bash
+        run: |
+          set -euo pipefail
+          nim c --hints:off --warnings:on -o:/tmp/singleton-nim src/Niche/Nim/singleton.nim
+          output="$(/tmp/singleton-nim)"
+          grep -Fxq 'same=true' <<<"$output"
+          grep -Fxq 'count=1' <<<"$output"
+
+      - name: Validate Dart Singleton
+        shell: bash
+        run: |
+          set -euo pipefail
+          dart format --output=none --set-exit-if-changed src/Web/Dart/singleton.dart
+          dart analyze --fatal-infos --fatal-warnings src/Web/Dart/singleton.dart
+          output="$(dart run src/Web/Dart/singleton.dart)"
+          grep -Fxq 'same=true' <<<"$output"
+          grep -Fxq 'count=1' <<<"$output"
+
+      - name: Validate Crystal Singleton
+        shell: bash
+        run: |
+          set -euo pipefail
+          crystal tool format src/Niche/Crystal/singleton.cr
+          test -z "$(git status --short -- src/Niche/Crystal/singleton.cr)"
+          crystal build --error-on-warnings src/Niche/Crystal/singleton.cr -o /tmp/singleton-crystal
+          output="$(/tmp/singleton-crystal)"
+          grep -Fxq 'same=true' <<<"$output"
+          grep -Fxq 'count=1' <<<"$output"
+
+      - name: Validate COBOL Singleton
+        shell: bash
+        run: |
+          set -euo pipefail
+          cobc -x -Wall src/Historical/Cobol/singleton.cbl -o /tmp/singleton-cobol
+          output="$(/tmp/singleton-cobol)"
+          grep -Fxq 'same=true' <<<"$output"
+          grep -Fq 'count=' <<<"$output"
+          grep -Eq 'count=[[:space:]]*1$' <<<"$output"
+
+      - name: Validate Assembly Singleton
+        shell: bash
+        run: |
+          set -euo pipefail
+          nasm -f elf64 -Wall src/LowLevel/Assembly/singleton.asm -o /tmp/singleton-assembly.o
+          ld /tmp/singleton-assembly.o -o /tmp/singleton-assembly
+          output="$(/tmp/singleton-assembly)"
+          grep -Fxq 'same=true' <<<"$output"
+          grep -Fxq 'count=1' <<<"$output"
+
+  objective-c:
+    if: github.head_ref == 'patterns/singleton-kb006'
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Validate Objective-C Singleton
+        shell: bash
+        run: |
+          set -euo pipefail
+          clang -fobjc-arc -Wall -Wextra -Werror -framework Foundation src/Systems/Objective-C/singleton.m -o /tmp/singleton-objective-c
+          output="$(/tmp/singleton-objective-c 2>&1)"
+          grep -Fq 'same=true' <<<"$output"
+          grep -Fq 'count=1' <<<"$output"
+
+  gdscript:
+    if: github.head_ref == 'patterns/singleton-kb006'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Setup Godot 4.6.3
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 'https://github.com/godotengine/godot-builds/releases/download/4.6.3-stable/Godot_v4.6.3-stable_linux.x86_64.zip' --output /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          sudo install -m 0755 /tmp/godot/Godot_v4.6.3-stable_linux.x86_64 /usr/local/bin/godot
+      - name: Validate GDScript Singleton
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(godot --headless --script src/Niche/GDScript/singleton.gd 2>&1)"
+          grep -Fxq 'same=true' <<<"$output"
+          grep -Fxq 'count=1' <<<"$output"
+
+  matlab:
+    if: github.head_ref == 'patterns/singleton-kb006'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Setup MATLAB
+        uses: matlab-actions/setup-matlab@v3
+        with:
+          release: latest
+      - name: Validate MATLAB Singleton
+        uses: matlab-actions/run-command@v3
+        with:
+          command: >-
+            addpath('src/DataScience/MATLAB');
+            output = evalc('singleton');
+            disp(output);
+            assert(contains(output, "same=true"));
+            assert(contains(output, "count=1"));
+
+  micropython:
+    if: github.head_ref == 'patterns/singleton-kb006'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Build MicroPython 1.28.0 Unix port
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential libffi-dev pkg-config
+          git clone --depth 1 --branch v1.28.0 --recurse-submodules https://github.com/micropython/micropython.git /tmp/micropython
+          make -C /tmp/micropython/mpy-cross -j2
+          make -C /tmp/micropython/ports/unix -j2
+      - name: Validate MicroPython Singleton
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(/tmp/micropython/ports/unix/build-standard/micropython src/Other/MicroPython/singleton.py)"
+          grep -Fxq 'same=true' <<<"$output"
+          grep -Fxq 'count=1' <<<"$output"
+
+  rockstar:
+    if: github.head_ref == 'patterns/singleton-kb006'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Setup Rockstar v2.0.31
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 'https://github.com/RockstarLang/rockstar/releases/download/v2.0.31/rockstar-v2.0.31-linux-x64.tar.gz' --output /tmp/rockstar.tar.gz
+          echo '3d265c80d9d039ad92524f42951eb546d8b42c680965dfa551210457e399653f  /tmp/rockstar.tar.gz' | sha256sum -c -
+          mkdir -p /tmp/rockstar
+          tar -xzf /tmp/rockstar.tar.gz -C /tmp/rockstar
+          ROCKSTAR="$(find /tmp/rockstar -type f -name rockstar -perm -111 | head -n 1)"
+          echo "ROCKSTAR=$ROCKSTAR" >> "$GITHUB_ENV"
+      - name: Validate Rockstar Singleton
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$("$ROCKSTAR" src/Other/Rockstar/singleton.rock)"
+          grep -Fxq 'same=true' <<<"$output"
+          grep -Fxq '1' <<<"$output"
+
+  proprietary-source-contracts:
+    if: github.head_ref == 'patterns/singleton-kb006'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Validate VBA and Delphi Singleton source contracts
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          def require(text: str, pattern: str, label: str) -> None:
+              if re.search(pattern, text, flags=re.IGNORECASE | re.MULTILINE | re.DOTALL) is None:
+                  raise SystemExit(f"Missing source contract: {label}")
+
+          vba = Path('src/Shell/VBA/singleton.bas').read_text(encoding='utf-8')
+          for pattern, label in [
+              (r'^Option Explicit$', 'VBA Option Explicit'),
+              (r'Private\s+SharedRegistry\s+As\s+RegistryState', 'VBA module singleton state'),
+              (r'Public\s+Function\s+RegistryIdentity\(\)\s+As\s+String', 'VBA controlled accessor'),
+              (r'IncrementRegistry.*RegistryCount', 'VBA shared mutation/read contract'),
+              (r'Debug\.Print\s+"same=".*Debug\.Print\s+"count="', 'VBA observable contract'),
+          ]:
+              require(vba, pattern, label)
+
+          delphi = Path('src/Enterprise/Delphi/SingletonExample.pas').read_text(encoding='utf-8')
+          for pattern, label in [
+              (r'class\s+var\s+FInstance:\s*TRegistry', 'Delphi class singleton state'),
+              (r'constructor\s+CreatePrivate', 'Delphi controlled constructor'),
+              (r'class\s+function\s+Instance:\s*TRegistry', 'Delphi accessor'),
+              (r'if\s+not\s+Assigned\(FInstance\).*FInstance\s*:=\s*TRegistry\.CreatePrivate', 'Delphi lazy singleton creation'),
+              (r'FirstRegistry\s*:=\s*TRegistry\.Instance.*SecondRegistry\s*:=\s*TRegistry\.Instance.*FirstRegistry\.Increment', 'Delphi shared access contract'),
+          ]:
+              require(delphi, pattern, label)
+
+          print('VBA Singleton source contract: OK')
+          print('Delphi Singleton source contract: OK')
