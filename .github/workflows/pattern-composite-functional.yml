@@ -1,0 +1,141 @@
+name: Pattern Composite Functional
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-composite-functional.yml'
+      - 'src/DataScience/R/composite.R'
+      - 'src/DataScience/Octave/composite.m'
+      - 'src/DataScience/Julia/composite.jl'
+      - 'src/Functional/OCaml/composite.ml'
+      - 'src/Functional/Lisp/composite.lisp'
+      - 'src/Functional/Clojure/composite.clj'
+      - 'src/Functional/Elixir/composite.exs'
+      - 'src/Functional/Erlang/composite.erl'
+      - 'src/Niche/Prolog/composite.pl'
+      - 'src/Scripting/Groovy/composite.groovy'
+      - 'wiki/Composite.md'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Erlang and Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '28.5.0.4'
+          elixir-version: '1.19.1'
+
+      - name: Setup Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: '1'
+
+      - name: Setup functional runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y octave r-base ocaml sbcl clojure swi-prolog-nox groovy
+
+      - name: Validate R
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(Rscript --vanilla src/DataScience/R/composite.R)"
+          grep -Fxq 'leaf=2' <<<"$output"
+          grep -Fxq 'docs=8' <<<"$output"
+          grep -Fxq 'root=10' <<<"$output"
+
+      - name: Validate Octave
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(octave --no-gui --quiet --eval "addpath('src/DataScience/Octave'); composite();")"
+          grep -Fxq 'leaf=2' <<<"$output"
+          grep -Fxq 'docs=8' <<<"$output"
+          grep -Fxq 'root=10' <<<"$output"
+
+      - name: Validate Julia
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(julia --startup-file=no src/DataScience/Julia/composite.jl)"
+          grep -Fxq 'leaf=2' <<<"$output"
+          grep -Fxq 'docs=8' <<<"$output"
+          grep -Fxq 'root=10' <<<"$output"
+
+      - name: Validate OCaml
+        shell: bash
+        run: |
+          set -euo pipefail
+          ocamlc -w +A-70 -warn-error +A-70 src/Functional/OCaml/composite.ml -o /tmp/composite-ocaml
+          output="$(/tmp/composite-ocaml)"
+          grep -Fxq 'leaf=2' <<<"$output"
+          grep -Fxq 'docs=8' <<<"$output"
+          grep -Fxq 'root=10' <<<"$output"
+
+      - name: Validate Common Lisp
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(sbcl --noinform --non-interactive --load src/Functional/Lisp/composite.lisp)"
+          grep -Fxq 'leaf=2' <<<"$output"
+          grep -Fxq 'docs=8' <<<"$output"
+          grep -Fxq 'root=10' <<<"$output"
+
+      - name: Validate Clojure
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(clojure src/Functional/Clojure/composite.clj)"
+          grep -Fxq 'leaf=2' <<<"$output"
+          grep -Fxq 'docs=8' <<<"$output"
+          grep -Fxq 'root=10' <<<"$output"
+
+      - name: Validate Elixir
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(elixir --warnings-as-errors src/Functional/Elixir/composite.exs)"
+          grep -Fxq 'leaf=2' <<<"$output"
+          grep -Fxq 'docs=8' <<<"$output"
+          grep -Fxq 'root=10' <<<"$output"
+
+      - name: Validate Erlang
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          erlc -Werror -o "$work" src/Functional/Erlang/composite.erl
+          output="$(erl -noshell -pa "$work" -eval 'composite:main(), halt().')"
+          grep -Fxq 'leaf=2' <<<"$output"
+          grep -Fxq 'docs=8' <<<"$output"
+          grep -Fxq 'root=10' <<<"$output"
+
+      - name: Validate Prolog
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(swipl -q -s src/Niche/Prolog/composite.pl -g run -t halt)"
+          grep -Fxq 'leaf=2' <<<"$output"
+          grep -Fxq 'docs=8' <<<"$output"
+          grep -Fxq 'root=10' <<<"$output"
+
+      - name: Validate Groovy
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          groovyc -d "$work" src/Scripting/Groovy/composite.groovy
+          output="$(groovy src/Scripting/Groovy/composite.groovy)"
+          grep -Fxq 'leaf=2' <<<"$output"
+          grep -Fxq 'docs=8' <<<"$output"
+          grep -Fxq 'root=10' <<<"$output"
