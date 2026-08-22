@@ -20,10 +20,10 @@ function Resolve-AuditConfiguration {
     }
 
     [pscustomobject]@{
-        StorageWarningPercent  = $warning
+        StorageWarningPercent = $warning
         StorageCriticalPercent = $critical
-        MemoryWarningPercent   = $memoryWarning
-        InventoryLimit         = $inventoryLimit
+        MemoryWarningPercent = $memoryWarning
+        InventoryLimit = $inventoryLimit
     }
 }
 
@@ -71,7 +71,10 @@ function Get-WindowsInventorySnapshot {
         )
         $software = @(
             Get-ItemProperty -Path $registryPaths -ErrorAction SilentlyContinue |
-                Where-Object { -not [string]::IsNullOrWhiteSpace($_.DisplayName) } |
+                Where-Object {
+                    $displayNameProperty = $_.PSObject.Properties['DisplayName']
+                    $null -ne $displayNameProperty -and -not [string]::IsNullOrWhiteSpace([string]$displayNameProperty.Value)
+                } |
                 Sort-Object DisplayName, DisplayVersion -Unique |
                 Select-Object -First $Limit DisplayName, DisplayVersion, Publisher
         )
@@ -120,11 +123,13 @@ function Get-PlatformSnapshot {
     [CmdletBinding()]
     param()
 
-    $drives = @(Get-PSDrive -PSProvider FileSystem | ForEach-Object {
-        $used = if ($null -eq $_.Used) { 0L } else { [long]$_.Used }
-        $free = if ($null -eq $_.Free) { 0L } else { [long]$_.Free }
-        [pscustomobject]@{ Name = $_.Name; Root = $_.Root; UsedBytes = $used; FreeBytes = $free; TotalBytes = $used + $free }
-    })
+    $drives = @(
+        Get-PSDrive -PSProvider FileSystem | ForEach-Object {
+            $used = if ($null -eq $_.Used) { 0L } else { [long]$_.Used }
+            $free = if ($null -eq $_.Free) { 0L } else { [long]$_.Free }
+            [pscustomobject]@{ Name = $_.Name; Root = $_.Root; UsedBytes = $used; FreeBytes = $free; TotalBytes = $used + $free }
+        }
+    )
 
     [pscustomobject]@{
         ComputerName = [Environment]::MachineName
@@ -138,6 +143,7 @@ function Get-PlatformSnapshot {
 function Get-StorageFinding {
     [CmdletBinding()]
     param([Parameter(Mandatory, ValueFromPipeline)][psobject]$Drive, [psobject]$Configuration = (Resolve-AuditConfiguration))
+
     process {
         if ($Drive.TotalBytes -le 0) {
             return [pscustomobject]@{ Code = 'storage.unknown'; Severity = 'Info'; Message = "No hay capacidad medible para $($Drive.Name)."; Evidence = @{ Name = $Drive.Name; TotalBytes = $Drive.TotalBytes } }
@@ -224,6 +230,7 @@ function Get-WorkstationAudit {
 function Export-WorkstationAudit {
     [CmdletBinding()]
     param([Parameter(Mandatory, ValueFromPipeline)][psobject]$Audit, [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$Path)
+
     process {
         $parent = Split-Path -Parent $Path
         if ($parent -and -not (Test-Path -LiteralPath $parent)) { New-Item -ItemType Directory -Path $parent -Force | Out-Null }
@@ -235,6 +242,7 @@ function Export-WorkstationAudit {
 function Export-WorkstationAuditText {
     [CmdletBinding()]
     param([Parameter(Mandatory, ValueFromPipeline)][psobject]$Audit, [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$Path)
+
     process {
         $parent = Split-Path -Parent $Path
         if ($parent -and -not (Test-Path -LiteralPath $parent)) { New-Item -ItemType Directory -Path $parent -Force | Out-Null }
@@ -264,6 +272,7 @@ function Import-WorkstationAudit {
 
 function Get-FindingIdentity {
     param([Parameter(Mandatory)][psobject]$Finding)
+
     $name = $null
     if ($null -ne $Finding.Evidence -and $null -ne $Finding.Evidence.PSObject.Properties['Name']) { $name = $Finding.Evidence.Name }
     if ($name) { return "$($Finding.Code)|$name" }
@@ -278,15 +287,25 @@ function Compare-WorkstationAudit {
         throw [System.ArgumentException]::new('No se comparan auditorías de equipos diferentes.')
     }
 
-    $before = @{}; foreach ($finding in @($Baseline.Findings)) { $before[(Get-FindingIdentity $finding)] = $finding }
-    $after = @{}; foreach ($finding in @($Current.Findings)) { $after[(Get-FindingIdentity $finding)] = $finding }
-    $added = @(); $resolved = @(); $changed = @()
+    $before = @{}
+    foreach ($finding in @($Baseline.Findings)) { $before[(Get-FindingIdentity $finding)] = $finding }
+    $after = @{}
+    foreach ($finding in @($Current.Findings)) { $after[(Get-FindingIdentity $finding)] = $finding }
+    $added = @()
+    $resolved = @()
+    $changed = @()
     foreach ($key in $after.Keys) {
         if (-not $before.ContainsKey($key)) { $added += $after[$key] }
         elseif ($before[$key].Severity -ne $after[$key].Severity) { $changed += [pscustomobject]@{ Identity = $key; Before = $before[$key].Severity; After = $after[$key].Severity } }
     }
     foreach ($key in $before.Keys) { if (-not $after.ContainsKey($key)) { $resolved += $before[$key] } }
-    [pscustomobject]@{ ComputerName = $Current.Snapshot.ComputerName; Added = $added; Resolved = $resolved; Changed = $changed; Summary = [pscustomobject]@{ Added = $added.Count; Resolved = $resolved.Count; Changed = $changed.Count } }
+    [pscustomobject]@{
+        ComputerName = $Current.Snapshot.ComputerName
+        Added = $added
+        Resolved = $resolved
+        Changed = $changed
+        Summary = [pscustomobject]@{ Added = $added.Count; Resolved = $resolved.Count; Changed = $changed.Count }
+    }
 }
 
 Export-ModuleMember -Function Resolve-AuditConfiguration, Get-WindowsSystemSnapshot, Get-WindowsInventorySnapshot, Get-ExecutionContextSnapshot, Get-PlatformSnapshot, Get-StorageFinding, Get-MemoryFinding, Get-PrivilegeFinding, Get-WorkstationAudit, Export-WorkstationAudit, Export-WorkstationAuditText, Import-WorkstationAudit, Compare-WorkstationAudit
