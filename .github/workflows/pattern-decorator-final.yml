@@ -51,6 +51,7 @@ jobs:
 
           work="$(mktemp -d)"
 
+          mkdir -p "$work/ada"
           gnatmake -q -gnat2022 -gnatwa -gnatwe -D "$work/ada" src/Historical/Ada/decorator.adb -o "$work/decorator-ada"
           assert_output "$("$work/decorator-ada")"
 
