@@ -5,7 +5,7 @@ abort "Contact model unavailable" unless defined?(Contact)
 contact = Contact.new(
   name: "Smoke Contact",
   email: "smoke@example.test",
-  status: "prospect"
+  status: "active"
 )
 
 abort "Contact validations unavailable" unless contact.valid?
