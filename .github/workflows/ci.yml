@@ -52,8 +52,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends -y fp-compiler octave r-base lua5.4 ghc gfortran ocaml sbcl scala clojure elixir swi-prolog-nox gnat gnucobol3 nasm nim groovy
+          echo 'Updating apt metadata for pattern runtimes'
+          sudo env DEBIAN_FRONTEND=noninteractive timeout --signal=TERM 5m apt-get update -o Acquire::Retries=3
+          echo 'Installing pattern runtimes with a bounded non-interactive setup'
+          sudo env DEBIAN_FRONTEND=noninteractive timeout --signal=TERM 20m apt-get install -o Acquire::Retries=3 --no-install-recommends -y fp-compiler octave r-base lua5.4 ghc gfortran ocaml sbcl scala clojure elixir swi-prolog-nox gnat gnucobol3 nasm nim groovy
 
       - name: Restore
         run: dotnet restore Genkidama.slnx
@@ -184,10 +186,31 @@ jobs:
       - name: Pack CLI Tool
         run: dotnet pack src/Genkidama.Cli/Genkidama.Cli.csproj --configuration Release --no-build --output artifacts/packages
 
-  adapter-mainstream:
-    if: github.event_name == 'pull_request' && github.head_ref == 'patterns/adapter-kb006'
+  objective-c-abstract-factory:
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'patterns/')
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Validate Objective-C Abstract Factory with Foundation
+        shell: bash
+        run: |
+          set -euo pipefail
+          clang -fobjc-arc -Wall -Wextra -Werror -framework Foundation \
+            src/Systems/Objective-C/example1.m \
+            -o /tmp/abstract-factory-objective-c
+          output="$(/tmp/abstract-factory-objective-c 2>&1)"
+          printf '%s\n' "$output"
+          grep -Fq 'Dark Button' <<<"$output"
+          grep -Fq 'Dark Checkbox' <<<"$output"
+          grep -Fq 'Light Button' <<<"$output"
+          grep -Fq 'Light Checkbox' <<<"$output"
+
+  factory-method-mainstream:
+    if: github.event_name == 'pull_request' && github.head_ref == 'patterns/factory-method-kb006'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
 
     steps:
       - name: Checkout
@@ -222,130 +245,172 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Setup portable Adapter runtimes
+      - name: Setup portable runtimes
         shell: bash
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y php-cli ruby lua5.4 ghc scala perl fp-compiler
+          sudo apt-get install --no-install-recommends -y php-cli lua5.4 ruby
 
-      - name: Validate Adapter mainstream examples
+      - name: Validate mainstream and portable Factory Method examples
         shell: bash
         run: |
           set -euo pipefail
-
-          assert_adapter() {
+          assert_output() {
             local output="$1"
-            grep -Fxq 'legacy=86F' <<<"$output"
-            grep -Fxq 'adapted=30C' <<<"$output"
+            grep -Fq 'PostgreSQL connect' <<<"$output"
+            grep -Fq 'MySQL query' <<<"$output"
           }
 
           work="$(mktemp -d)"
-
           dotnet new console --framework net10.0 --output "$work/csharp" --force >/dev/null
-          cp 'src/Enterprise/C#/AdapterExample.cs' "$work/csharp/Program.cs"
-          assert_adapter "$(dotnet run --project "$work/csharp" --configuration Release)"
+          cp 'src/Enterprise/C#/FactoryMethodExample.cs' "$work/csharp/Program.cs"
+          assert_output "$(dotnet run --project "$work/csharp" --configuration Release)"
 
-          python -m py_compile src/Scripting/PythonPY/adapter.py
-          assert_adapter "$(python src/Scripting/PythonPY/adapter.py)"
+          java_out="$work/java"
+          mkdir -p "$java_out"
+          javac -Xlint:all -Werror -d "$java_out" src/Enterprise/Java/FactoryMethodExample.java
+          assert_output "$(java -cp "$java_out" FactoryMethodExample)"
 
-          node --check src/Web/JavaScriptJS/adapter.js
-          assert_adapter "$(node src/Web/JavaScriptJS/adapter.js)"
+          python -m py_compile src/Scripting/PythonPY/factory_method.py
+          assert_output "$(python src/Scripting/PythonPY/factory_method.py)"
 
-          npx --yes --package typescript@6.0.3 tsc src/Web/TypeScriptTS/adapter.ts --strict --target ES2024 --module commonjs --outDir "$work/typescript"
-          assert_adapter "$(node "$work/typescript/adapter.js")"
+          node --check src/Web/JavaScriptJS/factory_method.js
+          assert_output "$(node src/Web/JavaScriptJS/factory_method.js)"
 
-          test -z "$(gofmt -d src/Systems/Go/adapter.go)"
-          go vet src/Systems/Go/adapter.go
-          assert_adapter "$(go run src/Systems/Go/adapter.go)"
+          ts_out="$work/typescript"
+          npx --yes --package typescript@6.0.3 tsc src/Web/TypeScriptTS/factory_method.ts --strict --target ES2024 --module commonjs --outDir "$ts_out"
+          assert_output "$(node "$ts_out/factory_method.js")"
 
-          rustfmt --check src/Systems/Rust/adapter.rs
-          rustc -D warnings src/Systems/Rust/adapter.rs -o "$work/adapter-rust"
-          assert_adapter "$("$work/adapter-rust")"
+          test -z "$(gofmt -d src/Systems/Go/factory_method.go)"
+          go vet src/Systems/Go/factory_method.go
+          assert_output "$(go run src/Systems/Go/factory_method.go)"
 
-          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/adapter.cpp' -o "$work/adapter-cpp"
-          assert_adapter "$("$work/adapter-cpp")"
+          rustfmt --check src/Systems/Rust/factory_method.rs
+          rustc -D warnings src/Systems/Rust/factory_method.rs -o "$work/factory-method-rust"
+          assert_output "$("$work/factory-method-rust")"
 
-          javac -Xlint:all -Werror -d "$work/java" src/Enterprise/Java/AdapterExample.java
-          assert_adapter "$(java -cp "$work/java" AdapterExample)"
+          php -l src/Scripting/PHP/factory_method.php >/dev/null
+          assert_output "$(php src/Scripting/PHP/factory_method.php)"
 
-          php -l src/Scripting/PHP/adapter.php
-          assert_adapter "$(php src/Scripting/PHP/adapter.php)"
+          gcc -std=c17 -Wall -Wextra -Werror src/Systems/C/factory_method.c -o "$work/factory-method-c"
+          assert_output "$("$work/factory-method-c")"
 
-          command -v kotlinc >/dev/null
-          kotlinc src/Enterprise/Kotlin/AdapterExample.kt -include-runtime -d "$work/adapter-kotlin.jar"
-          assert_adapter "$(java -jar "$work/adapter-kotlin.jar")"
-
-          command -v swiftc >/dev/null
-          swiftc src/Systems/Swift/adapter.swift -o "$work/adapter-swift"
-          assert_adapter "$("$work/adapter-swift")"
-
-          assert_adapter "$(dotnet fsi 'src/Functional/F#/adapter.fsx')"
-
-      - name: Validate Adapter portable examples
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          assert_adapter() {
-            local output="$1"
-            grep -Fxq 'legacy=86F' <<<"$output"
-            grep -Fxq 'adapted=30C' <<<"$output"
-          }
-
-          work="$(mktemp -d)"
+          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/factory_method.cpp' -o "$work/factory-method-cpp"
+          assert_output "$("$work/factory-method-cpp")"
 
           vb="$work/vb"
           dotnet new console --language VB --framework net10.0 --output "$vb" --force >/dev/null
-          cp src/Enterprise/VisualBasic/AdapterExample.vb "$vb/Program.vb"
-          assert_adapter "$(dotnet run --project "$vb" --configuration Release)"
+          cp src/Enterprise/VisualBasic/FactoryMethodExample.vb "$vb/Program.vb"
+          assert_output "$(dotnet run --project "$vb" --configuration Release)"
 
-          gcc -std=c17 -Wall -Wextra -Werror src/Systems/C/adapter.c -o "$work/adapter-c"
-          assert_adapter "$("$work/adapter-c")"
+          assert_output "$(dotnet fsi 'src/Functional/F#/factory_method.fsx')"
 
-          ruby -cw src/Scripting/RubyRB/adapter.rb
-          assert_adapter "$(ruby src/Scripting/RubyRB/adapter.rb)"
+          ruby -cw src/Scripting/RubyRB/factory_method.rb
+          assert_output "$(ruby src/Scripting/RubyRB/factory_method.rb)"
+          assert_output "$(lua5.4 src/Scripting/Lua/factory_method.lua)"
+          bash -n src/Shell/Bash/factory_method.sh
+          assert_output "$(bash src/Shell/Bash/factory_method.sh)"
+          assert_output "$(pwsh -NoLogo -NoProfile -NonInteractive -File src/Shell/PowerShell/factory_method.ps1)"
 
-          assert_adapter "$(lua5.4 src/Scripting/Lua/adapter.lua)"
+          kotlinc src/Enterprise/Kotlin/FactoryMethodExample.kt -include-runtime -d "$work/factory-method-kotlin.jar"
+          assert_output "$(java -jar "$work/factory-method-kotlin.jar")"
 
-          bash -n src/Shell/Bash/adapter.sh
-          assert_adapter "$(bash src/Shell/Bash/adapter.sh)"
+          swiftc src/Systems/Swift/factory_method.swift -o "$work/factory-method-swift"
+          assert_output "$("$work/factory-method-swift")"
 
-          assert_adapter "$(pwsh -NoLogo -NoProfile -NonInteractive -File src/Shell/PowerShell/adapter.ps1)"
+  factory-method-portable:
+    if: github.event_name == 'pull_request' && github.head_ref == 'patterns/factory-method-kb006'
+    runs-on: ubuntu-latest
 
-          assert_adapter "$(runghc -Wall -Werror src/Functional/Haskell/Adapter.hs)"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Zig
+        uses: mlugg/setup-zig@v2
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+
+      - name: Setup Crystal
+        uses: crystal-lang/install-crystal@v1
+
+      - name: Setup portable runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y gnat gfortran fp-compiler ghc scala groovy nim
+
+      - name: Validate extended portable Factory Method examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          assert_output() {
+            local output="$1"
+            grep -Fq 'PostgreSQL connect' <<<"$output"
+            grep -Fq 'MySQL query' <<<"$output"
+          }
+
+          work="$(mktemp -d)"
+          gnatmake -q -gnat2022 -gnatwa -gnatwe src/Historical/Ada/factory_method.adb -o "$work/factory-method-ada"
+          assert_output "$("$work/factory-method-ada")"
+
+          sol="$work/solidity"
+          mkdir -p "$sol"
+          npx --yes solc@0.8.30 --bin --abi src/Niche/Solidity/FactoryMethod.sol -o "$sol"
+          test -n "$(find "$sol" -type f -name '*FactoryMethodPostgresCreator.bin' -size +0c -print -quit)"
+          test -n "$(find "$sol" -type f -name '*FactoryMethodMySqlCreator.bin' -size +0c -print -quit)"
+
+          gfortran -std=f2018 -Wall -Wextra -Werror src/Historical/Fortran/factory_method.f90 -o "$work/factory-method-fortran"
+          assert_output "$("$work/factory-method-fortran")"
+
+          pas="$work/pascal"
+          mkdir -p "$pas"
+          fpc -Mobjfpc -O2 -Sew -FE"$pas" src/Historical/Pascal/factory_method.pas >/dev/null
+          assert_output "$("$pas/factory_method")"
+
+          zig fmt --check src/Systems/Zig/factory_method.zig
+          assert_output "$(zig run src/Systems/Zig/factory_method.zig 2>&1)"
+
+          nim c --hints:off --warnings:on -o:"$work/factory-method-nim" src/Niche/Nim/factory_method.nim
+          assert_output "$("$work/factory-method-nim")"
+
+          dart format --output=none --set-exit-if-changed src/Web/Dart/factory_method.dart
+          dart analyze --fatal-infos --fatal-warnings src/Web/Dart/factory_method.dart
+          assert_output "$(dart run src/Web/Dart/factory_method.dart)"
+
+          crystal tool format src/Niche/Crystal/factory_method.cr
+          test -z "$(git status --short -- src/Niche/Crystal/factory_method.cr)"
+          crystal build --error-on-warnings src/Niche/Crystal/factory_method.cr -o "$work/factory-method-crystal"
+          assert_output "$("$work/factory-method-crystal")"
+
+          assert_output "$(runghc -Wall -Werror src/Functional/Haskell/FactoryMethod.hs)"
 
           scala_out="$work/scala"
           mkdir -p "$scala_out"
-          scalac -deprecation -feature -unchecked src/Functional/Scala/Adapter.scala -d "$scala_out"
-          assert_adapter "$(scala -cp "$scala_out" Adapter)"
+          scalac -deprecation -feature -unchecked src/Functional/Scala/FactoryMethod.scala -d "$scala_out"
+          assert_output "$(scala -cp "$scala_out" FactoryMethod)"
 
-          perl -c src/Scripting/Perl/adapter.pl
-          assert_adapter "$(perl src/Scripting/Perl/adapter.pl)"
+          groovyc -d "$work/groovy" src/Scripting/Groovy/factory_method.groovy
+          assert_output "$(groovy src/Scripting/Groovy/factory_method.groovy)"
 
-          pascal_out="$work/pascal"
-          mkdir -p "$pascal_out"
-          fpc -Mobjfpc -O2 -Sew -FE"$pascal_out" src/Historical/Pascal/adapter.pas >/dev/null
-          assert_adapter "$("$pascal_out/adapter")"
-
-  objective-c-abstract-factory:
-    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'patterns/')
+  factory-method-objective-c:
+    if: github.event_name == 'pull_request' && github.head_ref == 'patterns/factory-method-kb006'
     runs-on: macos-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Validate Objective-C Abstract Factory with Foundation
+      - name: Validate Objective-C Factory Method with Foundation
         shell: bash
         run: |
           set -euo pipefail
           clang -fobjc-arc -Wall -Wextra -Werror -framework Foundation \
-            src/Systems/Objective-C/example1.m \
-            -o /tmp/abstract-factory-objective-c
-          output="$(/tmp/abstract-factory-objective-c 2>&1)"
-          printf '%s\n' "$output"
-          grep -Fq 'Dark Button' <<<"$output"
-          grep -Fq 'Dark Checkbox' <<<"$output"
-          grep -Fq 'Light Button' <<<"$output"
-          grep -Fq 'Light Checkbox' <<<"$output"
+            src/Systems/Objective-C/factory_method.m \
+            -o /tmp/factory-method-objective-c
+          output="$(/tmp/factory-method-objective-c 2>&1)"
+          grep -Fq 'PostgreSQL connect' <<<"$output"
+          grep -Fq 'MySQL query' <<<"$output"
