@@ -2,8 +2,8 @@
 
 > **Familia:** Structural  
 > **Intención:** añadir responsabilidades a un objeto de forma componible, envolviéndolo con objetos que conservan el mismo contrato observable.  
-> **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `22/48`  
+> **Estado:** `validated`  
+> **Implementaciones de lenguaje:** `48/48`  
 > **Cobertura de pruebas:** N/A — la completitud de lenguajes se valida por comportamiento/toolchain; no existe una métrica homogénea entre 48 ecosistemas standalone.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -24,7 +24,9 @@ Un componente cumple un contrato útil, pero algunos clientes necesitan capacida
 
 ## La solución
 
-Definir un contrato común `Component`. El componente base implementa el comportamiento esencial. Cada Decorator implementa el mismo contrato, conserva una referencia al componente envuelto y añade responsabilidad antes o después de delegar. Como un Decorator también es un `Component`, varios wrappers pueden apilarse dinámicamente.
+Definir un contrato común `Component`. El componente base implementa el comportamiento esencial. Cada Decorator preserva el mismo contrato, conserva una referencia o función delegada hacia el componente envuelto y añade responsabilidad antes o después de delegar. Como el Decorator sigue siendo consumible mediante el mismo contrato, varios wrappers pueden apilarse dinámicamente.
+
+La intención no exige clases. En lenguajes funcionales o dinámicos puede expresarse con funciones de orden superior, closures, módulos, tablas, registros, callbacks u otros mecanismos que mantengan contrato, delegación y composición.
 
 ## Participantes y responsabilidades
 
@@ -32,17 +34,17 @@ Definir un contrato común `Component`. El componente base implementa el comport
 |---|---|
 | `Component` | Contrato que el cliente consume tanto para componentes base como decorados. |
 | `ConcreteComponent` | Implementa el comportamiento esencial sin responsabilidades opcionales. |
-| `Decorator` | Conserva un `Component` envuelto y mantiene el mismo contrato. |
+| `Decorator` | Conserva o captura un componente envuelto y mantiene el mismo contrato observable. |
 | `ConcreteDecorator` | Añade una responsabilidad concreta y delega al componente envuelto. |
-| Cliente | Compone wrappers según las responsabilidades necesarias y usa sólo `Component`. |
+| Cliente | Compone wrappers según las responsabilidades necesarias y usa sólo el contrato común. |
 
 ## Cómo funciona
 
 1. El cliente crea un componente base.
 2. Si necesita una responsabilidad adicional, lo envuelve con un Decorator compatible.
-3. Cada Decorator conserva el mismo contrato y delega al objeto envuelto.
+3. Cada Decorator conserva el mismo contrato y delega al componente envuelto.
 4. Se pueden apilar varios Decorators; cada uno añade su responsabilidad en un orden explícito.
-5. El cliente invoca la operación común sin conocer la clase concreta de cada capa.
+5. El cliente invoca la operación común sin conocer la implementación concreta de cada capa.
 
 ## Diagrama
 
@@ -89,7 +91,16 @@ encrypted.render() // enc(alert)
 stacked.render()   // audit(enc(alert))
 ```
 
-El ejemplo canónico de este patrón en Genkidama usa precisamente estas cuatro observaciones para demostrar componente base, dos responsabilidades independientes y composición de wrappers.
+El ejemplo canónico de este patrón en Genkidama usa precisamente estas cuatro observaciones:
+
+```text
+base=alert
+audit=audit(alert)
+encrypted=enc(alert)
+stacked=audit(enc(alert))
+```
+
+La última línea demuestra composición y hace observable el orden de wrappers.
 
 ## Aplicación real
 
@@ -101,7 +112,7 @@ Si todas las llamadas necesitan siempre exactamente la misma política y nunca v
 
 ## En Genkidama
 
-La filosofía del repositorio identifica **logging, caching, validation y authorization wrappers** como presión natural para Decorator, pero esta página no declara una implementación productiva deliberada sin una ruta concreta y auditada. El catálogo educativo no modificará arquitectura productiva sólo para exhibir el patrón.
+La filosofía del repositorio identifica **logging, caching, validation y authorization wrappers** como presión natural para Decorator. No existe todavía una ruta productiva deliberada auditada que esta página pueda señalar como implementación canónica; por ello el patrón se mantiene como ejemplo educativo y no se fuerza dentro de la arquitectura productiva.
 
 ## Cuándo usarlo
 
@@ -153,17 +164,16 @@ Si no existe presión real de combinación dinámica, una función o composició
 
 ## Cómo comprobar una implementación
 
-- El componente base y los decorados se consumen mediante el mismo contrato.
+- El componente base y los decorados se consumen mediante el mismo contrato observable.
 - Cada Decorator delega al componente envuelto y añade una responsabilidad observable.
 - Dos responsabilidades pueden aplicarse de forma independiente.
 - Dos Decorators pueden apilarse y el resultado refleja el orden de composición.
-- La prueba observa comportamiento, no nombres como `Decorator` o herencia.
+- La validación observa comportamiento y no depende de que existan clases llamadas `Decorator`.
+- Cuando existe toolchain razonable, el ejemplo compila, analiza, formatea o ejecuta con el gate más fuerte y ligero disponible.
 
 ## Matriz de implementaciones
 
-El universo canónico mantiene **51 targets**. Decorator clasifica provisionalmente **48 como Applicable** y **HTML, CSS y SQL declarativo como N/A**. La falta de clases no excluye ningún lenguaje: closures, higher-order functions, records, modules, predicates, tables, callbacks y otros mecanismos son válidos si preservan el contrato y la composición.
-
-Actualmente existen **32/48 ejemplos materializados** y **22/48 verificados**. Mainstream y portable están verdes con sus toolchains reales; los diez funcionales permanecen candidatos hasta obtener su propia evidencia.
+El universo canónico mantiene **51 targets**. Decorator clasifica **48 como Applicable** y **HTML, CSS y SQL declarativo como N/A**. Los **48/48 Applicable tienen ejemplo real, enlazado y verificado**. La falta de clases no excluye ningún lenguaje: closures, higher-order functions, records, modules, predicates, tables, callbacks y otros mecanismos son válidos si preservan contrato, delegación y composición.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo | Estado |
 |---|---|---|---|
@@ -189,37 +199,41 @@ Actualmente existen **32/48 ejemplos materializados** y **22/48 verificados**. M
 | Scala | Applicable | [`src/Functional/Scala/Decorator.scala`](../src/Functional/Scala/Decorator.scala) | ✅ verificado |
 | Perl | Applicable | [`src/Scripting/Perl/decorator.pl`](../src/Scripting/Perl/decorator.pl) | ✅ verificado |
 | Pascal | Applicable | [`src/Historical/Pascal/decorator.pas`](../src/Historical/Pascal/decorator.pas) | ✅ verificado |
-| R | Applicable | [`src/DataScience/R/decorator.R`](../src/DataScience/R/decorator.R) | candidato |
-| GNU Octave | Applicable | [`src/DataScience/Octave/decorator.m`](../src/DataScience/Octave/decorator.m) | candidato |
-| Julia | Applicable | [`src/DataScience/Julia/decorator.jl`](../src/DataScience/Julia/decorator.jl) | candidato |
-| OCaml | Applicable | [`src/Functional/OCaml/decorator.ml`](../src/Functional/OCaml/decorator.ml) | candidato |
-| Common Lisp | Applicable | [`src/Functional/Lisp/decorator.lisp`](../src/Functional/Lisp/decorator.lisp) | candidato |
-| Clojure | Applicable | [`src/Functional/Clojure/decorator.clj`](../src/Functional/Clojure/decorator.clj) | candidato |
-| Elixir | Applicable | [`src/Functional/Elixir/decorator.exs`](../src/Functional/Elixir/decorator.exs) | candidato |
-| Erlang | Applicable | [`src/Functional/Erlang/decorator.erl`](../src/Functional/Erlang/decorator.erl) | candidato |
-| Prolog | Applicable | [`src/Niche/Prolog/decorator.pl`](../src/Niche/Prolog/decorator.pl) | candidato |
-| Groovy | Applicable | [`src/Scripting/Groovy/decorator.groovy`](../src/Scripting/Groovy/decorator.groovy) | candidato |
-| Ada | Applicable | — | pendiente |
-| Solidity | Applicable | — | pendiente |
-| Fortran | Applicable | — | pendiente |
-| Objective-C | Applicable | — | pendiente |
-| Zig | Applicable | — | pendiente |
-| Nim | Applicable | — | pendiente |
-| Dart | Applicable | — | pendiente |
-| Crystal | Applicable | — | pendiente |
-| COBOL | Applicable | — | pendiente |
-| VBA | Applicable | — | pendiente |
-| GDScript | Applicable | — | pendiente |
-| MATLAB | Applicable | — | pendiente |
-| Assembly | Applicable | — | pendiente |
-| Delphi | Applicable | — | pendiente |
-| MicroPython | Applicable | — | pendiente |
-| Rockstar | Applicable | — | pendiente |
+| R | Applicable | [`src/DataScience/R/decorator.R`](../src/DataScience/R/decorator.R) | ✅ verificado |
+| GNU Octave | Applicable | [`src/DataScience/Octave/decorator.m`](../src/DataScience/Octave/decorator.m) | ✅ verificado |
+| Julia | Applicable | [`src/DataScience/Julia/decorator.jl`](../src/DataScience/Julia/decorator.jl) | ✅ verificado |
+| OCaml | Applicable | [`src/Functional/OCaml/decorator.ml`](../src/Functional/OCaml/decorator.ml) | ✅ verificado |
+| Common Lisp | Applicable | [`src/Functional/Lisp/decorator.lisp`](../src/Functional/Lisp/decorator.lisp) | ✅ verificado |
+| Clojure | Applicable | [`src/Functional/Clojure/decorator.clj`](../src/Functional/Clojure/decorator.clj) | ✅ verificado |
+| Elixir | Applicable | [`src/Functional/Elixir/decorator.exs`](../src/Functional/Elixir/decorator.exs) | ✅ verificado |
+| Erlang | Applicable | [`src/Functional/Erlang/decorator.erl`](../src/Functional/Erlang/decorator.erl) | ✅ verificado |
+| Prolog | Applicable | [`src/Niche/Prolog/decorator.pl`](../src/Niche/Prolog/decorator.pl) | ✅ verificado |
+| Groovy | Applicable | [`src/Scripting/Groovy/decorator.groovy`](../src/Scripting/Groovy/decorator.groovy) | ✅ verificado |
+| Ada | Applicable | [`src/Historical/Ada/decorator.adb`](../src/Historical/Ada/decorator.adb) | ✅ verificado |
+| Solidity | Applicable | [`src/Niche/Solidity/Decorator.sol`](../src/Niche/Solidity/Decorator.sol) | ✅ verificado |
+| Fortran | Applicable | [`src/Historical/Fortran/decorator.f90`](../src/Historical/Fortran/decorator.f90) | ✅ verificado |
+| Objective-C | Applicable | [`src/Systems/Objective-C/decorator.m`](../src/Systems/Objective-C/decorator.m) | ✅ verificado |
+| Zig | Applicable | [`src/Systems/Zig/decorator.zig`](../src/Systems/Zig/decorator.zig) | ✅ verificado |
+| Nim | Applicable | [`src/Niche/Nim/decorator.nim`](../src/Niche/Nim/decorator.nim) | ✅ verificado |
+| Dart | Applicable | [`src/Web/Dart/decorator.dart`](../src/Web/Dart/decorator.dart) | ✅ verificado |
+| Crystal | Applicable | [`src/Niche/Crystal/decorator.cr`](../src/Niche/Crystal/decorator.cr) | ✅ verificado |
+| COBOL | Applicable | [`src/Historical/Cobol/decorator.cbl`](../src/Historical/Cobol/decorator.cbl) | ✅ verificado |
+| VBA | Applicable | [`src/Shell/VBA/DecoratorExample.bas`](../src/Shell/VBA/DecoratorExample.bas) | ✅ contrato verificado |
+| GDScript | Applicable | [`src/Niche/GDScript/decorator.gd`](../src/Niche/GDScript/decorator.gd) | ✅ verificado |
+| MATLAB | Applicable | [`src/DataScience/MATLAB/decorator.m`](../src/DataScience/MATLAB/decorator.m) | ✅ verificado |
+| Assembly | Applicable | [`src/LowLevel/Assembly/decorator.asm`](../src/LowLevel/Assembly/decorator.asm) | ✅ verificado |
+| Delphi | Applicable | [`src/Enterprise/Delphi/DecoratorExample.pas`](../src/Enterprise/Delphi/DecoratorExample.pas) | ✅ contrato verificado |
+| MicroPython | Applicable | [`src/Other/MicroPython/decorator.py`](../src/Other/MicroPython/decorator.py) | ✅ verificado |
+| Rockstar | Applicable | [`src/Other/Rockstar/decorator.rock`](../src/Other/Rockstar/decorator.rock) | ✅ verificado |
 | HTML | N/A | — | Declarativo: el comportamiento ejecutable pertenece al runtime/script que procesa el markup. |
-| CSS | N/A | — | Declarativo: reglas de presentación no proporcionan por sí mismas objetos/runtime wrappers componibles. |
+| CSS | N/A | — | Declarativo: reglas de presentación no proporcionan por sí mismas un runtime de wrappers componibles que preserve el contrato de un componente. |
 | SQL | N/A | — | SQL declarativo puede transformar datos, pero no expresa por sí mismo el contrato runtime que un Decorator preserva y envuelve. |
 
-Un ejemplo faltante o no verificado mantiene esta página `in-progress`; nunca se sustituye por un enlace inventado.
+## Evidencia de validación
+
+La validación se divide por familias para mantener feedback rápido y toolchains razonables. La certificación final ejecutada sobre el patrón demostró la última tranche con toolchains reales o contratos de fuente donde el runtime propietario no está disponible. En particular, el gate final comprobó Ada, Solidity, Fortran, Zig, Nim, Dart, Crystal, COBOL y Assembly de forma secuencial, además de jobs independientes para Objective-C, GDScript, MATLAB, MicroPython, Rockstar y contratos VBA/Delphi.
+
+La reparación final de Assembly evitó usar `out` como etiqueta, ya que NASM lo interpreta como mnemónico de instrucción. El ejemplo conserva exactamente el mismo contrato observable.
 
 ## Comprueba que lo entendiste
 
@@ -234,6 +248,7 @@ Un ejemplo faltante o no verificado mantiene esta página `in-progress`; nunca s
 - **Trade-off:** flexibilidad composicional a cambio de más capas e importancia del orden.
 - **Distinción clave:** Decorator preserva contrato para añadir responsabilidad; Adapter cambia contrato y Proxy controla acceso.
 - **Portabilidad:** no requiere OOP; cualquier mecanismo que preserve contrato, delegación y composición puede expresar la intención.
+- **Estado:** `validated`, con `48/48` targets Applicable verificados.
 
 ## Referencias
 
