@@ -1,6 +1,13 @@
 class ContactsController < ApplicationController
+  before_action :set_contact, only: %i[show edit update]
+
   def index
-    @contacts = Contact.order(:name)
+    @contacts = Contact.search(params[:q]).with_status(params[:status]).order(:name)
+  end
+
+  def show
+    @notes = @contact.notes.order(created_at: :desc)
+    @note = Note.new
   end
 
   def new
@@ -16,7 +23,21 @@ class ContactsController < ApplicationController
     end
   end
 
+  def edit; end
+
+  def update
+    if @contact.update(contact_params)
+      redirect_to @contact, notice: "Contacto actualizado."
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
   private
+
+  def set_contact
+    @contact = Contact.find(params[:id])
+  end
 
   def contact_params
     params.require(:contact).permit(:name, :email, :company, :status)

@@ -45,7 +45,7 @@ Antes de seguir, completa [Checkpoint 01 — extiende la ficha del contacto](../
 
 ## Siguiente paso
 
-El siguiente incremento añadirá búsqueda, actualización, notas y pruebas más profundas manteniendo ContactDesk como única aplicación.
+Continúa con [Lección 05 — búsqueda, colecciones y consultas](05-busqueda-colecciones-y-consultas.md).
 
 ## Referencias
 

@@ -2,15 +2,24 @@
 <p>CRM local para clientes y prospectos.</p>
 <p><%= link_to "Nuevo contacto", new_contact_path %></p>
 
+<%= form_with url: contacts_path, method: :get do |form| %>
+  <%= form.label :q, "Buscar" %>
+  <%= form.search_field :q, value: params[:q], placeholder: "Nombre, email o empresa" %>
+  <%= form.label :status, "Estado" %>
+  <%= form.select :status, [["Todos", ""], ["Prospecto", "lead"], ["Cliente", "active"], ["Archivado", "archived"]], selected: params[:status] %>
+  <%= form.submit "Filtrar" %>
+<% end %>
+
 <table>
-  <thead><tr><th>Nombre</th><th>Email</th><th>Empresa</th><th>Estado</th></tr></thead>
+  <thead><tr><th>Nombre</th><th>Email</th><th>Empresa</th><th>Estado</th><th>Acciones</th></tr></thead>
   <tbody>
     <% @contacts.each do |contact| %>
       <tr>
-        <td><%= contact.name %></td>
+        <td><%= link_to contact.name, contact %></td>
         <td><%= contact.email %></td>
         <td><%= contact.company %></td>
         <td><%= contact.status %></td>
+        <td><%= link_to "Editar", edit_contact_path(contact) %></td>
       </tr>
     <% end %>
   </tbody>

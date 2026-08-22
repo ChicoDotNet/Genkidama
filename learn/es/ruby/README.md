@@ -30,14 +30,19 @@ Abre `http://localhost:3000`.
 2. [Objetos, atributos y un contacto válido](lessons/02-objetos-atributos-y-contactos.md)
 3. [Métodos, condiciones y validaciones](lessons/03-metodos-condiciones-y-validaciones.md)
 4. [HTTP, controladores y persistencia](lessons/04-http-controladores-y-persistencia.md)
+5. [Búsqueda, colecciones y consultas](lessons/05-busqueda-colecciones-y-consultas.md)
+6. [Editar sin duplicar formularios](lessons/06-editar-sin-duplicar-formularios.md)
+7. [Asociaciones y notas de seguimiento](lessons/07-asociaciones-y-notas.md)
+8. [Encadenar consultas y probar comportamiento](lessons/08-encadenar-consultas-y-probar.md)
 
 ### Checkpoints
 
 - [Checkpoint 01 — extiende la ficha del contacto](exercises/checkpoint-01.md)
+- [Checkpoint 02 — seguimiento de contactos](exercises/checkpoint-02.md)
 
 ## Estado
 
-Primer incremento: **4/17 lecciones**. El siguiente bloque desarrollará búsqueda, actualización, notas y pruebas de comportamiento sobre la misma aplicación.
+Segundo incremento: **8/17 lecciones**. ContactDesk ya permite buscar y filtrar, editar contactos y registrar notas asociadas con pruebas de modelo e integración.
 
 ## Qué aprenderás al completar el curso
 
