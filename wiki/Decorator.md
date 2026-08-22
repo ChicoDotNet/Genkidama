@@ -163,7 +163,7 @@ Si no existe presión real de combinación dinámica, una función o composició
 
 El universo canónico mantiene **51 targets**. Decorator clasifica provisionalmente **48 como Applicable** y **HTML, CSS y SQL declarativo como N/A**. La falta de clases no excluye ningún lenguaje: closures, higher-order functions, records, modules, predicates, tables, callbacks y otros mecanismos son válidos si preservan el contrato y la composición.
 
-Actualmente existen **22/48 ejemplos materializados** y **12/48 verificados**. El tranche mainstream quedó verde con TypeScript 6 strict, `gofmt/go vet`, `rustfmt`, warnings-as-errors y ejecución real. Los diez ejemplos portables permanecen candidatos hasta obtener su propia evidencia.
+Actualmente existen **32/48 ejemplos materializados** y **12/48 verificados**. El tranche mainstream quedó verde con TypeScript 6 strict, `gofmt/go vet`, `rustfmt`, warnings-as-errors y ejecución real. Los diez portables y diez funcionales permanecen candidatos hasta obtener su propia evidencia.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo | Estado |
 |---|---|---|---|
@@ -189,16 +189,16 @@ Actualmente existen **22/48 ejemplos materializados** y **12/48 verificados**. E
 | Scala | Applicable | [`src/Functional/Scala/Decorator.scala`](../src/Functional/Scala/Decorator.scala) | candidato |
 | Perl | Applicable | [`src/Scripting/Perl/decorator.pl`](../src/Scripting/Perl/decorator.pl) | candidato |
 | Pascal | Applicable | [`src/Historical/Pascal/decorator.pas`](../src/Historical/Pascal/decorator.pas) | candidato |
-| R | Applicable | — | pendiente |
-| GNU Octave | Applicable | — | pendiente |
-| Julia | Applicable | — | pendiente |
-| OCaml | Applicable | — | pendiente |
-| Common Lisp | Applicable | — | pendiente |
-| Clojure | Applicable | — | pendiente |
-| Elixir | Applicable | — | pendiente |
-| Erlang | Applicable | — | pendiente |
-| Prolog | Applicable | — | pendiente |
-| Groovy | Applicable | — | pendiente |
+| R | Applicable | [`src/DataScience/R/decorator.R`](../src/DataScience/R/decorator.R) | candidato |
+| GNU Octave | Applicable | [`src/DataScience/Octave/decorator.m`](../src/DataScience/Octave/decorator.m) | candidato |
+| Julia | Applicable | [`src/DataScience/Julia/decorator.jl`](../src/DataScience/Julia/decorator.jl) | candidato |
+| OCaml | Applicable | [`src/Functional/OCaml/decorator.ml`](../src/Functional/OCaml/decorator.ml) | candidato |
+| Common Lisp | Applicable | [`src/Functional/Lisp/decorator.lisp`](../src/Functional/Lisp/decorator.lisp) | candidato |
+| Clojure | Applicable | [`src/Functional/Clojure/decorator.clj`](../src/Functional/Clojure/decorator.clj) | candidato |
+| Elixir | Applicable | [`src/Functional/Elixir/decorator.exs`](../src/Functional/Elixir/decorator.exs) | candidato |
+| Erlang | Applicable | [`src/Functional/Erlang/decorator.erl`](../src/Functional/Erlang/decorator.erl) | candidato |
+| Prolog | Applicable | [`src/Niche/Prolog/decorator.pl`](../src/Niche/Prolog/decorator.pl) | candidato |
+| Groovy | Applicable | [`src/Scripting/Groovy/decorator.groovy`](../src/Scripting/Groovy/decorator.groovy) | candidato |
 | Ada | Applicable | — | pendiente |
 | Solidity | Applicable | — | pendiente |
 | Fortran | Applicable | — | pendiente |
