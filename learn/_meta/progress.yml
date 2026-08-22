@@ -146,10 +146,10 @@ courses:
   r: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   powershell:
     status: in_progress
-    lessons_complete: 8
+    lessons_complete: 12
     lessons_total: 17
     ci: green
-    last_green_executable_sha: ee0e5e861ba98a1b005ee5c5c650973df43c4441
+    last_green_executable_sha: 1cb8d679be0098b8b39a6bdad6211fec7147b2b7
     pr: 70
   html: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   assembly: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
