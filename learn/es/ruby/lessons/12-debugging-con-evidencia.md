@@ -47,7 +47,7 @@ Completa [Checkpoint 03 — intercambio seguro de contactos](../exercises/checkp
 
 ## Siguiente paso
 
-El siguiente bloque llevará ContactDesk a operaciones más mantenibles: paginación/volumen, tareas de mantenimiento, observabilidad y hardening antes del cierre.
+Continúa con [Lección 13 — Paginar antes de cargarlo todo](13-paginar-antes-de-cargarlo-todo.md).
 
 ## Referencias
 

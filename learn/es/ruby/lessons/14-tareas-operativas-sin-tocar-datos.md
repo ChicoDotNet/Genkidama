@@ -36,7 +36,7 @@ Añade mentalmente una métrica `notes`. ¿En qué servicio debe calcularse para
 
 ## Siguiente paso
 
-La misma señal operativa puede exponerse de forma mínima a un monitor de disponibilidad.
+Continúa con [Lección 15 — Observabilidad con health check y request ID](15-observabilidad-health-request-id.md).
 
 ## Referencias
 

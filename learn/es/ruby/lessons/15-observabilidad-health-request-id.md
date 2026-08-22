@@ -42,7 +42,7 @@ Explica por qué el conteo total puede ser aceptable en este laboratorio mientra
 
 ## Siguiente paso
 
-Cerraremos el bloque separando lo que significa “listo para desplegar” de “funciona en mi máquina”.
+Continúa con [Lección 16 — Hardening y entrega](16-hardening-y-entrega.md).
 
 ## Referencias
 

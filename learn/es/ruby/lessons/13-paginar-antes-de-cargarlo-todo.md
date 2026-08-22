@@ -36,7 +36,7 @@ Explica por qué primero componemos búsqueda/filtro y después aplicamos `offse
 
 ## Siguiente paso
 
-Una aplicación mantenible también necesita tareas operativas que puedan ejecutarse sin abrir el navegador.
+Continúa con [Lección 14 — Tareas operativas sin tocar datos](14-tareas-operativas-sin-tocar-datos.md).
 
 ## Referencias
 
