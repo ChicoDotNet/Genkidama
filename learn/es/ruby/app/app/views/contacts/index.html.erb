@@ -1,6 +1,15 @@
 <h1>ContactDesk</h1>
 <p>CRM local para clientes y prospectos.</p>
-<p><%= link_to "Nuevo contacto", new_contact_path %></p>
+<p>
+  <%= link_to "Nuevo contacto", new_contact_path %> |
+  <%= link_to "Exportar CSV", export_contacts_path %>
+</p>
+
+<%= form_with url: import_contacts_path, method: :post, multipart: true do |form| %>
+  <%= form.label :file, "Importar contactos desde CSV" %>
+  <%= form.file_field :file, accept: ".csv,text/csv" %>
+  <%= form.submit "Importar" %>
+<% end %>
 
 <%= form_with url: contacts_path, method: :get do |form| %>
   <%= form.label :q, "Buscar" %>
