@@ -4,7 +4,7 @@ PowerShell es un shell y lenguaje de automatización orientado a objetos, muy us
 
 ## Qué vas a construir
 
-WorkstationAudit inspeccionará plataforma, versión de PowerShell y almacenamiento; transformará datos en hallazgos con severidad; manejará errores de recolección y terminará evolucionando hacia un diagnóstico más completo de una estación Windows sin modificar el equipo auditado.
+WorkstationAudit inspecciona plataforma, versión de PowerShell, almacenamiento y señales Windows cuando están disponibles; transforma datos en hallazgos con severidad, maneja errores de recolección y evoluciona hacia un diagnóstico reproducible sin modificar el equipo auditado.
 
 El curso enseña PowerShell 7 moderno. Al 22 de agosto de 2026 Microsoft identifica **PowerShell 7.6 como la línea LTS vigente**. Windows PowerShell 5.1 aparece cuando sea necesario para explicar compatibilidad, no como runtime principal del curso.
 
@@ -37,20 +37,20 @@ Install-Module Pester -MinimumVersion 5.7.1 -Scope CurrentUser
 Invoke-Pester ./app/tests
 ```
 
-Pester es la única dependencia de desarrollo del primer incremento; la aplicación usa únicamente capacidades incluidas en PowerShell/.NET.
+Pester es la dependencia de desarrollo; la aplicación usa capacidades incluidas en PowerShell/.NET.
 
 ## Avance
 
-**4/17 lecciones.** El primer checkpoint ya produce un diagnóstico pequeño, observable y probado.
+**8/17 lecciones implementadas.** Los dos primeros checkpoints cubren diagnóstico portable, configuración, fronteras Windows y reglas testeables.
 
 1. [Lección 01 — Ejecuta tu primer auditor](lessons/01-ejecuta-tu-primer-auditor.md)
 2. [Lección 02 — Trabaja con objetos y pipeline](lessons/02-objetos-y-pipeline.md)
 3. [Lección 03 — Convierte señales en hallazgos](lessons/03-funciones-parametros-y-hallazgos.md)
 4. [Lección 04 — Maneja errores y prueba comportamiento](lessons/04-errores-y-pruebas.md)
-5. Próximo: consultas de sistema y fronteras Windows.
-6. Próximo: colecciones y reglas de auditoría.
-7. Próximo: configuración del auditor.
-8. Próximo: checkpoint de diagnóstico reproducible.
+5. [Lección 05 — Configura reglas sin editar código](lessons/05-configura-reglas-sin-editar-codigo.md)
+6. [Lección 06 — Consulta Windows con CIM](lessons/06-consulta-windows-con-cim.md)
+7. [Lección 07 — Reglas reutilizables de memoria](lessons/07-reglas-reutilizables-de-memoria.md)
+8. [Lección 08 — Compón un diagnóstico reproducible](lessons/08-compone-un-diagnostico-reproducible.md)
 9. Próximo: inventario de software/servicios con límites explícitos.
 10. Próximo: seguridad de ejecución y privilegios.
 11. Próximo: reportes humanos y JSON.
@@ -61,7 +61,7 @@ Pester es la única dependencia de desarrollo del primer incremento; la aplicaci
 16. Próximo: hardening y entrega.
 17. Próximo: evaluación final autónoma.
 
-[Checkpoint 01 — Añade una regla diagnóstica](exercises/checkpoint-01.md) · [Solución de referencia](solutions/checkpoint-01.md)
+[Checkpoint 01](exercises/checkpoint-01.md) · [Solución 01](solutions/checkpoint-01.md) · [Checkpoint 02](exercises/checkpoint-02.md) · [Solución 02](solutions/checkpoint-02.md)
 
 ## Qué sabrás hacer al terminar
 
@@ -89,6 +89,7 @@ PowerShell aparece con frecuencia en administración Windows, soporte/operacione
 - **Módulo:** unidad reutilizable de funciones/comandos PowerShell.
 - **Pester:** framework de pruebas habitual del ecosistema PowerShell.
 - **Finding / hallazgo:** conclusión diagnóstica respaldada por evidencia observable.
+- **CIM:** modelo/interfaz de administración usada por PowerShell para consultar información de sistema, especialmente en Windows.
 
 ## Cómo hablar de este proyecto en una entrevista
 
@@ -98,8 +99,9 @@ Explica qué señales recopila WorkstationAudit, cómo separas recolección de r
 
 - [Documentación de PowerShell](https://learn.microsoft.com/powershell/)
 - [Ciclo de soporte de PowerShell](https://learn.microsoft.com/powershell/scripting/install/powershell-support-lifecycle)
+- [Get-CimInstance](https://learn.microsoft.com/powershell/module/cimcmdlets/get-ciminstance)
 - [Pester](https://pester.dev/)
 
 ## Siguiente paso
 
-Empieza con la lección 1 y llega al checkpoint sin copiar la solución antes de intentarlo. Para control de versiones y colaboración, usa el [curso transversal de Git](../git/).
+Empieza con la lección 1 y llega a cada checkpoint sin copiar la solución antes de intentarlo. Para control de versiones y colaboración, usa el [curso transversal de Git](../git/).
