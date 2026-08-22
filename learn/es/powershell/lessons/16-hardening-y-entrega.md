@@ -29,7 +29,7 @@ Un contrato estructurado permite integrar el auditor con CI, RMM o tareas progra
 Construye un fixture con severidad inválida y confirma que el contrato lo rechaza. Después crea resúmenes Info, Warning y Critical y comprueba sus códigos.
 
 ## Siguiente paso
-Completa [Checkpoint 04](../exercises/checkpoint-04.md). Después quedará la evaluación final autónoma.
+Completa [Checkpoint 04](../exercises/checkpoint-04.md) y continúa con [Lección 17 — Evaluación final autónoma](17-evaluacion-final.md).
 
 ## Referencias
 - https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_automatic_variables
