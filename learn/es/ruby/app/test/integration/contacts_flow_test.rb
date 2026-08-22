@@ -83,7 +83,7 @@ class ContactsFlowTest < ActionDispatch::IntegrationTest
     assert_redirected_to contacts_path
     assert_equal "active", Contact.find_by!(email: "ana@example.test").status
   ensure
-    upload&.tempfile&.close!
+    upload&.close
   end
 
   test "rejects invalid CSV without partial persistence" do
@@ -96,15 +96,15 @@ class ContactsFlowTest < ActionDispatch::IntegrationTest
     assert_redirected_to contacts_path
     assert_includes flash[:alert], "Fila 3"
   ensure
-    upload&.tempfile&.close!
+    upload&.close
   end
 
   private
 
   def csv_upload(content)
-    tempfile = Tempfile.new(["contacts", ".csv"])
-    tempfile.write(content)
-    tempfile.rewind
-    ActionDispatch::Http::UploadedFile.new(filename: "contacts.csv", type: "text/csv", tempfile: tempfile)
+    file = Tempfile.new(["contacts", ".csv"])
+    file.write(content)
+    file.close
+    Rack::Test::UploadedFile.new(file.path, "text/csv", false, original_filename: "contacts.csv")
   end
 end
