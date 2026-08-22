@@ -33,6 +33,23 @@ class ContactsController < ApplicationController
     end
   end
 
+  def export
+    send_data ContactTransfer.export_csv,
+      filename: "contactdesk-contacts.csv",
+      type: "text/csv; charset=utf-8",
+      disposition: "attachment"
+  end
+
+  def import
+    file = params[:file]
+    raise ContactTransfer::ImportError, "Selecciona un archivo CSV." unless file.respond_to?(:read)
+
+    processed = ContactTransfer.import_csv(file)
+    redirect_to contacts_path, notice: "Importación completa: #{processed} contacto(s)."
+  rescue ContactTransfer::ImportError => e
+    redirect_to contacts_path, alert: e.message
+  end
+
   private
 
   def set_contact
