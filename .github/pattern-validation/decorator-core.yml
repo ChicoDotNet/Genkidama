@@ -1,0 +1,4 @@
+# Reconciliation snapshot
+# Decorator mainstream/portable/functional validation was previously embedded in shared ci.yml.
+# It is intentionally materialized outside .github/workflows during reconciliation so current dev CI is not overwritten.
+# The next Decorator increment must promote these checks into a dedicated registered workflow before declaring 48/48 validated.
