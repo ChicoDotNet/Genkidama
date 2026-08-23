@@ -1,0 +1,225 @@
+name: Pattern Decorator Final
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-decorator-final.yml'
+      - 'src/Historical/Ada/decorator.adb'
+      - 'src/Niche/Solidity/Decorator.sol'
+      - 'src/Historical/Fortran/decorator.f90'
+      - 'src/Systems/Objective-C/decorator.m'
+      - 'src/Systems/Zig/decorator.zig'
+      - 'src/Niche/Nim/decorator.nim'
+      - 'src/Web/Dart/decorator.dart'
+      - 'src/Niche/Crystal/decorator.cr'
+      - 'src/Historical/Cobol/decorator.cbl'
+      - 'src/Shell/VBA/DecoratorExample.bas'
+      - 'src/Niche/GDScript/decorator.gd'
+      - 'src/DataScience/MATLAB/decorator.m'
+      - 'src/LowLevel/Assembly/decorator.asm'
+      - 'src/Enterprise/Delphi/DecoratorExample.pas'
+      - 'src/Other/MicroPython/decorator.py'
+      - 'src/Other/Rockstar/decorator.rock'
+
+jobs:
+  portable-final:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: mlugg/setup-zig@v2
+      - uses: dart-lang/setup-dart@v1
+      - uses: crystal-lang/install-crystal@v1
+      - name: Install toolchains
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y gnat gfortran gnucobol3 nasm nim
+      - name: Validate portable final examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          assert_output() {
+            local output="$1"
+            grep -Fxq 'base=alert' <<<"$output"
+            grep -Fxq 'audit=audit(alert)' <<<"$output"
+            grep -Fxq 'encrypted=enc(alert)' <<<"$output"
+            grep -Fxq 'stacked=audit(enc(alert))' <<<"$output"
+          }
+
+          work="$(mktemp -d)"
+
+          mkdir -p "$work/ada"
+          gnatmake -q -gnat2022 -gnatwa -gnatwe -D "$work/ada" src/Historical/Ada/decorator.adb -o "$work/decorator-ada"
+          assert_output "$("$work/decorator-ada")"
+
+          npx --yes solc@0.8.30 --bin --abi src/Niche/Solidity/Decorator.sol -o "$work/solidity"
+          test -n "$(find "$work/solidity" -type f -name '*DecoratorExample.bin' -size +0c -print -quit)"
+          grep -Fq 'audit(' src/Niche/Solidity/Decorator.sol
+          grep -Fq 'enc(' src/Niche/Solidity/Decorator.sol
+
+          gfortran -std=f2018 -Wall -Wextra -Werror src/Historical/Fortran/decorator.f90 -o "$work/decorator-fortran"
+          assert_output "$("$work/decorator-fortran")"
+
+          zig fmt --check src/Systems/Zig/decorator.zig
+          assert_output "$(zig run src/Systems/Zig/decorator.zig 2>&1)"
+
+          nim c --hints:off --warnings:on -o:"$work/decorator-nim" src/Niche/Nim/decorator.nim
+          assert_output "$("$work/decorator-nim")"
+
+          dart format --output=none --set-exit-if-changed src/Web/Dart/decorator.dart
+          dart analyze --fatal-infos --fatal-warnings src/Web/Dart/decorator.dart
+          assert_output "$(dart run src/Web/Dart/decorator.dart)"
+
+          crystal tool format src/Niche/Crystal/decorator.cr
+          test -z "$(git status --short -- src/Niche/Crystal/decorator.cr)"
+          crystal build --error-on-warnings src/Niche/Crystal/decorator.cr -o "$work/decorator-crystal"
+          assert_output "$("$work/decorator-crystal")"
+
+          cobc -x -Wall src/Historical/Cobol/decorator.cbl -o "$work/decorator-cobol"
+          assert_output "$("$work/decorator-cobol")"
+
+          nasm -f elf64 -Wall src/LowLevel/Assembly/decorator.asm -o "$work/decorator-assembly.o"
+          ld "$work/decorator-assembly.o" -o "$work/decorator-assembly"
+          assert_output "$("$work/decorator-assembly")"
+
+  objective-c:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate Objective-C Decorator
+        shell: bash
+        run: |
+          set -euo pipefail
+          clang -fobjc-arc -Wall -Wextra -Werror -framework Foundation src/Systems/Objective-C/decorator.m -o /tmp/decorator-objective-c
+          output="$(/tmp/decorator-objective-c)"
+          grep -Fxq 'base=alert' <<<"$output"
+          grep -Fxq 'audit=audit(alert)' <<<"$output"
+          grep -Fxq 'encrypted=enc(alert)' <<<"$output"
+          grep -Fxq 'stacked=audit(enc(alert))' <<<"$output"
+
+  gdscript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Setup Godot 4.6.3
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 'https://github.com/godotengine/godot-builds/releases/download/4.6.3-stable/Godot_v4.6.3-stable_linux.x86_64.zip' --output /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          sudo install -m 0755 /tmp/godot/Godot_v4.6.3-stable_linux.x86_64 /usr/local/bin/godot
+      - name: Validate GDScript Decorator
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(godot --headless --script src/Niche/GDScript/decorator.gd 2>&1)"
+          grep -Fxq 'base=alert' <<<"$output"
+          grep -Fxq 'audit=audit(alert)' <<<"$output"
+          grep -Fxq 'encrypted=enc(alert)' <<<"$output"
+          grep -Fxq 'stacked=audit(enc(alert))' <<<"$output"
+
+  matlab:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: matlab-actions/setup-matlab@v3
+        with:
+          release: latest
+      - name: Validate MATLAB Decorator
+        uses: matlab-actions/run-command@v3
+        with:
+          command: >-
+            addpath('src/DataScience/MATLAB');
+            output = evalc('decorator');
+            disp(output);
+            assert(contains(output, "base=alert"));
+            assert(contains(output, "audit=audit(alert)"));
+            assert(contains(output, "encrypted=enc(alert)"));
+            assert(contains(output, "stacked=audit(enc(alert))"));
+
+  micropython:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build MicroPython 1.28.0 Unix port
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential libffi-dev pkg-config
+          git clone --depth 1 --branch v1.28.0 --recurse-submodules https://github.com/micropython/micropython.git /tmp/micropython
+          make -C /tmp/micropython/mpy-cross -j2
+          make -C /tmp/micropython/ports/unix -j2
+      - name: Validate MicroPython Decorator
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(/tmp/micropython/ports/unix/build-standard/micropython src/Other/MicroPython/decorator.py)"
+          grep -Fxq 'base=alert' <<<"$output"
+          grep -Fxq 'audit=audit(alert)' <<<"$output"
+          grep -Fxq 'encrypted=enc(alert)' <<<"$output"
+          grep -Fxq 'stacked=audit(enc(alert))' <<<"$output"
+
+  rockstar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Setup Rockstar v2.0.31
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 'https://github.com/RockstarLang/rockstar/releases/download/v2.0.31/rockstar-v2.0.31-linux-x64.tar.gz' --output /tmp/rockstar.tar.gz
+          echo '3d265c80d9d039ad92524f42951eb546d8b42c680965dfa551210457e399653f  /tmp/rockstar.tar.gz' | sha256sum -c -
+          mkdir -p /tmp/rockstar
+          tar -xzf /tmp/rockstar.tar.gz -C /tmp/rockstar
+          echo "ROCKSTAR=$(find /tmp/rockstar -type f -name rockstar -perm -111 | head -n 1)" >> "$GITHUB_ENV"
+      - name: Validate Rockstar Decorator
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$("$ROCKSTAR" src/Other/Rockstar/decorator.rock 2>&1)"
+          printf '%s\n' "$output"
+          grep -Fxq 'base=alert' <<<"$output"
+          grep -Fxq 'audit=audit(alert)' <<<"$output"
+          grep -Fxq 'encrypted=enc(alert)' <<<"$output"
+          grep -Fxq 'stacked=audit(enc(alert))' <<<"$output"
+
+  proprietary-source-contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate VBA and Delphi Decorator source contracts
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          def require(text, pattern, label):
+              if re.search(pattern, text, flags=re.IGNORECASE | re.MULTILINE | re.DOTALL) is None:
+                  raise SystemExit(f"Missing source contract: {label}")
+
+          vba = Path('src/Shell/VBA/DecoratorExample.bas').read_text(encoding='utf-8')
+          for pattern, label in [
+              (r'^Option Explicit$', 'VBA Option Explicit'),
+              (r'Function\s+PlainMessage\(\).*alert', 'VBA base component'),
+              (r'Function\s+AuditDecorator\(.*inner.*\).*audit\(', 'VBA audit decorator'),
+              (r'Function\s+EncryptDecorator\(.*inner.*\).*enc\(', 'VBA encrypt decorator'),
+              (r'AuditDecorator\(EncryptDecorator\(base\)\)', 'VBA stacked decorators'),
+          ]:
+              require(vba, pattern, label)
+
+          delphi = Path('src/Enterprise/Delphi/DecoratorExample.pas').read_text(encoding='utf-8')
+          for pattern, label in [
+              (r'IComponent\s*=\s*interface.*function\s+Render', 'Delphi component contract'),
+              (r'TComponentDecorator\s*=\s*class.*FInner:\s*IComponent', 'Delphi decorator owns component'),
+              (r'TAuditDecorator.*function\s+Render.*override', 'Delphi audit decorator'),
+              (r'TEncryptDecorator.*function\s+Render.*override', 'Delphi encrypt decorator'),
+              (r'TAuditDecorator\.Create\(TEncryptDecorator\.Create\(Base\)\)', 'Delphi stacked decorators'),
+          ]:
+              require(delphi, pattern, label)
+
+          print('VBA Decorator source contract: OK')
+          print('Delphi Decorator source contract: OK')
