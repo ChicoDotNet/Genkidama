@@ -1,0 +1,36 @@
+schema_version: 1
+slug: cpp
+language: C++
+locale: es
+source_locale: es
+title: Curso de C++ desde cero — Construye un indexador y buscador de archivos
+status: complete
+canonical_app:
+  name: ThreadSeek
+  summary: Indexador y buscador de archivos que evoluciona desde un recorrido correcto y testeado hasta ejecución multihilo medible, cancelable y portable.
+audience: beginner
+prerequisites: []
+lesson_count: 17
+toolchain:
+  verified_on: '2026-08-16'
+  version_tested: 'GCC 14.2.0; Clang (GitHub Actions ubuntu-latest); MSVC (GitHub Actions windows-latest); CMake 3.31.6; C++23'
+  runtime_or_compiler: 'GCC/G++, Clang, MSVC'
+  package_or_build_tool: 'CMake'
+  operating_systems_tested:
+    - linux
+    - windows-11
+ci:
+  supported: true
+  workflow: .github/workflows/learn-cpp.yml
+career_context:
+  uses:
+    - software de sistemas y herramientas nativas
+    - motores, multimedia y aplicaciones sensibles a rendimiento
+    - infraestructura, bibliotecas y componentes con control fino de recursos
+  market_note: C++ se usa profesionalmente en dominios donde rendimiento, latencia o integración nativa importan; el acceso junior varía mucho por industria y suele exigir fundamentos sólidos además de sintaxis.
+official_references:
+  - https://gcc.gnu.org/
+  - https://gcc.gnu.org/releases.html
+  - https://cmake.org/documentation/
+  - https://isocpp.org/
+  - https://learn.microsoft.com/cpp/
