@@ -3,18 +3,21 @@ package main
 import "fmt"
 
 type AuthService struct{}
+
 func (AuthService) Authenticate(user string) string { return fmt.Sprintf("auth(%s)", user) }
 
 type InventoryService struct{}
+
 func (InventoryService) Reserve(sku string) string { return fmt.Sprintf("reserve(%s)", sku) }
 
 type BillingService struct{}
+
 func (BillingService) Charge(cents int) string { return fmt.Sprintf("charge(%d)", cents) }
 
 type CheckoutFacade struct {
-	auth AuthService
+	auth      AuthService
 	inventory InventoryService
-	billing BillingService
+	billing   BillingService
 }
 
 func (f CheckoutFacade) Checkout(user, sku string, cents int) string {
