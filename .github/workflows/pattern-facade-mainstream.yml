@@ -79,6 +79,6 @@ jobs:
           php -l src/Scripting/PHP/facade.php
           assert_output 'PHP' "$(php src/Scripting/PHP/facade.php)"
 
-          assert_output 'F#' "$(dotnet fsi src/Functional/F%23/facade.fsx)"
+          assert_output 'F#' "$(dotnet fsi 'src/Functional/F#/facade.fsx')"
           node --check src/Web/JavaScriptJS/facade.js
           assert_output 'JavaScript' "$(node src/Web/JavaScriptJS/facade.js)"
