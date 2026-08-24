@@ -1,0 +1,84 @@
+name: Pattern Facade Mainstream
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-facade-mainstream.yml'
+      - 'src/Enterprise/C#/FacadeExample.cs'
+      - 'src/Web/TypeScriptTS/facade.ts'
+      - 'src/Scripting/PythonPY/facade.py'
+      - 'src/Systems/C++/facade.cpp'
+      - 'src/Enterprise/Java/FacadeExample.java'
+      - 'src/Systems/Rust/facade.rs'
+      - 'src/Systems/Go/facade.go'
+      - 'src/Scripting/PHP/facade.php'
+      - 'src/Functional/F#/facade.fsx'
+      - 'src/Web/JavaScriptJS/facade.js'
+      - 'wiki/Facade.md'
+
+jobs:
+  mainstream:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.25.x'
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Validate Facade examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='checkout=auth(alice)>reserve(SKU-42)>charge(499)'
+          assert_output() {
+            local label="$1"
+            local output="$2"
+            if [[ "$output" != "$expected" ]]; then
+              printf '%s output mismatch\nexpected: %s\nactual:   %s\n' "$label" "$expected" "$output" >&2
+              exit 1
+            fi
+          }
+
+          work="$(mktemp -d)"
+
+          dotnet new console --framework net10.0 -n FacadeCheck -o "$work/csharp" >/dev/null
+          cp 'src/Enterprise/C#/FacadeExample.cs' "$work/csharp/Program.cs"
+          assert_output 'C#' "$(dotnet run --project "$work/csharp/FacadeCheck.csproj" --configuration Release)"
+
+          assert_output 'TypeScript' "$(npx --yes tsx src/Web/TypeScriptTS/facade.ts)"
+          python -m py_compile src/Scripting/PythonPY/facade.py
+          assert_output 'Python' "$(python src/Scripting/PythonPY/facade.py)"
+
+          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/facade.cpp' -o "$work/facade-cpp"
+          assert_output 'C++' "$("$work/facade-cpp")"
+
+          javac -Xlint:all -Werror -d "$work/java" src/Enterprise/Java/FacadeExample.java
+          assert_output 'Java' "$(java -cp "$work/java" FacadeExample)"
+
+          rustc --edition 2024 -D warnings src/Systems/Rust/facade.rs -o "$work/facade-rust"
+          assert_output 'Rust' "$("$work/facade-rust")"
+
+          test -z "$(gofmt -d src/Systems/Go/facade.go)"
+          assert_output 'Go' "$(go run src/Systems/Go/facade.go)"
+
+          php -l src/Scripting/PHP/facade.php
+          assert_output 'PHP' "$(php src/Scripting/PHP/facade.php)"
+
+          assert_output 'F#' "$(dotnet fsi src/Functional/F%23/facade.fsx)"
+          node --check src/Web/JavaScriptJS/facade.js
+          assert_output 'JavaScript' "$(node src/Web/JavaScriptJS/facade.js)"
