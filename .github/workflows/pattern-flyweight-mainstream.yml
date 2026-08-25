@@ -1,0 +1,41 @@
+name: Pattern Flyweight Mainstream
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/**/flyweight*'
+      - 'src/**/Flyweight*'
+      - 'wiki/Flyweight.md'
+      - '.github/workflows/pattern-flyweight-mainstream.yml'
+jobs:
+  mainstream:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with: { dotnet-version: '10.0.x' }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.x' }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '21' }
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-go@v5
+        with: { go-version: stable }
+      - name: Validate mainstream examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='styles=2;shared=true;text=ABC'
+          test "$(dotnet-script src/Enterprise/C#/FlyweightExample.cs 2>/dev/null || true)" = "$expected" || {
+            tmp=$(mktemp -d); dotnet new console -n Flyweight -o "$tmp" --force >/dev/null; cp 'src/Enterprise/C#/FlyweightExample.cs' "$tmp/Program.cs"; test "$(dotnet run --project "$tmp" -q)" = "$expected"; }
+          npx --yes tsx src/Web/TypeScriptTS/flyweight.ts | grep -Fx "$expected"
+          python src/Scripting/PythonPY/flyweight.py | grep -Fx "$expected"
+          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/flyweight.cpp' -o /tmp/flyweight_cpp && /tmp/flyweight_cpp | grep -Fx "$expected"
+          javac src/Enterprise/Java/FlyweightExample.java && java -cp src/Enterprise/Java FlyweightExample | grep -Fx "$expected"
+          rustc -D warnings src/Systems/Rust/flyweight.rs -o /tmp/flyweight_rs && /tmp/flyweight_rs | grep -Fx "$expected"
+          go run src/Systems/Go/flyweight.go | grep -Fx "$expected"
+          php src/Scripting/PHP/flyweight.php | grep -Fx "$expected"
+          dotnet fsi 'src/Functional/F#/flyweight.fsx' | tail -n 1 | grep -Fx "$expected"
+          node src/Web/JavaScriptJS/flyweight.js | grep -Fx "$expected"
