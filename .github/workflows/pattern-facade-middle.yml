@@ -155,11 +155,12 @@ jobs:
           erlc -Werror -o "$work" src/Functional/Erlang/facade.erl
           assert_output Erlang "$(erl -noshell -pa "$work" -s facade main -s init stop)"
 
-          ocamlc -w +a -warn-error +a -o "$work/facade-ocaml" src/Functional/OCaml/facade.ml
+          ocamlc -w +a-70 -warn-error +a-70 -o "$work/facade-ocaml" src/Functional/OCaml/facade.ml
           assert_output OCaml "$("$work/facade-ocaml")"
           assert_output Lisp "$(sbcl --script src/Functional/Lisp/facade.lisp)"
           assert_output Prolog "$(swipl -q -s src/Niche/Prolog/facade.pl -g main -t halt)"
           assert_output Groovy "$(groovy src/Scripting/Groovy/facade.groovy)"
 
+          mkdir -p "$work/ada"
           gnatmake -q -gnat2022 -gnatwa -gnatwe -D "$work/ada" -o "$work/facade-ada" src/Historical/Ada/facade.adb
           assert_output Ada "$("$work/facade-ada")"
