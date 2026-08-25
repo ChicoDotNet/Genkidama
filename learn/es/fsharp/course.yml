@@ -1,0 +1,33 @@
+schema_version: 1
+slug: fsharp
+language: F#
+locale: es
+source_locale: es
+title: Curso de F# desde cero — Construye un motor de precios y cotizaciones
+status: in_progress
+canonical_app:
+  name: QuoteRules
+  summary: Motor local de reglas para validar partidas, calcular descuentos y producir cotizaciones deterministas.
+audience: beginner
+prerequisites: []
+lesson_count: 17
+toolchain:
+  verified_on: 2026-08-24
+  version_tested: .NET SDK 10.0.111 / F# 10
+  runtime_or_compiler: .NET 10 LTS / F# 10
+  package_or_build_tool: dotnet CLI
+  operating_systems_tested:
+    - linux
+ci:
+  supported: true
+  workflow: .github/workflows/learn-fsharp.yml
+career_context:
+  uses:
+    - servicios y herramientas sobre .NET
+    - procesamiento de datos y reglas de negocio
+    - sistemas donde modelado de dominio y funciones puras reducen errores
+  market_note: F# tiene una comunidad profesional menor que C#, pero comparte el ecosistema .NET y aporta habilidades transferibles de programación funcional y modelado de dominio.
+official_references:
+  - https://learn.microsoft.com/dotnet/fsharp/
+  - https://learn.microsoft.com/dotnet/fsharp/whats-new/fsharp-10
+  - https://dotnet.microsoft.com/platform/support/policy
