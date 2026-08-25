@@ -1,14 +1,14 @@
 # Curso de F# desde cero — Construye un motor de precios y cotizaciones
 
-F# es un lenguaje funcional-first del ecosistema .NET. Este curso parte desde cero y construye **QuoteRules**, un motor local que valida partidas, aplica reglas de descuento y produce cotizaciones deterministas sin depender de servicios externos.
+F# es un lenguaje functional-first del ecosistema .NET. Este curso parte desde cero y construye **QuoteRules**, un motor local que valida partidas, aplica reglas de descuento y produce cotizaciones deterministas sin depender de servicios externos.
 
 ## Qué vas a construir
 
-Una CLI pequeña pero real con un dominio tipado, funciones puras para reglas de negocio, errores explícitos mediante `Result`, pruebas automatizadas, entrada desde archivo y persistencia local de reportes deterministas.
+Una CLI pequeña pero real con dominio tipado, funciones puras para reglas de negocio, errores explícitos mediante `Result`, pruebas automatizadas, entrada desde archivo y persistencia local de reportes deterministas.
 
 ## Requisitos
 
-- .NET 10 LTS SDK. La verificación inicial usa SDK 10.0.111 con F# 10.
+- .NET 10 LTS SDK. La verificación usa SDK 10.0.111 con F# 10.
 - VS Code o editor equivalente.
 - PowerShell en Windows o bash en Linux.
 
@@ -53,16 +53,58 @@ dotnet test app/QuoteRules.Tests/QuoteRules.Tests.fsproj
 11. [Produce reportes deterministas](lessons/11-reportes-deterministas.md)
 12. [Persiste y diagnostica fallos operativos](lessons/12-persistencia-y-fallos.md)
 13. [Checkpoint: cotización persistida](lessons/13-checkpoint-persistencia.md)
+14. [Depura con evidencia y endurece el flujo](lessons/14-depuracion-con-evidencia.md)
+15. [Evaluación final: extiende QuoteRules sin receta](lessons/15-evaluacion-final.md)
+16. [Rúbrica y solución de referencia](lessons/16-rubrica-y-solucion.md)
+17. [Cómo hablar de QuoteRules en una entrevista](lessons/17-entrevista-y-siguiente-paso.md)
 
-Este incremento cubre 13 de las 17 lecciones previstas. Las cuatro restantes cerrarán hardening, evaluación final, rúbrica, entrevista y solución de referencia sobre la misma aplicación canónica.
+La secuencia completa tiene **17 lecciones** sobre una sola aplicación canónica. Incluye checkpoints, depuración, evaluación final autónoma, rúbrica y solución de referencia.
+
+## Ejercicio final y solución
+
+- [Evaluación final independiente](exercises/evaluacion-final.md)
+- [Solución de referencia, sólo después de intentarlo](solutions/evaluacion-final-referencia.md)
 
 ## Qué sabrás hacer al terminar
 
 Leer y escribir F# idiomático de complejidad junior, modelar dominio, componer transformaciones, manejar errores, usar colecciones e I/O, probar reglas, depurar, construir con `dotnet` y explicar las decisiones del proyecto. El curso busca una base razonable para tareas junior con supervisión; no promete empleo.
 
+## Preguntas frecuentes
+
+### ¿Puedo aprender F# desde cero?
+
+Sí. La primera lección ejecuta la aplicación y la complejidad crece sobre QuoteRules en vez de exigir teoría previa.
+
+### ¿Necesito experiencia previa en .NET?
+
+No. Ayuda conocer conceptos generales de programación, pero el curso no la declara como prerrequisito.
+
+### ¿F# tiene el mismo mercado que C#?
+
+No. F# tiene una comunidad profesional menor, aunque comparte runtime, bibliotecas y tooling .NET. El curso lo trata como una ruta para aprender modelado funcional y reglas de negocio, no como promesa de demanda laboral equivalente.
+
+### ¿Necesito Windows?
+
+No. El núcleo y sus pruebas se ejecutan con .NET en Linux y Windows.
+
+### ¿Dónde aprendo Git?
+
+En el [curso transversal de Git](../git/); aquí no duplicamos ese material.
+
+## Glosario
+
+- **Record:** tipo con campos nombrados para representar datos.
+- **Unión discriminada:** conjunto cerrado de casos posibles.
+- **Pattern matching:** selección de comportamiento según la forma de un valor.
+- **Función pura:** no produce efectos externos y conserva el mismo resultado para la misma entrada.
+- **`Result`:** tipo explícito para éxito o error.
+- **Pipeline (`|>`):** encadena transformaciones pasando el resultado hacia la siguiente función.
+- **Frontera:** punto donde el programa interactúa con texto, CLI, filesystem u otro sistema externo.
+- **Determinista:** misma entrada y estado relevante producen la misma salida observable.
+
 ## Git
 
-Para ramas, historial, recuperación y colaboración usa el [curso transversal de Git](../git/). Aquí sólo se mencionarán comandos inevitables para trabajar con el proyecto.
+Para ramas, historial, recuperación y colaboración usa el [curso transversal de Git](../git/). Aquí sólo se mencionan comandos inevitables para trabajar con el proyecto.
 
 ## Contexto profesional
 
@@ -71,9 +113,12 @@ F# tiene un mercado más pequeño que C#, pero se ejecuta sobre .NET y se usa en
 ## Referencias oficiales
 
 - [F# Guide](https://learn.microsoft.com/dotnet/fsharp/)
+- [F# language reference](https://learn.microsoft.com/dotnet/fsharp/language-reference/)
+- [F# Core reference](https://fsharp.github.io/fsharp-core-docs/)
 - [What's new in F# 10](https://learn.microsoft.com/dotnet/fsharp/whats-new/fsharp-10)
+- [.NET CLI overview](https://learn.microsoft.com/dotnet/core/tools/)
 - [.NET support policy](https://dotnet.microsoft.com/platform/support/policy)
 
-## Próximo paso
+## Siguiente paso
 
-Continúa por la lección 1 y ejecuta el programa antes de cambiarlo.
+Empieza por la [lección 1](lessons/01-primera-cotizacion.md). Si ya terminaste el curso, vuelve a la evaluación final sin mirar la solución y explica QuoteRules como lo harías ante una revisión técnica.
