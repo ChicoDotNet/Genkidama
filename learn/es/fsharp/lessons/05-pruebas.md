@@ -47,4 +47,4 @@ Sin mirar las lecciones anteriores, explica y demuestra:
 
 Completaste el primer vertical slice: dominio, reglas, errores y pruebas. El siguiente incremento incorporará composición funcional, colecciones más ricas y entrada desde datos externos sin abandonar QuoteRules.
 
-[Anterior](04-errores-result.md)
+[Anterior](04-errores-result.md) · [Siguiente](06-pipelines-colecciones.md)
