@@ -16,13 +16,20 @@
            PERFORM AUTHENTICATE
            PERFORM RESERVE-STOCK
            PERFORM CHARGE-CARD
-           DISPLAY 'checkout=' AUTH-TEXT '>' STOCK-TEXT '>' BILL-TEXT.
+           DISPLAY 'checkout=' AUTH-TEXT '>' STOCK-TEXT
+                   '>' BILL-TEXT.
        AUTHENTICATE.
-           STRING 'auth(' DELIMITED BY SIZE USER-NAME DELIMITED BY SIZE
-                  ')' DELIMITED BY SIZE INTO AUTH-TEXT.
+           STRING 'auth(' DELIMITED BY SIZE
+                  USER-NAME DELIMITED BY SIZE
+                  ')' DELIMITED BY SIZE
+                  INTO AUTH-TEXT.
        RESERVE-STOCK.
-           STRING 'reserve(' DELIMITED BY SIZE SKU-CODE DELIMITED BY SIZE
-                  ')' DELIMITED BY SIZE INTO STOCK-TEXT.
+           STRING 'reserve(' DELIMITED BY SIZE
+                  SKU-CODE DELIMITED BY SIZE
+                  ')' DELIMITED BY SIZE
+                  INTO STOCK-TEXT.
        CHARGE-CARD.
-           STRING 'charge(' DELIMITED BY SIZE CENTS DELIMITED BY SIZE
-                  ')' DELIMITED BY SIZE INTO BILL-TEXT.
+           STRING 'charge(' DELIMITED BY SIZE
+                  CENTS DELIMITED BY SIZE
+                  ')' DELIMITED BY SIZE
+                  INTO BILL-TEXT.
