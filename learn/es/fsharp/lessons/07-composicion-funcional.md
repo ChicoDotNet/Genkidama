@@ -44,3 +44,5 @@ Ahora la aplicación dejará de depender sólo de datos incrustados y aceptará 
 
 - [F# functions](https://learn.microsoft.com/dotnet/fsharp/language-reference/functions/)
 - [F# error handling](https://learn.microsoft.com/dotnet/fsharp/language-reference/exception-handling/)
+
+[Anterior](06-pipelines-colecciones.md) · [Siguiente](08-entrada-externa.md)
