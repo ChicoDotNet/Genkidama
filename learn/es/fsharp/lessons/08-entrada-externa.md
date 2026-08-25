@@ -73,3 +73,5 @@ Harás un checkpoint que combine colecciones, composición, parsing, errores y p
 
 - [System.IO.File](https://learn.microsoft.com/dotnet/api/system.io.file)
 - [F# command-line applications](https://learn.microsoft.com/dotnet/fsharp/get-started/get-started-command-line)
+
+[Anterior](07-composicion-funcional.md) · [Siguiente](09-checkpoint-entrada.md)
