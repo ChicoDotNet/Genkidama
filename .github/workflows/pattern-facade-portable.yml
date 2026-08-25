@@ -1,0 +1,52 @@
+name: Pattern Facade Portable
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-facade-portable.yml'
+      - 'src/Niche/Solidity/Facade.sol'
+      - 'src/Historical/Fortran/facade.f90'
+      - 'src/Systems/Zig/facade.zig'
+
+jobs:
+  solidity-fortran-zig:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: '0.15.2'
+      - name: Install Solidity compiler
+        shell: bash
+        run: npm install --global solc
+      - name: Validate Solidity, Fortran and Zig Facade
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='checkout=auth(alice)>reserve(SKU-42)>charge(499)'
+          assert_output() {
+            local label="$1"
+            local output="$2"
+            if [[ "$output" != "$expected" ]]; then
+              printf '%s output mismatch\nexpected: %s\nactual:   %s\n' "$label" "$expected" "$output" >&2
+              exit 1
+            fi
+          }
+
+          work="$(mktemp -d)"
+
+          solc --bin --abi src/Niche/Solidity/Facade.sol -o "$work/solidity" --overwrite
+          test -s "$work/solidity/CheckoutFacade.bin"
+          test -s "$work/solidity/CheckoutFacade.abi"
+
+          gfortran -std=f2018 -Wall -Wextra -Werror src/Historical/Fortran/facade.f90 -o "$work/facade-fortran"
+          assert_output 'Fortran' "$("$work/facade-fortran")"
+
+          zig fmt --check src/Systems/Zig/facade.zig
+          zig build-exe src/Systems/Zig/facade.zig -O ReleaseSafe -femit-bin="$work/facade-zig"
+          assert_output 'Zig' "$("$work/facade-zig")"
