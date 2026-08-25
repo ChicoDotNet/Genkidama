@@ -1,6 +1,9 @@
 program FlyweightExample;
 {$mode objfpc}{$H+}
 
+uses
+  SysUtils;
+
 type
   TStyle = record
     Font: string;
