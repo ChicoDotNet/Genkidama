@@ -41,8 +41,8 @@ jobs:
           work="$(mktemp -d)"
 
           solc --bin --abi src/Niche/Solidity/Facade.sol -o "$work/solidity" --overwrite
-          test -s "$work/solidity/CheckoutFacade.bin"
-          test -s "$work/solidity/CheckoutFacade.abi"
+          test "$(find "$work/solidity" -maxdepth 1 -name '*CheckoutFacade.bin' -size +0c | wc -l)" -eq 1
+          test "$(find "$work/solidity" -maxdepth 1 -name '*CheckoutFacade.abi' -size +0c | wc -l)" -eq 1
 
           gfortran -std=f2018 -Wall -Wextra -Werror src/Historical/Fortran/facade.f90 -o "$work/facade-fortran"
           assert_output 'Fortran' "$("$work/facade-fortran")"
