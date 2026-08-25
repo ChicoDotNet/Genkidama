@@ -16,5 +16,3 @@ checkout_facade(User, Sku, Amount, Result) :-
 main :-
     checkout_facade(alice, 'SKU-42', 499, Result),
     format('checkout=~w~n', [Result]).
-
-:- initialization(main, main).
