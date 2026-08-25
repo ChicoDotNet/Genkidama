@@ -47,6 +47,6 @@ Define una política explícita para evitar sobrescribir un reporte existente. D
 
 ## Siguiente paso
 
-El siguiente incremento endurecerá observabilidad, depuración y composición de flujos antes de la evaluación final.
+En la lección 14 aprenderás a depurar QuoteRules con evidencia antes de tocar código al azar.
 
-[Anterior](12-persistencia-y-fallos.md)
+[Anterior](12-persistencia-y-fallos.md) · [Siguiente](14-depuracion-con-evidencia.md)
