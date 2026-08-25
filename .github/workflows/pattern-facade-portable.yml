@@ -40,7 +40,7 @@ jobs:
 
           work="$(mktemp -d)"
 
-          solc --bin --abi src/Niche/Solidity/Facade.sol -o "$work/solidity" --overwrite
+          solcjs --bin --abi src/Niche/Solidity/Facade.sol -o "$work/solidity"
           test "$(find "$work/solidity" -maxdepth 1 -name '*CheckoutFacade.bin' -size +0c | wc -l)" -eq 1
           test "$(find "$work/solidity" -maxdepth 1 -name '*CheckoutFacade.abi' -size +0c | wc -l)" -eq 1
 
