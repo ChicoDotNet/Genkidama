@@ -49,4 +49,6 @@ QuoteRules ya no es un ejemplo con datos incrustados: puede transformar entrada 
 
 ## Siguiente paso
 
-El próximo incremento introducirá persistencia/configuración local y profundizará en diseño de tipos e integración con el ecosistema .NET.
+Ahora harás imposible representar una ruta de salida inválida antes de llegar al filesystem.
+
+[Anterior](08-entrada-externa.md) · [Siguiente](10-tipos-para-fronteras.md)
