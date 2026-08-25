@@ -20,6 +20,12 @@ Comprueba tu instalación con `dotnet --info`.
 dotnet run --project app/QuoteRules/QuoteRules.fsproj
 ```
 
+Para cotizar desde un archivo con formato `descripcion|cantidad|precio`:
+
+```bash
+dotnet run --project app/QuoteRules/QuoteRules.fsproj -- partner quote.txt
+```
+
 ## Probar
 
 ```bash
@@ -33,8 +39,12 @@ dotnet test app/QuoteRules.Tests/QuoteRules.Tests.fsproj
 3. [Convierte reglas de precios en funciones puras](lessons/03-reglas-puras.md)
 4. [Haz visibles los errores con Result](lessons/04-errores-result.md)
 5. [Protege reglas con pruebas](lessons/05-pruebas.md)
+6. [Procesa colecciones con pipelines](lessons/06-pipelines-colecciones.md)
+7. [Compón funciones pequeñas](lessons/07-composicion-funcional.md)
+8. [Lee entrada externa sin contaminar el dominio](lessons/08-entrada-externa.md)
+9. [Checkpoint: cotiza desde datos externos](lessons/09-checkpoint-entrada.md)
 
-Este incremento cubre 5 de las 17 lecciones previstas. Las restantes se incorporarán sobre la misma aplicación canónica.
+Este incremento cubre 9 de las 17 lecciones previstas. Las restantes se incorporarán sobre la misma aplicación canónica.
 
 ## Qué sabrás hacer al terminar
 
