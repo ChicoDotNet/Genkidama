@@ -1,0 +1,9 @@
+{
+  "name": "PocketLedger",
+  "short_name": "PocketLedger",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "description": "Gestor educativo de gastos personales de Genkidama Learn."
+}
