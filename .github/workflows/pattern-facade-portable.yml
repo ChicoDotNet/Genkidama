@@ -9,6 +9,9 @@ on:
       - 'src/Niche/Solidity/Facade.sol'
       - 'src/Historical/Fortran/facade.f90'
       - 'src/Systems/Zig/facade.zig'
+      - 'src/Systems/Objective-C/facade.m'
+      - 'src/Niche/Nim/facade.nim'
+      - 'src/Web/Dart/facade.dart'
 
 jobs:
   solidity-fortran-zig:
@@ -50,3 +53,40 @@ jobs:
           zig fmt --check src/Systems/Zig/facade.zig
           zig build-exe src/Systems/Zig/facade.zig -O ReleaseSafe -femit-bin="$work/facade-zig"
           assert_output 'Zig' "$("$work/facade-zig")"
+
+  nim-dart:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dart-lang/setup-dart@v1
+      - name: Install Nim
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y nim
+      - name: Validate Nim and Dart Facade
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='checkout=auth(alice)>reserve(SKU-42)>charge(499)'
+          work="$(mktemp -d)"
+
+          nim c --hints:off --warnings:on -o:"$work/facade-nim" src/Niche/Nim/facade.nim
+          test "$("$work/facade-nim")" = "$expected"
+
+          dart format --output=none --set-exit-if-changed src/Web/Dart/facade.dart
+          dart analyze --fatal-infos --fatal-warnings src/Web/Dart/facade.dart
+          test "$(dart run src/Web/Dart/facade.dart)" = "$expected"
+
+  objective-c:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate Objective-C Facade
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='checkout=auth(alice)>reserve(SKU-42)>charge(499)'
+          clang -fobjc-arc -Wall -Wextra -Werror -framework Foundation src/Systems/Objective-C/facade.m -o /tmp/facade-objective-c
+          test "$(/tmp/facade-objective-c)" = "$expected"
