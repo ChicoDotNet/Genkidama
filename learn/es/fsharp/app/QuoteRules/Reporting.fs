@@ -5,7 +5,7 @@ open System.Globalization
 open System.IO
 
 module Reporting =
-    let private money value = value.ToString("0.00", CultureInfo.InvariantCulture)
+    let private money (value: decimal) = value.ToString("0.00", CultureInfo.InvariantCulture)
 
     let render quote =
         [ yield $"Subtotal={money quote.Subtotal}"
