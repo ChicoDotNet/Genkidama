@@ -4,7 +4,7 @@
 > **Intención:** ofrecer una interfaz deliberadamente simple y estable para coordinar un subsistema más amplio sin ocultar que sus componentes siguen existiendo.  
 > **Estado:** `in-progress`  
 > **Implementaciones verificadas:** `10/48`  
-> **Implementaciones materializadas:** `30/48`  
+> **Implementaciones materializadas:** `34/48`  
 > **Cobertura de pruebas:** N/A — la completitud se valida por comportamiento/toolchain en múltiples ecosistemas standalone; no existe una métrica homogénea agregable.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -149,7 +149,7 @@ Facade no implica necesariamente encapsulación absoluta. Clientes especializado
 
 ## Implementaciones por lenguaje
 
-El universo canónico mantiene **51 targets**. Para Facade, **48 son Applicable** y **HTML, CSS y SQL declarativo son N/A**. Actualmente hay **10/48 verificados y 30/48 materializados**; los veinte ejemplos posteriores al golden tranche permanecen explícitamente pendientes de evidencia CI antes de promoción factual.
+El universo canónico mantiene **51 targets**. Para Facade, **48 son Applicable** y **HTML, CSS y SQL declarativo son N/A**. Actualmente hay **10/48 verificados y 34/48 materializados**; los ejemplos posteriores al golden tranche permanecen explícitamente pendientes de evidencia CI antes de promoción factual.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo | Validación | Nota |
 |---|---|---|---|---|
@@ -174,15 +174,15 @@ El universo canónico mantiene **51 targets**. Para Facade, **48 son Applicable*
 | Haskell | Applicable | [`src/Functional/Haskell/Facade.hs`](../src/Functional/Haskell/Facade.hs) | pendiente CI Facade | funciones/registros pueden componer subsistemas |
 | Scala | Applicable | [`src/Functional/Scala/Facade.scala`](../src/Functional/Scala/Facade.scala) | pendiente CI Facade | objetos/funciones son suficientes |
 | Perl | Applicable | [`src/Scripting/Perl/facade.pl`](../src/Scripting/Perl/facade.pl) | pendiente CI Facade | paquetes/subrutinas son suficientes |
-| Pascal | Applicable | — | pendiente | procedimientos/records/objetos pueden coordinar subsistemas |
+| Pascal | Applicable | [`src/Historical/Pascal/facade.pas`](../src/Historical/Pascal/facade.pas) | pendiente CI Facade | clases/procedimientos coordinan los subsistemas |
 | R | Applicable | [`src/DataScience/R/facade.R`](../src/DataScience/R/facade.R) | pendiente CI Facade | funciones/listas pueden expresar la frontera |
 | GNU Octave | Applicable | [`src/DataScience/Octave/facade.m`](../src/DataScience/Octave/facade.m) | pendiente CI Facade | funciones/structs pueden expresar la frontera |
 | Julia | Applicable | [`src/DataScience/Julia/facade.jl`](../src/DataScience/Julia/facade.jl) | pendiente CI Facade | funciones/structs son suficientes |
 | OCaml | Applicable | [`src/Functional/OCaml/facade.ml`](../src/Functional/OCaml/facade.ml) | pendiente CI Facade | módulos/records/funciones son suficientes |
 | Common Lisp | Applicable | [`src/Functional/Lisp/facade.lisp`](../src/Functional/Lisp/facade.lisp) | pendiente CI Facade | funciones/estructuras son suficientes |
-| Clojure | Applicable | — | pendiente | funciones/maps son suficientes |
-| Elixir | Applicable | — | pendiente | módulos/funciones coordinan subsistemas |
-| Erlang | Applicable | — | pendiente | módulos/funciones coordinan procesos/servicios |
+| Clojure | Applicable | [`src/Functional/Clojure/facade.clj`](../src/Functional/Clojure/facade.clj) | pendiente CI Facade | funciones ofrecen la frontera de alto nivel |
+| Elixir | Applicable | [`src/Functional/Elixir/facade.exs`](../src/Functional/Elixir/facade.exs) | pendiente CI Facade | módulos/funciones coordinan subsistemas |
+| Erlang | Applicable | [`src/Functional/Erlang/facade.erl`](../src/Functional/Erlang/facade.erl) | pendiente CI Facade | módulo/funciones coordinan servicios |
 | Prolog | Applicable | [`src/Niche/Prolog/facade.pl`](../src/Niche/Prolog/facade.pl) | pendiente CI Facade | predicados pueden ofrecer una consulta de alto nivel sobre varios predicados |
 | Groovy | Applicable | [`src/Scripting/Groovy/facade.groovy`](../src/Scripting/Groovy/facade.groovy) | pendiente CI Facade | clases/closures son suficientes |
 | Ada | Applicable | [`src/Historical/Ada/facade.adb`](../src/Historical/Ada/facade.adb) | pendiente CI Facade | packages/procedures son suficientes |
