@@ -23,12 +23,12 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: actions/setup-go@v5
         with: { go-version: stable }
-      - name: Install Ruby
+      - name: Install scripting and functional runtimes
         shell: bash
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y ruby
+          sudo apt-get install --no-install-recommends -y ruby lua5.4 ghc perl
       - name: Validate mainstream examples
         shell: bash
         run: |
@@ -71,3 +71,12 @@ jobs:
 
           ruby -cw src/Scripting/Ruby/flyweight.rb >/dev/null
           assert_output Ruby "$(ruby src/Scripting/Ruby/flyweight.rb)"
+
+          assert_output Lua "$(lua5.4 src/Scripting/Lua/flyweight.lua)"
+          bash -n src/Scripting/Bash/flyweight.sh
+          assert_output Bash "$(bash src/Scripting/Bash/flyweight.sh)"
+          assert_output PowerShell "$(pwsh -NoProfile -File src/Scripting/PowerShell/flyweight.ps1)"
+          ghc -Wall -Werror src/Functional/Haskell/flyweight.hs -o "$work/flyweight-haskell"
+          assert_output Haskell "$("$work/flyweight-haskell")"
+          perl -c src/Scripting/Perl/flyweight.pl >/dev/null
+          assert_output Perl "$(perl src/Scripting/Perl/flyweight.pl)"
