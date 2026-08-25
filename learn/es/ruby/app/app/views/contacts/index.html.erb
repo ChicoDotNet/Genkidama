@@ -1,0 +1,46 @@
+<h1>ContactDesk</h1>
+<p>CRM local para clientes y prospectos.</p>
+<p>
+  <%= link_to "Nuevo contacto", new_contact_path %> |
+  <%= link_to "Exportar CSV", export_contacts_path %>
+</p>
+
+<%= form_with url: import_contacts_path, method: :post, multipart: true do |form| %>
+  <%= form.label :file, "Importar contactos desde CSV" %>
+  <%= form.file_field :file, accept: ".csv,text/csv" %>
+  <%= form.submit "Importar" %>
+<% end %>
+
+<%= form_with url: contacts_path, method: :get do |form| %>
+  <%= form.label :q, "Buscar" %>
+  <%= form.search_field :q, value: params[:q], placeholder: "Nombre, email o empresa" %>
+  <%= form.label :status, "Estado" %>
+  <%= form.select :status, [["Todos", ""], ["Prospecto", "lead"], ["Cliente", "active"], ["Archivado", "archived"]], selected: params[:status] %>
+  <%= form.submit "Filtrar" %>
+<% end %>
+
+<p>Mostrando <%= @contacts.size %> de <%= @total_count %> contacto(s). Página <%= @page %> de <%= @total_pages %>.</p>
+
+<table>
+  <thead><tr><th>Nombre</th><th>Email</th><th>Empresa</th><th>Estado</th><th>Acciones</th></tr></thead>
+  <tbody>
+    <% @contacts.each do |contact| %>
+      <tr>
+        <td><%= link_to contact.name, contact %></td>
+        <td><%= contact.email %></td>
+        <td><%= contact.company %></td>
+        <td><%= contact.status %></td>
+        <td><%= link_to "Editar", edit_contact_path(contact) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<nav aria-label="Paginación de contactos">
+  <% if @page > 1 %>
+    <%= link_to "← Anterior", contacts_path(q: params[:q], status: params[:status], page: @page - 1) %>
+  <% end %>
+  <% if @page < @total_pages %>
+    <%= link_to "Siguiente →", contacts_path(q: params[:q], status: params[:status], page: @page + 1) %>
+  <% end %>
+</nav>

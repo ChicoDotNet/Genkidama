@@ -1,0 +1,32 @@
+<h1><%= @contact.name %></h1>
+<p><strong>Email:</strong> <%= @contact.email %></p>
+<p><strong>Empresa:</strong> <%= @contact.company.presence || "—" %></p>
+<p><strong>Estado:</strong> <%= @contact.status %></p>
+<p><%= link_to "Editar", edit_contact_path(@contact) %> · <%= link_to "Volver", contacts_path %></p>
+
+<h2>Notas</h2>
+<% if @notes.any? %>
+  <ul>
+    <% @notes.each do |note| %>
+      <li><%= note.body %> <small><%= note.created_at.strftime("%Y-%m-%d %H:%M") %></small></li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>Aún no hay notas.</p>
+<% end %>
+
+<% if @note.errors.any? %>
+  <div>
+    <h3>Revisa la nota</h3>
+    <ul>
+      <% @note.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_with model: [@contact, @note] do |form| %>
+  <p><%= form.label :body, "Nueva nota" %><br><%= form.text_area :body, required: true, maxlength: 1000 %></p>
+  <%= form.submit "Agregar nota" %>
+<% end %>

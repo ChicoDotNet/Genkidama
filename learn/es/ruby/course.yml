@@ -1,0 +1,34 @@
+schema_version: 1
+slug: ruby
+language: Ruby
+locale: es
+source_locale: es
+title: Curso de Ruby desde cero — Construye un CRM web para clientes y prospectos
+status: complete
+canonical_app:
+  name: ContactDesk
+  summary: CRM web local para registrar clientes y prospectos, validar datos y gestionar su estado.
+audience: beginner
+prerequisites: []
+lesson_count: 17
+toolchain:
+  verified_on: '2026-08-22'
+  version_tested: 'Ruby 4.0.6; Rails 8.1.3.1'
+  runtime_or_compiler: 'Ruby 4.0.6'
+  package_or_build_tool: 'Bundler + Rails 8.1.3.1 + Minitest'
+  operating_systems_tested:
+    - github-windows-runner
+    - github-ubuntu-runner
+ci:
+  supported: true
+  workflow: .github/workflows/learn-ruby.yml
+career_context:
+  uses:
+    - aplicaciones web con Ruby on Rails
+    - sistemas internos y productos SaaS
+    - automatización y servicios backend
+  market_note: Ruby sigue utilizándose profesionalmente, especialmente junto con Rails. Completar este curso no garantiza empleo y el ecosistema laboral suele exigir además bases de datos, HTTP, pruebas, Git y operación de aplicaciones web.
+official_references:
+  - https://www.ruby-lang.org/en/documentation/
+  - https://guides.rubyonrails.org/
+  - https://api.rubyonrails.org/
