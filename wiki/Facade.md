@@ -3,7 +3,8 @@
 > **Familia:** Structural  
 > **Intención:** ofrecer una interfaz deliberadamente simple y estable para coordinar un subsistema más amplio sin ocultar que sus componentes siguen existiendo.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `10/48`  
+> **Implementaciones verificadas:** `10/48`  
+> **Implementaciones materializadas:** `20/48`  
 > **Cobertura de pruebas:** N/A — la completitud se valida por comportamiento/toolchain en múltiples ecosistemas standalone; no existe una métrica homogénea agregable.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -148,9 +149,9 @@ Facade no implica necesariamente encapsulación absoluta. Clientes especializado
 
 ## Implementaciones por lenguaje
 
-El universo canónico mantiene **51 targets**. Para Facade, **48 son Applicable** y **HTML, CSS y SQL declarativo son N/A**. En este incremento hay **10/48 Applicable con ejemplo real**; el patrón permanece `in-progress` hasta verificar los 38 restantes.
+El universo canónico mantiene **51 targets**. Para Facade, **48 son Applicable** y **HTML, CSS y SQL declarativo son N/A**. Actualmente hay **10/48 verificados y 20/48 materializados**; los diez nuevos ejemplos permanecen explícitamente pendientes de evidencia CI antes de promoción factual.
 
-| Lenguaje / target | Aplicabilidad | Ejemplo verificado | Validación | Nota |
+| Lenguaje / target | Aplicabilidad | Ejemplo | Validación | Nota |
 |---|---|---|---|---|
 | C# | Applicable | [`src/Enterprise/C#/FacadeExample.cs`](../src/Enterprise/C%23/FacadeExample.cs) | CI mainstream | clases y composición explícita |
 | TypeScript | Applicable | [`src/Web/TypeScriptTS/facade.ts`](../src/Web/TypeScriptTS/facade.ts) | CI mainstream | clases y API tipada |
@@ -160,19 +161,19 @@ El universo canónico mantiene **51 targets**. Para Facade, **48 son Applicable*
 | Rust | Applicable | [`src/Systems/Rust/facade.rs`](../src/Systems/Rust/facade.rs) | CI mainstream | structs y métodos |
 | Go | Applicable | [`src/Systems/Go/facade.go`](../src/Systems/Go/facade.go) | CI mainstream | structs y composición |
 | PHP | Applicable | [`src/Scripting/PHP/facade.php`](../src/Scripting/PHP/facade.php) | CI mainstream | composición explícita |
-| Kotlin | Applicable | — | pendiente | clases/funciones son suficientes |
-| Swift | Applicable | — | pendiente | tipos y composición son suficientes |
+| Kotlin | Applicable | [`src/Enterprise/Kotlin/FacadeExample.kt`](../src/Enterprise/Kotlin/FacadeExample.kt) | pendiente CI Facade | clases/funciones son suficientes |
+| Swift | Applicable | [`src/Systems/Swift/facade.swift`](../src/Systems/Swift/facade.swift) | pendiente CI Facade | tipos y composición son suficientes |
 | F# | Applicable | [`src/Functional/F#/facade.fsx`](../src/Functional/F%23/facade.fsx) | CI mainstream | tipos y función de alto nivel |
 | JavaScript | Applicable | [`src/Web/JavaScriptJS/facade.js`](../src/Web/JavaScriptJS/facade.js) | CI mainstream | objetos dinámicos |
-| Visual Basic .NET | Applicable | — | pendiente | clases/módulos son suficientes |
-| C | Applicable | — | pendiente | funciones y structs pueden formar la frontera |
-| Ruby | Applicable | — | pendiente | objetos/módulos son suficientes |
-| Lua | Applicable | — | pendiente | tablas y funciones son suficientes |
-| Bash | Applicable | — | pendiente | funciones pueden coordinar comandos/subsistemas |
-| PowerShell | Applicable | — | pendiente | funciones/módulos pueden exponer la operación de alto nivel |
-| Haskell | Applicable | — | pendiente | funciones/registros pueden componer subsistemas |
+| Visual Basic .NET | Applicable | [`src/Enterprise/VB.NET/FacadeExample.vb`](../src/Enterprise/VB.NET/FacadeExample.vb) | pendiente CI Facade | clases/módulos son suficientes |
+| C | Applicable | [`src/Systems/C/facade.c`](../src/Systems/C/facade.c) | pendiente CI Facade | funciones y structs pueden formar la frontera |
+| Ruby | Applicable | [`src/Scripting/Ruby/facade.rb`](../src/Scripting/Ruby/facade.rb) | pendiente CI Facade | objetos/módulos son suficientes |
+| Lua | Applicable | [`src/Scripting/Lua/facade.lua`](../src/Scripting/Lua/facade.lua) | pendiente CI Facade | tablas y funciones son suficientes |
+| Bash | Applicable | [`src/Scripting/Bash/facade.sh`](../src/Scripting/Bash/facade.sh) | pendiente CI Facade | funciones pueden coordinar comandos/subsistemas |
+| PowerShell | Applicable | [`src/Scripting/PowerShell/FacadeExample.ps1`](../src/Scripting/PowerShell/FacadeExample.ps1) | pendiente CI Facade | funciones/módulos pueden exponer la operación de alto nivel |
+| Haskell | Applicable | [`src/Functional/Haskell/Facade.hs`](../src/Functional/Haskell/Facade.hs) | pendiente CI Facade | funciones/registros pueden componer subsistemas |
 | Scala | Applicable | — | pendiente | objetos/funciones son suficientes |
-| Perl | Applicable | — | pendiente | paquetes/subrutinas son suficientes |
+| Perl | Applicable | [`src/Scripting/Perl/facade.pl`](../src/Scripting/Perl/facade.pl) | pendiente CI Facade | paquetes/subrutinas son suficientes |
 | Pascal | Applicable | — | pendiente | procedimientos/records/objetos pueden coordinar subsistemas |
 | R | Applicable | — | pendiente | funciones/listas pueden expresar la frontera |
 | GNU Octave | Applicable | — | pendiente | funciones/structs pueden expresar la frontera |
