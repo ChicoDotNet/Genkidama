@@ -16,6 +16,11 @@ on:
       - 'src/Scripting/PHP/facade.php'
       - 'src/Functional/F#/facade.fsx'
       - 'src/Web/JavaScriptJS/facade.js'
+      - 'src/Enterprise/VB.NET/FacadeExample.vb'
+      - 'src/Systems/C/facade.c'
+      - 'src/Scripting/Ruby/facade.rb'
+      - 'src/Scripting/Bash/facade.sh'
+      - 'src/Scripting/PowerShell/FacadeExample.ps1'
       - 'wiki/Facade.md'
 
 jobs:
@@ -82,3 +87,18 @@ jobs:
           assert_output 'F#' "$(dotnet fsi 'src/Functional/F#/facade.fsx')"
           node --check src/Web/JavaScriptJS/facade.js
           assert_output 'JavaScript' "$(node src/Web/JavaScriptJS/facade.js)"
+
+          dotnet new console -lang VB --framework net10.0 -n FacadeVb -o "$work/vb" >/dev/null
+          cp 'src/Enterprise/VB.NET/FacadeExample.vb' "$work/vb/Program.vb"
+          assert_output 'VB.NET' "$(dotnet run --project "$work/vb/FacadeVb.vbproj" --configuration Release)"
+
+          gcc -std=c17 -Wall -Wextra -Werror -pedantic src/Systems/C/facade.c -o "$work/facade-c"
+          assert_output 'C' "$("$work/facade-c")"
+
+          ruby -c src/Scripting/Ruby/facade.rb >/dev/null
+          assert_output 'Ruby' "$(ruby src/Scripting/Ruby/facade.rb)"
+
+          bash -n src/Scripting/Bash/facade.sh
+          assert_output 'Bash' "$(bash src/Scripting/Bash/facade.sh)"
+
+          assert_output 'PowerShell' "$(pwsh -NoLogo -NoProfile -File src/Scripting/PowerShell/FacadeExample.ps1)"
