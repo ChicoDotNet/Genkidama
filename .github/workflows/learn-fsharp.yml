@@ -1,0 +1,32 @@
+name: Learn F#
+
+on:
+  pull_request:
+    paths:
+      - 'learn/es/fsharp/**'
+      - '.github/workflows/learn-fsharp.yml'
+  push:
+    branches: [dev]
+    paths:
+      - 'learn/es/fsharp/**'
+      - '.github/workflows/learn-fsharp.yml'
+
+jobs:
+  fsharp:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.111'
+      - name: Build
+        run: dotnet build learn/es/fsharp/app/QuoteRules/QuoteRules.fsproj --configuration Release
+      - name: Test with coverage
+        run: dotnet test learn/es/fsharp/app/QuoteRules.Tests/QuoteRules.Tests.fsproj --configuration Release --collect:"XPlat Code Coverage" --results-directory learn/es/fsharp/TestResults
+      - name: Enforce meaningful coverage floor
+        run: python learn/es/fsharp/tools/check_coverage.py
+      - name: Smoke
+        run: dotnet run --project learn/es/fsharp/app/QuoteRules/QuoteRules.fsproj --configuration Release
