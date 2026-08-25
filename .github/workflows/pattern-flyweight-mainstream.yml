@@ -11,31 +11,63 @@ jobs:
   mainstream:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
         with: { dotnet-version: '10.0.x' }
       - uses: actions/setup-node@v4
         with: { node-version: '22' }
       - uses: actions/setup-python@v5
         with: { python-version: '3.x' }
-      - uses: actions/setup-java@v4
-        with: { distribution: temurin, java-version: '21' }
+      - uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: '25' }
       - uses: dtolnay/rust-toolchain@stable
       - uses: actions/setup-go@v5
         with: { go-version: stable }
+      - name: Install Ruby
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y ruby
       - name: Validate mainstream examples
         shell: bash
         run: |
           set -euo pipefail
           expected='styles=2;shared=true;text=ABC'
-          test "$(dotnet-script src/Enterprise/C#/FlyweightExample.cs 2>/dev/null || true)" = "$expected" || {
-            tmp=$(mktemp -d); dotnet new console -n Flyweight -o "$tmp" --force >/dev/null; cp 'src/Enterprise/C#/FlyweightExample.cs' "$tmp/Program.cs"; test "$(dotnet run --project "$tmp" -q)" = "$expected"; }
-          npx --yes tsx src/Web/TypeScriptTS/flyweight.ts | grep -Fx "$expected"
-          python src/Scripting/PythonPY/flyweight.py | grep -Fx "$expected"
-          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/flyweight.cpp' -o /tmp/flyweight_cpp && /tmp/flyweight_cpp | grep -Fx "$expected"
-          javac src/Enterprise/Java/FlyweightExample.java && java -cp src/Enterprise/Java FlyweightExample | grep -Fx "$expected"
-          rustc -D warnings src/Systems/Rust/flyweight.rs -o /tmp/flyweight_rs && /tmp/flyweight_rs | grep -Fx "$expected"
-          go run src/Systems/Go/flyweight.go | grep -Fx "$expected"
-          php src/Scripting/PHP/flyweight.php | grep -Fx "$expected"
-          dotnet fsi 'src/Functional/F#/flyweight.fsx' | tail -n 1 | grep -Fx "$expected"
-          node src/Web/JavaScriptJS/flyweight.js | grep -Fx "$expected"
+          assert_output() { test "$2" = "$expected" || { printf '%s mismatch\nexpected: %s\nactual: %s\n' "$1" "$expected" "$2" >&2; exit 1; }; }
+          work="$(mktemp -d)"
+
+          dotnet new console -n FlyweightCs -o "$work/cs" --force >/dev/null
+          cp 'src/Enterprise/C#/FlyweightExample.cs' "$work/cs/Program.cs"
+          assert_output C# "$(dotnet run --project "$work/cs/FlyweightCs.csproj" --configuration Release -q)"
+
+          assert_output TypeScript "$(npx --yes tsx src/Web/TypeScriptTS/flyweight.ts)"
+          assert_output Python "$(python src/Scripting/PythonPY/flyweight.py)"
+          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/flyweight.cpp' -o "$work/flyweight-cpp"
+          assert_output C++ "$("$work/flyweight-cpp")"
+          javac src/Enterprise/Java/FlyweightExample.java
+          assert_output Java "$(java -cp src/Enterprise/Java FlyweightExample)"
+          rustc -D warnings src/Systems/Rust/flyweight.rs -o "$work/flyweight-rs"
+          assert_output Rust "$("$work/flyweight-rs")"
+          assert_output Go "$(go run src/Systems/Go/flyweight.go)"
+          assert_output PHP "$(php src/Scripting/PHP/flyweight.php)"
+          assert_output F# "$(dotnet fsi 'src/Functional/F#/flyweight.fsx' | tail -n 1)"
+          assert_output JavaScript "$(node src/Web/JavaScriptJS/flyweight.js)"
+
+          command -v kotlinc >/dev/null
+          kotlinc src/Enterprise/Kotlin/FlyweightExample.kt -include-runtime -d "$work/flyweight-kotlin.jar"
+          assert_output Kotlin "$(java -jar "$work/flyweight-kotlin.jar")"
+
+          command -v swiftc >/dev/null
+          swiftc -warnings-as-errors src/Systems/Swift/flyweight.swift -o "$work/flyweight-swift"
+          assert_output Swift "$("$work/flyweight-swift")"
+
+          dotnet new console -lang VB --framework net10.0 -n FlyweightVb -o "$work/vb" >/dev/null
+          cp src/Enterprise/VB.NET/FlyweightExample.vb "$work/vb/Program.vb"
+          assert_output VB.NET "$(dotnet run --project "$work/vb/FlyweightVb.vbproj" --configuration Release)"
+
+          gcc -std=c17 -Wall -Wextra -Werror -pedantic src/Systems/C/flyweight.c -o "$work/flyweight-c"
+          assert_output C "$("$work/flyweight-c")"
+
+          ruby -cw src/Scripting/Ruby/flyweight.rb >/dev/null
+          assert_output Ruby "$(ruby src/Scripting/Ruby/flyweight.rb)"
