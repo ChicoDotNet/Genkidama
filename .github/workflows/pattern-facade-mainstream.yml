@@ -1,6 +1,30 @@
 name: Pattern Facade Mainstream
 
 on:
+  push:
+    paths:
+      - '.github/workflows/pattern-facade-mainstream.yml'
+      - 'src/Enterprise/C#/FacadeExample.cs'
+      - 'src/Web/TypeScriptTS/facade.ts'
+      - 'src/Scripting/PythonPY/facade.py'
+      - 'src/Systems/C++/facade.cpp'
+      - 'src/Enterprise/Java/FacadeExample.java'
+      - 'src/Systems/Rust/facade.rs'
+      - 'src/Systems/Go/facade.go'
+      - 'src/Scripting/PHP/facade.php'
+      - 'src/Enterprise/Kotlin/FacadeExample.kt'
+      - 'src/Systems/Swift/facade.swift'
+      - 'src/Functional/F#/facade.fsx'
+      - 'src/Web/JavaScriptJS/facade.js'
+      - 'src/Enterprise/VB.NET/FacadeExample.vb'
+      - 'src/Systems/C/facade.c'
+      - 'src/Scripting/Ruby/facade.rb'
+      - 'src/Scripting/Lua/facade.lua'
+      - 'src/Scripting/Bash/facade.sh'
+      - 'src/Scripting/PowerShell/FacadeExample.ps1'
+      - 'src/Functional/Haskell/Facade.hs'
+      - 'src/Scripting/Perl/facade.pl'
+      - 'wiki/Facade.md'
   pull_request:
     branches:
       - dev
@@ -14,13 +38,18 @@ on:
       - 'src/Systems/Rust/facade.rs'
       - 'src/Systems/Go/facade.go'
       - 'src/Scripting/PHP/facade.php'
+      - 'src/Enterprise/Kotlin/FacadeExample.kt'
+      - 'src/Systems/Swift/facade.swift'
       - 'src/Functional/F#/facade.fsx'
       - 'src/Web/JavaScriptJS/facade.js'
       - 'src/Enterprise/VB.NET/FacadeExample.vb'
       - 'src/Systems/C/facade.c'
       - 'src/Scripting/Ruby/facade.rb'
+      - 'src/Scripting/Lua/facade.lua'
       - 'src/Scripting/Bash/facade.sh'
       - 'src/Scripting/PowerShell/FacadeExample.ps1'
+      - 'src/Functional/Haskell/Facade.hs'
+      - 'src/Scripting/Perl/facade.pl'
       - 'wiki/Facade.md'
 
 jobs:
@@ -84,6 +113,12 @@ jobs:
           php -l src/Scripting/PHP/facade.php
           assert_output 'PHP' "$(php src/Scripting/PHP/facade.php)"
 
+          kotlinc src/Enterprise/Kotlin/FacadeExample.kt -include-runtime -d "$work/facade-kotlin.jar"
+          assert_output 'Kotlin' "$(java -jar "$work/facade-kotlin.jar")"
+
+          swiftc -warnings-as-errors src/Systems/Swift/facade.swift -o "$work/facade-swift"
+          assert_output 'Swift' "$("$work/facade-swift")"
+
           assert_output 'F#' "$(dotnet fsi 'src/Functional/F#/facade.fsx')"
           node --check src/Web/JavaScriptJS/facade.js
           assert_output 'JavaScript' "$(node src/Web/JavaScriptJS/facade.js)"
@@ -98,7 +133,16 @@ jobs:
           ruby -c src/Scripting/Ruby/facade.rb >/dev/null
           assert_output 'Ruby' "$(ruby src/Scripting/Ruby/facade.rb)"
 
+          lua src/Scripting/Lua/facade.lua >/dev/null
+          assert_output 'Lua' "$(lua src/Scripting/Lua/facade.lua)"
+
           bash -n src/Scripting/Bash/facade.sh
           assert_output 'Bash' "$(bash src/Scripting/Bash/facade.sh)"
 
           assert_output 'PowerShell' "$(pwsh -NoLogo -NoProfile -File src/Scripting/PowerShell/FacadeExample.ps1)"
+
+          ghc -Wall -Werror -outputdir "$work/haskell" -o "$work/facade-haskell" src/Functional/Haskell/Facade.hs
+          assert_output 'Haskell' "$("$work/facade-haskell")"
+
+          perl -c src/Scripting/Perl/facade.pl >/dev/null
+          assert_output 'Perl' "$(perl src/Scripting/Perl/facade.pl)"
