@@ -23,12 +23,12 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: actions/setup-go@v5
         with: { go-version: stable }
-      - name: Install scripting and functional runtimes
+      - name: Install scripting, functional and data runtimes
         shell: bash
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y ruby lua5.4 ghc perl
+          sudo apt-get install --no-install-recommends -y ruby lua5.4 ghc perl fp-compiler r-base octave ocaml sbcl
       - name: Validate mainstream examples
         shell: bash
         run: |
@@ -80,3 +80,11 @@ jobs:
           assert_output Haskell "$("$work/flyweight-haskell")"
           perl -c src/Scripting/Perl/flyweight.pl >/dev/null
           assert_output Perl "$(perl src/Scripting/Perl/flyweight.pl)"
+
+          fpc -vw -FE"$work" -oFlyweightPascal src/Historical/Pascal/flyweight.pas >/dev/null
+          assert_output Pascal "$("$work/FlyweightPascal")"
+          assert_output R "$(Rscript src/DataScience/R/flyweight.R)"
+          assert_output Octave "$(octave --quiet --no-gui src/DataScience/Octave/flyweight.m)"
+          ocamlc -w +a-70 -warn-error +a-70 src/Functional/OCaml/flyweight.ml -o "$work/flyweight-ocaml"
+          assert_output OCaml "$("$work/flyweight-ocaml")"
+          assert_output CommonLisp "$(sbcl --script src/Functional/CommonLisp/flyweight.lisp)"
