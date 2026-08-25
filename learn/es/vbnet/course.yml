@@ -1,0 +1,37 @@
+schema_version: 1
+slug: vbnet
+language: Visual Basic .NET
+locale: es
+source_locale: es
+title: Curso de Visual Basic .NET desde cero — Construye un gestor WinForms de cotizaciones y facturas
+status: complete
+canonical_app:
+  name: QuoteDesk
+  summary: Aplicación WinForms para preparar cotizaciones, calcular importes y evolucionar hacia facturación local.
+audience: beginner
+prerequisites: []
+lesson_count: 17
+toolchain:
+  verified_on: '2026-08-23'
+  version_tested: '.NET SDK 10.0.400 / runtime 10.0.11'
+  runtime_or_compiler: '.NET 10 LTS + Visual Basic'
+  package_or_build_tool: 'dotnet SDK + MSTest.Sdk 4.3.3 / Microsoft.Testing.Platform'
+  operating_systems_tested:
+    - github-ubuntu-24.04.4-runner
+    - github-windows-server-2025-runner
+ci:
+  supported: true
+  workflow: .github/workflows/learn-vbnet.yml
+career_context:
+  uses:
+    - aplicaciones de escritorio empresariales en Windows
+    - mantenimiento y evolución de sistemas .NET existentes
+    - automatización y herramientas internas con interfaz gráfica
+    - software administrativo con formularios y reglas de negocio
+  market_note: Visual Basic .NET sigue siendo relevante en bases instaladas y aplicaciones empresariales Windows; aprenderlo no garantiza empleo y conviene complementar con .NET moderno, pruebas, SQL y arquitectura.
+official_references:
+  - https://dotnet.microsoft.com/platform/support/policy
+  - https://learn.microsoft.com/dotnet/visual-basic/
+  - https://learn.microsoft.com/dotnet/desktop/winforms/
+  - https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test
+  - https://learn.microsoft.com/dotnet/core/tools/
