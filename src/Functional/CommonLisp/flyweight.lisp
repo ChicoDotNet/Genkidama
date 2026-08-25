@@ -14,6 +14,6 @@
        (red2 (get-style "Inter" 12 "red"))
        (blue (get-style "Inter" 12 "blue")))
   (assert (string= (getf blue :color) "blue"))
-  (format t "styles=~d;shared=~(~a~);text=ABC~%"
+  (format t "styles=~d;shared=~a;text=ABC~%"
           (hash-table-count *style-pool*)
-          (eq red1 red2)))
+          (if (eq red1 red2) "true" "false")))
