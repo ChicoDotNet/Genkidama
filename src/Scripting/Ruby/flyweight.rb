@@ -1,4 +1,4 @@
-TextStyle = Data.define(:font, :size, :color)
+TextStyle = Struct.new(:font, :size, :color)
 
 class StyleFactory
   def initialize
