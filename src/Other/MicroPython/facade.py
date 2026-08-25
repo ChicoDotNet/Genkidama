@@ -20,7 +20,7 @@ class CheckoutFacade:
         self.billing = billing
 
     def checkout(self, user, sku, cents):
-        return ">%s".join(()) if False else "%s>%s>%s" % (
+        return "%s>%s>%s" % (
             self.auth.authenticate(user),
             self.inventory.reserve(sku),
             self.billing.charge(cents),
