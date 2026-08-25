@@ -48,3 +48,5 @@ En la próxima lección separarás parsing, validación y cálculo como funcione
 
 - [F# collections](https://learn.microsoft.com/dotnet/fsharp/language-reference/fsharp-collection-types)
 - [F# functions](https://learn.microsoft.com/dotnet/fsharp/language-reference/functions/)
+
+[Anterior](05-pruebas.md) · [Siguiente](07-composicion-funcional.md)
