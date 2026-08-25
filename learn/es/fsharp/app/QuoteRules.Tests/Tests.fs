@@ -35,3 +35,31 @@ module PricingTests =
             Assert.Equal(0.10m, quote.DiscountRate)
             Assert.Equal(100m, quote.Discount)
             Assert.Equal(900m, quote.Total)
+
+module InputTests =
+    [<Theory>]
+    [<InlineData("standard")>]
+    [<InlineData(" Standard ")>]
+    let ``standard tier parsing is case and whitespace tolerant`` value =
+        Assert.Equal(Ok Standard, Input.parseTier value)
+
+    [<Fact>]
+    let ``unknown tier is rejected`` () =
+        match Input.parseTier "vip" with
+        | Error error -> Assert.Contains("desconocido", error)
+        | Ok _ -> failwith "Expected invalid tier to fail"
+
+    [<Fact>]
+    let ``line parser converts external text into typed domain data`` () =
+        let expected = { Description = "Consultoría"; Quantity = 2; UnitPrice = 350m }
+        Assert.Equal(Ok expected, Input.parseLine "Consultoría|2|350")
+
+    [<Fact>]
+    let ``line parser rejects malformed quantity`` () =
+        Assert.Equal(Error "Cantidad inválida: dos", Input.parseLine "Consultoría|dos|350")
+
+    [<Fact>]
+    let ``parseLines preserves source order`` () =
+        match Input.parseLines [ "A|1|10"; "B|2|20" ] with
+        | Error error -> failwith error
+        | Ok lines -> Assert.Equal<string list>([ "A"; "B" ], lines |> List.map _.Description)
