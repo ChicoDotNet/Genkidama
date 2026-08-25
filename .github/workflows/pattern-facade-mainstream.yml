@@ -31,6 +31,10 @@ on:
       - 'src/DataScience/Julia/facade.jl'
       - 'src/DataScience/Octave/facade.m'
       - 'src/DataScience/MATLAB/facade.m'
+      - 'src/Historical/Pascal/facade.pas'
+      - 'src/Functional/Clojure/facade.clj'
+      - 'src/Functional/Elixir/facade.exs'
+      - 'src/Functional/Erlang/facade.erl'
       - 'wiki/Facade.md'
 
 jobs:
@@ -192,3 +196,39 @@ jobs:
             output = strtrim(evalc('facade'));
             disp(output);
             assert(strcmp(output, "checkout=auth(alice)>reserve(SKU-42)>charge(499)"));
+
+  pascal-beam-functional:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install Pascal, Clojure, Elixir and Erlang
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y fp-compiler clojure elixir erlang-base
+      - name: Validate Pascal, Clojure, Elixir and Erlang Facade
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='checkout=auth(alice)>reserve(SKU-42)>charge(499)'
+          assert_output() {
+            local label="$1"
+            local output="$2"
+            if [[ "$output" != "$expected" ]]; then
+              printf '%s output mismatch\nexpected: %s\nactual:   %s\n' "$label" "$expected" "$output" >&2
+              exit 1
+            fi
+          }
+
+          work="$(mktemp -d)"
+
+          fpc -vw -FE"$work" -oFacadePascal src/Historical/Pascal/facade.pas >/dev/null
+          assert_output 'Pascal' "$("$work/FacadePascal")"
+
+          assert_output 'Clojure' "$(clojure src/Functional/Clojure/facade.clj)"
+
+          assert_output 'Elixir' "$(elixir src/Functional/Elixir/facade.exs)"
+
+          erlc -Werror -o "$work" src/Functional/Erlang/facade.erl
+          assert_output 'Erlang' "$(erl -noshell -pa "$work" -s facade main -s init stop)"
