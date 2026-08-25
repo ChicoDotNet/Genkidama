@@ -1,0 +1,21 @@
+Authenticate takes User
+Give back "auth(" plus User plus ")"
+Yeah
+
+Reserve takes SKU
+Give back "reserve(" plus SKU plus ")"
+Yeah
+
+Charge takes Cents
+Give back "charge(" plus Cents plus ")"
+Yeah
+
+Checkout takes User, SKU, Cents
+Call Authenticate with User into Auth Result
+Call Reserve with SKU into Stock Result
+Call Charge with Cents into Billing Result
+Give back Auth Result plus ">" plus Stock Result plus ">" plus Billing Result
+Yeah
+
+Call Checkout with "alice", "SKU-42", 499 into Result
+Print "checkout=" plus Result
