@@ -17,7 +17,7 @@ let () =
   let red1 = get_style "Inter" 12 "red" in
   let red2 = get_style "Inter" 12 "red" in
   let blue = get_style "Inter" 12 "blue" in
-  assert (blue.color = "blue");
+  assert (blue.font = "Inter" && blue.size = 12 && blue.color = "blue");
   Printf.printf "styles=%d;shared=%s;text=ABC\n"
     (Hashtbl.length pool)
     (String.lowercase_ascii (string_of_bool (red1 == red2)))
