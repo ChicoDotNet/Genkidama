@@ -4,7 +4,7 @@ F# es un lenguaje funcional-first del ecosistema .NET. Este curso parte desde ce
 
 ## Qué vas a construir
 
-Una CLI pequeña pero real con un dominio tipado, funciones puras para reglas de negocio, errores explícitos mediante `Result`, pruebas automatizadas y evolución posterior hacia persistencia, configuración y una evaluación final autónoma.
+Una CLI pequeña pero real con un dominio tipado, funciones puras para reglas de negocio, errores explícitos mediante `Result`, pruebas automatizadas, entrada desde archivo y persistencia local de reportes deterministas.
 
 ## Requisitos
 
@@ -26,6 +26,12 @@ Para cotizar desde un archivo con formato `descripcion|cantidad|precio`:
 dotnet run --project app/QuoteRules/QuoteRules.fsproj -- partner quote.txt
 ```
 
+Para persistir además un reporte de texto:
+
+```bash
+dotnet run --project app/QuoteRules/QuoteRules.fsproj -- partner quote.txt artifacts/quote.txt
+```
+
 ## Probar
 
 ```bash
@@ -43,8 +49,12 @@ dotnet test app/QuoteRules.Tests/QuoteRules.Tests.fsproj
 7. [Compón funciones pequeñas](lessons/07-composicion-funcional.md)
 8. [Lee entrada externa sin contaminar el dominio](lessons/08-entrada-externa.md)
 9. [Checkpoint: cotiza desde datos externos](lessons/09-checkpoint-entrada.md)
+10. [Usa tipos para proteger fronteras inválidas](lessons/10-tipos-para-fronteras.md)
+11. [Produce reportes deterministas](lessons/11-reportes-deterministas.md)
+12. [Persiste y diagnostica fallos operativos](lessons/12-persistencia-y-fallos.md)
+13. [Checkpoint: cotización persistida](lessons/13-checkpoint-persistencia.md)
 
-Este incremento cubre 9 de las 17 lecciones previstas. Las restantes se incorporarán sobre la misma aplicación canónica.
+Este incremento cubre 13 de las 17 lecciones previstas. Las cuatro restantes cerrarán hardening, evaluación final, rúbrica, entrevista y solución de referencia sobre la misma aplicación canónica.
 
 ## Qué sabrás hacer al terminar
 
