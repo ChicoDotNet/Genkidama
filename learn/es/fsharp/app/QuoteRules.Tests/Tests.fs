@@ -1,5 +1,6 @@
 namespace QuoteRules.Tests
 
+open System.IO
 open QuoteRules
 open Xunit
 
@@ -63,3 +64,40 @@ module InputTests =
         match Input.parseLines [ "A|1|10"; "B|2|20" ] with
         | Error error -> failwith error
         | Ok lines -> Assert.Equal<string list>([ "A"; "B" ], lines |> List.map _.Description)
+
+module ReportingTests =
+    let private sampleQuote =
+        { Lines = [ { Description = "Servicio"; Quantity = 2; UnitPrice = 125m } ]
+          Subtotal = 250m
+          DiscountRate = 0.05m
+          Discount = 12.5m
+          Total = 237.5m }
+
+    [<Fact>]
+    let ``output file rejects non text extension`` () =
+        Assert.Equal(Error "La salida debe usar extensión .txt.", OutputFile.create "quote.json")
+
+    [<Fact>]
+    let ``report is deterministic and culture independent`` () =
+        let rendered = Reporting.render sampleQuote
+        Assert.Contains("Subtotal=250.00", rendered)
+        Assert.Contains("DiscountRate=0.05", rendered)
+        Assert.Contains("- Servicio|2|125.00", rendered)
+
+    [<Fact>]
+    let ``saving report creates parent directory`` () =
+        let root = Path.Combine(Path.GetTempPath(), $"quoterules-{System.Guid.NewGuid():N}")
+        let path = Path.Combine(root, "nested", "quote.txt")
+
+        try
+            match OutputFile.create path with
+            | Error error -> failwith error
+            | Ok output ->
+                match Reporting.save output sampleQuote with
+                | Error error -> failwith error
+                | Ok savedPath ->
+                    Assert.True(File.Exists savedPath)
+                    Assert.Contains("Total=237.50", File.ReadAllText savedPath)
+        finally
+            if Directory.Exists root then
+                Directory.Delete(root, true)
