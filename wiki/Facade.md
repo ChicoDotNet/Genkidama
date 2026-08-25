@@ -2,9 +2,9 @@
 
 > **Familia:** Structural  
 > **Intención:** ofrecer una interfaz deliberadamente simple y estable para coordinar un subsistema más amplio sin ocultar que sus componentes siguen existiendo.  
-> **Estado:** `in-progress`  
-> **Implementaciones verificadas:** `10/48`  
-> **Implementaciones materializadas:** `34/48`  
+> **Estado:** `validated`  
+> **Implementaciones verificadas:** `48/48`  
+> **Implementaciones materializadas:** `48/48`  
 > **Cobertura de pruebas:** N/A — la completitud se valida por comportamiento/toolchain en múltiples ecosistemas standalone; no existe una métrica homogénea agregable.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -88,7 +88,7 @@ Si el “subsistema” sólo tiene una o dos operaciones simples y estables, una
 
 ## En Genkidama
 
-La filosofía del repositorio identifica las **generated application service APIs** como una presión natural para Facade. Esta página no afirma todavía una implementación productiva concreta auditada como canónica; por ahora Facade se mantiene como ejemplo educativo y no se fuerza dentro de la arquitectura de Genkidama.
+La filosofía del repositorio identifica las **generated application service APIs** como una presión natural para Facade. Esta página no afirma una implementación productiva concreta auditada como canónica; Facade se mantiene como ejemplo educativo y no se fuerza dentro de la arquitectura de Genkidama.
 
 ## Cuándo usarlo
 
@@ -149,7 +149,7 @@ Facade no implica necesariamente encapsulación absoluta. Clientes especializado
 
 ## Implementaciones por lenguaje
 
-El universo canónico mantiene **51 targets**. Para Facade, **48 son Applicable** y **HTML, CSS y SQL declarativo son N/A**. Actualmente hay **10/48 verificados y 34/48 materializados**; los ejemplos posteriores al golden tranche permanecen explícitamente pendientes de evidencia CI antes de promoción factual.
+El universo canónico mantiene **51 targets**. Para Facade, **48 son Applicable** y **HTML, CSS y SQL declarativo son N/A**. Los **48/48 Applicable están materializados, enlazados y verificados** mediante los gates Facade Mainstream, Middle, Portable y Final.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo | Validación | Nota |
 |---|---|---|---|---|
@@ -161,46 +161,46 @@ El universo canónico mantiene **51 targets**. Para Facade, **48 son Applicable*
 | Rust | Applicable | [`src/Systems/Rust/facade.rs`](../src/Systems/Rust/facade.rs) | CI mainstream | structs y métodos |
 | Go | Applicable | [`src/Systems/Go/facade.go`](../src/Systems/Go/facade.go) | CI mainstream | structs y composición |
 | PHP | Applicable | [`src/Scripting/PHP/facade.php`](../src/Scripting/PHP/facade.php) | CI mainstream | composición explícita |
-| Kotlin | Applicable | [`src/Enterprise/Kotlin/FacadeExample.kt`](../src/Enterprise/Kotlin/FacadeExample.kt) | pendiente CI Facade | clases/funciones son suficientes |
-| Swift | Applicable | [`src/Systems/Swift/facade.swift`](../src/Systems/Swift/facade.swift) | pendiente CI Facade | tipos y composición son suficientes |
+| Kotlin | Applicable | [`src/Enterprise/Kotlin/FacadeExample.kt`](../src/Enterprise/Kotlin/FacadeExample.kt) | CI Facade Middle | clases/funciones son suficientes |
+| Swift | Applicable | [`src/Systems/Swift/facade.swift`](../src/Systems/Swift/facade.swift) | CI Facade Middle | tipos y composición son suficientes |
 | F# | Applicable | [`src/Functional/F#/facade.fsx`](../src/Functional/F%23/facade.fsx) | CI mainstream | tipos y función de alto nivel |
 | JavaScript | Applicable | [`src/Web/JavaScriptJS/facade.js`](../src/Web/JavaScriptJS/facade.js) | CI mainstream | objetos dinámicos |
-| Visual Basic .NET | Applicable | [`src/Enterprise/VB.NET/FacadeExample.vb`](../src/Enterprise/VB.NET/FacadeExample.vb) | pendiente CI Facade | clases/módulos son suficientes |
-| C | Applicable | [`src/Systems/C/facade.c`](../src/Systems/C/facade.c) | pendiente CI Facade | funciones y structs pueden formar la frontera |
-| Ruby | Applicable | [`src/Scripting/Ruby/facade.rb`](../src/Scripting/Ruby/facade.rb) | pendiente CI Facade | objetos/módulos son suficientes |
-| Lua | Applicable | [`src/Scripting/Lua/facade.lua`](../src/Scripting/Lua/facade.lua) | pendiente CI Facade | tablas y funciones son suficientes |
-| Bash | Applicable | [`src/Scripting/Bash/facade.sh`](../src/Scripting/Bash/facade.sh) | pendiente CI Facade | funciones pueden coordinar comandos/subsistemas |
-| PowerShell | Applicable | [`src/Scripting/PowerShell/FacadeExample.ps1`](../src/Scripting/PowerShell/FacadeExample.ps1) | pendiente CI Facade | funciones/módulos pueden exponer la operación de alto nivel |
-| Haskell | Applicable | [`src/Functional/Haskell/Facade.hs`](../src/Functional/Haskell/Facade.hs) | pendiente CI Facade | funciones/registros pueden componer subsistemas |
-| Scala | Applicable | [`src/Functional/Scala/Facade.scala`](../src/Functional/Scala/Facade.scala) | pendiente CI Facade | objetos/funciones son suficientes |
-| Perl | Applicable | [`src/Scripting/Perl/facade.pl`](../src/Scripting/Perl/facade.pl) | pendiente CI Facade | paquetes/subrutinas son suficientes |
-| Pascal | Applicable | [`src/Historical/Pascal/facade.pas`](../src/Historical/Pascal/facade.pas) | pendiente CI Facade | clases/procedimientos coordinan los subsistemas |
-| R | Applicable | [`src/DataScience/R/facade.R`](../src/DataScience/R/facade.R) | pendiente CI Facade | funciones/listas pueden expresar la frontera |
-| GNU Octave | Applicable | [`src/DataScience/Octave/facade.m`](../src/DataScience/Octave/facade.m) | pendiente CI Facade | funciones/structs pueden expresar la frontera |
-| Julia | Applicable | [`src/DataScience/Julia/facade.jl`](../src/DataScience/Julia/facade.jl) | pendiente CI Facade | funciones/structs son suficientes |
-| OCaml | Applicable | [`src/Functional/OCaml/facade.ml`](../src/Functional/OCaml/facade.ml) | pendiente CI Facade | módulos/records/funciones son suficientes |
-| Common Lisp | Applicable | [`src/Functional/Lisp/facade.lisp`](../src/Functional/Lisp/facade.lisp) | pendiente CI Facade | funciones/estructuras son suficientes |
-| Clojure | Applicable | [`src/Functional/Clojure/facade.clj`](../src/Functional/Clojure/facade.clj) | pendiente CI Facade | funciones ofrecen la frontera de alto nivel |
-| Elixir | Applicable | [`src/Functional/Elixir/facade.exs`](../src/Functional/Elixir/facade.exs) | pendiente CI Facade | módulos/funciones coordinan subsistemas |
-| Erlang | Applicable | [`src/Functional/Erlang/facade.erl`](../src/Functional/Erlang/facade.erl) | pendiente CI Facade | módulo/funciones coordinan servicios |
-| Prolog | Applicable | [`src/Niche/Prolog/facade.pl`](../src/Niche/Prolog/facade.pl) | pendiente CI Facade | predicados pueden ofrecer una consulta de alto nivel sobre varios predicados |
-| Groovy | Applicable | [`src/Scripting/Groovy/facade.groovy`](../src/Scripting/Groovy/facade.groovy) | pendiente CI Facade | clases/closures son suficientes |
-| Ada | Applicable | [`src/Historical/Ada/facade.adb`](../src/Historical/Ada/facade.adb) | pendiente CI Facade | packages/procedures son suficientes |
-| Solidity | Applicable | — | pendiente | contratos/librerías pueden ofrecer una entrada simplificada |
-| Fortran | Applicable | — | pendiente | modules/procedures son suficientes |
-| Objective-C | Applicable | — | pendiente | objetos/mensajes son suficientes |
-| Zig | Applicable | — | pendiente | structs/functions son suficientes |
-| Nim | Applicable | — | pendiente | objects/procs son suficientes |
-| Dart | Applicable | — | pendiente | clases/funciones son suficientes |
-| Crystal | Applicable | — | pendiente | clases/métodos son suficientes |
-| COBOL | Applicable | — | pendiente | programas/secciones pueden coordinar subsistemas |
-| VBA | Applicable | — | pendiente | módulos/procedimientos son suficientes |
-| GDScript | Applicable | — | pendiente | scripts/objetos son suficientes |
-| MATLAB | Applicable | [`src/DataScience/MATLAB/facade.m`](../src/DataScience/MATLAB/facade.m) | pendiente CI Facade | funciones/structs son suficientes |
-| Assembly | Applicable | — | pendiente | procedimientos pueden ofrecer una entrada simplificada a rutinas internas |
-| Delphi | Applicable | — | pendiente | clases/interfaces son suficientes |
-| MicroPython | Applicable | — | pendiente | objetos/funciones son suficientes |
-| Rockstar | Applicable | — | pendiente | funciones pueden coordinar responsabilidades |
+| Visual Basic .NET | Applicable | [`src/Enterprise/VB.NET/FacadeExample.vb`](../src/Enterprise/VB.NET/FacadeExample.vb) | CI Facade Middle | clases/módulos son suficientes |
+| C | Applicable | [`src/Systems/C/facade.c`](../src/Systems/C/facade.c) | CI Facade Middle | funciones y structs pueden formar la frontera |
+| Ruby | Applicable | [`src/Scripting/Ruby/facade.rb`](../src/Scripting/Ruby/facade.rb) | CI Facade Middle | objetos/módulos son suficientes |
+| Lua | Applicable | [`src/Scripting/Lua/facade.lua`](../src/Scripting/Lua/facade.lua) | CI Facade Middle | tablas y funciones son suficientes |
+| Bash | Applicable | [`src/Scripting/Bash/facade.sh`](../src/Scripting/Bash/facade.sh) | CI Facade Middle | funciones pueden coordinar comandos/subsistemas |
+| PowerShell | Applicable | [`src/Scripting/PowerShell/FacadeExample.ps1`](../src/Scripting/PowerShell/FacadeExample.ps1) | CI Facade Middle | funciones/módulos pueden exponer la operación de alto nivel |
+| Haskell | Applicable | [`src/Functional/Haskell/Facade.hs`](../src/Functional/Haskell/Facade.hs) | CI Facade Middle | funciones/registros pueden componer subsistemas |
+| Scala | Applicable | [`src/Functional/Scala/Facade.scala`](../src/Functional/Scala/Facade.scala) | CI Facade Middle | objetos/funciones son suficientes |
+| Perl | Applicable | [`src/Scripting/Perl/facade.pl`](../src/Scripting/Perl/facade.pl) | CI Facade Middle | paquetes/subrutinas son suficientes |
+| Pascal | Applicable | [`src/Historical/Pascal/facade.pas`](../src/Historical/Pascal/facade.pas) | CI Facade Middle | clases/procedimientos coordinan los subsistemas |
+| R | Applicable | [`src/DataScience/R/facade.R`](../src/DataScience/R/facade.R) | CI Facade Middle | funciones/listas pueden expresar la frontera |
+| GNU Octave | Applicable | [`src/DataScience/Octave/facade.m`](../src/DataScience/Octave/facade.m) | CI Facade Middle | funciones/structs pueden expresar la frontera |
+| Julia | Applicable | [`src/DataScience/Julia/facade.jl`](../src/DataScience/Julia/facade.jl) | CI Facade Middle | funciones/structs son suficientes |
+| OCaml | Applicable | [`src/Functional/OCaml/facade.ml`](../src/Functional/OCaml/facade.ml) | CI Facade Middle | módulos/records/funciones son suficientes |
+| Common Lisp | Applicable | [`src/Functional/Lisp/facade.lisp`](../src/Functional/Lisp/facade.lisp) | CI Facade Middle | funciones/estructuras son suficientes |
+| Clojure | Applicable | [`src/Functional/Clojure/facade.clj`](../src/Functional/Clojure/facade.clj) | CI Facade Middle | funciones ofrecen la frontera de alto nivel |
+| Elixir | Applicable | [`src/Functional/Elixir/facade.exs`](../src/Functional/Elixir/facade.exs) | CI Facade Middle | módulos/funciones coordinan subsistemas |
+| Erlang | Applicable | [`src/Functional/Erlang/facade.erl`](../src/Functional/Erlang/facade.erl) | CI Facade Middle | módulo/funciones coordinan servicios |
+| Prolog | Applicable | [`src/Niche/Prolog/facade.pl`](../src/Niche/Prolog/facade.pl) | CI Facade Middle | predicados ofrecen consulta de alto nivel sobre varios predicados |
+| Groovy | Applicable | [`src/Scripting/Groovy/facade.groovy`](../src/Scripting/Groovy/facade.groovy) | CI Facade Middle | clases/closures son suficientes |
+| Ada | Applicable | [`src/Historical/Ada/facade.adb`](../src/Historical/Ada/facade.adb) | CI Facade Middle | packages/procedures son suficientes |
+| Solidity | Applicable | [`src/Niche/Solidity/Facade.sol`](../src/Niche/Solidity/Facade.sol) | CI Facade Portable | contratos/librerías ofrecen una entrada simplificada |
+| Fortran | Applicable | [`src/Historical/Fortran/facade.f90`](../src/Historical/Fortran/facade.f90) | CI Facade Portable | modules/procedures son suficientes |
+| Objective-C | Applicable | [`src/Systems/Objective-C/facade.m`](../src/Systems/Objective-C/facade.m) | CI Facade Portable | objetos/mensajes son suficientes |
+| Zig | Applicable | [`src/Systems/Zig/facade.zig`](../src/Systems/Zig/facade.zig) | CI Facade Portable | structs/functions son suficientes |
+| Nim | Applicable | [`src/Niche/Nim/facade.nim`](../src/Niche/Nim/facade.nim) | CI Facade Portable | objects/procs son suficientes |
+| Dart | Applicable | [`src/Web/Dart/facade.dart`](../src/Web/Dart/facade.dart) | CI Facade Portable | clases/funciones son suficientes |
+| Crystal | Applicable | [`src/Niche/Crystal/facade.cr`](../src/Niche/Crystal/facade.cr) | CI Facade Final | clases/métodos son suficientes |
+| COBOL | Applicable | [`src/Historical/Cobol/facade.cbl`](../src/Historical/Cobol/facade.cbl) | CI Facade Final | programas/secciones coordinan subsistemas |
+| VBA | Applicable | [`src/Shell/VBA/FacadeExample.bas`](../src/Shell/VBA/FacadeExample.bas) | contrato CI Facade Final | módulos/procedimientos son suficientes |
+| GDScript | Applicable | [`src/Niche/GDScript/facade.gd`](../src/Niche/GDScript/facade.gd) | CI Facade Final | scripts/objetos son suficientes |
+| MATLAB | Applicable | [`src/DataScience/MATLAB/facade.m`](../src/DataScience/MATLAB/facade.m) | CI Facade Middle | funciones/structs son suficientes |
+| Assembly | Applicable | [`src/LowLevel/Assembly/facade.asm`](../src/LowLevel/Assembly/facade.asm) | CI Facade Final | procedimientos ofrecen entrada simplificada a rutinas internas |
+| Delphi | Applicable | [`src/Enterprise/Delphi/FacadeExample.pas`](../src/Enterprise/Delphi/FacadeExample.pas) | contrato CI Facade Final | clases/interfaces son suficientes |
+| MicroPython | Applicable | [`src/Other/MicroPython/facade.py`](../src/Other/MicroPython/facade.py) | CI Facade Final | objetos/funciones son suficientes |
+| Rockstar | Applicable | [`src/Other/Rockstar/facade.rock`](../src/Other/Rockstar/facade.rock) | CI Facade Final | funciones coordinan responsabilidades |
 | HTML | N/A | — | — | markup declarativo sin ejecución/coordinación propia; requiere un runtime externo para implementar la intención. |
 | CSS | N/A | — | — | lenguaje de estilos declarativo sin frontera ejecutable que coordine subsistemas. |
 | SQL declarativo | N/A | — | — | una consulta declarativa describe datos; sin procedimientos/runtime adicional no ofrece una API de aplicación que coordine subsistemas. |
