@@ -3,8 +3,8 @@
 > **Familia:** Structural  
 > **Intención:** compartir estado intrínseco reutilizable entre muchas representaciones ligeras y mantener fuera del objeto compartido el estado que cambia por contexto.  
 > **Estado:** `in-progress`  
-> **Implementaciones verificadas:** `0/48`  
-> **Implementaciones materializadas:** `10/48`  
+> **Implementaciones verificadas:** `15/48`  
+> **Implementaciones materializadas:** `20/48`  
 > **Cobertura de pruebas:** N/A — ejemplos standalone multi-ecosistema; se usa compilación/runtime/contrato por lenguaje en lugar de un porcentaje agregado inventado.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -69,7 +69,7 @@ blue = styles.get("Inter", 12, "blue")
 styles=2;shared=true;text=ABC
 ```
 
-La salida prueba dos cosas: sólo existen dos estilos intrínsecos para tres usos y las dos solicitudes del rojo comparten identidad.
+La salida prueba dos cosas: sólo existen dos estilos intrínsecos para tres usos y las dos solicitudes del rojo comparten identidad o la misma representación canonicalizada según el modelo del lenguaje.
 
 ## Aplicación real
 
@@ -128,7 +128,7 @@ Si dos contextos reciben el mismo Flyweight y uno puede mutarlo, el ahorro de me
 
 ## Cómo comprobar una implementación
 
-- Dos solicitudes con la misma clave intrínseca reutilizan la misma representación.
+- Dos solicitudes con la misma clave intrínseca reutilizan la misma representación o valor canonicalizado según el modelo de identidad del lenguaje.
 - Una clave intrínseca distinta produce otra representación.
 - El estado extrínseco no queda absorbido en el objeto compartido.
 - La prueba observa reutilización y resultado, no sólo nombres de clases.
@@ -140,27 +140,27 @@ Universo actual: **51 targets**. Flyweight clasifica provisionalmente **48 Appli
 
 | Lenguaje / target | Aplicabilidad | Ejemplo | Validación | Nota |
 |---|---|---|---|---|
-| C# | Applicable | [`src/Enterprise/C#/FlyweightExample.cs`](../src/Enterprise/C%23/FlyweightExample.cs) | pendiente CI Flyweight Mainstream | record inmutable + diccionario |
-| TypeScript | Applicable | [`src/Web/TypeScriptTS/flyweight.ts`](../src/Web/TypeScriptTS/flyweight.ts) | pendiente CI Flyweight Mainstream | objetos congelados + Map |
-| Python | Applicable | [`src/Scripting/PythonPY/flyweight.py`](../src/Scripting/PythonPY/flyweight.py) | pendiente CI Flyweight Mainstream | dataclass congelada + dict |
-| C++ | Applicable | [`src/Systems/C++/flyweight.cpp`](../src/Systems/C%2B%2B/flyweight.cpp) | pendiente CI Flyweight Mainstream | shared_ptr + map |
-| Java | Applicable | [`src/Enterprise/Java/FlyweightExample.java`](../src/Enterprise/Java/FlyweightExample.java) | pendiente CI Flyweight Mainstream | record + HashMap |
-| Rust | Applicable | [`src/Systems/Rust/flyweight.rs`](../src/Systems/Rust/flyweight.rs) | pendiente CI Flyweight Mainstream | Rc + HashMap |
-| Go | Applicable | [`src/Systems/Go/flyweight.go`](../src/Systems/Go/flyweight.go) | pendiente CI Flyweight Mainstream | pointers + map |
-| PHP | Applicable | [`src/Scripting/PHP/flyweight.php`](../src/Scripting/PHP/flyweight.php) | pendiente CI Flyweight Mainstream | objetos + array asociativo |
-| F# | Applicable | [`src/Functional/F#/flyweight.fsx`](../src/Functional/F%23/flyweight.fsx) | pendiente CI Flyweight Mainstream | valores compartidos + Dictionary |
-| JavaScript | Applicable | [`src/Web/JavaScriptJS/flyweight.js`](../src/Web/JavaScriptJS/flyweight.js) | pendiente CI Flyweight Mainstream | objetos congelados + Map |
-| Kotlin | Applicable | — | pendiente | maps/values pueden internarse |
-| Swift | Applicable | — | pendiente | structs/referencias compartidas pueden separar estado |
-| Visual Basic .NET | Applicable | — | pendiente | clases/records y diccionarios |
-| C | Applicable | — | pendiente | structs + tabla de internado |
-| Ruby | Applicable | — | pendiente | objetos congelados + Hash |
-| Lua | Applicable | — | pendiente | tablas + cache |
-| Bash | Applicable | — | pendiente | arrays asociativos pueden internar valores simbólicos |
-| PowerShell | Applicable | — | pendiente | hashtables/objetos |
-| Haskell | Applicable | — | pendiente | mapas y valores inmutables |
+| C# | Applicable | [`src/Enterprise/C#/FlyweightExample.cs`](../src/Enterprise/C%23/FlyweightExample.cs) | Flyweight Mainstream #10 ✅ | record inmutable + diccionario |
+| TypeScript | Applicable | [`src/Web/TypeScriptTS/flyweight.ts`](../src/Web/TypeScriptTS/flyweight.ts) | Flyweight Mainstream #10 ✅ | objetos congelados + Map |
+| Python | Applicable | [`src/Scripting/PythonPY/flyweight.py`](../src/Scripting/PythonPY/flyweight.py) | Flyweight Mainstream #10 ✅ | dataclass congelada + dict |
+| C++ | Applicable | [`src/Systems/C++/flyweight.cpp`](../src/Systems/C%2B%2B/flyweight.cpp) | Flyweight Mainstream #10 ✅ | shared_ptr + map |
+| Java | Applicable | [`src/Enterprise/Java/FlyweightExample.java`](../src/Enterprise/Java/FlyweightExample.java) | Flyweight Mainstream #10 ✅ | record + HashMap |
+| Rust | Applicable | [`src/Systems/Rust/flyweight.rs`](../src/Systems/Rust/flyweight.rs) | Flyweight Mainstream #10 ✅ | Rc + HashMap |
+| Go | Applicable | [`src/Systems/Go/flyweight.go`](../src/Systems/Go/flyweight.go) | Flyweight Mainstream #10 ✅ | pointers + map |
+| PHP | Applicable | [`src/Scripting/PHP/flyweight.php`](../src/Scripting/PHP/flyweight.php) | Flyweight Mainstream #10 ✅ | objetos + array asociativo |
+| F# | Applicable | [`src/Functional/F#/flyweight.fsx`](../src/Functional/F%23/flyweight.fsx) | Flyweight Mainstream #10 ✅ | valores compartidos + Dictionary |
+| JavaScript | Applicable | [`src/Web/JavaScriptJS/flyweight.js`](../src/Web/JavaScriptJS/flyweight.js) | Flyweight Mainstream #10 ✅ | objetos congelados + Map |
+| Kotlin | Applicable | [`src/Enterprise/Kotlin/FlyweightExample.kt`](../src/Enterprise/Kotlin/FlyweightExample.kt) | Flyweight Mainstream #10 ✅ | data class + MutableMap |
+| Swift | Applicable | [`src/Systems/Swift/flyweight.swift`](../src/Systems/Swift/flyweight.swift) | Flyweight Mainstream #10 ✅ | referencia compartida + Dictionary |
+| Visual Basic .NET | Applicable | [`src/Enterprise/VB.NET/FlyweightExample.vb`](../src/Enterprise/VB.NET/FlyweightExample.vb) | Flyweight Mainstream #10 ✅ | objetos + Dictionary |
+| C | Applicable | [`src/Systems/C/flyweight.c`](../src/Systems/C/flyweight.c) | Flyweight Mainstream #10 ✅ | structs + tabla de internado |
+| Ruby | Applicable | [`src/Scripting/Ruby/flyweight.rb`](../src/Scripting/Ruby/flyweight.rb) | Flyweight Mainstream #10 ✅ | Struct congelado + Hash |
+| Lua | Applicable | [`src/Scripting/Lua/flyweight.lua`](../src/Scripting/Lua/flyweight.lua) | pendiente CI del HEAD actual | tablas + cache |
+| Bash | Applicable | [`src/Scripting/Bash/flyweight.sh`](../src/Scripting/Bash/flyweight.sh) | pendiente CI del HEAD actual | array asociativo + clave canonicalizada |
+| PowerShell | Applicable | [`src/Scripting/PowerShell/flyweight.ps1`](../src/Scripting/PowerShell/flyweight.ps1) | pendiente CI del HEAD actual | hashtable + objetos compartidos |
+| Haskell | Applicable | [`src/Functional/Haskell/flyweight.hs`](../src/Functional/Haskell/flyweight.hs) | pendiente CI del HEAD actual | Map + valores inmutables canonicalizados |
+| Perl | Applicable | [`src/Scripting/Perl/flyweight.pl`](../src/Scripting/Perl/flyweight.pl) | pendiente CI del HEAD actual | hashes + referencias |
 | Scala | Applicable | — | pendiente | case classes + Map |
-| Perl | Applicable | — | pendiente | hashes/referencias |
 | Pascal | Applicable | — | pendiente | records/classes + tabla |
 | R | Applicable | — | pendiente | environments/lists |
 | GNU Octave | Applicable | — | pendiente | structs/maps según runtime |
