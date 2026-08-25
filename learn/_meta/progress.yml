@@ -2,10 +2,10 @@ schema_version: 1
 initiative:
   status: pilots_complete
   source_locale: es
-  last_updated: '2026-08-16'
-  active_work: powershell_course
+  last_updated: '2026-08-23'
+  active_work: fsharp_course
   v1_courses_total: 45
-  v1_courses_complete: 13
+  v1_courses_complete: 18
 foundation:
   status: complete
   catalog: complete
@@ -59,7 +59,13 @@ courses:
     last_green_executable_sha: 09339458ed1a4736749f14260466242919dd0c95
     pr: 35
     pilot_order: 2
-  vbnet: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  vbnet:
+    status: complete
+    lessons_complete: 17
+    lessons_total: 17
+    ci: green
+    last_green_executable_sha: 149a05b3fa9b9dd3d96da6cf121d49ac999f47ac
+    pr: 74
   cpp:
     status: complete
     lessons_complete: 17
@@ -98,7 +104,13 @@ courses:
     last_green_executable_sha: 637a4b715a87f460e605c42e95d24af424318496
     pr: 49
   nim: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
-  dart: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  dart:
+    status: complete
+    lessons_complete: 17
+    lessons_total: 17
+    ci: green
+    last_green_executable_sha: 07a7da5c19d71795f41d2f4a08686f656933849e
+    pr: 72
   kotlin:
     status: complete
     lessons_complete: 17
@@ -127,8 +139,20 @@ courses:
     pilot_order: 4
   scala: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   groovy: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
-  ruby: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
-  c: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  ruby:
+    status: complete
+    lessons_complete: 17
+    lessons_total: 17
+    ci: green
+    last_green_executable_sha: db18aa2d9e7580b3ab15880f02d00a3ff073452a
+    pr: 71
+  c:
+    status: complete
+    lessons_complete: 17
+    lessons_total: 17
+    ci: green
+    last_green_executable_sha: 3519a8a5a9c72cf77bbc4ab02c4ffe3f40239b5e
+    pr: 73
   ocaml: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   julia: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   vba: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
@@ -144,7 +168,13 @@ courses:
   matlab: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   perl: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   r: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
-  powershell: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
+  powershell:
+    status: complete
+    lessons_complete: 17
+    lessons_total: 17
+    ci: green
+    last_green_executable_sha: 9f105725c3157c34bc75b1c6ee67713beb6a0f9a
+    pr: 70
   html: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   assembly: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}
   elixir: {status: planned, lessons_complete: 0, lessons_total: null, ci: not_configured, pr: null}

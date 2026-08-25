@@ -1,0 +1,35 @@
+schema_version: 1
+slug: c
+language: C
+locale: es
+source_locale: es
+title: Curso de C desde cero — Construye un logger binario de telemetría
+status: complete
+canonical_app:
+  name: TelemetryTape
+  summary: Logger binario portable de telemetría con herramienta CLI para registrar, validar y analizar muestras.
+audience: beginner
+prerequisites: []
+lesson_count: 17
+toolchain:
+  verified_on: '2026-08-22'
+  version_tested: 'GCC 13.3.0 + Clang 18.1.3; CMake 3.31.6 en Ubuntu 24.04.4 LTS'
+  runtime_or_compiler: 'C23 explícito mediante CMake C_STANDARD 23; GCC/Clang'
+  package_or_build_tool: 'CMake + CTest + Ninja'
+  operating_systems_tested:
+    - github-ubuntu-runner
+ci:
+  supported: true
+  workflow: .github/workflows/learn-c.yml
+career_context:
+  uses:
+    - software de sistemas y bibliotecas nativas
+    - firmware y software embebido
+    - herramientas de alto rendimiento y formatos binarios
+    - interoperabilidad con sistemas operativos y otros lenguajes
+  market_note: C sigue siendo fundamental en sistemas, embebidos y bibliotecas nativas; aprenderlo no garantiza empleo y los puestos suelen exigir además debugging, arquitectura de computadores y plataforma.
+official_references:
+  - https://gcc.gnu.org/projects/c-status.html
+  - https://gcc.gnu.org/releases.html
+  - https://cmake.org/documentation/
+  - https://cmake.org/cmake/help/latest/prop_tgt/C_STANDARD.html

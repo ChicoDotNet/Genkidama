@@ -1,0 +1,36 @@
+schema_version: 1
+slug: dart
+language: Dart
+locale: es
+source_locale: es
+title: Curso de Dart desde cero — Construye un gestor móvil de gastos personales
+status: complete
+canonical_app:
+  name: PocketLedger
+  summary: Gestor móvil de gastos personales con Flutter, categorías, persistencia local y reportes simples.
+audience: beginner
+prerequisites: []
+lesson_count: 17
+toolchain:
+  verified_on: '2026-08-22'
+  version_tested: 'Dart 3.13.0 mediante Flutter 3.47.0'
+  runtime_or_compiler: 'Dart 3.13 estable mediante Flutter 3.47'
+  package_or_build_tool: 'Flutter + pub + flutter_test'
+  operating_systems_tested:
+    - github-windows-runner
+    - github-ubuntu-runner
+ci:
+  supported: true
+  workflow: .github/workflows/learn-dart.yml
+career_context:
+  uses:
+    - aplicaciones móviles y multiplataforma con Flutter
+    - interfaces cliente para productos y servicios
+    - aplicaciones internas que comparten código entre plataformas
+  market_note: Dart se usa profesionalmente sobre todo con Flutter. Completar este curso no garantiza empleo y los roles móviles suelen exigir además UX, APIs, almacenamiento, testing y conocimientos específicos de Android/iOS.
+official_references:
+  - https://dart.dev/
+  - https://dart.dev/language
+  - https://docs.flutter.dev/
+  - https://docs.flutter.dev/testing/overview
+  - https://docs.flutter.dev/deployment/web
