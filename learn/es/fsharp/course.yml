@@ -4,7 +4,7 @@ language: F#
 locale: es
 source_locale: es
 title: Curso de F# desde cero — Construye un motor de precios y cotizaciones
-status: in_progress
+status: complete
 canonical_app:
   name: QuoteRules
   summary: Motor local de reglas para validar partidas, calcular descuentos y producir cotizaciones deterministas.
@@ -12,11 +12,12 @@ audience: beginner
 prerequisites: []
 lesson_count: 17
 toolchain:
-  verified_on: 2026-08-24
+  verified_on: 2026-08-25
   version_tested: .NET SDK 10.0.111 / F# 10
   runtime_or_compiler: .NET 10 LTS / F# 10
   package_or_build_tool: dotnet CLI
   operating_systems_tested:
+    - windows-11
     - linux
 ci:
   supported: true
