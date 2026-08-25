@@ -1,0 +1,234 @@
+name: Pattern Facade Mainstream
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-facade-mainstream.yml'
+      - 'src/Enterprise/C#/FacadeExample.cs'
+      - 'src/Web/TypeScriptTS/facade.ts'
+      - 'src/Scripting/PythonPY/facade.py'
+      - 'src/Systems/C++/facade.cpp'
+      - 'src/Enterprise/Java/FacadeExample.java'
+      - 'src/Systems/Rust/facade.rs'
+      - 'src/Systems/Go/facade.go'
+      - 'src/Scripting/PHP/facade.php'
+      - 'src/Enterprise/Kotlin/FacadeExample.kt'
+      - 'src/Systems/Swift/facade.swift'
+      - 'src/Functional/F#/facade.fsx'
+      - 'src/Web/JavaScriptJS/facade.js'
+      - 'src/Enterprise/VB.NET/FacadeExample.vb'
+      - 'src/Systems/C/facade.c'
+      - 'src/Scripting/Ruby/facade.rb'
+      - 'src/Scripting/Lua/facade.lua'
+      - 'src/Scripting/Bash/facade.sh'
+      - 'src/Scripting/PowerShell/FacadeExample.ps1'
+      - 'src/Functional/Haskell/Facade.hs'
+      - 'src/Scripting/Perl/facade.pl'
+      - 'src/Functional/Scala/Facade.scala'
+      - 'src/DataScience/R/facade.R'
+      - 'src/DataScience/Julia/facade.jl'
+      - 'src/DataScience/Octave/facade.m'
+      - 'src/DataScience/MATLAB/facade.m'
+      - 'src/Historical/Pascal/facade.pas'
+      - 'src/Functional/Clojure/facade.clj'
+      - 'src/Functional/Elixir/facade.exs'
+      - 'src/Functional/Erlang/facade.erl'
+      - 'wiki/Facade.md'
+
+jobs:
+  mainstream:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.26.5'
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install portable runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y php-cli lua5.4 ruby ghc
+      - name: Validate Facade examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='checkout=auth(alice)>reserve(SKU-42)>charge(499)'
+          assert_output() {
+            local label="$1"
+            local output="$2"
+            if [[ "$output" != "$expected" ]]; then
+              printf '%s output mismatch\nexpected: %s\nactual:   %s\n' "$label" "$expected" "$output" >&2
+              exit 1
+            fi
+          }
+
+          work="$(mktemp -d)"
+
+          dotnet new console --framework net10.0 -n FacadeCheck -o "$work/csharp" >/dev/null
+          cp 'src/Enterprise/C#/FacadeExample.cs' "$work/csharp/Program.cs"
+          assert_output 'C#' "$(dotnet run --project "$work/csharp/FacadeCheck.csproj" --configuration Release)"
+
+          assert_output 'TypeScript' "$(npx --yes tsx src/Web/TypeScriptTS/facade.ts)"
+          python -m py_compile src/Scripting/PythonPY/facade.py
+          assert_output 'Python' "$(python src/Scripting/PythonPY/facade.py)"
+
+          g++ -std=c++20 -Wall -Wextra -Werror 'src/Systems/C++/facade.cpp' -o "$work/facade-cpp"
+          assert_output 'C++' "$("$work/facade-cpp")"
+
+          javac -Xlint:all -Werror -d "$work/java" src/Enterprise/Java/FacadeExample.java
+          assert_output 'Java' "$(java -cp "$work/java" FacadeExample)"
+
+          rustc --edition 2024 -D warnings src/Systems/Rust/facade.rs -o "$work/facade-rust"
+          assert_output 'Rust' "$("$work/facade-rust")"
+
+          test -z "$(gofmt -d src/Systems/Go/facade.go)"
+          assert_output 'Go' "$(go run src/Systems/Go/facade.go)"
+
+          php -l src/Scripting/PHP/facade.php >/dev/null
+          assert_output 'PHP' "$(php src/Scripting/PHP/facade.php)"
+
+          command -v kotlinc >/dev/null
+          kotlinc src/Enterprise/Kotlin/FacadeExample.kt -include-runtime -d "$work/facade-kotlin.jar"
+          assert_output 'Kotlin' "$(java -jar "$work/facade-kotlin.jar")"
+
+          command -v swiftc >/dev/null
+          swiftc -warnings-as-errors src/Systems/Swift/facade.swift -o "$work/facade-swift"
+          assert_output 'Swift' "$("$work/facade-swift")"
+
+          assert_output 'F#' "$(dotnet fsi 'src/Functional/F#/facade.fsx')"
+          node --check src/Web/JavaScriptJS/facade.js
+          assert_output 'JavaScript' "$(node src/Web/JavaScriptJS/facade.js)"
+
+          dotnet new console -lang VB --framework net10.0 -n FacadeVb -o "$work/vb" >/dev/null
+          cp 'src/Enterprise/VB.NET/FacadeExample.vb' "$work/vb/Program.vb"
+          assert_output 'VB.NET' "$(dotnet run --project "$work/vb/FacadeVb.vbproj" --configuration Release)"
+
+          gcc -std=c17 -Wall -Wextra -Werror -pedantic src/Systems/C/facade.c -o "$work/facade-c"
+          assert_output 'C' "$("$work/facade-c")"
+
+          ruby -cw src/Scripting/Ruby/facade.rb >/dev/null
+          assert_output 'Ruby' "$(ruby src/Scripting/Ruby/facade.rb)"
+
+          assert_output 'Lua' "$(lua5.4 src/Scripting/Lua/facade.lua)"
+
+          bash -n src/Scripting/Bash/facade.sh
+          assert_output 'Bash' "$(bash src/Scripting/Bash/facade.sh)"
+
+          assert_output 'PowerShell' "$(pwsh -NoLogo -NoProfile -NonInteractive -File src/Scripting/PowerShell/FacadeExample.ps1)"
+
+          ghc -Wall -Werror -outputdir "$work/haskell" -o "$work/facade-haskell" src/Functional/Haskell/Facade.hs
+          assert_output 'Haskell' "$("$work/facade-haskell")"
+
+          perl -c src/Scripting/Perl/facade.pl >/dev/null
+          assert_output 'Perl' "$(perl src/Scripting/Perl/facade.pl)"
+
+  scala-r-julia-octave:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+      - uses: VirtusLab/scala-cli-setup@v1
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: '1'
+      - name: Install R and Octave
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y r-base octave
+      - name: Validate Scala, R, Julia and Octave Facade
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='checkout=auth(alice)>reserve(SKU-42)>charge(499)'
+          assert_output() {
+            local label="$1"
+            local output="$2"
+            if [[ "$output" != "$expected" ]]; then
+              printf '%s output mismatch\nexpected: %s\nactual:   %s\n' "$label" "$expected" "$output" >&2
+              exit 1
+            fi
+          }
+
+          scala-cli compile --scala 3 src/Functional/Scala/Facade.scala
+          assert_output 'Scala' "$(scala-cli run --scala 3 src/Functional/Scala/Facade.scala --quiet)"
+
+          assert_output 'R' "$(Rscript src/DataScience/R/facade.R)"
+
+          julia --startup-file=no src/DataScience/Julia/facade.jl >/tmp/facade-julia.out
+          assert_output 'Julia' "$(cat /tmp/facade-julia.out)"
+
+          assert_output 'Octave' "$(octave --quiet --no-gui src/DataScience/Octave/facade.m 2>/dev/null)"
+
+  matlab:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: matlab-actions/setup-matlab@v3
+        with:
+          release: latest
+      - name: Validate MATLAB Facade
+        uses: matlab-actions/run-command@v3
+        with:
+          command: >-
+            addpath('src/DataScience/MATLAB');
+            output = strtrim(evalc('facade'));
+            disp(output);
+            assert(strcmp(output, "checkout=auth(alice)>reserve(SKU-42)>charge(499)"));
+
+  pascal-beam-functional:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install Pascal, Clojure, Elixir and Erlang
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y fp-compiler clojure elixir erlang-base
+      - name: Validate Pascal, Clojure, Elixir and Erlang Facade
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='checkout=auth(alice)>reserve(SKU-42)>charge(499)'
+          assert_output() {
+            local label="$1"
+            local output="$2"
+            if [[ "$output" != "$expected" ]]; then
+              printf '%s output mismatch\nexpected: %s\nactual:   %s\n' "$label" "$expected" "$output" >&2
+              exit 1
+            fi
+          }
+
+          work="$(mktemp -d)"
+
+          fpc -vw -FE"$work" -oFacadePascal src/Historical/Pascal/facade.pas >/dev/null
+          assert_output 'Pascal' "$("$work/FacadePascal")"
+
+          assert_output 'Clojure' "$(clojure src/Functional/Clojure/facade.clj)"
+
+          assert_output 'Elixir' "$(elixir src/Functional/Elixir/facade.exs)"
+
+          erlc -Werror -o "$work" src/Functional/Erlang/facade.erl
+          assert_output 'Erlang' "$(erl -noshell -pa "$work" -s facade main -s init stop)"

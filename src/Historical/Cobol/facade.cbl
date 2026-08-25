@@ -1,0 +1,35 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. FACADE.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 USER-NAME PIC X(5) VALUE 'alice'.
+       01 SKU-CODE  PIC X(6) VALUE 'SKU-42'.
+       01 CENTS     PIC 9(3) VALUE 499.
+       01 AUTH-TEXT PIC X(11).
+       01 STOCK-TEXT PIC X(15).
+       01 BILL-TEXT PIC X(11).
+       PROCEDURE DIVISION.
+       MAIN.
+           PERFORM CHECKOUT
+           STOP RUN.
+       CHECKOUT.
+           PERFORM AUTHENTICATE
+           PERFORM RESERVE-STOCK
+           PERFORM CHARGE-CARD
+           DISPLAY 'checkout=' AUTH-TEXT '>' STOCK-TEXT
+                   '>' BILL-TEXT.
+       AUTHENTICATE.
+           STRING 'auth(' DELIMITED BY SIZE
+                  USER-NAME DELIMITED BY SIZE
+                  ')' DELIMITED BY SIZE
+                  INTO AUTH-TEXT.
+       RESERVE-STOCK.
+           STRING 'reserve(' DELIMITED BY SIZE
+                  SKU-CODE DELIMITED BY SIZE
+                  ')' DELIMITED BY SIZE
+                  INTO STOCK-TEXT.
+       CHARGE-CARD.
+           STRING 'charge(' DELIMITED BY SIZE
+                  CENTS DELIMITED BY SIZE
+                  ')' DELIMITED BY SIZE
+                  INTO BILL-TEXT.

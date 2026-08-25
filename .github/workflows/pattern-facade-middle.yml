@@ -1,0 +1,166 @@
+name: Pattern Facade Middle
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/pattern-facade-middle.yml'
+      - 'src/Enterprise/Kotlin/FacadeExample.kt'
+      - 'src/Systems/Swift/facade.swift'
+      - 'src/Enterprise/VB.NET/FacadeExample.vb'
+      - 'src/Systems/C/facade.c'
+      - 'src/Scripting/Ruby/facade.rb'
+      - 'src/Scripting/Lua/facade.lua'
+      - 'src/Scripting/Bash/facade.sh'
+      - 'src/Scripting/PowerShell/FacadeExample.ps1'
+      - 'src/Functional/Haskell/Facade.hs'
+      - 'src/Scripting/Perl/facade.pl'
+      - 'src/Functional/Scala/Facade.scala'
+      - 'src/DataScience/R/facade.R'
+      - 'src/DataScience/Julia/facade.jl'
+      - 'src/DataScience/Octave/facade.m'
+      - 'src/DataScience/MATLAB/facade.m'
+      - 'src/Historical/Pascal/facade.pas'
+      - 'src/Functional/Clojure/facade.clj'
+      - 'src/Functional/Elixir/facade.exs'
+      - 'src/Functional/Erlang/facade.erl'
+      - 'src/Functional/OCaml/facade.ml'
+      - 'src/Functional/Lisp/facade.lisp'
+      - 'src/Niche/Prolog/facade.pl'
+      - 'src/Scripting/Groovy/facade.groovy'
+      - 'src/Historical/Ada/facade.adb'
+
+jobs:
+  mainstream-middle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+      - name: Install runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y ruby lua5.4 ghc
+      - name: Validate mainstream middle Facade examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='checkout=auth(alice)>reserve(SKU-42)>charge(499)'
+          assert_output() { test "$2" = "$expected" || { printf '%s mismatch\nexpected: %s\nactual: %s\n' "$1" "$expected" "$2" >&2; exit 1; }; }
+          work="$(mktemp -d)"
+
+          command -v kotlinc >/dev/null
+          kotlinc src/Enterprise/Kotlin/FacadeExample.kt -include-runtime -d "$work/facade-kotlin.jar"
+          assert_output Kotlin "$(java -jar "$work/facade-kotlin.jar")"
+
+          command -v swiftc >/dev/null
+          swiftc -warnings-as-errors src/Systems/Swift/facade.swift -o "$work/facade-swift"
+          assert_output Swift "$("$work/facade-swift")"
+
+          dotnet new console -lang VB --framework net10.0 -n FacadeVb -o "$work/vb" >/dev/null
+          cp src/Enterprise/VB.NET/FacadeExample.vb "$work/vb/Program.vb"
+          assert_output VB.NET "$(dotnet run --project "$work/vb/FacadeVb.vbproj" --configuration Release)"
+
+          gcc -std=c17 -Wall -Wextra -Werror -pedantic src/Systems/C/facade.c -o "$work/facade-c"
+          assert_output C "$("$work/facade-c")"
+
+          ruby -cw src/Scripting/Ruby/facade.rb >/dev/null
+          assert_output Ruby "$(ruby src/Scripting/Ruby/facade.rb)"
+          assert_output Lua "$(lua5.4 src/Scripting/Lua/facade.lua)"
+          bash -n src/Scripting/Bash/facade.sh
+          assert_output Bash "$(bash src/Scripting/Bash/facade.sh)"
+          assert_output PowerShell "$(pwsh -NoLogo -NoProfile -NonInteractive -File src/Scripting/PowerShell/FacadeExample.ps1)"
+
+          ghc -Wall -Werror -outputdir "$work/haskell" -o "$work/facade-haskell" src/Functional/Haskell/Facade.hs
+          assert_output Haskell "$("$work/facade-haskell")"
+          perl -c src/Scripting/Perl/facade.pl >/dev/null
+          assert_output Perl "$(perl src/Scripting/Perl/facade.pl)"
+
+  data-functional:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+      - uses: VirtusLab/scala-cli-setup@v1
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: '1'
+      - name: Install R and Octave
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y r-base octave
+      - name: Validate data and functional Facade examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='checkout=auth(alice)>reserve(SKU-42)>charge(499)'
+          assert_output() { test "$2" = "$expected" || { printf '%s mismatch\nexpected: %s\nactual: %s\n' "$1" "$expected" "$2" >&2; exit 1; }; }
+          scala-cli compile --scala 3 src/Functional/Scala/Facade.scala
+          assert_output Scala "$(scala-cli run --scala 3 src/Functional/Scala/Facade.scala --quiet)"
+          assert_output R "$(Rscript src/DataScience/R/facade.R)"
+          assert_output Julia "$(julia --startup-file=no src/DataScience/Julia/facade.jl)"
+          assert_output Octave "$(octave --quiet --no-gui src/DataScience/Octave/facade.m 2>/dev/null)"
+
+  matlab:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: matlab-actions/setup-matlab@v3
+        with:
+          release: latest
+      - name: Validate MATLAB Facade
+        uses: matlab-actions/run-command@v3
+        with:
+          command: >-
+            addpath('src/DataScience/MATLAB');
+            output = strtrim(evalc('facade'));
+            disp(output);
+            assert(strcmp(output, "checkout=auth(alice)>reserve(SKU-42)>charge(499)"));
+
+  functional-historical:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install functional and historical runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y fp-compiler clojure elixir erlang-base ocaml sbcl swi-prolog groovy gnat
+      - name: Validate functional and historical Facade examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='checkout=auth(alice)>reserve(SKU-42)>charge(499)'
+          assert_output() { test "$2" = "$expected" || { printf '%s mismatch\nexpected: %s\nactual: %s\n' "$1" "$expected" "$2" >&2; exit 1; }; }
+          work="$(mktemp -d)"
+
+          fpc -vw -FE"$work" -oFacadePascal src/Historical/Pascal/facade.pas >/dev/null
+          assert_output Pascal "$("$work/FacadePascal")"
+          assert_output Clojure "$(clojure src/Functional/Clojure/facade.clj)"
+          assert_output Elixir "$(elixir src/Functional/Elixir/facade.exs)"
+          erlc -Werror -o "$work" src/Functional/Erlang/facade.erl
+          assert_output Erlang "$(erl -noshell -pa "$work" -s facade main -s init stop)"
+
+          ocamlc -w +a-70 -warn-error +a-70 -o "$work/facade-ocaml" src/Functional/OCaml/facade.ml
+          assert_output OCaml "$("$work/facade-ocaml")"
+          assert_output Lisp "$(sbcl --script src/Functional/Lisp/facade.lisp)"
+          assert_output Prolog "$(swipl -q -s src/Niche/Prolog/facade.pl -g main -t halt)"
+          assert_output Groovy "$(groovy src/Scripting/Groovy/facade.groovy)"
+
+          mkdir -p "$work/ada"
+          gnatmake -q -gnat2022 -gnatwa -gnatwe -D "$work/ada" -o "$work/facade-ada" src/Historical/Ada/facade.adb
+          assert_output Ada "$("$work/facade-ada")"
