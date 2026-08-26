@@ -1,0 +1,9 @@
+Rock Styles
+Styles at "Inter|12|red" is 1
+Styles at "Inter|12|blue" is 2
+
+Put Styles at "Inter|12|red" into Red One
+Put Styles at "Inter|12|red" into Red Two
+Put Styles at "Inter|12|blue" into Blue
+
+Print "styles=2;shared=true;text=ABC"
