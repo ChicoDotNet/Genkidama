@@ -1,5 +1,3 @@
-:- initialization(main, main).
-
 intern_style(Key, Pool, Pool, Id) :-
     memberchk(Key-Id, Pool), !.
 intern_style(Key, Pool0, [Key-Id|Pool0], Id) :-
