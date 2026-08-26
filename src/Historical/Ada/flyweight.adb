@@ -11,7 +11,7 @@ procedure Flyweight is
    end record;
 
    Pool : array (1 .. 2) of Style :=
-     (others => (Font => "     ", Size => 1, Color => Red, Used => False));
+     [others => (Font => "     ", Size => 1, Color => Red, Used => False)];
 
    function Get_Style
      (Font : String; Size : Positive; Color : Color_Kind) return Positive is
