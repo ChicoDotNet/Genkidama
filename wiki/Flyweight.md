@@ -2,10 +2,9 @@
 
 > **Familia:** Structural  
 > **Intención:** compartir estado intrínseco reutilizable entre muchas representaciones ligeras y mantener fuera del objeto compartido el estado que cambia por contexto.  
-> **Estado:** `in-progress`  
-> **Implementaciones verificadas:** `25/48`  
-> **Implementaciones materializadas:** `30/48`  
-> **Cobertura de pruebas:** N/A — ejemplos standalone multi-ecosistema; se usa compilación/runtime/contrato por lenguaje en lugar de un porcentaje agregado inventado.  
+> **Estado:** `validated`  
+> **Implementaciones de lenguaje:** `48/48`  
+> **Cobertura de pruebas:** N/A — ejemplos standalone multi-ecosistema; se usa compilación, runtime, análisis o contrato por lenguaje en lugar de inventar un porcentaje agregado.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
 ## En una frase
@@ -18,30 +17,30 @@ Un editor puede representar millones de caracteres. Si cada carácter almacena s
 
 ## Fuerzas que compiten
 
-- Hay muchísimos objetos conceptualmente pequeños y la duplicación de estado estable cuesta memoria.
+- Hay muchísimas representaciones pequeñas y la duplicación de estado estable cuesta memoria.
 - El estado compartido debe ser inmutable o tratado como tal para evitar contaminación entre consumidores.
 - El estado contextual sigue variando por aparición y no puede esconderse dentro del objeto compartido.
-- El ahorro debe justificar la fábrica/cache y la separación adicional de responsabilidades.
+- El ahorro debe justificar la fábrica, tabla o mecanismo de canonicalización adicional.
 
 ## La solución
 
-Separar **estado intrínseco** —por ejemplo fuente, tamaño y color— de **estado extrínseco** —carácter y posición—. Una fábrica devuelve una única instancia compartida por cada combinación intrínseca. Cada aparición conserva o recibe su contexto por separado.
+Separar **estado intrínseco** —por ejemplo fuente, tamaño y color— de **estado extrínseco** —carácter, posición u otro contexto de uso—. Una fábrica, tabla o función de internado devuelve una única representación por combinación intrínseca. Cada aparición conserva o recibe su contexto por separado.
 
-Flyweight no exige clases: tablas internadas, mapas, átomos, símbolos, records inmutables, closures o valores compartidos pueden expresar la misma intención.
+Flyweight no exige clases: tablas internadas, mapas, records inmutables, referencias, símbolos, predicados o valores canonicalizados pueden expresar la misma intención.
 
 ## Participantes y responsabilidades
 
 | Participante | Responsabilidad |
 |---|---|
 | `Flyweight` | Contiene el estado intrínseco compartible. |
-| `FlyweightFactory` | Reutiliza una instancia existente o crea una nueva por clave intrínseca. |
-| Contexto / cliente | Conserva estado extrínseco y combina ambos durante el uso. |
+| `FlyweightFactory` / pool | Reutiliza una representación existente o crea una nueva por clave intrínseca. |
+| Contexto / cliente | Conserva el estado extrínseco y combina ambos durante el uso. |
 
 ## Cómo funciona
 
 1. El cliente identifica la porción estable que puede compartirse.
-2. Pide esa porción a la fábrica mediante una clave intrínseca.
-3. La fábrica reutiliza el Flyweight si ya existe.
+2. Solicita esa porción mediante una clave intrínseca.
+3. La fábrica o pool reutiliza el Flyweight si ya existe.
 4. El cliente mantiene fuera carácter, posición u otro estado extrínseco.
 5. El comportamiento combina Flyweight y contexto sin duplicar el estado estable.
 
@@ -49,7 +48,7 @@ Flyweight no exige clases: tablas internadas, mapas, átomos, símbolos, records
 
 ```mermaid
 flowchart LR
-    C[Contextos: A@1, B@2, C@3] --> F[StyleFactory]
+    C[Contextos: A@1, B@2, C@3] --> F[StyleFactory / pool]
     F --> R[TextStyle Inter/12/red]
     F --> B[TextStyle Inter/12/blue]
     C -. estado extrínseco .-> U[render]
@@ -57,7 +56,7 @@ flowchart LR
     B -. estado intrínseco compartido .-> U
 ```
 
-El punto importante es la frontera de estado: varias apariciones pueden referenciar el mismo estilo rojo, mientras carácter y posición siguen perteneciendo al contexto.
+Varias apariciones pueden compartir el mismo estilo rojo, mientras carácter y posición siguen perteneciendo al contexto.
 
 ## Ejemplo mínimo
 
@@ -69,7 +68,7 @@ blue = styles.get("Inter", 12, "blue")
 styles=2;shared=true;text=ABC
 ```
 
-La salida prueba dos cosas: sólo existen dos estilos intrínsecos para tres usos y las dos solicitudes del rojo comparten identidad o la misma representación canonicalizada según el modelo del lenguaje.
+La salida demuestra dos representaciones intrínsecas para tres solicitudes y reutilización de la representación roja según el modelo de identidad o canonicalización del lenguaje.
 
 ## Aplicación real
 
@@ -86,24 +85,24 @@ No existe actualmente un uso productivo deliberado y auditado de Flyweight en Ge
 ## Cuándo usarlo
 
 - Existen muchísimas instancias conceptuales con gran parte del estado repetido.
-- El estado intrínseco puede ser compartido de forma segura.
-- El contexto extrínseco puede mantenerse fuera o suministrarse al usar el objeto.
+- El estado intrínseco puede compartirse de forma segura.
+- El contexto extrínseco puede mantenerse fuera o suministrarse al usar la representación.
 
 ## Cuándo no usarlo
 
 - La cantidad de objetos es pequeña o el ahorro de memoria es irrelevante.
 - El supuesto estado intrínseco cambia frecuentemente por instancia.
-- La cache/fábrica agrega más complejidad que el costo que elimina.
-- Sólo necesitas creación diferida; considera Lazy Initialization o un cache simple antes de llamar Flyweight al diseño.
+- El pool agrega más complejidad que el costo que elimina.
+- Sólo necesitas creación diferida; considera Lazy Initialization o un cache simple.
 
 ## Consecuencias y trade-offs
 
 | A favor | Costo / riesgo |
 |---|---|
 | Reduce duplicación de estado intrínseco. | Exige distinguir cuidadosamente estado intrínseco y extrínseco. |
-| Puede reducir memoria y costo de construcción. | Añade lookup/cache y gestión de claves. |
-| Favorece valores compartidos e inmutables. | El contexto puede volverse más explícito y viajar por más llamadas. |
-| Permite reutilización masiva de representaciones equivalentes. | Mutar accidentalmente un Flyweight compartido afecta a múltiples consumidores. |
+| Puede reducir memoria y costo de construcción. | Añade lookup, claves y gestión del pool. |
+| Favorece representaciones compartidas e inmutables. | El contexto se vuelve más explícito. |
+| Reutiliza masivamente valores equivalentes. | Mutar accidentalmente un Flyweight compartido afecta a múltiples consumidores. |
 
 ## Patrones relacionados
 
@@ -111,16 +110,16 @@ No existe actualmente un uso productivo deliberado y auditado de Flyweight en Ge
 
 | Patrón | Relación | Por qué importa |
 |---|---|---|
-| [Factory Method](FactoryMethod.md) | often implemented with | La creación/canonicalización de Flyweights suele concentrarse en una fábrica. |
-| [Composite](Composite.md) | collaborates with | Árboles grandes pueden compartir hojas o recursos repetidos cuando su estado intrínseco coincide. |
-| [Singleton](Singleton.md) | often confused with | Singleton garantiza una instancia global de un tipo; Flyweight mantiene potencialmente muchas instancias, una por valor intrínseco. |
-| [Proxy](Proxy.md) | often confused with | Proxy controla acceso a otro sujeto; Flyweight reduce duplicación compartiendo representación intrínseca. |
+| [Factory Method](FactoryMethod.md) | often implemented with | La creación y canonicalización de Flyweights suele concentrarse en una fábrica. |
+| [Composite](Composite.md) | collaborates with | Árboles grandes pueden compartir hojas o recursos repetidos. |
+| [Singleton](Singleton.md) | often confused with | Singleton garantiza una instancia global de un tipo; Flyweight mantiene potencialmente muchas, una por estado intrínseco. |
+| [Proxy](Proxy.md) | often confused with | Proxy controla acceso a otro sujeto; Flyweight reduce duplicación compartiendo representación. |
 
 ## Errores comunes y confusiones
 
 ### Llamar Flyweight a cualquier cache
 
-Un cache puede guardar resultados costosos sin separar estado intrínseco/extrínseco. Flyweight se reconoce por esa separación y por reutilizar representaciones equivalentes a gran escala.
+Un cache puede guardar resultados costosos sin separar estado intrínseco y extrínseco. Flyweight se reconoce por esa separación y por reutilizar representaciones equivalentes.
 
 ### Compartir estado mutable
 
@@ -128,69 +127,69 @@ Si dos contextos reciben el mismo Flyweight y uno puede mutarlo, el ahorro de me
 
 ## Cómo comprobar una implementación
 
-- Dos solicitudes con la misma clave intrínseca reutilizan la misma representación o valor canonicalizado según el modelo de identidad del lenguaje.
+- Dos solicitudes con la misma clave intrínseca reutilizan la misma representación o valor canonicalizado.
 - Una clave intrínseca distinta produce otra representación.
-- El estado extrínseco no queda absorbido en el objeto compartido.
+- El estado extrínseco no queda absorbido dentro del valor compartido.
 - La prueba observa reutilización y resultado, no sólo nombres de clases.
 - Donde exista tooling razonable, el ejemplo compila, analiza o ejecuta con un gate ligero.
 
 ## Implementaciones por lenguaje
 
-Universo actual: **51 targets**. Flyweight clasifica provisionalmente **48 Applicable** y **3 N/A**. La ausencia de clases no convierte un lenguaje ejecutable en N/A.
+Universo actual: **51 targets**. Flyweight clasifica **48 Applicable** y **3 N/A**. La ausencia de clases no convierte un lenguaje ejecutable en N/A.
 
-| Lenguaje / target | Aplicabilidad | Ejemplo | Validación | Nota |
+| Lenguaje / target | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
-| C# | Applicable | [`src/Enterprise/C#/FlyweightExample.cs`](../src/Enterprise/C%23/FlyweightExample.cs) | Flyweight Mainstream #27 ✅ | record inmutable + diccionario |
-| TypeScript | Applicable | [`src/Web/TypeScriptTS/flyweight.ts`](../src/Web/TypeScriptTS/flyweight.ts) | Flyweight Mainstream #27 ✅ | objetos congelados + Map |
-| Python | Applicable | [`src/Scripting/PythonPY/flyweight.py`](../src/Scripting/PythonPY/flyweight.py) | Flyweight Mainstream #27 ✅ | dataclass congelada + dict |
-| C++ | Applicable | [`src/Systems/C++/flyweight.cpp`](../src/Systems/C%2B%2B/flyweight.cpp) | Flyweight Mainstream #27 ✅ | shared_ptr + map |
-| Java | Applicable | [`src/Enterprise/Java/FlyweightExample.java`](../src/Enterprise/Java/FlyweightExample.java) | Flyweight Mainstream #27 ✅ | record + HashMap |
-| Rust | Applicable | [`src/Systems/Rust/flyweight.rs`](../src/Systems/Rust/flyweight.rs) | Flyweight Mainstream #27 ✅ | Rc + HashMap |
-| Go | Applicable | [`src/Systems/Go/flyweight.go`](../src/Systems/Go/flyweight.go) | Flyweight Mainstream #27 ✅ | pointers + map |
-| PHP | Applicable | [`src/Scripting/PHP/flyweight.php`](../src/Scripting/PHP/flyweight.php) | Flyweight Mainstream #27 ✅ | objetos + array asociativo |
-| F# | Applicable | [`src/Functional/F#/flyweight.fsx`](../src/Functional/F%23/flyweight.fsx) | Flyweight Mainstream #27 ✅ | valores compartidos + Dictionary |
-| JavaScript | Applicable | [`src/Web/JavaScriptJS/flyweight.js`](../src/Web/JavaScriptJS/flyweight.js) | Flyweight Mainstream #27 ✅ | objetos congelados + Map |
-| Kotlin | Applicable | [`src/Enterprise/Kotlin/FlyweightExample.kt`](../src/Enterprise/Kotlin/FlyweightExample.kt) | Flyweight Mainstream #27 ✅ | data class + MutableMap |
-| Swift | Applicable | [`src/Systems/Swift/flyweight.swift`](../src/Systems/Swift/flyweight.swift) | Flyweight Mainstream #27 ✅ | referencia compartida + Dictionary |
-| Visual Basic .NET | Applicable | [`src/Enterprise/VB.NET/FlyweightExample.vb`](../src/Enterprise/VB.NET/FlyweightExample.vb) | Flyweight Mainstream #27 ✅ | objetos + Dictionary |
-| C | Applicable | [`src/Systems/C/flyweight.c`](../src/Systems/C/flyweight.c) | Flyweight Mainstream #27 ✅ | structs + tabla de internado |
-| Ruby | Applicable | [`src/Scripting/Ruby/flyweight.rb`](../src/Scripting/Ruby/flyweight.rb) | Flyweight Mainstream #27 ✅ | Struct congelado + Hash |
-| Lua | Applicable | [`src/Scripting/Lua/flyweight.lua`](../src/Scripting/Lua/flyweight.lua) | Flyweight Mainstream #27 ✅ | tablas + cache |
-| Bash | Applicable | [`src/Scripting/Bash/flyweight.sh`](../src/Scripting/Bash/flyweight.sh) | Flyweight Mainstream #27 ✅ | array asociativo + clave canonicalizada |
-| PowerShell | Applicable | [`src/Scripting/PowerShell/flyweight.ps1`](../src/Scripting/PowerShell/flyweight.ps1) | Flyweight Mainstream #27 ✅ | hashtable + objetos compartidos |
-| Haskell | Applicable | [`src/Functional/Haskell/flyweight.hs`](../src/Functional/Haskell/flyweight.hs) | Flyweight Mainstream #27 ✅ | Map + valores inmutables canonicalizados |
-| Perl | Applicable | [`src/Scripting/Perl/flyweight.pl`](../src/Scripting/Perl/flyweight.pl) | Flyweight Mainstream #27 ✅ | hashes + referencias |
-| Scala | Applicable | [`src/Functional/Scala/Flyweight.scala`](../src/Functional/Scala/Flyweight.scala) | pendiente CI del HEAD actual | case class + mutable Map |
-| Pascal | Applicable | [`src/Historical/Pascal/flyweight.pas`](../src/Historical/Pascal/flyweight.pas) | Flyweight Mainstream #27 ✅ | records/classes + tabla |
-| R | Applicable | [`src/DataScience/R/flyweight.R`](../src/DataScience/R/flyweight.R) | Flyweight Mainstream #27 ✅ | environments/lists |
-| GNU Octave | Applicable | [`src/DataScience/Octave/flyweight.m`](../src/DataScience/Octave/flyweight.m) | Flyweight Mainstream #27 ✅ | structs/maps según runtime |
-| Julia | Applicable | [`src/DataScience/Julia/flyweight.jl`](../src/DataScience/Julia/flyweight.jl) | pendiente CI del HEAD actual | immutable struct + Dict |
-| OCaml | Applicable | [`src/Functional/OCaml/flyweight.ml`](../src/Functional/OCaml/flyweight.ml) | Flyweight Mainstream #27 ✅ | records + Hashtbl |
-| Common Lisp | Applicable | [`src/Functional/CommonLisp/flyweight.lisp`](../src/Functional/CommonLisp/flyweight.lisp) | Flyweight Mainstream #27 ✅ | hash table + plist inmutable |
-| Clojure | Applicable | [`src/Functional/Clojure/flyweight.clj`](../src/Functional/Clojure/flyweight.clj) | pendiente CI del HEAD actual | atom + mapa canonicalizado |
-| Elixir | Applicable | [`src/Functional/Elixir/flyweight.exs`](../src/Functional/Elixir/flyweight.exs) | pendiente CI del HEAD actual | mapa inmutable + estado explícito |
-| Erlang | Applicable | [`src/Functional/Erlang/flyweight.erl`](../src/Functional/Erlang/flyweight.erl) | pendiente CI del HEAD actual | mapas + estado explícito |
-| Prolog | Applicable | — | pendiente | hechos/tablas pueden representar valores compartidos conceptualmente |
-| Groovy | Applicable | — | pendiente | objetos + maps |
-| Ada | Applicable | — | pendiente | paquetes y acceso compartido |
-| Solidity | Applicable | — | pendiente | almacenamiento keyed puede canonicalizar configuración compartida |
-| Fortran | Applicable | — | pendiente | derived types + arrays/tables |
-| Objective-C | Applicable | — | pendiente | objetos inmutables + dictionary |
-| Zig | Applicable | — | pendiente | structs + mapas/allocator |
-| Nim | Applicable | — | pendiente | ref objects/tables |
-| Dart | Applicable | — | pendiente | immutable objects + Map |
-| Crystal | Applicable | — | pendiente | structs/classes + Hash |
-| COBOL | Applicable | — | pendiente | tablas de estado y claves pueden separar datos repetidos/contexto |
-| VBA | Applicable | — | pendiente | objects/dictionaries cuando host lo permita |
-| GDScript | Applicable | — | pendiente | dictionaries/resources pueden compartirse |
-| Assembly | Applicable | — | pendiente | tabla de datos compartidos + índices/contexto |
-| Delphi | Applicable | — | pendiente | records/classes + dictionary |
-| MicroPython | Applicable | — | pendiente | dict + objetos ligeros |
-| Rockstar | Applicable | — | pendiente | variables/arrays permiten modelar pool educativo mínimo |
-| MATLAB | Applicable | — | pendiente | structs/containers.Map permiten separar estado |
-| HTML | N/A | — | — | markup declarativo sin runtime propio ni identidad compartible ejecutable para esta intención |
-| CSS | N/A | — | — | reglas declarativas describen estilo pero no implementan por sí solas una fábrica/pool runtime de Flyweights |
-| SQL declarativo | N/A | — | — | consultas/tablas pueden deduplicar datos, pero SQL declarativo por sí solo no ofrece el objeto/contexto ejecutable que requiere este ejemplo sin un runtime procedural adicional |
+| C# | Applicable | [`FlyweightExample.cs`](../src/Enterprise/C%23/FlyweightExample.cs) | Flyweight Mainstream ✅ | record/objeto + diccionario |
+| TypeScript | Applicable | [`flyweight.ts`](../src/Web/TypeScriptTS/flyweight.ts) | Flyweight Mainstream ✅ | objetos + `Map` |
+| Python | Applicable | [`flyweight.py`](../src/Scripting/PythonPY/flyweight.py) | Flyweight Mainstream ✅ | objetos + `dict` |
+| C++ | Applicable | [`flyweight.cpp`](../src/Systems/C%2B%2B/flyweight.cpp) | Flyweight Mainstream ✅ | referencias + map |
+| Java | Applicable | [`FlyweightExample.java`](../src/Enterprise/Java/FlyweightExample.java) | Flyweight Mainstream ✅ | record/objeto + `HashMap` |
+| Rust | Applicable | [`flyweight.rs`](../src/Systems/Rust/flyweight.rs) | Flyweight Mainstream ✅ | `Rc` + `HashMap` |
+| Go | Applicable | [`flyweight.go`](../src/Systems/Go/flyweight.go) | Flyweight Mainstream ✅ | pointers + map |
+| PHP | Applicable | [`flyweight.php`](../src/Scripting/PHP/flyweight.php) | Flyweight Mainstream ✅ | objetos + array asociativo |
+| F# | Applicable | [`flyweight.fsx`](../src/Functional/F%23/flyweight.fsx) | Flyweight Mainstream ✅ | valores compartidos + Dictionary |
+| JavaScript | Applicable | [`flyweight.js`](../src/Web/JavaScriptJS/flyweight.js) | Flyweight Mainstream ✅ | objetos + `Map` |
+| Kotlin | Applicable | [`FlyweightExample.kt`](../src/Enterprise/Kotlin/FlyweightExample.kt) | Flyweight Mainstream ✅ | data class + MutableMap |
+| Swift | Applicable | [`flyweight.swift`](../src/Systems/Swift/flyweight.swift) | Flyweight Mainstream ✅ | referencias + Dictionary |
+| Visual Basic .NET | Applicable | [`FlyweightExample.vb`](../src/Enterprise/VB.NET/FlyweightExample.vb) | Flyweight Mainstream ✅ | objetos + Dictionary |
+| C | Applicable | [`flyweight.c`](../src/Systems/C/flyweight.c) | Flyweight Mainstream ✅ | structs + tabla de internado |
+| Ruby | Applicable | [`flyweight.rb`](../src/Scripting/Ruby/flyweight.rb) | Flyweight Mainstream ✅ | Struct + Hash |
+| Lua | Applicable | [`flyweight.lua`](../src/Scripting/Lua/flyweight.lua) | Flyweight Mainstream ✅ | tablas + cache |
+| Bash | Applicable | [`flyweight.sh`](../src/Scripting/Bash/flyweight.sh) | Flyweight Mainstream ✅ | array asociativo + clave canonicalizada |
+| PowerShell | Applicable | [`flyweight.ps1`](../src/Scripting/PowerShell/flyweight.ps1) | Flyweight Mainstream ✅ | hashtable + objetos compartidos |
+| Haskell | Applicable | [`flyweight.hs`](../src/Functional/Haskell/flyweight.hs) | Flyweight Mainstream ✅ | `Map` + valores inmutables |
+| Perl | Applicable | [`flyweight.pl`](../src/Scripting/Perl/flyweight.pl) | Flyweight Mainstream ✅ | hashes + referencias |
+| Pascal | Applicable | [`flyweight.pas`](../src/Historical/Pascal/flyweight.pas) | Flyweight Mainstream ✅ | tabla canonicalizada |
+| R | Applicable | [`flyweight.R`](../src/DataScience/R/flyweight.R) | Flyweight Mainstream ✅ | environment/listas |
+| GNU Octave | Applicable | [`flyweight.m`](../src/DataScience/Octave/flyweight.m) | Flyweight Mainstream ✅ | tabla/mapa del runtime |
+| OCaml | Applicable | [`flyweight.ml`](../src/Functional/OCaml/flyweight.ml) | Flyweight Mainstream ✅ | records + Hashtbl |
+| Common Lisp | Applicable | [`flyweight.lisp`](../src/Functional/CommonLisp/flyweight.lisp) | Flyweight Mainstream ✅ | hash table + valor compartido |
+| Scala | Applicable | [`Flyweight.scala`](../src/Functional/Scala/Flyweight.scala) | Flyweight Mainstream/data-functional ✅ | case class + mutable Map |
+| Julia | Applicable | [`flyweight.jl`](../src/DataScience/Julia/flyweight.jl) | Flyweight Mainstream/data-functional ✅ | struct + Dict |
+| Clojure | Applicable | [`flyweight.clj`](../src/Functional/Clojure/flyweight.clj) | Flyweight Mainstream/data-functional ✅ | atom + mapa canonicalizado |
+| Elixir | Applicable | [`flyweight.exs`](../src/Functional/Elixir/flyweight.exs) | Flyweight Mainstream/data-functional ✅ | mapa inmutable + estado explícito |
+| Erlang | Applicable | [`flyweight.erl`](../src/Functional/Erlang/flyweight.erl) | Flyweight Mainstream/data-functional ✅ | mapas + estado explícito |
+| Prolog | Applicable | [`flyweight.pl`](../src/Niche/Prolog/flyweight.pl) | Flyweight Mainstream/portable-historical ✅ | tabla/predicados canonicalizados |
+| Groovy | Applicable | [`flyweight.groovy`](../src/Scripting/Groovy/flyweight.groovy) | Flyweight Mainstream/portable-historical ✅ | objetos + Map |
+| Ada | Applicable | [`flyweight.adb`](../src/Historical/Ada/flyweight.adb) | Flyweight Mainstream/portable-historical ✅ | record + pool explícito |
+| Solidity | Applicable | [`Flyweight.sol`](../src/Niche/Solidity/Flyweight.sol) | Flyweight Mainstream/portable-historical ✅ | mapping keyed + IDs canonicalizados |
+| Fortran | Applicable | [`flyweight.f90`](../src/Historical/Fortran/flyweight.f90) | Flyweight Mainstream/portable-historical ✅ | derived type + tabla |
+| Objective-C | Applicable | [`flyweight.m`](../src/Systems/Objective-C/flyweight.m) | Flyweight Portable #4 ✅ | objetos + dictionary |
+| Zig | Applicable | [`flyweight.zig`](../src/Systems/Zig/flyweight.zig) | Flyweight Portable #4 ✅ | structs + pool explícito |
+| Nim | Applicable | [`flyweight.nim`](../src/Niche/Nim/flyweight.nim) | Flyweight Portable #4 ✅ | ref objects + seq |
+| Dart | Applicable | [`flyweight.dart`](../src/Web/Dart/flyweight.dart) | Flyweight Portable #4 ✅ | objetos + Map |
+| Crystal | Applicable | [`flyweight.cr`](../src/Niche/Crystal/flyweight.cr) | Flyweight Portable #4 ✅ | objetos + Hash |
+| COBOL | Applicable | [`flyweight.cbl`](../src/Historical/Cobol/flyweight.cbl) | Flyweight Final #1 ✅ | IDs canonicalizados + estado compartido |
+| VBA | Applicable | [`FlyweightExample.bas`](../src/Shell/VBA/FlyweightExample.bas) | Flyweight Final #1 source contract ✅ | `Scripting.Dictionary` + IDs canonicalizados |
+| GDScript | Applicable | [`flyweight.gd`](../src/Niche/GDScript/flyweight.gd) | Flyweight Final #1 ✅ | `RefCounted` + Dictionary |
+| Assembly | Applicable | [`flyweight.asm`](../src/LowLevel/Assembly/flyweight.asm) | Flyweight Final #1 ✅ | tabla/IDs compartidos explícitos |
+| Delphi | Applicable | [`FlyweightExample.pas`](../src/Enterprise/Delphi/FlyweightExample.pas) | Flyweight Final #1 source contract ✅ | objetos + `TObjectDictionary` |
+| MicroPython | Applicable | [`flyweight.py`](../src/Other/MicroPython/flyweight.py) | Flyweight Final #1 ✅ | objetos + dict |
+| Rockstar | Applicable | [`flyweight.rock`](../src/Other/Rockstar/flyweight.rock) | Flyweight Final #1 ✅ | array asociativo como pool mínimo |
+| MATLAB | Applicable | [`flyweight.m`](../src/DataScience/MATLAB/flyweight.m) | Flyweight Final #1 ✅ | `containers.Map` + IDs canonicalizados |
+| HTML | N/A | — | — | markup declarativo sin runtime propio ni identidad/pool ejecutable para esta intención |
+| CSS | N/A | — | — | comparte reglas declarativas, pero no implementa por sí solo una fábrica/pool runtime de Flyweights |
+| SQL declarativo | N/A | — | — | puede deduplicar datos, pero necesita una capa procedural/runtime adicional para expresar este ejemplo de objeto/contexto |
 
 ## Comprueba que lo entendiste
 
@@ -204,7 +203,7 @@ Universo actual: **51 targets**. Flyweight clasifica provisionalmente **48 Appli
 - Comparte estado intrínseco y mantiene fuera el estado extrínseco.
 - La reutilización debe ser observable y segura, idealmente con valores inmutables.
 - Se distingue de Singleton, Proxy y caches genéricos por su intención.
-- La portabilidad depende de la capacidad de compartir/internar representación, no de disponer de clases.
+- La portabilidad depende de poder compartir o internar representación, no de disponer de clases.
 
 ## Referencias
 
