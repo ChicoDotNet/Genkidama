@@ -24,14 +24,14 @@ program flyweight
 
 contains
 
-  integer function get_style(font, size, color) result(id)
+  integer function get_style(font, font_size, color) result(id)
     character(len=*), intent(in) :: font, color
-    integer, intent(in) :: size
+    integer, intent(in) :: font_size
     integer :: i
 
     do i = 1, size(pool)
       if (pool(i)%used .and. pool(i)%font == font .and. &
-          pool(i)%size == size .and. pool(i)%color == color) then
+          pool(i)%size == font_size .and. pool(i)%color == color) then
         id = i
         return
       end if
@@ -39,7 +39,7 @@ contains
 
     do i = 1, size(pool)
       if (.not. pool(i)%used) then
-        pool(i) = text_style(font, size, color, .true.)
+        pool(i) = text_style(font, font_size, color, .true.)
         id = i
         return
       end if
