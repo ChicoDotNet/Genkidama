@@ -23,5 +23,7 @@ void main() {
   final red2 = factory.get('Inter', 12, 'red');
   final blue = factory.get('Inter', 12, 'blue');
   assert(blue.color == 'blue');
-  print('styles=${factory.count};shared=${identical(red1, red2) ? 'true' : 'false'};text=ABC');
+  print(
+    'styles=${factory.count};shared=${identical(red1, red2) ? 'true' : 'false'};text=ABC',
+  );
 }
