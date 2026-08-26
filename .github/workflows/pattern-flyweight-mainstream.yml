@@ -122,3 +122,39 @@ jobs:
           assert_output Elixir "$(elixir src/Functional/Elixir/flyweight.exs)"
           erlc -Werror -o "$work" src/Functional/Erlang/flyweight.erl
           assert_output Erlang "$(erl -noshell -pa "$work" -s flyweight main -s init stop)"
+
+  portable-historical:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with: { node-version: '24' }
+      - name: Install portable and historical runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y swi-prolog groovy gnat gfortran
+          npm install --global solc
+      - name: Validate portable and historical Flyweight examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='styles=2;shared=true;text=ABC'
+          assert_output() { test "$2" = "$expected" || { printf '%s mismatch\nexpected: %s\nactual: %s\n' "$1" "$expected" "$2" >&2; exit 1; }; }
+          work="$(mktemp -d)"
+
+          assert_output Prolog "$(swipl -q -s src/Niche/Prolog/flyweight.pl -g main -t halt)"
+          assert_output Groovy "$(groovy src/Scripting/Groovy/flyweight.groovy)"
+
+          mkdir -p "$work/ada"
+          gnatmake -q -gnat2022 -gnatwa -gnatwe -D "$work/ada" -o "$work/flyweight-ada" src/Historical/Ada/flyweight.adb
+          assert_output Ada "$("$work/flyweight-ada")"
+
+          mkdir -p "$work/solidity"
+          solcjs --bin --abi src/Niche/Solidity/Flyweight.sol -o "$work/solidity"
+          test "$(find "$work/solidity" -maxdepth 1 -name '*FlyweightPool.bin' -size +0c | wc -l)" -eq 1
+          test "$(find "$work/solidity" -maxdepth 1 -name '*FlyweightPool.abi' -size +0c | wc -l)" -eq 1
+
+          gfortran -std=f2018 -Wall -Wextra -Werror src/Historical/Fortran/flyweight.f90 -o "$work/flyweight-fortran"
+          assert_output Fortran "$("$work/flyweight-fortran" | tr -d ' ')"
