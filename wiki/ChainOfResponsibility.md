@@ -1,0 +1,229 @@
+# Chain of Responsibility
+
+> **Familia:** Behavioral  
+> **Intención:** permitir que una solicitud recorra una secuencia de posibles manejadores hasta que uno asuma la responsabilidad, sin acoplar al emisor con un receptor concreto.  
+> **Estado:** `in-progress`  
+> **Implementaciones de lenguaje:** `0/49`  
+> **Cobertura de pruebas:** N/A — ejemplos standalone multi-ecosistema; se usa compilación, runtime, análisis o contrato por lenguaje en lugar de inventar un porcentaje agregado.  
+> **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
+
+## En una frase
+
+Chain of Responsibility deja que el emisor entregue una solicitud al inicio de una cadena y que cada manejador decida entre resolverla o pasarla al siguiente.
+
+## El problema
+
+Un sistema de soporte recibe solicitudes de reembolso con distintos montos. Una FAQ automática puede resolver importes pequeños, facturación puede asumir importes moderados y un especialista humano debe recibir los casos restantes. Si el emisor conoce y selecciona directamente cada receptor, la política de enrutamiento queda duplicada y cada nuevo nivel obliga a cambiar al cliente.
+
+## Fuerzas que compiten
+
+- El emisor debe permanecer desacoplado del manejador concreto que finalmente resuelve la solicitud.
+- Los manejadores deben poder ordenarse, añadirse o retirarse sin reescribir al emisor.
+- Una solicitud debe detenerse cuando un manejador asume responsabilidad; continuar innecesariamente puede duplicar efectos.
+- El orden de la cadena es comportamiento de negocio y puede cambiar el resultado.
+- Una cadena sin manejador final o política de rechazo puede dejar solicitudes sin respuesta.
+
+## La solución
+
+Construir una secuencia de **Handlers** que comparten el mismo contrato de manejo. Cada handler inspecciona la solicitud: si puede atenderla, produce el resultado y termina el recorrido; si no, la delega al siguiente. El cliente conoce únicamente el punto de entrada de la cadena.
+
+La intención no depende de clases. Listas de funciones, closures, módulos, procesos, predicados, tablas de reglas o CTEs pueden representar una cadena siempre que exista un orden de posibles receptores y el recorrido termine al asumir uno la responsabilidad.
+
+## Participantes y responsabilidades
+
+| Participante | Responsabilidad |
+|---|---|
+| `Request` | Contiene la información necesaria para decidir quién puede atenderla. |
+| `Handler` | Define cómo inspeccionar la solicitud y cómo continuar al siguiente receptor. |
+| `ConcreteHandler` | Decide si asume la responsabilidad o delega. |
+| Cliente / emisor | Entrega la solicitud al inicio de la cadena sin seleccionar al receptor final. |
+
+## Cómo funciona
+
+1. El cliente envía `refund(250)` al primer handler, `faq`.
+2. `faq` registra que recibió la solicitud, determina que 250 excede su límite y delega.
+3. `billing` recibe la misma solicitud y determina que puede resolverla.
+4. La cadena se detiene: `escalation` no recibe la solicitud.
+5. El cliente obtiene el resultado sin conocer qué handler concreto terminó atendiendo.
+
+## Diagrama
+
+```mermaid
+sequenceDiagram
+    participant C as Cliente
+    participant F as FAQ
+    participant B as Billing
+    participant E as Escalation
+    C->>F: refund(250)
+    F->>F: ¿<= 50? no
+    F->>B: refund(250)
+    B->>B: ¿<= 500? sí
+    B-->>C: refund(250)
+    Note over E: no se invoca
+```
+
+La evidencia importante es doble: la solicitud puede avanzar sin que el cliente elija receptor y el recorrido se corta en el primer handler que acepta responsabilidad.
+
+## Ejemplo mínimo
+
+```text
+faq -> billing -> escalation
+
+refund(250)
+visited=faq>billing;handled=billing;result=refund(250)
+```
+
+`escalation` existe como fallback, pero no aparece en `visited`: eso demuestra el short-circuit de la cadena.
+
+## Aplicación real
+
+### Validación y soporte escalonado
+
+Una cadena puede aplicar reglas de menor a mayor costo: resolver automáticamente casos simples, delegar casos moderados a un subsistema especializado y escalar sólo excepciones. El emisor no necesita un `if/else` que conozca cada receptor.
+
+Si todas las etapas deben ejecutarse siempre, un pipeline explícito suele comunicar mejor la intención. Si sólo debe elegirse una implementación entre varias antes de ejecutar, [Strategy](Strategy.md) suele ser más directo.
+
+### Middleware HTTP
+
+Los pipelines de middleware son una expresión natural de Chain of Responsibility cuando cada componente decide si responde o continúa con el siguiente. En Genkidama, [`GenkidamaTraceMiddleware`](../src/Genkidama.Http/GenkidamaTraceMiddleware.cs) recibe un `RequestDelegate next` y lo invoca después de agregar el trace identifier; [`UseGenkidamaTraceIdentifier`](../src/Genkidama.Http/GenkidamaHttpApplicationBuilderExtensions.cs) lo registra en el pipeline ASP.NET Core. La arquitectura usa deliberadamente middleware; esta página reconoce esa estructura sin introducir componentes artificiales sólo para exhibir el patrón.
+
+## En Genkidama
+
+La capa HTTP ya contiene una cadena de middleware real. `GenkidamaTraceMiddleware` mantiene la referencia al siguiente delegate y pasa la solicitud después de realizar su responsabilidad. No se modifica esa arquitectura como parte del catálogo; los ejemplos standalone enseñan la intención de selección/short-circuit de forma más aislada.
+
+## Cuándo usarlo
+
+- Hay varios posibles receptores y el emisor no debería elegir directamente cuál atiende.
+- El orden de evaluación es configurable o evoluciona con frecuencia.
+- Sólo uno —o un subconjunto condicionado— debe asumir la responsabilidad.
+- Middleware, autorización, validación, soporte o reglas escalonadas forman una secuencia natural.
+
+## Cuándo no usarlo
+
+- Existe un único receptor conocido y una llamada directa es más clara.
+- Todas las etapas deben ejecutarse siempre; usa un pipeline explícito en lugar de fingir short-circuit.
+- El orden es accidental o difícil de auditar y puede ocultar reglas de negocio críticas.
+- Necesitas seleccionar una única política estable antes de ejecutar; considera Strategy.
+- La solicitud no puede quedar sin atender y no existe fallback ni error explícito.
+
+## Consecuencias y trade-offs
+
+| A favor | Costo / riesgo |
+|---|---|
+| Desacopla emisor y receptor concreto. | El resultado depende del orden de handlers. |
+| Permite añadir, quitar o reordenar receptores. | Una cadena larga puede ocultar dónde se tomó la decisión. |
+| Centraliza la política de escalamiento. | Un handler puede olvidar delegar o cortar cuando no corresponde. |
+| Evita grandes bloques condicionales en el emisor. | Debe definirse qué ocurre si nadie acepta la solicitud. |
+
+## Patrones relacionados
+
+[Consulta también el mapa global de relaciones](README.md#relationship-map).
+
+| Patrón | Relación | Por qué importa |
+|---|---|---|
+| [Command](Command.md) | collaborates with | La solicitud puede encapsularse como Command y recorrer una cadena de handlers. |
+| [Decorator](Decorator.md) | often confused with | Ambos pueden enlazar wrappers, pero Decorator añade responsabilidades y normalmente delega; Chain decide quién asume la solicitud y puede detener el recorrido. |
+| [Strategy](Strategy.md) | often confused with | Strategy elige una política; Chain deja que varios candidatos se consulten secuencialmente hasta encontrar responsable. |
+| [Mediator](Mediator.md) | alternative to | Mediator centraliza coordinación entre colegas; Chain distribuye la decisión a lo largo de receptores ordenados. |
+
+## Errores comunes y confusiones
+
+### Confundir cadena con pipeline obligatorio
+
+Si todas las etapas siempre deben ejecutarse, no hay transferencia de responsabilidad: hay una secuencia de procesamiento. Chain of Responsibility resulta significativo cuando un handler puede terminar el recorrido o decidir explícitamente continuar.
+
+### Orden invisible
+
+Reordenar handlers puede cambiar quién acepta una solicitud. El orden debe ser legible, probado y tratado como parte del comportamiento, no como un detalle de ensamblado irrelevante.
+
+### Solicitudes que desaparecen
+
+Una cadena sin fallback o error explícito puede terminar sin respuesta. El ejemplo incluye `escalation` como último receptor para hacer total la política de manejo.
+
+## Cómo comprobar una implementación
+
+- El cliente entrega la solicitud al inicio de la cadena y no selecciona al receptor final.
+- Un handler incapaz de atender delega la misma solicitud al siguiente.
+- El primer handler que acepta corta el recorrido; los posteriores no se ejecutan.
+- Cambiar el orden de handlers puede cambiar de forma observable quién atiende.
+- Existe fallback o manejo explícito para el caso en que nadie acepte.
+
+## Implementaciones por lenguaje
+
+Universo actual: **51 targets**. Chain of Responsibility clasifica **49 Applicable** y **2 N/A**. SQL declarativo permanece Applicable porque una secuencia ordenada de reglas/CTEs puede representar receptores que se evalúan hasta que uno acepta; no requiere clases para preservar la intención.
+
+Actualmente hay **11 ejemplos materializados y 0 verificados** en este PR; se promoverán únicamente después de observar verde el gate correspondiente.
+
+| Lenguaje / target | Aplicabilidad | Ejemplo verificado | Validación | Nota |
+|---|---|---|---|---|
+| C# | Applicable | [`ChainOfResponsibilityExample.cs`](../src/Enterprise/C%23/ChainOfResponsibilityExample.cs) | Mainstream pendiente | interfaz + handlers enlazados |
+| TypeScript | Applicable | [`chain-of-responsibility.ts`](../src/Web/TypeScriptTS/chain-of-responsibility.ts) | Mainstream pendiente | clases + enlace explícito |
+| Python | Applicable | [`chain_of_responsibility.py`](../src/Scripting/PythonPY/chain_of_responsibility.py) | Mainstream pendiente | objetos + delegación |
+| C++ | Applicable | [`chain_of_responsibility.cpp`](../src/Systems/C%2B%2B/chain_of_responsibility.cpp) | Mainstream pendiente | handlers + puntero al siguiente |
+| Java | Applicable | [`ChainOfResponsibilityExample.java`](../src/Enterprise/Java/ChainOfResponsibilityExample.java) | Mainstream pendiente | handlers enlazados |
+| Rust | Applicable | [`chain_of_responsibility.rs`](../src/Systems/Rust/chain_of_responsibility.rs) | Mainstream pendiente | nodos enlazados con `Box` |
+| Go | Applicable | [`chain_of_responsibility.go`](../src/Systems/Go/chain_of_responsibility.go) | Mainstream pendiente | structs + puntero al siguiente |
+| PHP | Applicable | [`chain_of_responsibility.php`](../src/Scripting/PHP/chain_of_responsibility.php) | Mainstream pendiente | handlers abstractos |
+| F# | Applicable | [`chain_of_responsibility.fsx`](../src/Functional/F%23/chain_of_responsibility.fsx) | Mainstream pendiente | records + recursión |
+| JavaScript | Applicable | [`chain-of-responsibility.js`](../src/Web/JavaScriptJS/chain-of-responsibility.js) | Mainstream pendiente | objetos enlazados |
+| SQL declarativo | Applicable | [`chain_of_responsibility.sql`](../src/Data/SQL/chain_of_responsibility.sql) | Mainstream pendiente | CTE recursivo + reglas ordenadas |
+| Kotlin | Applicable | — | Pendiente | interfaces/handlers o funciones enlazadas |
+| Swift | Applicable | — | Pendiente | protocolos/closures |
+| Visual Basic .NET | Applicable | — | Pendiente | interfaces/handlers |
+| C | Applicable | — | Pendiente | structs + function pointers |
+| Ruby | Applicable | — | Pendiente | duck typing/objetos enlazados |
+| Lua | Applicable | — | Pendiente | tablas/closures |
+| Bash | Applicable | — | Pendiente | funciones y estado explícito |
+| PowerShell | Applicable | — | Pendiente | scriptblocks/objetos |
+| Haskell | Applicable | — | Pendiente | ADTs/funciones y recorrido explícito |
+| Perl | Applicable | — | Pendiente | paquetes/referencias |
+| Pascal | Applicable | — | Pendiente | clases/procedimientos enlazados |
+| R | Applicable | — | Pendiente | closures/listas ordenadas |
+| GNU Octave | Applicable | — | Pendiente | funciones/handles |
+| OCaml | Applicable | — | Pendiente | records/variants/recursión |
+| Common Lisp | Applicable | — | Pendiente | CLOS o closures |
+| Scala | Applicable | — | Pendiente | traits/case classes |
+| Julia | Applicable | — | Pendiente | funciones/structs |
+| Clojure | Applicable | — | Pendiente | functions/protocols + secuencia |
+| Elixir | Applicable | — | Pendiente | módulos/procesos/recursión |
+| Erlang | Applicable | — | Pendiente | procesos/mensajes o funciones recursivas |
+| Prolog | Applicable | — | Pendiente | predicados ordenados con corte/recursión |
+| Groovy | Applicable | — | Pendiente | clases/duck typing |
+| Ada | Applicable | — | Pendiente | tagged types/records/procedures |
+| Solidity | Applicable | — | Pendiente | contratos/funciones encadenadas |
+| Fortran | Applicable | — | Pendiente | derived types/procedimientos |
+| Objective-C | Applicable | — | Pendiente | protocol + next handler |
+| Zig | Applicable | — | Pendiente | structs/function pointers |
+| Nim | Applicable | — | Pendiente | ref objects/procs |
+| Dart | Applicable | — | Pendiente | clases/interfaces implícitas |
+| Crystal | Applicable | — | Pendiente | clases abstractas/handlers |
+| COBOL | Applicable | — | Pendiente | paragraphs/programas ordenados |
+| VBA | Applicable | — | Pendiente | class modules o funciones encadenadas |
+| GDScript | Applicable | — | Pendiente | objetos/scripts enlazados |
+| Assembly | Applicable | — | Pendiente | tabla de rutinas + branch al siguiente |
+| Delphi | Applicable | — | Pendiente | interfaces/clases |
+| MicroPython | Applicable | — | Pendiente | objetos/closures |
+| Rockstar | Applicable | — | Pendiente | funciones y estado explícito |
+| MATLAB | Applicable | — | Pendiente | funciones/handles/listas ordenadas |
+| HTML | N/A | — | — | markup declarativo sin ejecución ni transferencia de una solicitud entre receptores |
+| CSS | N/A | — | — | reglas declarativas de estilo sin flujo ejecutable de responsabilidad entre handlers |
+
+## Comprueba que lo entendiste
+
+1. Si todas las etapas de una secuencia deben ejecutarse siempre, ¿por qué un pipeline puede ser una descripción más precisa que Chain of Responsibility?
+2. ¿Qué diferencia de intención separa a Chain of Responsibility de Strategy cuando hay varios candidatos capaces de procesar una solicitud?
+3. Si cambiar el orden de dos handlers cambia quién resuelve la solicitud, ¿qué debería probar el sistema para evitar regresiones silenciosas?
+
+## Resumen
+
+- Chain of Responsibility desacopla al emisor del receptor concreto.
+- Cada handler decide entre asumir la solicitud o delegarla al siguiente.
+- El orden y el short-circuit son comportamiento, no detalles incidentales.
+- Command puede encapsular la solicitud; Decorator y Strategy se parecen superficialmente pero responden a fuerzas distintas.
+- La intención puede expresarse sin OOP, incluso mediante funciones, mensajes, predicados o SQL declarativo ordenado.
+
+## Referencias
+
+- Gamma, Helm, Johnson y Vlissides, *Design Patterns: Elements of Reusable Object-Oriented Software*.
+- [Patterns as Living Examples](../docs/philosophy/001-patterns-as-living-examples.md).
+- [KB-006 — Canonical Design Pattern Authoring Standard](../docs/kb/catalog/pattern-authoring-standard.md).
