@@ -37,5 +37,8 @@ jobs:
           (cd src/Systems/Ada && gnatmake -q -gnat2022 -gnatwa -gnatwe -D "$work/ada" -o "$work/ada/proxy" proxy.adb)
           assert_output Ada "$("$work/ada/proxy")"
 
-          nim c --hints:off --warningsAsErrors:on -o:"$work/proxy-nim" src/Systems/Nim/proxy.nim
+          # Ubuntu 24.04 currently packages Nim 1.6.x, whose CLI does not provide
+          # a global warnings-as-errors switch. Keep compiler warnings enabled,
+          # enforce identifier style as errors, then execute the real example.
+          nim c --hints:off --warnings:on --styleCheck:error -o:"$work/proxy-nim" src/Systems/Nim/proxy.nim
           assert_output Nim "$("$work/proxy-nim")"
