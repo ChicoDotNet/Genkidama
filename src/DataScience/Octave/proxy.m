@@ -1,4 +1,8 @@
 function proxy()
+  %PROXY Demonstrate a lazy caching Proxy with one mediated backend fetch.
+  %   PROXY() creates the real subject on first access, caches document 42,
+  %   performs the same lookup twice, and prints the canonical deterministic
+  %   observable used by the cross-language Proxy validation gate.
   backend_created = 0;
   fetches = 0;
   cache = containers.Map('KeyType', 'char', 'ValueType', 'char');
@@ -25,5 +29,3 @@ function proxy()
     cache(key) = value;
   endfunction
 endfunction
-
-proxy();
