@@ -28,7 +28,7 @@ jobs:
           work="$(mktemp -d)"
 
           assert_output R "$(Rscript src/DataScience/R/proxy.R)"
-          assert_output Octave "$(octave --quiet src/DataScience/Octave/proxy.m)"
+          assert_output Octave "$(octave --quiet --eval "addpath('src/DataScience/Octave'); proxy()")"
 
           ocamlc -w +a -warn-error +a -o "$work/proxy-ocaml" src/Functional/OCaml/proxy.ml
           assert_output OCaml "$("$work/proxy-ocaml")"
