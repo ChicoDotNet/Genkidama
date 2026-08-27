@@ -24,12 +24,12 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: actions/setup-go@v5
         with: { go-version: stable }
-      - name: Install SQL runtime
+      - name: Install SQL and scripting runtimes
         shell: bash
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y sqlite3
+          sudo apt-get install --no-install-recommends -y sqlite3 ruby
       - name: Validate Proxy examples
         shell: bash
         run: |
@@ -67,6 +67,24 @@ jobs:
 
           node --check src/Web/JavaScriptJS/proxy.js
           assert_output JavaScript "$(node src/Web/JavaScriptJS/proxy.js)"
+
+          command -v kotlinc >/dev/null
+          kotlinc src/Enterprise/Kotlin/ProxyExample.kt -include-runtime -d "$work/proxy-kotlin.jar"
+          assert_output Kotlin "$(java -jar "$work/proxy-kotlin.jar")"
+
+          command -v swiftc >/dev/null
+          swiftc -warnings-as-errors src/Systems/Swift/proxy.swift -o "$work/proxy-swift"
+          assert_output Swift "$("$work/proxy-swift")"
+
+          dotnet new console -lang VB --framework net10.0 -n ProxyVb -o "$work/vb" >/dev/null
+          cp src/Enterprise/VB.NET/ProxyExample.vb "$work/vb/Program.vb"
+          assert_output VB.NET "$(dotnet run --project "$work/vb/ProxyVb.vbproj" --configuration Release)"
+
+          gcc -std=c17 -Wall -Wextra -Werror -pedantic src/Systems/C/proxy.c -o "$work/proxy-c"
+          assert_output C "$("$work/proxy-c")"
+
+          ruby -cw src/Scripting/Ruby/proxy.rb >/dev/null
+          assert_output Ruby "$(ruby src/Scripting/Ruby/proxy.rb)"
 
           sql_expected='rows=1;first=doc(42)'
           sql_actual="$(sqlite3 :memory: < src/Data/SQL/proxy.sql)"
