@@ -8,6 +8,9 @@ on:
       - 'src/Niche/Solidity/Proxy.sol'
       - 'src/Historical/Cobol/proxy.cbl'
       - 'src/LowLevel/Assembly/proxy.asm'
+      - 'src/Shell/VBA/ProxyExample.bas'
+      - 'src/Enterprise/Delphi/ProxyExample.pas'
+      - 'src/DataScience/MATLAB/proxy.m'
       - 'wiki/Proxy.md'
 
 jobs:
@@ -47,3 +50,48 @@ jobs:
           nasm -f elf64 -Wall src/LowLevel/Assembly/proxy.asm -o /tmp/proxy-assembly.o
           ld /tmp/proxy-assembly.o -o /tmp/proxy-assembly
           test "$(/tmp/proxy-assembly)" = 'backend=1;fetches=1;first=doc(42);second=doc(42)'
+
+  matlab:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: matlab-actions/setup-matlab@v2
+      - uses: matlab-actions/run-command@v2
+        with:
+          command: "run('src/DataScience/MATLAB/proxy.m')"
+
+  proprietary-source-contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate VBA and Delphi Proxy source contracts
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          def require(text, pattern, label):
+              if re.search(pattern, text, flags=re.IGNORECASE | re.MULTILINE | re.DOTALL) is None:
+                  raise SystemExit(f"Missing source contract: {label}")
+
+          vba = Path('src/Shell/VBA/ProxyExample.bas').read_text(encoding='utf-8')
+          for pattern, label in [
+              (r'^Option Explicit$', 'VBA Option Explicit'),
+              (r'Function\s+ProxyGet', 'VBA proxy operation'),
+              (r'CreateObject\("Scripting\.Dictionary"\)', 'VBA proxy cache'),
+              (r'If\s+mBackendCreated\s*=\s*0\s+Then\s+mBackendCreated\s*=\s*1', 'VBA lazy backend'),
+              (r'cache\.Exists\(key\)', 'VBA cached mediation'),
+          ]:
+              require(vba, pattern, label)
+
+          delphi = Path('src/Enterprise/Delphi/ProxyExample.pas').read_text(encoding='utf-8')
+          for pattern, label in [
+              (r'IDocumentStore\s*=\s*interface', 'Delphi subject contract'),
+              (r'TRemoteDocumentStore\s*=\s*class', 'Delphi real subject'),
+              (r'TDocumentStoreProxy\s*=\s*class', 'Delphi proxy'),
+              (r'FCache\.TryGetValue', 'Delphi cached mediation'),
+              (r'if\s+FBackend\s*=\s*nil\s+then', 'Delphi lazy backend'),
+          ]:
+              require(delphi, pattern, label)
+
+          print('VBA/Delphi Proxy source contracts: OK')
