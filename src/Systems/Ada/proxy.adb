@@ -1,6 +1,18 @@
 with Ada.Text_IO; use Ada.Text_IO;
 
 procedure Proxy is
+   function Positive_Text (Value : Positive) return String is
+      Image : constant String := Positive'Image (Value);
+   begin
+      return Image (Image'First + 1 .. Image'Last);
+   end Positive_Text;
+
+   function Natural_Text (Value : Natural) return String is
+      Image : constant String := Natural'Image (Value);
+   begin
+      return Image (Image'First + 1 .. Image'Last);
+   end Natural_Text;
+
    type Remote_Document_Store is record
       Fetches : Natural := 0;
    end record;
@@ -9,7 +21,7 @@ procedure Proxy is
      (Store : in out Remote_Document_Store; Id : Positive) return String is
    begin
       Store.Fetches := Store.Fetches + 1;
-      return "doc(" & Positive'Image (Id) (2 .. Positive'Image (Id)'Last) & ")";
+      return "doc(" & Positive_Text (Id) & ")";
    end Get_Document;
 
    type Document_Store_Proxy is record
@@ -23,7 +35,7 @@ procedure Proxy is
      (Store : in out Document_Store_Proxy; Id : Positive) return String is
    begin
       if Store.Has_Cache and then Store.Cached_Id = Id then
-         return "doc(" & Positive'Image (Id) (2 .. Positive'Image (Id)'Last) & ")";
+         return "doc(" & Positive_Text (Id) & ")";
       end if;
 
       Store.Backend_Created := True;
@@ -38,6 +50,6 @@ procedure Proxy is
 begin
    Put_Line
      ("backend=" & (if Store.Backend_Created then "1" else "0") &
-      ";fetches=" & Natural'Image (Store.Backend.Fetches) (2 .. Natural'Image (Store.Backend.Fetches)'Last) &
+      ";fetches=" & Natural_Text (Store.Backend.Fetches) &
       ";first=" & First_Value & ";second=" & Second_Value);
 end Proxy;
