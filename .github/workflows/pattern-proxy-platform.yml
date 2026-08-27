@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/pattern-proxy-platform.yml'
       - 'src/Systems/Objective-C/proxy.m'
+      - 'src/Systems/Zig/proxy.zig'
       - 'src/Niche/GDScript/proxy.gd'
       - 'src/Other/MicroPython/proxy.py'
 
@@ -22,6 +23,23 @@ jobs:
           work="$(mktemp -d)"
           clang -fobjc-arc -Wall -Wextra -Werror -framework Foundation src/Systems/Objective-C/proxy.m -o "$work/proxy-objective-c"
           test "$("$work/proxy-objective-c")" = "$expected"
+
+  zig:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: '0.15.2'
+      - name: Validate Zig Proxy
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='backend=1;fetches=1;first=doc(42);second=doc(42)'
+          test -z "$(zig fmt --check src/Systems/Zig/proxy.zig 2>&1)"
+          work="$(mktemp -d)"
+          zig build-exe src/Systems/Zig/proxy.zig -O ReleaseSafe -femit-bin="$work/proxy-zig"
+          test "$("$work/proxy-zig")" = "$expected"
 
   gdscript:
     runs-on: ubuntu-latest
