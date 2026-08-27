@@ -7,12 +7,16 @@ End Interface
 Public NotInheritable Class RemoteDocumentStore
     Implements IDocumentStore
 
-    Public Property FetchCount As Integer
-        Private Set
+    Private _fetchCount As Integer
+
+    Public ReadOnly Property FetchCount As Integer
+        Get
+            Return _fetchCount
+        End Get
     End Property
 
     Public Function [Get](id As Integer) As String Implements IDocumentStore.Get
-        FetchCount += 1
+        _fetchCount += 1
         Return $"doc({id})"
     End Function
 End Class
