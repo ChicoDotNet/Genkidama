@@ -3,7 +3,7 @@
 > **Familia:** Structural  
 > **Intención:** proporcionar un sustituto con el mismo contrato que otro sujeto para controlar, diferir o mediar el acceso a éste.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `11/49`  
+> **Implementaciones de lenguaje:** `16/49`  
 > **Cobertura de pruebas:** N/A — ejemplos standalone multi-ecosistema; se usa compilación, runtime, análisis o contrato por lenguaje en lugar de inventar un porcentaje agregado.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -153,7 +153,7 @@ Cachear es una posibilidad, no una obligación del patrón. Si los datos cambian
 
 Universo actual: **51 targets**. Proxy clasifica **49 Applicable** y **2 N/A**. SQL declarativo es Applicable porque una vista puede actuar como surrogate/protection proxy con una interfaz relacional equivalente.
 
-Actualmente hay **16 ejemplos materializados y 11 verificados**. Los cinco ejemplos de la segunda cohorte no se promoverán hasta que su gate cierre verde.
+Actualmente hay **16 ejemplos materializados y 16 verificados**. Los demás Applicable permanecen pendientes hasta tener ejemplo real y evidencia propia.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -167,11 +167,11 @@ Actualmente hay **16 ejemplos materializados y 11 verificados**. Los cinco ejemp
 | PHP | Applicable | [`proxy.php`](../src/Scripting/PHP/proxy.php) | Proxy Mainstream #2 ✅ | interface + array cache |
 | F# | Applicable | [`proxy.fsx`](../src/Functional/F%23/proxy.fsx) | Proxy Mainstream #2 ✅ | interface + option + Dictionary |
 | JavaScript | Applicable | [`proxy.js`](../src/Web/JavaScriptJS/proxy.js) | Proxy Mainstream #2 ✅ | objeto + Map |
-| Kotlin | Applicable | [`ProxyExample.kt`](../src/Enterprise/Kotlin/ProxyExample.kt) | Proxy Mainstream pendiente | interface + MutableMap |
-| Swift | Applicable | [`proxy.swift`](../src/Systems/Swift/proxy.swift) | Proxy Mainstream pendiente | protocol + referencia lazy |
-| Visual Basic .NET | Applicable | [`ProxyExample.vb`](../src/Enterprise/VB.NET/ProxyExample.vb) | Proxy Mainstream pendiente | interface + Dictionary |
-| C | Applicable | [`proxy.c`](../src/Systems/C/proxy.c) | Proxy Mainstream pendiente | function pointer + structs |
-| Ruby | Applicable | [`proxy.rb`](../src/Scripting/Ruby/proxy.rb) | Proxy Mainstream pendiente | duck typing + Hash |
+| Kotlin | Applicable | [`ProxyExample.kt`](../src/Enterprise/Kotlin/ProxyExample.kt) | Proxy Mainstream #4 ✅ | interface + MutableMap |
+| Swift | Applicable | [`proxy.swift`](../src/Systems/Swift/proxy.swift) | Proxy Mainstream #4 ✅ | protocol + referencia lazy |
+| Visual Basic .NET | Applicable | [`ProxyExample.vb`](../src/Enterprise/VB.NET/ProxyExample.vb) | Proxy Mainstream #4 ✅ | interface + Dictionary |
+| C | Applicable | [`proxy.c`](../src/Systems/C/proxy.c) | Proxy Mainstream #4 ✅ | function pointer + structs |
+| Ruby | Applicable | [`proxy.rb`](../src/Scripting/Ruby/proxy.rb) | Proxy Mainstream #4 ✅ | duck typing + Hash |
 | Lua | Applicable | — | Pendiente | tablas/metatables o closures |
 | Bash | Applicable | — | Pendiente | funciones y estado explícito pueden mediar acceso |
 | PowerShell | Applicable | — | Pendiente | objetos/scriptblocks pueden mediar acceso |
