@@ -2,8 +2,8 @@
 
 > **Familia:** Structural  
 > **Intención:** proporcionar un sustituto con el mismo contrato que otro sujeto para controlar, diferir o mediar el acceso a éste.  
-> **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `35/49`  
+> **Estado:** `validated`  
+> **Implementaciones de lenguaje:** `49/49`  
 > **Cobertura de pruebas:** N/A — ejemplos standalone multi-ecosistema; se usa compilación, runtime, análisis o contrato por lenguaje en lugar de inventar un porcentaje agregado.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -151,14 +151,12 @@ Cachear es una posibilidad, no una obligación del patrón. Si los datos cambian
 
 ## Implementaciones por lenguaje
 
-Universo actual: **51 targets**. Proxy clasifica **49 Applicable** y **2 N/A**. SQL declarativo es Applicable porque una vista puede actuar como surrogate/protection proxy con una interfaz relacional equivalente.
-
-Actualmente hay **38 ejemplos materializados y 35 verificados**. Erlang, Prolog y Groovy ya tienen ejemplo real pero esperan evidencia verde del gate Functional actual; los demás Applicable permanecen pendientes hasta tener ejemplo y validación propios.
+Universo actual: **51 targets**. Proxy clasifica **49 Applicable** y **2 N/A**. Todos los Applicable tienen ejemplo real enlazado y evidencia verde observada en el head del PR. SQL declarativo es Applicable porque una vista puede actuar como surrogate/protection proxy con una interfaz relacional equivalente.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
 | C# | Applicable | [`ProxyExample.cs`](../src/Enterprise/C%23/ProxyExample.cs) | Proxy Mainstream ✅ | interfaz + lazy/caching proxy |
-| TypeScript | Applicable | [`proxy.ts`](../src/Web/TypeScriptTS/proxy.ts) | Proxy Mainstream ✅ | interface + Map |
+| TypeScript | Applicable | [`proxy.ts`](../src/Web/TypeScriptTS/proxy.ts) | Proxy Mainstream ✅ | interface + `Map` |
 | Python | Applicable | [`proxy.py`](../src/Scripting/PythonPY/proxy.py) | Proxy Mainstream ✅ | objeto + dict |
 | C++ | Applicable | [`proxy.cpp`](../src/Systems/C%2B%2B/proxy.cpp) | Proxy Mainstream ✅ | interfaz + `unique_ptr` |
 | Java | Applicable | [`ProxyExample.java`](../src/Enterprise/Java/ProxyExample.java) | Proxy Mainstream ✅ | interface + lazy subject |
@@ -166,46 +164,46 @@ Actualmente hay **38 ejemplos materializados y 35 verificados**. Erlang, Prolog 
 | Go | Applicable | [`proxy.go`](../src/Systems/Go/proxy.go) | Proxy Mainstream ✅ | interface + pointer receiver |
 | PHP | Applicable | [`proxy.php`](../src/Scripting/PHP/proxy.php) | Proxy Mainstream ✅ | interface + array cache |
 | F# | Applicable | [`proxy.fsx`](../src/Functional/F%23/proxy.fsx) | Proxy Mainstream ✅ | interface + option + Dictionary |
-| JavaScript | Applicable | [`proxy.js`](../src/Web/JavaScriptJS/proxy.js) | Proxy Mainstream ✅ | objeto + Map |
-| Kotlin | Applicable | [`ProxyExample.kt`](../src/Enterprise/Kotlin/ProxyExample.kt) | Proxy Mainstream ✅ | interface + MutableMap |
+| JavaScript | Applicable | [`proxy.js`](../src/Web/JavaScriptJS/proxy.js) | Proxy Mainstream ✅ | objeto + `Map` |
+| Kotlin | Applicable | [`ProxyExample.kt`](../src/Enterprise/Kotlin/ProxyExample.kt) | Proxy Mainstream ✅ | interface + `MutableMap` |
 | Swift | Applicable | [`proxy.swift`](../src/Systems/Swift/proxy.swift) | Proxy Mainstream ✅ | protocol + referencia lazy |
 | Visual Basic .NET | Applicable | [`ProxyExample.vb`](../src/Enterprise/VB.NET/ProxyExample.vb) | Proxy Mainstream ✅ | interface + Dictionary |
 | C | Applicable | [`proxy.c`](../src/Systems/C/proxy.c) | Proxy Mainstream ✅ | function pointer + structs |
 | Ruby | Applicable | [`proxy.rb`](../src/Scripting/Ruby/proxy.rb) | Proxy Mainstream ✅ | duck typing + Hash |
+| SQL declarativo | Applicable | [`proxy.sql`](../src/Data/SQL/proxy.sql) | Proxy Mainstream ✅ | `VIEW` como protection proxy de una tabla |
 | Lua | Applicable | [`proxy.lua`](../src/Scripting/Lua/proxy.lua) | Proxy Portable ✅ | tabla de operaciones + cache explícito |
 | Bash | Applicable | [`proxy.sh`](../src/Shell/Bash/proxy.sh) | Proxy Portable ✅ | funciones y estado explícito |
 | PowerShell | Applicable | [`proxy.ps1`](../src/Shell/PowerShell/proxy.ps1) | Proxy Portable ✅ | objeto/script methods + cache |
-| Haskell | Applicable | [`Proxy.hs`](../src/Functional/Haskell/Proxy.hs) | Proxy Portable ✅ | estado explícito preservando el contrato |
+| Haskell | Applicable | [`Proxy.hs`](../src/Functional/Haskell/Proxy.hs) | Proxy Portable ✅ | estado explícito preservando contrato |
 | Perl | Applicable | [`proxy.pl`](../src/Scripting/Perl/proxy.pl) | Proxy Portable ✅ | paquetes/referencias + cache |
-| Pascal | Applicable | [`proxy.pas`](../src/Systems/Pascal/proxy.pas) | Proxy Compiled #9 ✅ | contrato virtual + surrogate lazy/cache |
-| R | Applicable | [`proxy.R`](../src/DataScience/R/proxy.R) | evidencia Functional previa ✅ | closures/environments |
-| GNU Octave | Applicable | [`proxy.m`](../src/DataScience/Octave/proxy.m) | evidencia Functional previa ✅ | funciones/estado explícito |
-| OCaml | Applicable | [`proxy.ml`](../src/Functional/OCaml/proxy.ml) | evidencia Functional previa ✅ | records/closures |
-| Common Lisp | Applicable | [`proxy.lisp`](../src/Functional/CommonLisp/proxy.lisp) | evidencia Functional previa ✅ | closures/estado |
 | Scala | Applicable | [`Proxy.scala`](../src/Functional/Scala/Proxy.scala) | Proxy Portable ✅ | trait + surrogate lazy/cache |
-| Julia | Applicable | [`proxy.jl`](../src/DataScience/Julia/proxy.jl) | Proxy Modern #1 ✅ | mutable backend + `Dict` cache |
-| Clojure | Applicable | [`proxy.clj`](../src/Functional/Clojure/proxy.clj) | evidencia Functional previa ✅ | protocol/functions + estado explícito |
-| Elixir | Applicable | [`proxy.exs`](../src/Functional/Elixir/proxy.exs) | evidencia Functional previa ✅ | módulos/estado funcional |
-| Erlang | Applicable | [`proxy.erl`](../src/Functional/Erlang/proxy.erl) | Gate Functional actual pendiente | procesos backend/proxy + mensajes |
-| Prolog | Applicable | [`proxy.pl`](../src/Functional/Prolog/proxy.pl) | Gate Functional actual pendiente | predicados + estado dinámico explícito |
-| Groovy | Applicable | [`proxy.groovy`](../src/Functional/Groovy/proxy.groovy) | Gate Functional actual pendiente | interface-compatible lazy/caching surrogate |
-| Ada | Applicable | [`proxy.adb`](../src/Systems/Ada/proxy.adb) | Proxy Compiled #9 ✅ | record-backed subject/proxy |
-| Solidity | Applicable | — | Pendiente | contrato surrogate frente a otro contrato |
-| Fortran | Applicable | [`proxy.f90`](../src/Systems/Fortran/proxy.f90) | Proxy Compiled #9 ✅ | derived types + type-bound procedures |
-| Objective-C | Applicable | — | Pendiente | protocol + objeto proxy |
-| Zig | Applicable | — | Pendiente | structs/function pointers |
-| Nim | Applicable | [`proxy.nim`](../src/Systems/Nim/proxy.nim) | Proxy Compiled #9 ✅ | ref objects + table cache |
-| Dart | Applicable | [`proxy.dart`](../src/Web/Dart/proxy.dart) | Proxy Modern #1 ✅ | interface implícita + `Map` cache |
-| Crystal | Applicable | [`proxy.cr`](../src/Niche/Crystal/proxy.cr) | Proxy Modern #1 ✅ | abstract subject + typed Hash cache |
-| COBOL | Applicable | — | Pendiente | programas/paragraphs pueden mediar una operación externa |
-| VBA | Applicable | — | Pendiente | class modules o funciones wrapper con política de acceso |
-| GDScript | Applicable | — | Pendiente | objetos/scripts con contrato convencional |
-| Assembly | Applicable | — | Pendiente | tabla de saltos/wrapper routine puede interponer acceso |
-| Delphi | Applicable | — | Pendiente | interfaces/clases |
-| MicroPython | Applicable | — | Pendiente | objetos/closures |
-| Rockstar | Applicable | — | Pendiente | funciones y estado explícito pueden expresar la intermediación mínima |
-| MATLAB | Applicable | — | Pendiente | handles/functions pueden interponer acceso |
-| SQL declarativo | Applicable | [`proxy.sql`](../src/Data/SQL/proxy.sql) | Proxy Mainstream ✅ | `VIEW` como protection proxy de una tabla |
+| R | Applicable | [`proxy.R`](../src/DataScience/R/proxy.R) | Proxy Functional ✅ | closures/environments |
+| GNU Octave | Applicable | [`proxy.m`](../src/DataScience/Octave/proxy.m) | Proxy Functional ✅ | funciones + estado explícito |
+| OCaml | Applicable | [`proxy.ml`](../src/Functional/OCaml/proxy.ml) | Proxy Functional ✅ | records/closures |
+| Common Lisp | Applicable | [`proxy.lisp`](../src/Functional/CommonLisp/proxy.lisp) | Proxy Functional ✅ | closures/estado |
+| Clojure | Applicable | [`proxy.clj`](../src/Functional/Clojure/proxy.clj) | Proxy Functional ✅ | protocol/functions + estado explícito |
+| Elixir | Applicable | [`proxy.exs`](../src/Functional/Elixir/proxy.exs) | Proxy Functional ✅ | módulos/estado funcional |
+| Erlang | Applicable | [`proxy.erl`](../src/Functional/Erlang/proxy.erl) | Proxy Functional ✅ | procesos backend/proxy + mensajes |
+| Prolog | Applicable | [`proxy.pl`](../src/Functional/Prolog/proxy.pl) | Proxy Functional ✅ | predicados + estado dinámico explícito |
+| Groovy | Applicable | [`proxy.groovy`](../src/Functional/Groovy/proxy.groovy) | Proxy Functional ✅ | surrogate lazy/cache compatible con contrato |
+| Pascal | Applicable | [`proxy.pas`](../src/Systems/Pascal/proxy.pas) | Proxy Compiled ✅ | contrato virtual + surrogate lazy/cache |
+| Fortran | Applicable | [`proxy.f90`](../src/Systems/Fortran/proxy.f90) | Proxy Compiled ✅ | derived types + type-bound procedures |
+| Ada | Applicable | [`proxy.adb`](../src/Systems/Ada/proxy.adb) | Proxy Compiled ✅ | record-backed subject/proxy |
+| Nim | Applicable | [`proxy.nim`](../src/Systems/Nim/proxy.nim) | Proxy Compiled ✅ | ref objects + table cache |
+| Julia | Applicable | [`proxy.jl`](../src/DataScience/Julia/proxy.jl) | Proxy Modern ✅ | mutable backend + `Dict` cache |
+| Dart | Applicable | [`proxy.dart`](../src/Web/Dart/proxy.dart) | Proxy Modern ✅ | interface implícita + `Map` cache |
+| Crystal | Applicable | [`proxy.cr`](../src/Niche/Crystal/proxy.cr) | Proxy Modern ✅ | abstract subject + typed Hash cache |
+| Objective-C | Applicable | [`proxy.m`](../src/Systems/Objective-C/proxy.m) | Proxy Platform ✅ | protocol + objeto proxy |
+| Zig | Applicable | [`proxy.zig`](../src/Systems/Zig/proxy.zig) | Proxy Platform ✅ | structs + mediación explícita |
+| GDScript | Applicable | [`proxy.gd`](../src/Niche/GDScript/proxy.gd) | Proxy Platform ✅ | script/objeto con cache y sujeto lazy |
+| MicroPython | Applicable | [`proxy.py`](../src/Other/MicroPython/proxy.py) | Proxy Platform ✅ | objetos + estado compatible con runtime MicroPython |
+| Solidity | Applicable | [`Proxy.sol`](../src/Niche/Solidity/Proxy.sol) | Proxy Final ✅ | contrato surrogate frente a otro contrato |
+| COBOL | Applicable | [`proxy.cbl`](../src/Historical/Cobol/proxy.cbl) | Proxy Final ✅ | paragraphs/estado median acceso al backend |
+| Assembly | Applicable | [`proxy.asm`](../src/LowLevel/Assembly/proxy.asm) | Proxy Final ✅ | rutina wrapper y estado explícito |
+| VBA | Applicable | [`ProxyExample.bas`](../src/Shell/VBA/ProxyExample.bas) | Proxy Final — contrato fuente ✅ | funciones + `Scripting.Dictionary` + backend lazy |
+| Delphi | Applicable | [`ProxyExample.pas`](../src/Enterprise/Delphi/ProxyExample.pas) | Proxy Final — contrato fuente ✅ | `IDocumentStore` + clases + cache |
+| Rockstar | Applicable | [`proxy.rock`](../src/Other/Rockstar/proxy.rock) | Proxy Final ✅ | funciones y estado explícito |
+| MATLAB | Applicable | [`proxy.m`](../src/DataScience/MATLAB/proxy.m) | Proxy Final ✅ | funciones/estado + `containers.Map` |
 | HTML | N/A | — | — | markup declarativo sin una operación ejecutable que pueda implementar el contrato y controlar acceso a un sujeto |
 | CSS | N/A | — | — | reglas de estilo declarativas sin sujeto/intermediario ejecutable ni política de acceso al mismo contrato |
 
