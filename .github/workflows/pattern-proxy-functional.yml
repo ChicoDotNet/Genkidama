@@ -43,7 +43,7 @@ jobs:
 
           mkdir -p "$work/erlang"
           erlc -Werror -o "$work/erlang" src/Functional/Erlang/proxy.erl
-          assert_output Erlang "$(erl -noshell -pa "$work/erlang" -s proxy main)"
+          assert_output Erlang "$(erl -noshell -pa "$work/erlang" -s proxy main -s init stop)"
 
           swipl -q -t halt -c src/Functional/Prolog/proxy.pl
           assert_output Prolog "$(swipl -q -s src/Functional/Prolog/proxy.pl)"
