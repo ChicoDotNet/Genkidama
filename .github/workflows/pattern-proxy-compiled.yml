@@ -34,7 +34,7 @@ jobs:
           assert_output Fortran "$("$work/proxy-fortran")"
 
           mkdir -p "$work/ada"
-          (cd src/Systems/Ada && gnatmake -q -gnat2022 -gnatwa -gnatwe -D "$work/ada" proxy.adb)
+          (cd src/Systems/Ada && gnatmake -q -gnat2022 -gnatwa -gnatwe -D "$work/ada" -o "$work/ada/proxy" proxy.adb)
           assert_output Ada "$("$work/ada/proxy")"
 
           nim c --hints:off --warningsAsErrors:on -o:"$work/proxy-nim" src/Systems/Nim/proxy.nim
