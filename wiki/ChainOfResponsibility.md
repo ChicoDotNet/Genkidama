@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** permitir que una solicitud recorra una secuencia de posibles manejadores hasta que uno asuma la responsabilidad, sin acoplar al emisor con un receptor concreto.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `0/49`  
+> **Implementaciones de lenguaje:** `11/49`  
 > **Cobertura de pruebas:** N/A — ejemplos standalone multi-ecosistema; se usa compilación, runtime, análisis o contrato por lenguaje en lugar de inventar un porcentaje agregado.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -152,21 +152,21 @@ Una cadena sin fallback o error explícito puede terminar sin respuesta. El ejem
 
 Universo actual: **51 targets**. Chain of Responsibility clasifica **49 Applicable** y **2 N/A**. SQL declarativo permanece Applicable porque una secuencia ordenada de reglas/CTEs puede representar receptores que se evalúan hasta que uno acepta; no requiere clases para preservar la intención.
 
-Actualmente hay **11 ejemplos materializados y 0 verificados** en este PR; se promoverán únicamente después de observar verde el gate correspondiente.
+Actualmente hay **11 ejemplos materializados y 11 verificados** en este PR. Los demás Applicable permanecen pendientes hasta contar con ejemplo y evidencia propios.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
-| C# | Applicable | [`ChainOfResponsibilityExample.cs`](../src/Enterprise/C%23/ChainOfResponsibilityExample.cs) | Mainstream pendiente | interfaz + handlers enlazados |
-| TypeScript | Applicable | [`chain-of-responsibility.ts`](../src/Web/TypeScriptTS/chain-of-responsibility.ts) | Mainstream pendiente | clases + enlace explícito |
-| Python | Applicable | [`chain_of_responsibility.py`](../src/Scripting/PythonPY/chain_of_responsibility.py) | Mainstream pendiente | objetos + delegación |
-| C++ | Applicable | [`chain_of_responsibility.cpp`](../src/Systems/C%2B%2B/chain_of_responsibility.cpp) | Mainstream pendiente | handlers + puntero al siguiente |
-| Java | Applicable | [`ChainOfResponsibilityExample.java`](../src/Enterprise/Java/ChainOfResponsibilityExample.java) | Mainstream pendiente | handlers enlazados |
-| Rust | Applicable | [`chain_of_responsibility.rs`](../src/Systems/Rust/chain_of_responsibility.rs) | Mainstream pendiente | nodos enlazados con `Box` |
-| Go | Applicable | [`chain_of_responsibility.go`](../src/Systems/Go/chain_of_responsibility.go) | Mainstream pendiente | structs + puntero al siguiente |
-| PHP | Applicable | [`chain_of_responsibility.php`](../src/Scripting/PHP/chain_of_responsibility.php) | Mainstream pendiente | handlers abstractos |
-| F# | Applicable | [`chain_of_responsibility.fsx`](../src/Functional/F%23/chain_of_responsibility.fsx) | Mainstream pendiente | records + recursión |
-| JavaScript | Applicable | [`chain-of-responsibility.js`](../src/Web/JavaScriptJS/chain-of-responsibility.js) | Mainstream pendiente | objetos enlazados |
-| SQL declarativo | Applicable | [`chain_of_responsibility.sql`](../src/Data/SQL/chain_of_responsibility.sql) | Mainstream pendiente | CTE recursivo + reglas ordenadas |
+| C# | Applicable | [`ChainOfResponsibilityExample.cs`](../src/Enterprise/C%23/ChainOfResponsibilityExample.cs) | Chain Mainstream ✅ | interfaz + handlers enlazados |
+| TypeScript | Applicable | [`chain-of-responsibility.ts`](../src/Web/TypeScriptTS/chain-of-responsibility.ts) | Chain Mainstream ✅ | clases + enlace explícito |
+| Python | Applicable | [`chain_of_responsibility.py`](../src/Scripting/PythonPY/chain_of_responsibility.py) | Chain Mainstream ✅ | objetos + delegación |
+| C++ | Applicable | [`chain_of_responsibility.cpp`](../src/Systems/C%2B%2B/chain_of_responsibility.cpp) | Chain Mainstream ✅ | handlers + puntero al siguiente |
+| Java | Applicable | [`ChainOfResponsibilityExample.java`](../src/Enterprise/Java/ChainOfResponsibilityExample.java) | Chain Mainstream ✅ | handlers enlazados |
+| Rust | Applicable | [`chain_of_responsibility.rs`](../src/Systems/Rust/chain_of_responsibility.rs) | Chain Mainstream ✅ | nodos enlazados con `Box` |
+| Go | Applicable | [`chain_of_responsibility.go`](../src/Systems/Go/chain_of_responsibility.go) | Chain Mainstream ✅ | structs + puntero al siguiente |
+| PHP | Applicable | [`chain_of_responsibility.php`](../src/Scripting/PHP/chain_of_responsibility.php) | Chain Mainstream ✅ | handlers abstractos |
+| F# | Applicable | [`chain_of_responsibility.fsx`](../src/Functional/F%23/chain_of_responsibility.fsx) | Chain Mainstream ✅ | records + recursión |
+| JavaScript | Applicable | [`chain-of-responsibility.js`](../src/Web/JavaScriptJS/chain-of-responsibility.js) | Chain Mainstream ✅ | objetos enlazados |
+| SQL declarativo | Applicable | [`chain_of_responsibility.sql`](../src/Data/SQL/chain_of_responsibility.sql) | Chain Mainstream ✅ | CTE recursivo + reglas ordenadas |
 | Kotlin | Applicable | — | Pendiente | interfaces/handlers o funciones enlazadas |
 | Swift | Applicable | — | Pendiente | protocolos/closures |
 | Visual Basic .NET | Applicable | — | Pendiente | interfaces/handlers |
