@@ -42,7 +42,7 @@ jobs:
           cp 'src/Enterprise/C#/ProxyExample.cs' "$work/cs/Program.cs"
           assert_output C# "$(dotnet run --project "$work/cs/ProxyCs.csproj" --configuration Release -q)"
 
-          npx --yes tsc --noEmit --target ES2022 src/Web/TypeScriptTS/proxy.ts
+          npx --yes --package typescript tsc --noEmit --target ES2022 src/Web/TypeScriptTS/proxy.ts
           assert_output TypeScript "$(npx --yes tsx src/Web/TypeScriptTS/proxy.ts)"
 
           python -m py_compile src/Scripting/PythonPY/proxy.py
