@@ -1,0 +1,49 @@
+name: Pattern Proxy Final
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - '.github/workflows/pattern-proxy-final.yml'
+      - 'src/Niche/Solidity/Proxy.sol'
+      - 'src/Historical/Cobol/proxy.cbl'
+      - 'src/LowLevel/Assembly/proxy.asm'
+      - 'wiki/Proxy.md'
+
+jobs:
+  final:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install native toolchains
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y gnucobol3 nasm
+
+      - name: Validate Solidity Proxy source contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$(mktemp -d)"
+          npx --yes solc@0.8.30 --bin --abi src/Niche/Solidity/Proxy.sol -o "$out"
+          test -n "$(find "$out" -type f -name '*DocumentStoreProxy.bin' -size +0c -print -quit)"
+          grep -Fq 'backend = new RemoteDocumentStore();' src/Niche/Solidity/Proxy.sol
+          grep -Fq 'cache[id] = backend.get(id);' src/Niche/Solidity/Proxy.sol
+          grep -Fq 'cached[id] = true;' src/Niche/Solidity/Proxy.sol
+
+      - name: Validate COBOL Proxy
+        shell: bash
+        run: |
+          set -euo pipefail
+          cobc -x -Wall src/Historical/Cobol/proxy.cbl -o /tmp/proxy-cobol
+          test "$(/tmp/proxy-cobol)" = 'backend=1;fetches=1;first=doc(42);second=doc(42)'
+
+      - name: Validate Assembly Proxy
+        shell: bash
+        run: |
+          set -euo pipefail
+          nasm -f elf64 -Wall src/LowLevel/Assembly/proxy.asm -o /tmp/proxy-assembly.o
+          ld /tmp/proxy-assembly.o -o /tmp/proxy-assembly
+          test "$(/tmp/proxy-assembly)" = 'backend=1;fetches=1;first=doc(42);second=doc(42)'
