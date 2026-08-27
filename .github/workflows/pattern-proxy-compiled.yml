@@ -33,6 +33,7 @@ jobs:
           gfortran -std=f2018 -Wall -Wextra -Werror -pedantic src/Systems/Fortran/proxy.f90 -o "$work/proxy-fortran"
           assert_output Fortran "$("$work/proxy-fortran")"
 
+          mkdir -p "$work/ada"
           (cd src/Systems/Ada && gnatmake -q -gnat2022 -gnatwa -gnatwe -D "$work/ada" proxy.adb)
           assert_output Ada "$("$work/ada/proxy")"
 
