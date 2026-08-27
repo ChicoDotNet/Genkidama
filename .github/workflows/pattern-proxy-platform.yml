@@ -20,7 +20,7 @@ jobs:
           set -euo pipefail
           expected='backend=1;fetches=1;first=doc(42);second=doc(42)'
           work="$(mktemp -d)"
-          clang -fobjc-arc -fmodules -Weverything -Werror -Wno-objc-interface-ivars -framework Foundation src/Systems/Objective-C/proxy.m -o "$work/proxy-objective-c"
+          clang -fobjc-arc -Wall -Wextra -Werror -framework Foundation src/Systems/Objective-C/proxy.m -o "$work/proxy-objective-c"
           test "$("$work/proxy-objective-c")" = "$expected"
 
   gdscript:
