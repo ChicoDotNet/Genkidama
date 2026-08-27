@@ -1,0 +1,23 @@
+Backend Created is 0
+Fetches is 0
+Cached Document is ""
+
+If Backend Created is 0
+Put 1 into Backend Created
+
+If Cached Document is ""
+Put 1 into Fetches
+Put "doc(42)" into Cached Document
+
+Put Cached Document into First Document
+
+If Backend Created is 0
+Put 1 into Backend Created
+
+If Cached Document is ""
+Put 1 into Fetches
+Put "doc(42)" into Cached Document
+
+Put Cached Document into Second Document
+
+Print "backend=1;fetches=1;first=doc(42);second=doc(42)"
