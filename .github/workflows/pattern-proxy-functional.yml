@@ -30,7 +30,9 @@ jobs:
           assert_output R "$(Rscript src/DataScience/R/proxy.R)"
           assert_output Octave "$(octave --quiet --eval "addpath('src/DataScience/Octave'); proxy()")"
 
-          ocamlc -w +a -warn-error +a -o "$work/proxy-ocaml" src/Functional/OCaml/proxy.ml
+          # Warning 70 only reports the absence of a .mli for this standalone executable;
+          # keep every other compiler warning enabled and fatal.
+          ocamlc -w +a-70 -warn-error +a-70 -o "$work/proxy-ocaml" src/Functional/OCaml/proxy.ml
           assert_output OCaml "$("$work/proxy-ocaml")"
 
           assert_output CommonLisp "$(sbcl --script src/Functional/CommonLisp/proxy.lisp)"
