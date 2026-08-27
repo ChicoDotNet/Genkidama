@@ -1,0 +1,51 @@
+name: Pattern Proxy Functional
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/**/proxy*'
+      - 'src/**/Proxy*'
+      - 'wiki/Proxy.md'
+      - '.github/workflows/pattern-proxy-functional.yml'
+
+jobs:
+  functional:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install functional/data runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y r-base octave ocaml-nox sbcl clojure elixir swi-prolog-nox groovy
+      - name: Validate Proxy functional/data examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='backend=1;fetches=1;first=doc(42);second=doc(42)'
+          assert_output() { test "$2" = "$expected" || { printf '%s mismatch\nexpected: %s\nactual: %s\n' "$1" "$expected" "$2" >&2; exit 1; }; }
+          work="$(mktemp -d)"
+
+          assert_output R "$(Rscript src/DataScience/R/proxy.R)"
+          assert_output Octave "$(octave --quiet --eval "addpath('src/DataScience/Octave'); proxy()")"
+
+          # Warning 70 only reports the absence of a .mli for this standalone executable;
+          # keep every other compiler warning enabled and fatal.
+          ocamlc -w +a-70 -warn-error +a-70 -o "$work/proxy-ocaml" src/Functional/OCaml/proxy.ml
+          assert_output OCaml "$("$work/proxy-ocaml")"
+
+          assert_output CommonLisp "$(sbcl --script src/Functional/CommonLisp/proxy.lisp)"
+          assert_output Clojure "$(clojure src/Functional/Clojure/proxy.clj)"
+
+          elixirc --warnings-as-errors -o "$work/elixir" src/Functional/Elixir/proxy.exs
+          assert_output Elixir "$(elixir src/Functional/Elixir/proxy.exs)"
+
+          mkdir -p "$work/erlang"
+          erlc -Werror -o "$work/erlang" src/Functional/Erlang/proxy.erl
+          assert_output Erlang "$(erl -noshell -pa "$work/erlang" -s proxy main -s init stop)"
+
+          swipl -q -t halt -c src/Functional/Prolog/proxy.pl
+          assert_output Prolog "$(swipl -q -s src/Functional/Prolog/proxy.pl)"
+
+          assert_output Groovy "$(groovy src/Functional/Groovy/proxy.groovy)"

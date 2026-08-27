@@ -1,0 +1,91 @@
+name: Pattern Proxy Mainstream
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/**/proxy*'
+      - 'src/**/Proxy*'
+      - 'wiki/Proxy.md'
+      - '.github/workflows/pattern-proxy-mainstream.yml'
+
+jobs:
+  mainstream:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with: { dotnet-version: '10.0.x' }
+      - uses: actions/setup-node@v6
+        with: { node-version: '24' }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.x' }
+      - uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: '25' }
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-go@v5
+        with: { go-version: stable }
+      - name: Install SQL and scripting runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y sqlite3 ruby
+      - name: Validate Proxy examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='backend=1;fetches=1;first=doc(42);second=doc(42)'
+          assert_output() { test "$2" = "$expected" || { printf '%s mismatch\nexpected: %s\nactual: %s\n' "$1" "$expected" "$2" >&2; exit 1; }; }
+          work="$(mktemp -d)"
+
+          dotnet new console -n ProxyCs -o "$work/cs" --force >/dev/null
+          cp 'src/Enterprise/C#/ProxyExample.cs' "$work/cs/Program.cs"
+          assert_output C# "$(dotnet run --project "$work/cs/ProxyCs.csproj" --configuration Release -q)"
+
+          npx --yes --package typescript tsc --noEmit --target ES2022 src/Web/TypeScriptTS/proxy.ts
+          assert_output TypeScript "$(npx --yes tsx src/Web/TypeScriptTS/proxy.ts)"
+
+          python -m py_compile src/Scripting/PythonPY/proxy.py
+          assert_output Python "$(python src/Scripting/PythonPY/proxy.py)"
+
+          g++ -std=c++20 -Wall -Wextra -Werror -pedantic 'src/Systems/C++/proxy.cpp' -o "$work/proxy-cpp"
+          assert_output C++ "$("$work/proxy-cpp")"
+
+          javac -Xlint:all -Werror src/Enterprise/Java/ProxyExample.java
+          assert_output Java "$(java -cp src/Enterprise/Java ProxyExample)"
+
+          rustc -D warnings src/Systems/Rust/proxy.rs -o "$work/proxy-rs"
+          assert_output Rust "$("$work/proxy-rs")"
+
+          test -z "$(gofmt -d src/Systems/Go/proxy.go)"
+          assert_output Go "$(go run src/Systems/Go/proxy.go)"
+
+          php -l src/Scripting/PHP/proxy.php >/dev/null
+          assert_output PHP "$(php src/Scripting/PHP/proxy.php)"
+
+          assert_output F# "$(dotnet fsi 'src/Functional/F#/proxy.fsx' | tail -n 1)"
+
+          node --check src/Web/JavaScriptJS/proxy.js
+          assert_output JavaScript "$(node src/Web/JavaScriptJS/proxy.js)"
+
+          command -v kotlinc >/dev/null
+          kotlinc src/Enterprise/Kotlin/ProxyExample.kt -include-runtime -d "$work/proxy-kotlin.jar"
+          assert_output Kotlin "$(java -jar "$work/proxy-kotlin.jar")"
+
+          command -v swiftc >/dev/null
+          swiftc -warnings-as-errors src/Systems/Swift/proxy.swift -o "$work/proxy-swift"
+          assert_output Swift "$("$work/proxy-swift")"
+
+          dotnet new console -lang VB --framework net10.0 -n ProxyVb -o "$work/vb" >/dev/null
+          cp src/Enterprise/VB.NET/ProxyExample.vb "$work/vb/Program.vb"
+          assert_output VB.NET "$(dotnet run --project "$work/vb/ProxyVb.vbproj" --configuration Release)"
+
+          gcc -std=c17 -Wall -Wextra -Werror -pedantic src/Systems/C/proxy.c -o "$work/proxy-c"
+          assert_output C "$("$work/proxy-c")"
+
+          ruby -cw src/Scripting/Ruby/proxy.rb >/dev/null
+          assert_output Ruby "$(ruby src/Scripting/Ruby/proxy.rb)"
+
+          sql_expected='rows=1;first=doc(42)'
+          sql_actual="$(sqlite3 :memory: < src/Data/SQL/proxy.sql)"
+          test "$sql_actual" = "$sql_expected" || { printf 'SQL mismatch\nexpected: %s\nactual: %s\n' "$sql_expected" "$sql_actual" >&2; exit 1; }

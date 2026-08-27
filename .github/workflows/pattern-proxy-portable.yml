@@ -1,0 +1,46 @@
+name: Pattern Proxy Portable
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/**/proxy*'
+      - 'src/**/Proxy*'
+      - 'wiki/Proxy.md'
+      - '.github/workflows/pattern-proxy-portable.yml'
+
+jobs:
+  portable:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install portable runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y lua5.4 ghc scala perl
+      - name: Validate Proxy portable and functional examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='backend=1;fetches=1;first=doc(42);second=doc(42)'
+          assert_output() { test "$2" = "$expected" || { printf '%s mismatch\nexpected: %s\nactual: %s\n' "$1" "$expected" "$2" >&2; exit 1; }; }
+          work="$(mktemp -d)"
+
+          luac5.4 -p src/Scripting/Lua/proxy.lua
+          assert_output Lua "$(lua5.4 src/Scripting/Lua/proxy.lua)"
+
+          bash -n src/Shell/Bash/proxy.sh
+          assert_output Bash "$(bash src/Shell/Bash/proxy.sh)"
+
+          command -v pwsh >/dev/null
+          assert_output PowerShell "$(pwsh -NoLogo -NoProfile -File src/Shell/PowerShell/proxy.ps1)"
+
+          ghc -Wall -Werror -outputdir "$work/haskell" -o "$work/proxy-haskell" src/Functional/Haskell/Proxy.hs
+          assert_output Haskell "$("$work/proxy-haskell")"
+
+          perl -c src/Scripting/Perl/proxy.pl
+          assert_output Perl "$(perl src/Scripting/Perl/proxy.pl)"
+
+          scalac -d "$work" src/Functional/Scala/Proxy.scala
+          assert_output Scala "$(scala -cp "$work" ProxyExample)"
