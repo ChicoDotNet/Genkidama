@@ -1,0 +1,40 @@
+name: Pattern Proxy Compiled
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/**/proxy*'
+      - 'src/**/Proxy*'
+      - 'wiki/Proxy.md'
+      - '.github/workflows/pattern-proxy-compiled.yml'
+
+jobs:
+  compiled:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install compiled language toolchains
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y fp-compiler gfortran gnat nim
+      - name: Validate Proxy compiled examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='backend=1;fetches=1;first=doc(42);second=doc(42)'
+          assert_output() { test "$2" = "$expected" || { printf '%s mismatch\nexpected: %s\nactual: %s\n' "$1" "$expected" "$2" >&2; exit 1; }; }
+          work="$(mktemp -d)"
+
+          fpc -O2 -S2 -FE"$work" -FU"$work" src/Systems/Pascal/proxy.pas >/dev/null
+          assert_output Pascal "$("$work/proxy")"
+
+          gfortran -std=f2018 -Wall -Wextra -Werror -pedantic src/Systems/Fortran/proxy.f90 -o "$work/proxy-fortran"
+          assert_output Fortran "$("$work/proxy-fortran")"
+
+          (cd src/Systems/Ada && gnatmake -q -gnat2022 -gnatwa -gnatwe -D "$work/ada" proxy.adb)
+          assert_output Ada "$("$work/ada/proxy")"
+
+          nim c --hints:off --warningsAsErrors:on -o:"$work/proxy-nim" src/Systems/Nim/proxy.nim
+          assert_output Nim "$("$work/proxy-nim")"
