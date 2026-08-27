@@ -10,6 +10,7 @@ on:
       - 'src/LowLevel/Assembly/proxy.asm'
       - 'src/Shell/VBA/ProxyExample.bas'
       - 'src/Enterprise/Delphi/ProxyExample.pas'
+      - 'src/Other/Rockstar/proxy.rock'
       - 'src/DataScience/MATLAB/proxy.m'
       - 'wiki/Proxy.md'
 
@@ -50,6 +51,25 @@ jobs:
           nasm -f elf64 -Wall src/LowLevel/Assembly/proxy.asm -o /tmp/proxy-assembly.o
           ld /tmp/proxy-assembly.o -o /tmp/proxy-assembly
           test "$(/tmp/proxy-assembly)" = 'backend=1;fetches=1;first=doc(42);second=doc(42)'
+
+  rockstar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Setup Rockstar v2.0.31
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 'https://github.com/RockstarLang/rockstar/releases/download/v2.0.31/rockstar-v2.0.31-linux-x64.tar.gz' --output /tmp/rockstar.tar.gz
+          echo '3d265c80d9d039ad92524f42951eb546d8b42c680965dfa551210457e399653f  /tmp/rockstar.tar.gz' | sha256sum -c -
+          mkdir -p /tmp/rockstar
+          tar -xzf /tmp/rockstar.tar.gz -C /tmp/rockstar
+          echo "ROCKSTAR=$(find /tmp/rockstar -type f -name rockstar -perm -111 | head -n 1)" >> "$GITHUB_ENV"
+      - name: Validate Rockstar Proxy
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$("$ROCKSTAR" src/Other/Rockstar/proxy.rock)" = 'backend=1;fetches=1;first=doc(42);second=doc(42)'
 
   matlab:
     runs-on: ubuntu-latest
