@@ -2,6 +2,9 @@ program ProxyExample;
 
 {$mode objfpc}{$H+}
 
+uses
+  SysUtils;
+
 type
   TDocumentStore = class
   public
