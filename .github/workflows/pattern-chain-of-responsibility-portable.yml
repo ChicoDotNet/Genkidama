@@ -42,8 +42,11 @@ jobs:
           }
           work="$(mktemp -d)"
 
-          # Objective-C: GNUstep plus GCC's Objective-C frontend provides a real compile/link/run gate.
-          gcc $(gnustep-config --objc-flags) 'src/Systems/Objective-C/chain_of_responsibility.m' -o "$work/chain-objc" $(gnustep-config --base-libs)
+          # Objective-C: use Clang's modern Objective-C parser with GNUstep and the installed GCC runtime headers.
+          objc_headers="$(gcc -print-file-name=include)"
+          clang $(gnustep-config --objc-flags) -I"$objc_headers" \
+            'src/Systems/Objective-C/chain_of_responsibility.m' \
+            -o "$work/chain-objc" $(gnustep-config --base-libs)
           assert_output Objective-C "$("$work/chain-objc")"
 
           # Zig: compile and execute with the current toolchain to catch API and type drift.
