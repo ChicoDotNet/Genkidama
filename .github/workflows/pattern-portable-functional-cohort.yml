@@ -2,9 +2,11 @@ name: Pattern Portable Functional Cohort
 
 on:
   push:
-    branches: [sweeps/portable-functional-cohort-kb006]
+    branches:
+      - sweeps/portable-functional-cohort-kb006
   pull_request:
-    branches: [dev]
+    branches:
+      - dev
     paths:
       - 'src/Systems/Rust/patterns/**'
       - 'src/Enterprise/Java/patterns/**'
@@ -26,11 +28,14 @@ permissions:
   contents: read
 
 jobs:
-  native-compiled:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - name: Validate Rust C++ and C canonical cells
+
+      - id: native
+        name: Rust C++ and C - 117 cells
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
@@ -63,11 +68,9 @@ jobs:
           done
           echo 'native-compiled: 117/117 passed'
 
-  jvm:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - name: Validate Java and Groovy canonical cells
+      - id: jvm
+        name: Java and Groovy - 78 cells
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
@@ -88,20 +91,22 @@ jobs:
           done
           echo 'jvm: 78/78 passed'
 
-  functional-runtimes:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - name: Validate BEAM OCaml Lisp and Prolog canonical cells
+      - id: functional
+        name: BEAM OCaml Lisp and Prolog - 195 cells
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
           for spec in 'src/Functional/Elixir/patterns:*.exs' 'src/Functional/Erlang/patterns:*.erl' 'src/Functional/OCaml/patterns:*.ml' 'src/Functional/CommonLisp/patterns:*.lisp' 'src/Functional/Prolog/patterns:*.pl'; do
-            dir=${spec%%:*}; glob=${spec##*:}; test "$(find "$dir" -maxdepth 1 -name "$glob" | wc -l)" -eq 39
+            dir=${spec%%:*}
+            glob=${spec##*:}
+            test "$(find "$dir" -maxdepth 1 -name "$glob" | wc -l)" -eq 39
           done
           docker pull elixir:latest
           docker run --rm elixir:latest elixir --version
-          for f in src/Functional/Elixir/patterns/*.exs; do docker run --rm -v "$PWD:/work" -w /work elixir:latest elixir "/work/$f"; done
+          for f in src/Functional/Elixir/patterns/*.exs; do
+            docker run --rm -v "$PWD:/work" -w /work elixir:latest elixir "/work/$f"
+          done
           mkdir -p .ci/erlang
           for f in src/Functional/Erlang/patterns/*.erl; do
             mod=$(basename "$f" .erl)
@@ -111,20 +116,24 @@ jobs:
           done
           docker pull ocaml/opam:latest
           docker run --rm ocaml/opam:latest ocamlc -version
-          for f in src/Functional/OCaml/patterns/*.ml; do docker run --rm -v "$PWD:/work" -w /work ocaml/opam:latest sh -lc "ocamlc -w +a -warn-error +a /work/$f -o /tmp/cell && /tmp/cell"; done
+          for f in src/Functional/OCaml/patterns/*.ml; do
+            docker run --rm -v "$PWD:/work" -w /work ocaml/opam:latest sh -lc "ocamlc -w +a -warn-error +a /work/$f -o /tmp/cell && /tmp/cell"
+          done
           docker pull clfoundation/sbcl:latest
           docker run --rm clfoundation/sbcl:latest --version
-          for f in src/Functional/CommonLisp/patterns/*.lisp; do docker run --rm -v "$PWD:/work" clfoundation/sbcl:latest --script "/work/$f"; done
+          for f in src/Functional/CommonLisp/patterns/*.lisp; do
+            docker run --rm -v "$PWD:/work" clfoundation/sbcl:latest --script "/work/$f"
+          done
           docker pull swipl:latest
           docker run --rm swipl:latest --version
-          for f in src/Functional/Prolog/patterns/*.pl; do docker run --rm -v "$PWD:/work" -w /work swipl:latest -q -f "/work/$f"; done
+          for f in src/Functional/Prolog/patterns/*.pl; do
+            docker run --rm -v "$PWD:/work" -w /work swipl:latest -q -f "/work/$f"
+          done
           echo 'functional-runtimes: 195/195 passed'
 
-  data-and-shell:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - name: Validate R Octave and PowerShell canonical cells
+      - id: data
+        name: R Octave and PowerShell - 117 cells
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
@@ -133,7 +142,9 @@ jobs:
           test "$(find src/Scripting/PowerShell/patterns -maxdepth 1 -name '*.ps1' | wc -l)" -eq 39
           docker pull r-base:latest
           docker run --rm r-base:latest R --version | head -n1
-          for f in src/DataScience/R/patterns/*.R; do docker run --rm -v "$PWD:/work" -w /work r-base:latest Rscript "/work/$f"; done
+          for f in src/DataScience/R/patterns/*.R; do
+            docker run --rm -v "$PWD:/work" -w /work r-base:latest Rscript "/work/$f"
+          done
           docker pull gnuoctave/octave:latest
           docker run --rm gnuoctave/octave:latest --version | head -n1
           for f in src/DataScience/Octave/patterns/*.m; do
@@ -142,5 +153,23 @@ jobs:
           done
           docker pull mcr.microsoft.com/powershell:latest-ubuntu-24.04
           docker run --rm mcr.microsoft.com/powershell:latest-ubuntu-24.04 pwsh --version
-          for f in src/Scripting/PowerShell/patterns/*.ps1; do docker run --rm -v "$PWD:/work" -w /work mcr.microsoft.com/powershell:latest-ubuntu-24.04 pwsh -NoLogo -NoProfile -File "/work/$f"; done
+          for f in src/Scripting/PowerShell/patterns/*.ps1; do
+            docker run --rm -v "$PWD:/work" -w /work mcr.microsoft.com/powershell:latest-ubuntu-24.04 pwsh -NoLogo -NoProfile -File "/work/$f"
+          done
           echo 'data-and-shell: 117/117 passed'
+
+      - name: Require all 507 cells
+        if: always()
+        shell: bash
+        env:
+          NATIVE: ${{ steps.native.outcome }}
+          JVM: ${{ steps.jvm.outcome }}
+          FUNCTIONAL: ${{ steps.functional.outcome }}
+          DATA: ${{ steps.data.outcome }}
+        run: |
+          printf 'native=%s jvm=%s functional=%s data=%s\n' "$NATIVE" "$JVM" "$FUNCTIONAL" "$DATA"
+          test "$NATIVE" = success
+          test "$JVM" = success
+          test "$FUNCTIONAL" = success
+          test "$DATA" = success
+          echo 'portable-functional cohort: 507/507 passed'
