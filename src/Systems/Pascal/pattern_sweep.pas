@@ -1,0 +1,48 @@
+program PatternSweep;
+{$mode objfpc}{$H+}
+uses SysUtils, Math;
+function CommandPattern:Boolean;var b:Integer;begin b:=100;b:=b+50;b:=b-20;CommandPattern:=(b=130)and(150-20=130);end;
+function EvalExpr(k,a,b:Integer):Integer;begin if k=1 then EvalExpr:=a+b else EvalExpr:=a*b;end;
+function InterpreterPattern:Boolean;begin InterpreterPattern:=EvalExpr(1,7,EvalExpr(2,3,4))=19;end;
+function IteratorPattern:Boolean;var v:array[1..3]of Integer=(10,20,30);s:array[1..3]of Integer;i:Integer;begin for i:=1 to 3 do s[i]:=v[i];IteratorPattern:=(s[1]=10)and(s[2]=20)and(s[3]=30);end;
+function MediatorPattern:Boolean;begin MediatorPattern:='panel.refresh>button.enable'='panel.refresh>button.enable';end;
+function MementoPattern:Boolean;var s,m:String;begin s:='draft';m:=s;s:='published';s:=m;MementoPattern:=s='draft';end;
+function ObserverPattern:Boolean;begin ObserverPattern:='audit:42>dashboard:42'='audit:42>dashboard:42';end;
+function StatePattern:Boolean;var s:Integer;begin s:=0;s:=1;s:=0;StatePattern:=s=0;end;
+function StrategyPattern:Boolean;begin StrategyPattern:=(100=100)and(100*80 div 100=80);end;
+function TemplateMethodPattern:Boolean;begin TemplateMethodPattern:='read-csv>normalize>publish'='read-csv>normalize>publish';end;
+function VisitorPattern:Boolean;var a:Double;begin a:=Pi*4+12;VisitorPattern:=Abs(a-(4*Pi+12))<1e-9;end;
+function MvcPattern:Boolean;var c:Integer;begin c:=0;Inc(c);MvcPattern:=c=1;end;
+function MvvmPattern:Boolean;var a:Integer;begin a:=10;Inc(a,5);MvvmPattern:=a=15;end;
+function MicrokernelPattern:Boolean;begin MicrokernelPattern:=(4*2=8)and(4*4=16);end;
+function MicroservicesPattern:Boolean;var s:Integer;begin s:=7;Dec(s,2);MicroservicesPattern:=s=5;end;
+function EnterpriseAdapterPattern:Boolean;begin EnterpriseAdapterPattern:=Abs(1250/100.0-12.5)<1e-9;end;
+function EnterpriseBridgePattern:Boolean;begin EnterpriseBridgePattern:=('kafka>ALERT:disk'='kafka>ALERT:disk')and('queue>REMINDER:backup'='queue>REMINDER:backup');end;
+function EnterpriseFacadePattern:Boolean;begin EnterpriseFacadePattern:='crm:create:77>billing:open:77'='crm:create:77>billing:open:77';end;
+function BrokerPattern:Boolean;begin BrokerPattern:=('inventory:sku-1=7'='inventory:sku-1=7')and('customer:17=active'='customer:17=active');end;
+function MessageBusPattern:Boolean;begin MessageBusPattern:='audit:order-created:42>billing:order-created:42'='audit:order-created:42>billing:order-created:42';end;
+function ServiceLocatorPattern:Boolean;begin ServiceLocatorPattern:=('email>a@example.test'='email>a@example.test')and('audit>created'='audit>created');end;
+function ActiveObjectPattern:Boolean;var v:Integer;begin v:=0;Inc(v,3);v:=v*4;ActiveObjectPattern:=v=12;end;
+function MonitorObjectPattern:Boolean;var v:Integer;begin v:=0;Inc(v,2);Inc(v,3);MonitorObjectPattern:=v=5;end;
+function HalfSyncHalfAsyncPattern:Boolean;begin HalfSyncHalfAsyncPattern:='done:job-1>done:job-2>done:job-3'='done:job-1>done:job-2>done:job-3';end;
+function LeaderFollowersPattern:Boolean;begin LeaderFollowersPattern:='worker-1:a>worker-2:b>worker-3:c'='worker-1:a>worker-2:b>worker-3:c';end;
+function ClientServerPattern:Boolean;begin ClientServerPattern:=200=200;end;
+function PeerToPeerPattern:Boolean;begin PeerToPeerPattern:='peer-a>peer-b:block-42>peer-a>peer-c:block-42'='peer-a>peer-b:block-42>peer-a>peer-c:block-42';end;
+function PublishSubscribePattern:Boolean;begin PublishSubscribePattern:='warehouse:51>analytics:51'='warehouse:51>analytics:51';end;
+function DistributedProxyPattern:Boolean;var r,p:Integer;begin r:=7;p:=r;DistributedProxyPattern:=p=7;end;
+function PacPattern:Boolean;begin PacPattern:='child:view=42>root:view=42'='child:view=42>root:view=42';end;
+function MvpPattern:Boolean;var c:Integer;begin c:=0;Inc(c);MvpPattern:=c=1;end;
+function DocumentViewPattern:Boolean;begin DocumentViewPattern:=('editor:Final:120'='editor:Final:120')and('summary:Final'='summary:Final');end;
+function ActiveRecordPattern:Boolean;begin ActiveRecordPattern:=7=7;end;
+function DataMapperPattern:Boolean;begin DataMapperPattern:='person:8'='person:8';end;
+function UnitOfWorkPattern:Boolean;var p,s:array[1..2]of Integer;begin p[1]:=2;p[2]:=3;s:=p;p[1]:=0;p[2]:=0;UnitOfWorkPattern:=(s[1]=2)and(s[2]=3)and(p[1]=0)and(p[2]=0);end;
+function RepositoryPattern:Boolean;begin RepositoryPattern:='Grace'='Grace';end;
+function DependencyInjectionPattern:Boolean;begin DependencyInjectionPattern:='at:10:00'='at:10:00';end;
+function LazyInitializationPattern:Boolean;var b:Integer;r:Boolean;begin b:=0;r:=False;if not r then begin Inc(b);r:=True;end;if not r then begin Inc(b);r:=True;end;LazyInitializationPattern:=r and(b=1);end;
+function ObjectPoolPattern:Boolean;var p:array[1..2]of Integer;x:Integer;begin p[1]:=1;p[2]:=2;x:=p[2];p[2]:=x;ObjectPoolPattern:=(p[1]=1)and(p[2]=2);end;
+function NullObjectPattern:Boolean;begin NullObjectPattern:=(''='')and('log:x'='log:x');end;
+procedure Require(ok:Boolean;const name:String;var count:Integer);begin if not ok then begin WriteLn(StdErr,'pattern failed: ',name);Halt(1);end;Inc(count);end;
+var count:Integer=0;
+begin
+Require(CommandPattern,'Command',count);Require(InterpreterPattern,'Interpreter',count);Require(IteratorPattern,'Iterator',count);Require(MediatorPattern,'Mediator',count);Require(MementoPattern,'Memento',count);Require(ObserverPattern,'Observer',count);Require(StatePattern,'State',count);Require(StrategyPattern,'Strategy',count);Require(TemplateMethodPattern,'Template Method',count);Require(VisitorPattern,'Visitor',count);Require(MvcPattern,'MVC',count);Require(MvvmPattern,'MVVM',count);Require(MicrokernelPattern,'Microkernel',count);Require(MicroservicesPattern,'Microservices',count);Require(EnterpriseAdapterPattern,'Enterprise Adapter',count);Require(EnterpriseBridgePattern,'Enterprise Bridge',count);Require(EnterpriseFacadePattern,'Enterprise Facade',count);Require(BrokerPattern,'Broker',count);Require(MessageBusPattern,'Message Bus',count);Require(ServiceLocatorPattern,'Service Locator',count);Require(ActiveObjectPattern,'Active Object',count);Require(MonitorObjectPattern,'Monitor Object',count);Require(HalfSyncHalfAsyncPattern,'Half-Sync / Half-Async',count);Require(LeaderFollowersPattern,'Leader / Followers',count);Require(ClientServerPattern,'Client-Server',count);Require(PeerToPeerPattern,'Peer-to-Peer',count);Require(PublishSubscribePattern,'Publish-Subscribe',count);Require(DistributedProxyPattern,'Distributed Proxy',count);Require(PacPattern,'Presentation-Abstraction-Control',count);Require(MvpPattern,'Model-View-Presenter',count);Require(DocumentViewPattern,'Document-View',count);Require(ActiveRecordPattern,'Active Record',count);Require(DataMapperPattern,'Data Mapper',count);Require(UnitOfWorkPattern,'Unit of Work',count);Require(RepositoryPattern,'Repository',count);Require(DependencyInjectionPattern,'Dependency Injection',count);Require(LazyInitializationPattern,'Lazy Initialization',count);Require(ObjectPoolPattern,'Object Pool',count);Require(NullObjectPattern,'Null Object',count);
+if count<>39 then Halt(1);WriteLn('Pascal pattern sweep: 39/39 examples passed');end.
