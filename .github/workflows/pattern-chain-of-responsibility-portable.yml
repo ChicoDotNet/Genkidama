@@ -6,6 +6,9 @@ on:
     paths:
       - 'src/Systems/Objective-C/chain_of_responsibility.m'
       - 'src/Systems/Zig/chain_of_responsibility.zig'
+      - 'src/Niche/Nim/chain_of_responsibility.nim'
+      - 'src/Web/Dart/chain_of_responsibility.dart'
+      - 'src/Niche/Crystal/chain_of_responsibility.cr'
       - 'src/Niche/GDScript/chain_of_responsibility.gd'
       - 'src/Other/MicroPython/chain_of_responsibility.py'
       - 'wiki/ChainOfResponsibility.md'
@@ -20,12 +23,18 @@ jobs:
       - name: Set up Zig
         uses: mlugg/setup-zig@v2
 
-      - name: Install Objective-C GNUstep runtime
+      - name: Set up Dart
+        uses: dart-lang/setup-dart@v1
+
+      - name: Set up Crystal
+        uses: crystal-lang/install-crystal@v1
+
+      - name: Install portable runtimes
         shell: bash
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y gobjc libobjc-13-dev libgnustep-base-dev
+          sudo apt-get install --no-install-recommends -y gobjc libobjc-13-dev libgnustep-base-dev nim
 
       - name: Validate portable Chain examples
         shell: bash
@@ -52,6 +61,21 @@ jobs:
 
           # Zig: compile and execute with the repository-standard stable toolchain.
           assert_output Zig "$(zig run src/Systems/Zig/chain_of_responsibility.zig 2>&1)"
+
+          # Nim: compile the ref-object chain and execute the binary.
+          nim c --hints:off --warnings:on -o:"$work/chain-nim" src/Niche/Nim/chain_of_responsibility.nim
+          assert_output Nim "$("$work/chain-nim")"
+
+          # Dart: require canonical formatting, static analysis and runtime behavior.
+          dart format --output=none --set-exit-if-changed src/Web/Dart/chain_of_responsibility.dart
+          dart analyze --fatal-infos --fatal-warnings src/Web/Dart/chain_of_responsibility.dart
+          assert_output Dart "$(dart run src/Web/Dart/chain_of_responsibility.dart)"
+
+          # Crystal: format, compile with warnings as errors and execute.
+          crystal tool format src/Niche/Crystal/chain_of_responsibility.cr
+          test -z "$(git status --short -- src/Niche/Crystal/chain_of_responsibility.cr)"
+          crystal build --error-on-warnings src/Niche/Crystal/chain_of_responsibility.cr -o "$work/chain-crystal"
+          assert_output Crystal "$("$work/chain-crystal")"
 
           # MicroPython example deliberately stays inside the Python language subset shared by CPython;
           # CPython execution is a stronger lightweight gate than syntax-only validation here.
