@@ -5,7 +5,7 @@ object PatternSweep {
   sealed trait Expr; case class Lit(v:Int) extends Expr; case class Add(l:Expr,r:Expr) extends Expr; case class Mul(l:Expr,r:Expr) extends Expr
   def eval(e:Expr):Int=e match{case Lit(v)=>v;case Add(l,r)=>eval(l)+eval(r);case Mul(l,r)=>eval(l)*eval(r)}
   def interpreterPattern:Boolean=eval(Add(Lit(7),Mul(Lit(3),Lit(4))))==19
-  def iteratorPattern:Boolean={val it=List(10,20,30).iterator;val seen=it.toList;seen==List(10,20,30)&&!it.hasNext}
+  def iteratorPattern:Boolean={val it=List(10,20,30).iterator;val seen=it.toList;seen==List(10,20,30) && !it.hasNext}
   def mediatorPattern:Boolean={val e=mutable.ArrayBuffer[String]();def notify(s:String,x:String):Unit={if(s=="button"&&x=="click")e+="panel.refresh";if(s=="panel"&&x=="loaded")e+="button.enable"};notify("button","click");notify("panel","loaded");e.mkString(">") == "panel.refresh>button.enable"}
   def mementoPattern:Boolean={var s="draft";val snap=s;s="published";s=snap;s=="draft"}
   def observerPattern:Boolean=List[Int=>String](i=>s"audit:$i",i=>s"dashboard:$i").map(_(42)).mkString(">")=="audit:42>dashboard:42"
