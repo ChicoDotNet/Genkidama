@@ -1,1 +1,3 @@
-(flet((sender(x)(concatenate 'string "sms:" x)))(assert(string=(sender "ok")"sms:ok")))
+(flet ((sender (message)
+         (concatenate 'string "sms:" message)))
+  (assert (string= (sender "ok") "sms:ok")))

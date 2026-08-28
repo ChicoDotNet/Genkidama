@@ -1,1 +1,6 @@
-(let ((b 100))(dolist(c (list (lambda()(incf b 50))(lambda()(decf b 20))))(funcall c))(assert (= b 130)))
+(let ((balance 100))
+  (dolist (command
+           (list (lambda () (incf balance 50))
+                 (lambda () (decf balance 20))))
+    (funcall command))
+  (assert (= balance 130)))

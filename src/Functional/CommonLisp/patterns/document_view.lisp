@@ -1,1 +1,3 @@
-(let((doc "One"))(assert(string= doc "One"))(assert(string=(string-upcase doc)"ONE")))
+(let ((document "One"))
+  (assert (string= document "One"))
+  (assert (string= (string-upcase document) "ONE")))

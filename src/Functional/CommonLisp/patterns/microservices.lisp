@@ -1,1 +1,3 @@
-(flet((inventory(sku)(list sku t)))(assert(second(inventory "A-1"))))
+(flet ((inventory (sku)
+         (list sku t)))
+  (assert (second (inventory "A-1"))))

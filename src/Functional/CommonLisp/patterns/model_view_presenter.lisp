@@ -1,1 +1,6 @@
-(let((model "Ada")(view nil))(flet((presenter()(setf view(string-upcase model))))(presenter)(assert(string= view "ADA"))))
+(let ((model "Ada")
+      (view nil))
+  (flet ((presenter ()
+           (setf view (string-upcase model))))
+    (presenter)
+    (assert (string= view "ADA"))))

@@ -1,1 +1,5 @@
-(let((table(make-hash-table)))(flet((save(id name)(setf(gethash id table)name)))(save 1 "Ada")(assert(string=(gethash 1 table)"Ada"))))
+(let ((table (make-hash-table)))
+  (flet ((save (id name)
+           (setf (gethash id table) name)))
+    (save 1 "Ada")
+    (assert (string= (gethash 1 table) "Ada"))))

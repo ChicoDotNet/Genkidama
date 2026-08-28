@@ -1,1 +1,6 @@
-(assert(equal(mapcar(lambda(w e)(format nil "~A:~A" w e))'("leader" "follower")'("one" "two"))'("leader:one" "follower:two")))
+(let ((handled
+       (mapcar (lambda (worker event)
+                 (format nil "~A:~A" worker event))
+               '("leader" "follower")
+               '("one" "two"))))
+  (assert (equal handled '("leader:one" "follower:two"))))

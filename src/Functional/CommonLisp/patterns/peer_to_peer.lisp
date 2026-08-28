@@ -1,1 +1,3 @@
-(flet((send(s m)(format nil "~A:~A" s m)))(assert(string=(send "a" "hello")"a:hello")))
+(flet ((send-direct (source message)
+         (format nil "~A:~A" source message)))
+  (assert (string= (send-direct "a" "hello") "a:hello")))

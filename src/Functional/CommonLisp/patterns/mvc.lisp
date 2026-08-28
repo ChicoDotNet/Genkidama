@@ -1,1 +1,7 @@
-(let((model 0))(flet((controller()(incf model))(view()(format nil "count=~A" model)))(controller)(assert(string=(view)"count=1"))))
+(let ((model 0))
+  (flet ((controller ()
+           (incf model))
+         (view ()
+           (format nil "count=~A" model)))
+    (controller)
+    (assert (string= (view) "count=1"))))

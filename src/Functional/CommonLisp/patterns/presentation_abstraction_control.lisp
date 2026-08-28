@@ -1,1 +1,7 @@
-(let((a 1))(flet((control(d)(incf a d))(presentation()a))(control 2)(assert(=3(presentation)))))
+(let ((abstraction 1))
+  (flet ((control (delta)
+           (incf abstraction delta))
+         (presentation ()
+           abstraction))
+    (control 2)
+    (assert (= 3 (presentation)))))
