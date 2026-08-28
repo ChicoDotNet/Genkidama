@@ -1,0 +1,1 @@
+function messageBusPattern(){const handlers=[(t:string,id:number)=>`audit:${t}:${id}`,(t:string,id:number)=>`billing:${t}:${id}`];return handlers.map(h=>h('order-created',42)).join('>')==='audit:order-created:42>billing:order-created:42'}

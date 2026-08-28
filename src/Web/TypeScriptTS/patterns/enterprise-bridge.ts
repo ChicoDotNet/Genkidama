@@ -1,0 +1,1 @@
+function enterpriseBridgePattern(){const send=(transport:string,kind:string,msg:string)=>`${transport}>${kind}:${msg}`;return send('kafka','ALERT','disk')==='kafka>ALERT:disk'&&send('queue','REMINDER','backup')==='queue>REMINDER:backup'}

@@ -1,0 +1,1 @@
+function serviceLocatorPattern(){const services={email:(v:string)=>`email>${v}`,audit:(v:string)=>`audit>${v}`};return services.email('a@example.test')==='email>a@example.test'&&services.audit('created')==='audit>created'}
