@@ -1,7 +1,7 @@
 # Ruby pattern sweep
 
 > **Scope:** Ruby column for the 39 catalog patterns remaining after Chain of Responsibility.  
-> **Status:** in progress until the Ruby target gate passes on the reviewed head.  
+> **Status:** target slice verified on the reviewed PR head; canonical pattern completion remains unchanged.  
 > **Canonical completion:** unchanged; each pattern remains incomplete until all Applicable languages satisfy KB-006.
 
 ## Applicability
@@ -62,7 +62,20 @@ The target workflow runs `ruby -c` and then executes the entire 39-cell harness 
 ruby-pattern-sweep: 39/39 passed
 ```
 
-The workflow also emits `cells`, `setup_seconds`, `validation_seconds` and `total_seconds` so later batching decisions use observed CI cost rather than assumptions.
+### Observed reviewed-head evidence
+
+GitHub Actions `Pattern sweep - Ruby #1` completed successfully for PR #95 at head `bd3c1a32bb604eec138e34b5556f49e5d3ba2723` before this ledger-only evidence update. The run used Ruby 3.3.12 and observed:
+
+```text
+Syntax OK
+ruby-pattern-sweep: 39/39 passed
+cells=39
+setup_seconds=0
+validation_seconds=0
+total_seconds=0
+```
+
+The zero-second integer telemetry reflects the workflow's whole-second timer resolution for this very fast runtime; it is retained as observed evidence rather than replaced with invented sub-second values. Any later reviewed head must pass its own applicable checks before being treated as verified.
 
 ## Coverage
 
