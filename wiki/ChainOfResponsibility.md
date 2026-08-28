@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** permitir que una solicitud recorra una secuencia de posibles manejadores hasta que uno asuma la responsabilidad, sin acoplar al emisor con un receptor concreto.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `26/49`  
+> **Implementaciones de lenguaje:** `31/49`  
 > **Cobertura de pruebas:** N/A — ejemplos standalone multi-ecosistema; se usa compilación, runtime, análisis o contrato por lenguaje en lugar de inventar un porcentaje agregado.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -152,7 +152,7 @@ Una cadena sin fallback o error explícito puede terminar sin respuesta. El ejem
 
 Universo actual: **51 targets**. Chain of Responsibility clasifica **49 Applicable** y **2 N/A**. SQL declarativo permanece Applicable porque una secuencia ordenada de reglas/CTEs puede representar receptores que se evalúan hasta que uno acepta; no requiere clases para preservar la intención.
 
-Actualmente hay **26 ejemplos materializados y 26 verificados** en este PR. Los demás Applicable permanecen pendientes hasta contar con ejemplo y evidencia propios.
+Actualmente hay **31 ejemplos materializados y 31 verificados** en este PR. Los demás Applicable permanecen pendientes hasta contar con ejemplo y evidencia propios.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -182,11 +182,11 @@ Actualmente hay **26 ejemplos materializados y 26 verificados** en este PR. Los 
 | GNU Octave | Applicable | [`chain_of_responsibility.m`](../src/DataScience/Octave/chain_of_responsibility.m) | Chain Functional #1 ✅ | structs ordenados + short-circuit |
 | OCaml | Applicable | [`chain_of_responsibility.ml`](../src/Functional/OCaml/chain_of_responsibility.ml) | Chain Functional #1 ✅ | records + recursión |
 | Common Lisp | Applicable | [`chain_of_responsibility.lisp`](../src/Functional/CommonLisp/chain_of_responsibility.lisp) | Chain Functional #1 ✅ | structs + closures + recursión |
-| Scala | Applicable | — | Pendiente | traits/case classes |
-| Julia | Applicable | — | Pendiente | funciones/structs |
-| Clojure | Applicable | — | Pendiente | functions/protocols + secuencia |
-| Elixir | Applicable | — | Pendiente | módulos/procesos/recursión |
-| Erlang | Applicable | — | Pendiente | procesos/mensajes o funciones recursivas |
+| Scala | Applicable | [`ChainOfResponsibility.scala`](../src/Functional/Scala/ChainOfResponsibility.scala) | Chain Functional #4 ✅ | case class + recursión enlazada |
+| Julia | Applicable | [`chain_of_responsibility.jl`](../src/DataScience/Julia/chain_of_responsibility.jl) | Chain Modern #2 ✅ | struct + recorrido ordenado |
+| Clojure | Applicable | [`chain_of_responsibility.clj`](../src/Functional/Clojure/chain_of_responsibility.clj) | Chain Functional #4 ✅ | mapas + predicados + `loop/recur` |
+| Elixir | Applicable | [`chain_of_responsibility.exs`](../src/Functional/Elixir/chain_of_responsibility.exs) | Chain Functional #4 ✅ | `Enum.reduce_while` + short-circuit |
+| Erlang | Applicable | [`chain_of_responsibility.erl`](../src/Functional/Erlang/chain_of_responsibility.erl) | Chain Functional #4 ✅ | tuplas ordenadas + recursión |
 | Prolog | Applicable | — | Pendiente | predicados ordenados con corte/recursión |
 | Groovy | Applicable | — | Pendiente | clases/duck typing |
 | Ada | Applicable | — | Pendiente | tagged types/records/procedures |
