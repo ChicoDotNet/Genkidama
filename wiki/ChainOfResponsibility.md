@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** permitir que una solicitud recorra una secuencia de posibles manejadores hasta que uno asuma la responsabilidad, sin acoplar al emisor con un receptor concreto.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `36/49`  
+> **Implementaciones de lenguaje:** `40/49`  
 > **Cobertura de pruebas:** N/A — ejemplos standalone multi-ecosistema; se usa compilación, runtime, análisis o contrato por lenguaje en lugar de inventar un porcentaje agregado.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -152,7 +152,7 @@ Una cadena sin fallback o error explícito puede terminar sin respuesta. El ejem
 
 Universo actual: **51 targets**. Chain of Responsibility clasifica **49 Applicable** y **2 N/A**. SQL declarativo permanece Applicable porque una secuencia ordenada de reglas/CTEs puede representar receptores que se evalúan hasta que uno acepta; no requiere clases para preservar la intención.
 
-Actualmente hay **36 ejemplos materializados y 36 verificados** en este PR. Los demás Applicable permanecen pendientes hasta contar con ejemplo y evidencia propios.
+Actualmente hay **40 ejemplos materializados y 40 verificados** en este PR. Los demás Applicable permanecen pendientes hasta contar con ejemplo y evidencia propios.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -192,17 +192,17 @@ Actualmente hay **36 ejemplos materializados y 36 verificados** en este PR. Los 
 | Ada | Applicable | [`chain_of_responsibility.adb`](../src/Systems/Ada/chain_of_responsibility.adb) | Chain Compiled #6 ✅ | records + selección ordenada |
 | Solidity | Applicable | [`ChainOfResponsibility.sol`](../src/Niche/Solidity/ChainOfResponsibility.sol) | Chain Final #1 ✅ | contrato + selección secuencial compilada |
 | Fortran | Applicable | [`chain_of_responsibility.f90`](../src/Systems/Fortran/chain_of_responsibility.f90) | Chain Compiled #6 ✅ | derived type array + short-circuit |
-| Objective-C | Applicable | — | Pendiente | protocol + next handler |
-| Zig | Applicable | — | Pendiente | structs/function pointers |
+| Objective-C | Applicable | [`chain_of_responsibility.m`](../src/Systems/Objective-C/chain_of_responsibility.m) | Chain Portable #10 ✅ | protocol + linked handlers; GNUstep compile/link/run |
+| Zig | Applicable | [`chain_of_responsibility.zig`](../src/Systems/Zig/chain_of_responsibility.zig) | Chain Portable #10 ✅ | structs + ordered handlers; stable Zig compile/run |
 | Nim | Applicable | — | Pendiente | ref objects/procs |
 | Dart | Applicable | — | Pendiente | clases/interfaces implícitas |
 | Crystal | Applicable | — | Pendiente | clases abstractas/handlers |
 | COBOL | Applicable | — | Pendiente | paragraphs/programas ordenados |
 | VBA | Applicable | — | Pendiente | class modules o funciones encadenadas |
-| GDScript | Applicable | — | Pendiente | objetos/scripts enlazados |
+| GDScript | Applicable | [`chain_of_responsibility.gd`](../src/Niche/GDScript/chain_of_responsibility.gd) | Chain Portable #10 ✅ — validación estructural; Godot 4 no está instalado en el runner genérico | objetos/scripts enlazados + short-circuit explícito |
 | Assembly | Applicable | — | Pendiente | tabla de rutinas + branch al siguiente |
 | Delphi | Applicable | — | Pendiente | interfaces/clases |
-| MicroPython | Applicable | — | Pendiente | objetos/closures |
+| MicroPython | Applicable | [`chain_of_responsibility.py`](../src/Other/MicroPython/chain_of_responsibility.py) | Chain Portable #10 ✅ — sintaxis + ejecución en subconjunto compartido CPython | objetos/closures compatibles con MicroPython |
 | Rockstar | Applicable | — | Pendiente | funciones y estado explícito |
 | MATLAB | Applicable | — | Pendiente | funciones/handles/listas ordenadas |
 | HTML | N/A | — | — | markup declarativo sin ejecución ni transferencia de una solicitud entre receptores |
