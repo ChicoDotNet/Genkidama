@@ -1,0 +1,64 @@
+name: Pattern sweep - Bash canonical
+
+on:
+  pull_request:
+    paths:
+      - 'src/Scripting/Bash/patterns/**'
+      - 'src/Scripting/Bash/pattern_sweep.sh'
+      - 'docs/pattern-sweeps/bash.md'
+      - '.github/workflows/pattern-sweep-bash.yml'
+
+jobs:
+  bash:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build current stable Bash
+        shell: bash
+        run: |
+          set -euo pipefail
+          started=$(date +%s)
+          version=5.3
+          archive="bash-${version}.tar.gz"
+          url="https://ftp.gnu.org/gnu/bash/${archive}"
+          # GNU re-rolled the 5.3 tarball after its initial publication; this is
+          # the checksum of the currently served upstream archive.
+          expected="0d5cd86965f869a26cf64f4b71be7b96f90a3ba8b3d74e27e8e9d9d5550f31ba"
+          curl --fail --location --retry 3 --output "$RUNNER_TEMP/$archive" "$url"
+          echo "$expected  $RUNNER_TEMP/$archive" | sha256sum --check -
+          tar -xzf "$RUNNER_TEMP/$archive" -C "$RUNNER_TEMP"
+          prefix="$RUNNER_TEMP/bash-$version-install"
+          pushd "$RUNNER_TEMP/bash-$version"
+          ./configure --prefix="$prefix" >/dev/null
+          make -j2 >/dev/null
+          make install >/dev/null
+          popd
+          "$prefix/bin/bash" --version | head -n1
+          finished=$(date +%s)
+          echo "BASH_BIN=$prefix/bin/bash" >> "$GITHUB_ENV"
+          echo "SETUP_SECONDS=$((finished-started))" >> "$GITHUB_ENV"
+
+      - name: Validate canonical cells
+        shell: bash
+        run: |
+          set -euo pipefail
+          started=$(date +%s)
+          mapfile -t cells < <(find src/Scripting/Bash/patterns -maxdepth 1 -type f -name '*.sh' -print | sort)
+          test "${#cells[@]}" -eq 39
+          "$BASH_BIN" -n "${cells[@]}" src/Scripting/Bash/pattern_sweep.sh
+          for cell in "${cells[@]}"; do
+            "$BASH_BIN" "$cell"
+          done
+          output=$("$BASH_BIN" src/Scripting/Bash/pattern_sweep.sh)
+          echo "$output"
+          grep -Fx 'bash-pattern-sweep: 39/39 passed' <<<"$output"
+          finished=$(date +%s)
+          validation=$((finished-started))
+          total=$((SETUP_SECONDS+validation))
+          {
+            echo "cells=39"
+            echo "setup_seconds=$SETUP_SECONDS"
+            echo "validation_seconds=$validation"
+            echo "total_seconds=$total"
+          } >> "$GITHUB_STEP_SUMMARY"
