@@ -1,0 +1,57 @@
+name: Pattern Chain of Responsibility Functional
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/**/chain*'
+      - 'src/**/ChainOfResponsibility*'
+      - 'wiki/ChainOfResponsibility.md'
+      - '.github/workflows/pattern-chain-of-responsibility-functional.yml'
+
+jobs:
+  functional:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install functional and data runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y r-base octave ocaml-nox sbcl scala clojure elixir swi-prolog-nox groovy
+      - name: Validate Chain of Responsibility functional and data examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='visited=faq>billing;handled=billing;result=refund(250)'
+          assert_output() {
+            test "$2" = "$expected" || {
+              printf '%s mismatch\nexpected: %s\nactual: %s\n' "$1" "$expected" "$2" >&2
+              exit 1
+            }
+          }
+          work="$(mktemp -d)"
+
+          assert_output R "$(Rscript src/DataScience/R/chain_of_responsibility.R)"
+          assert_output Octave "$(octave --quiet --eval "addpath('src/DataScience/Octave'); chain_of_responsibility()")"
+
+          ocamlc -w +a-70 -warn-error +a-70 -o "$work/chain-ocaml" src/Functional/OCaml/chain_of_responsibility.ml
+          assert_output OCaml "$("$work/chain-ocaml")"
+
+          assert_output CommonLisp "$(sbcl --script src/Functional/CommonLisp/chain_of_responsibility.lisp)"
+
+          scalac -d "$work" src/Functional/Scala/ChainOfResponsibility.scala
+          assert_output Scala "$(scala -cp "$work" ChainOfResponsibilityExample)"
+
+          assert_output Clojure "$(clojure src/Functional/Clojure/chain_of_responsibility.clj)"
+
+          mkdir -p "$work/elixir"
+          elixirc --warnings-as-errors -o "$work/elixir" src/Functional/Elixir/chain_of_responsibility.exs >/dev/null
+          assert_output Elixir "$(elixir src/Functional/Elixir/chain_of_responsibility.exs)"
+
+          mkdir -p "$work/erlang"
+          erlc -Werror -o "$work/erlang" src/Functional/Erlang/chain_of_responsibility.erl
+          assert_output Erlang "$(erl -noshell -pa "$work/erlang" -s chain_of_responsibility main -s init stop)"
+
+          assert_output Prolog "$(swipl -q -f src/Functional/Prolog/chain_of_responsibility.pl)"
+          assert_output Groovy "$(groovy src/Functional/Groovy/chain_of_responsibility.groovy)"

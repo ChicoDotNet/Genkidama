@@ -1,0 +1,49 @@
+name: Pattern Chain of Responsibility Compiled
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/**/chain*'
+      - 'src/**/ChainOfResponsibility*'
+      - 'wiki/ChainOfResponsibility.md'
+      - '.github/workflows/pattern-chain-of-responsibility-compiled.yml'
+
+jobs:
+  compiled:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install compiled language toolchains
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y fp-compiler gnat gfortran gnucobol3 nasm
+      - name: Validate Chain of Responsibility compiled examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='visited=faq>billing;handled=billing;result=refund(250)'
+          assert_output() {
+            test "$2" = "$expected" || {
+              printf '%s mismatch\nexpected: %s\nactual: %s\n' "$1" "$expected" "$2" >&2
+              exit 1
+            }
+          }
+          work="$(mktemp -d)"
+
+          fpc -O2 -S2 -FE"$work" -FU"$work" src/Systems/Pascal/chain_of_responsibility.pas >/dev/null
+          assert_output Pascal "$("$work/chain_of_responsibility")"
+
+          gnatmake -q -gnat2022 -gnatwa -D "$work" -o "$work/chain-ada" src/Systems/Ada/chain_of_responsibility.adb
+          assert_output Ada "$("$work/chain-ada")"
+
+          gfortran -std=f2018 -Wall -Wextra -Werror src/Systems/Fortran/chain_of_responsibility.f90 -o "$work/chain-fortran"
+          assert_output Fortran "$("$work/chain-fortran" | xargs)"
+
+          cobc -x -Wall src/Historical/Cobol/chain_of_responsibility.cbl -o "$work/chain-cobol"
+          assert_output COBOL "$("$work/chain-cobol")"
+
+          nasm -f elf64 -Wall src/LowLevel/Assembly/chain_of_responsibility.asm -o "$work/chain-assembly.o"
+          ld "$work/chain-assembly.o" -o "$work/chain-assembly"
+          assert_output Assembly "$("$work/chain-assembly")"
