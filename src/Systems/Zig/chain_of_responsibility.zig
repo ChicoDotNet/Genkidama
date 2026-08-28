@@ -44,5 +44,5 @@ pub fn main() !void {
 
     var output: [160]u8 = undefined;
     const rendered = try std.fmt.bufPrint(&output, "visited={s};{s}", .{ visited_buffer[0..visited_length], result });
-    try std.fs.File.stdout().writeAll(rendered);
+    std.debug.print("{s}", .{rendered});
 }
