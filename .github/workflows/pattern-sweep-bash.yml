@@ -22,7 +22,9 @@ jobs:
           version=5.3
           archive="bash-${version}.tar.gz"
           url="https://ftp.gnu.org/gnu/bash/${archive}"
-          expected="62dd49c44c399ed1b3f7f731e87a782334d834f08e098a35f2c87547d5dbb269"
+          # GNU re-rolled the 5.3 tarball after its initial publication; this is
+          # the checksum of the currently served upstream archive.
+          expected="0d5cd86965f869a26cf64f4b71be7b96f90a3ba8b3d74e27e8e9d9d5550f31ba"
           curl --fail --location --retry 3 --output "$RUNNER_TEMP/$archive" "$url"
           echo "$expected  $RUNNER_TEMP/$archive" | sha256sum --check -
           tar -xzf "$RUNNER_TEMP/$archive" -C "$RUNNER_TEMP"
