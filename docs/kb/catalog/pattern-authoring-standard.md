@@ -1,7 +1,7 @@
 # Canonical Design Pattern Authoring Standard
 
-> **Status:** Approved by the owner on 2026-08-14; bounded matrix-scheduling exception approved on 2026-08-27  
-> **Applies to:** pattern pages under `wiki/` and their executable examples  
+> **Status:** Approved by the owner on 2026-08-14; language-major matrix scheduling and CI-amortization rule approved on 2026-08-27  
+> **Applies to:** pattern pages under `wiki/`, their executable examples and approved pattern-sweep ledgers  
 > **Catalog:** [`wiki/README.md`](../../../wiki/README.md)  
 > **Guiding principle:** architecture comes first; a pattern exists in the catalog to explain a real design force, not to force the pattern into production code.
 
@@ -101,6 +101,8 @@ Where tooling permits, examples must build, compile, parse, run or otherwise pas
 
 Never use `#`, invented paths, fake availability or "coming soon" as implementation links. If an applicable language lacks its required example, the pattern remains **in progress**.
 
+During an approved language-major sweep, an incomplete cell may be linked first from an authoritative target ledger under `docs/pattern-sweeps/`. Before the pattern reaches `validated`, its canonical page must reconcile the complete language table and contain the real implementation links itself.
+
 ### 10. Genkidama usage must be factual
 
 The **En Genkidama** section must either link to a real deliberate use of the pattern and explain why it fits, or state that Genkidama does not currently use it deliberately.
@@ -115,7 +117,17 @@ Do not chase 100% coverage as a proxy for correctness. Once coverage is at least
 
 ### 12. Teach distinction
 
-Every page addresses at least one misuse, confusion or over-engineering risk.
+Every completed page addresses at least one misuse, confusion or over-engineering risk.
+
+### 13. CI certifies coherent work; it does not define the smallest work unit
+
+CI exists to certify a meaningful implementation boundary. It must not become the dominant consumer of execution time merely because work was divided into artificially small pushes.
+
+When several changes share the same owner, target language/runtime, toolchain, module or validation context and the marginal cost of continuing is low, finish the larger coherent slice before paying another full validation cycle.
+
+Evaluate delivery efficiency by **useful functional work and real debt removed per CI cycle**, not by the number of commits, pushes or green checks produced.
+
+This principle never authorizes weaker checks, speculative validation or delayed defect repair. It changes the **batching boundary**, not the quality bar.
 
 ## Canonical page structure
 
@@ -223,7 +235,7 @@ Use these headings in this order. A completed page must not leave a required sec
 
 ## Implementaciones por lenguaje
 
-The table is authoritative for language completeness.
+The table is authoritative for final language completeness.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -252,7 +264,7 @@ The table is authoritative for language completeness.
 
 ## Language applicability rules
 
-For each pattern, build an explicit applicability inventory from the language targets currently maintained by Genkidama. Every target must be classified `Applicable` or `N/A`.
+For each pattern, build an explicit applicability inventory from the language targets currently maintained by Genkidama. Every target must ultimately be classified `Applicable` or `N/A`.
 
 A pattern reaches `validated` only when every language classified **Applicable** has a verified example satisfying this standard. Express this as a complete set (`implemented == applicable`), not as "100% test coverage".
 
@@ -263,7 +275,7 @@ A language example must:
 1. preserve the pattern's intent rather than merely its class diagram;
 2. use a reasonable native idiom for that language;
 3. live at a stable repository path;
-4. be linked from the pattern page;
+4. be linked from the final canonical pattern page;
 5. have the strongest practical lightweight validation available for that ecosystem;
 6. avoid dependencies or infrastructure disproportionate to the teaching goal.
 
@@ -287,24 +299,43 @@ When code coverage can be measured meaningfully:
 - 44%–72.8% is a healthy and fully acceptable range;
 - more than 72.8% is welcome, especially when it comes naturally from useful tests;
 - never add low-value tests merely to increase a percentage;
-- never block the next pattern because coverage is below 100%; 100% is not a requirement.
+- never block the next valuable slice because coverage is below 100%; 100% is not a requirement.
+
+### CI amortization
+
+For a runtime/toolchain with meaningful setup cost, prefer one validation job that:
+
+1. installs or restores that target runtime once;
+2. executes all coherent cells included in the target slice;
+3. fails if any cell fails;
+4. records useful timing evidence when practical.
+
+Do not intentionally trigger the same expensive setup once per pattern when those pattern cells can be validated safely in one process/job.
+
+Do not publish a push merely to learn whether each tiny sub-step is green when the same local/static reasoning can safely continue through the rest of the coherent slice. Conversely, when a defect cannot be isolated safely without execution, use CI rather than guessing.
+
+If a batched CI run finds defects, repair the discovered scoped debt before expanding to another target. Where practical, coalesce related fixes and pay one new validation cycle rather than one cycle per corrected cell.
 
 ## Scheduling and delivery order
 
-The default delivery order remains **one incomplete pattern at a time**. A bounded exception is allowed only when the owner explicitly approves a matrix/language scheduling experiment and `docs/roadmap.md` records its scope, order and exit/review point.
+The default delivery order outside an explicit exception remains **one incomplete pattern at a time**.
 
-The exception changes **scheduling only**. During an approved matrix sweep:
+During an owner-approved matrix/language scheduling experiment recorded in `docs/roadmap.md`, the delivery unit may instead be a **language-major target slice spanning many incomplete patterns**. This exception changes scheduling and PR ownership boundaries while preserving every pattern-level DoD requirement.
 
-- one active branch/PR per pattern remains the delivery boundary;
-- a pattern may receive one verified target implementation and remain `in-progress` while another pattern receives the same target next;
-- later sweeps continue the same draft/in-progress PR for that pattern rather than opening a second pattern PR;
-- no partial pattern may be called `validated`, complete, stable for promotion or roadmap-complete until every Applicable target and every other item in this standard's DoD passes;
-- all applicability, idiomaticity, validation, coverage, Mermaid, relationship, factual `En Genkidama`, link-integrity and comprehension requirements remain unchanged;
+During an approved language-major sweep:
+
+- one active branch/PR may own the target-language slice across many patterns;
+- a slow or high-overhead target should normally be set up once and used to implement/validate as many remaining Applicable pattern cells as safely fit that context;
+- do **not** open one PR or pay one CI runtime setup per pattern merely to preserve a horizontal work shape;
+- partial cells may be tracked in `docs/pattern-sweeps/{target}.md`; that ledger is authoritative for the incomplete slice until final pattern-page reconciliation;
+- pattern pages may remain `in-progress` and may lag the full language table during a bounded sweep, but no pattern may reach `validated` until its page itself satisfies the complete canonical structure and reconciles every target/link;
+- no partial pattern may be called complete, stable for promotion or roadmap-complete merely because one or several target cells are green;
 - `N/A` remains a technical conclusion, never a scheduling shortcut;
+- applicability, idiomaticity, behavioral validation, coverage policy, Mermaid, relationships, factual `En Genkidama`, link integrity and comprehension requirements remain unchanged for final pattern completion;
 - current `dev`, concurrent lane work and CI must still be reconciled before any stability claim;
-- the experiment must be reversible without rewriting already valid pattern artifacts.
+- the experiment must remain reversible without invalidating already correct examples.
 
-If no active roadmap exception exists, the default one-pattern-at-a-time rule applies.
+The roadmap defines the active sweep order and review point. If no active exception exists, the default pattern-major rule applies.
 
 ## Content rules
 
@@ -346,7 +377,7 @@ A pattern is complete only when **all** of the following are true:
 - [ ] Three comprehension questions require reasoning.
 - [ ] References are present where appropriate and copyright constraints are respected.
 - [ ] No `TODO`, `TBD`, `PLACEHOLDER`, empty heading or knowingly speculative claim remains.
-- [ ] Markdown links, Mermaid syntax and the language implementation table have been reviewed.
+- [ ] Markdown links, Mermaid syntax and the final language implementation table have been reviewed.
 
 A pattern with one failed mandatory item remains **in progress**. Do not manufacture low-value tests merely to optimize a metric.
 
@@ -367,21 +398,23 @@ Correctness is non-compensable. A materially wrong pattern definition or a non-i
 
 ## Agent workflow
 
-1. Read this standard, `docs/roadmap.md`, the target page, actual example files and the relevant neighborhood of the relationship map.
-2. Repay bounded debt in the target pattern before adding breadth.
-3. By default, work on **one pattern at a time** until every Applicable language has a verified example. During an owner-approved matrix scheduling experiment explicitly recorded in `docs/roadmap.md`, follow that bounded order while keeping every partial pattern `in-progress`.
-4. Use **one active PR per pattern**. Multiple coherent commits and multiple approved scheduling passes are expected when the cross-language implementation is large; commits may be grouped by language family or validation boundary.
-5. Do not start the next pattern while the current pattern is incomplete unless an external technical blocker is documented and no safe work remains on it **or** the active roadmap explicitly authorizes a bounded matrix/language sweep. Neither exception changes the pattern DoD.
-6. Verify paths and applicability; never infer completion from naming conventions.
-7. Keep the language implementation table current after every increment.
-8. Update the global relationship map only when a relationship is useful and defensible.
-9. Run applicable repository checks and inspect the final diff.
-10. Once relevant behavior is protected and coverage is >=44%, do not stall delivery merely to chase 72.8%, 90% or 100%.
-11. Do not mix course implementation, runtime refactors or unrelated documentation in a pattern PR.
+1. Read this standard, `docs/roadmap.md`, the relevant target ledger/page, actual example files and the relevant neighborhood of the relationship map.
+2. Repay bounded debt in the active owner/slice before expanding it.
+3. Outside an active exception, work one pattern at a time. During an owner-approved language-major matrix sweep, work the current target across all remaining patterns authorized by the roadmap.
+4. While the same target runtime/toolchain/context is loaded and marginal implementation cost remains low, continue producing coherent cells instead of publishing artificial micro-increments.
+5. Prefer staging the coherent slice before moving the review branch/ref, so one publication triggers one expensive CI certification when practical.
+6. Never mark a cell verified before its required validation actually passes. A materialized-but-unrun cell stays factual and pending.
+7. Keep the target sweep ledger current during matrix work; reconcile each pattern's canonical language table before that pattern is called `validated`.
+8. Verify paths and applicability; never infer completion from naming conventions.
+9. Update the global relationship map only when a relationship is useful and defensible.
+10. Run the strongest practical target validation plus applicable repository checks and inspect the final diff.
+11. Once relevant behavior is protected and coverage is >=44%, do not stall delivery merely to chase 72.8%, 90% or 100%.
+12. Do not mix course implementation, runtime refactors or unrelated product work in a pattern-sweep PR.
 
 ## Approved rollout
 
-1. Retrofit [`AbstractFactory.md`](../../../wiki/AbstractFactory.md) first and make it the golden reference, including all Applicable language implementations.
-2. Complete Builder, Factory Method, Prototype and Singleton under the same DoD.
-3. Continue family by family so neighboring patterns and their relationships can be reviewed coherently. An active owner-approved matrix scheduling experiment may change the traversal order without changing family membership, pattern DoD or promotion criteria.
-4. Coordinate with the Genkidama Learn lane through the unified repository roadmap: each lane spends roughly 80% of effort on its own delivery and 20% checking that its changes remain compatible with the other lane.
+1. [`AbstractFactory.md`](../../../wiki/AbstractFactory.md) remains the golden reference for final pattern-page quality.
+2. Completed pattern artifacts keep the same full DoD regardless of scheduling strategy.
+3. Continue family relationships coherently, but an active owner-approved language-major experiment may traverse the matrix by target runtime to amortize CI.
+4. The current experiment order and exit/review point live in `docs/roadmap.md`.
+5. Coordinate with the Genkidama Learn lane through the unified repository roadmap: each lane spends roughly 80% of effort on its own delivery and 20% checking compatibility with the other lane.
