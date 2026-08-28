@@ -1,15 +1,17 @@
-name: Pattern Command MATLAB
+name: Pattern MATLAB Sweep
 
 on:
   pull_request:
     branches: [dev]
     paths:
-      - 'src/DataScience/MATLAB/command.m'
-      - 'wiki/Command.md'
-      - '.github/workflows/pattern-command-matlab.yml'
+      - 'src/DataScience/MATLAB/*.m'
+      - 'docs/pattern-sweeps/matlab.md'
+      - 'docs/kb/catalog/pattern-authoring-standard.md'
+      - 'docs/roadmap.md'
+      - '.github/workflows/pattern-matlab-sweep.yml'
 
 jobs:
-  matlab:
+  matlab-pattern-sweep:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +22,7 @@ jobs:
         shell: bash
         run: date +%s > "$RUNNER_TEMP/matlab-setup-start"
 
-      - name: Setup MATLAB
+      - name: Setup MATLAB once for the full sweep
         uses: matlab-actions/setup-matlab@v3
         with:
           release: latest
@@ -34,28 +36,20 @@ jobs:
           echo "$((now - start))" > "$RUNNER_TEMP/matlab-setup-seconds"
           echo "$now" > "$RUNNER_TEMP/matlab-validation-start"
 
-      - name: Validate MATLAB Command behavior
+      - name: Validate all remaining MATLAB pattern cells
         uses: matlab-actions/run-command@v3
         with:
           command: >-
             addpath('src/DataScience/MATLAB');
-            result = command;
-            assert(result.queue == "deposit(50)>withdraw(20)");
-            assert(result.executed == "deposit>withdraw");
-            assert(result.balance == 130);
-            assert(result.undone == "withdraw(20)");
-            assert(result.balanceAfterUndo == 150);
-            output = evalc('command');
-            disp(output);
-            assert(contains(output, "queued=deposit(50)>withdraw(20);executed=deposit>withdraw;balance=130;undo=withdraw(20);balance_after_undo=150"));
+            validate_pattern_sweep;
 
-      - name: Record MATLAB timing telemetry
+      - name: Record MATLAB sweep timing telemetry
         if: always()
         shell: bash
         run: |
           set -euo pipefail
           if [[ ! -f "$RUNNER_TEMP/matlab-setup-start" || ! -f "$RUNNER_TEMP/matlab-setup-seconds" || ! -f "$RUNNER_TEMP/matlab-validation-start" ]]; then
-            echo 'MATLAB timing telemetry unavailable because setup did not reach the validation boundary.'
+            echo 'MATLAB sweep timing telemetry unavailable because setup did not reach the validation boundary.'
             exit 0
           fi
 
@@ -66,12 +60,13 @@ jobs:
           validation_seconds="$((now - validation_start))"
           total_seconds="$((now - setup_start))"
 
-          printf 'setup_seconds=%s\nvalidation_seconds=%s\ntotal_seconds=%s\n' \
+          printf 'cells=39\nsetup_seconds=%s\nvalidation_seconds=%s\ntotal_seconds=%s\n' \
             "$setup_seconds" "$validation_seconds" "$total_seconds"
 
           {
-            echo '### MATLAB target timing'
+            echo '### MATLAB language-major pattern sweep'
             echo
+            echo '- cells=39'
             echo "- setup_seconds=$setup_seconds"
             echo "- validation_seconds=$validation_seconds"
             echo "- total_seconds=$total_seconds"

@@ -60,13 +60,15 @@ Before publishing an increment, each lane must inspect the current `dev`, the ot
 
 A lane may report **stable for promotion** only when:
 
-1. its own current increment is complete for the intended scope;
+1. its own current increment is complete for the intended promotable scope;
 2. its applicable checks are green, or a documented platform limitation is explicitly outside the change and does not hide a known defect;
 3. the branch/PR is mergeable against the current `dev`;
 4. no known regression is introduced into the other lane;
 5. shared roadmap/state documents are internally consistent;
 6. no bounded debt introduced by the lane remains unpaid;
 7. the lane has inspected the other lane's current integration surface rather than assuming compatibility.
+
+A matrix slice that intentionally leaves its patterns incomplete may be a **complete experiment increment** without being **stable for promotion**. Pattern promotion still requires the full KB-006 pattern DoD.
 
 `main` promotion is a human synchronization point. Agents do not infer permission to merge from both lanes being stable.
 
@@ -81,6 +83,21 @@ When meaningful code/test coverage tooling exists:
 - a lane must not stall valuable delivery merely to chase a higher percentage once the applicable quality gates are satisfied.
 
 Coverage is evidence, not the product goal. Do not manufacture low-value tests to optimize the metric.
+
+## Shared CI-efficiency policy
+
+CI certifies progress; it must not fragment development into economically tiny units.
+
+For each delivery boundary, optimize for **useful functional work and real debt removed per full validation cycle** while keeping the same correctness bar. In particular:
+
+- when several changes share one owner, feature, module, language runtime or toolchain, finish the coherent batch while marginal implementation cost is low;
+- avoid repeated pushes that reinstall the same expensive runtime merely to certify one small variation at a time;
+- prefer one setup followed by many behavioral checks when those checks can safely share the runtime;
+- keep defects visible and repay discovered scoped debt before moving to a different owner/slice;
+- do not weaken validation, skip required checks or claim unexecuted evidence to improve speed;
+- use observed setup + validation latency and completed functional cells to decide future batching boundaries.
+
+The desired direction is that each successive matrix increment removes **more remaining work per expensive CI cycle**, especially while high-overhead target runtimes remain.
 
 ## Lane A — 0 -> Junior courses
 
@@ -116,50 +133,89 @@ Before declaring a course increment stable, check at minimum:
 
 ### Mission
 
-Turn the Design Pattern catalog into a connected and executable learning reference under the approved canonical standard. The default cadence completes one pattern at a time; an explicitly recorded owner-approved scheduling experiment may change work order without changing the Definition of Done.
+Turn the Design Pattern catalog into a connected and executable learning reference under the approved canonical standard. The default cadence completes one pattern at a time; the active owner-approved experiment traverses expensive portions of the pattern/language matrix **by target language/runtime** to amortize CI without weakening the Definition of Done.
 
 ### Sources of truth
 
 - [`wiki/README.md`](../wiki/README.md)
 - [`docs/kb/catalog/pattern-authoring-standard.md`](kb/catalog/pattern-authoring-standard.md)
 - [`docs/philosophy/001-patterns-as-living-examples.md`](philosophy/001-patterns-as-living-examples.md)
+- target sweep ledgers under [`docs/pattern-sweeps/`](pattern-sweeps/), while their slices are incomplete
 - this roadmap.
 
 ### Primary work
 
-1. Retrofit `AbstractFactory.md` as the golden reference.
+1. Keep `AbstractFactory.md` as the golden reference for final pattern-page quality.
 2. Keep full Applicable-language completeness as the completion gate for every pattern, regardless of scheduling order.
-3. Finish the remaining Creational family: Builder, Factory Method, Prototype and Singleton.
-4. Continue family by family while keeping the global relationship map coherent.
-5. Use one active PR per pattern; multiple commits and multiple scheduling passes through that same PR are expected when cross-language work is large.
+3. Preserve completed Creational/Structural work and continue the catalog relationships family by family at final reconciliation time.
+4. During the active experiment, let the **target language/runtime** own a coherent slice spanning all remaining patterns when that materially amortizes CI.
+5. After the expensive target rows are substantially retired, complete horizontal pattern pages/remaining cheap cells in the order that maximizes useful progress per validation cycle.
 
 A pattern is not complete until **every language in which the pattern can be implemented meaningfully has a verified example**. This is language-set completeness, not a demand for 100% code/test coverage. `N/A` requires technical justification and review; lack of classes/OOP syntax is not enough.
 
-### Owner-approved matrix scheduling experiment — MATLAB first
+### Owner-approved matrix scheduling experiment — language-major, expensive targets first
 
-The owner approved a bounded scheduling experiment after Chain of Responsibility was integrated into `dev`. It changes **work order only**; it does not weaken KB-006, pattern correctness, applicability rules, validation, coverage policy, the 80/20 cross-lane contract or promotion gates.
+The owner first approved the matrix experiment after Chain of Responsibility was integrated into `dev`, then clarified its intended granularity on 2026-08-27: **a slow/high-overhead language should cover all remaining patterns in one coherent implementation/CI slice whenever practical**.
 
-The experiment starts from the current catalog state of **39 remaining patterns** and the current universe of **51 language targets**:
+The Command-only MATLAB pass is retained as a pilot measurement, not as the desired delivery granularity. It observed approximately **92 s of MATLAB setup versus 6 s of Command validation**. That evidence shows that repeating setup per pattern would make CI the dominant cost.
 
-1. **Vertical MATLAB sweep:** visit every remaining pattern and decide MATLAB applicability. For each MATLAB-Applicable pattern, add a real idiomatic MATLAB example and the strongest reasonable lightweight validation. For MATLAB `N/A`, record a technical justification that can survive review.
-2. **Horizontal Command sweep:** return to Command and complete every remaining Applicable language until Command satisfies the full pattern DoD.
-3. **Next vertical target:** choose the next language/target primarily from observed repository CI cost, preferring median setup + validation latency from comparable green runs over theoretical compiler-speed assumptions.
-4. **Next horizontal pattern:** complete the next pending pattern across all remaining Applicable targets.
-5. Alternate vertical target sweeps and horizontal pattern completions while the experiment remains useful.
-6. Re-evaluate the scheduling strategy after the first MATLAB + Command cycle. The owner may continue the matrix cadence, return to pattern-first delivery, or choose another bounded order based on evidence.
+The experiment starts from the catalog state of **39 patterns remaining after Chain of Responsibility** and **51 language targets**.
 
-Operational rules for the experiment:
+#### Phase 1 — MATLAB column in one slice
 
-- **One active PR per pattern remains mandatory.** A vertical sweep may leave several pattern PRs in draft/in-progress state; later sweeps continue those same PRs rather than opening a second PR for the same pattern.
+1. Decide MATLAB applicability for all 39 remaining patterns.
+2. Materialize every MATLAB-Applicable pattern example before publishing the target validation boundary.
+3. Use one target-level validator to execute all 39 examples in the same MATLAB runtime.
+4. Install/setup MATLAB once for the sweep and record `cells`, `setup_seconds`, `validation_seconds` and `total_seconds`.
+5. Track the partial cells in [`docs/pattern-sweeps/matlab.md`](pattern-sweeps/matlab.md).
+6. Keep every incomplete canonical pattern `in-progress`; the green MATLAB sweep certifies the MATLAB column only.
+
+#### Phase 2 — other high-overhead target columns
+
+After MATLAB, rank the next target primarily from **observed repository CI cost and remaining cell count**, not from theoretical compiler speed alone.
+
+Candidates explicitly worth inspecting early include runtimes/toolchains such as **Haskell, Dart and Crystal**, along with any other target whose setup/validation history shows material fixed cost.
+
+For the selected target:
+
+1. open/reuse one language-major sweep branch/PR;
+2. implement that target across all remaining Applicable patterns while the context/toolchain remains coherent;
+3. validate the whole target slice after one setup when the ecosystem permits;
+4. record timing and completed-cell evidence;
+5. repay failures/debt discovered by that gate before switching targets.
+
+#### Phase 3 — progressively cheaper rows and horizontal closure
+
+Continue language-major sweeps while they remove more matrix work per CI cycle than pattern-major execution.
+
+As fixed setup cost falls, or as the remaining matrix becomes sparse, switch back toward horizontal pattern completion whenever that produces the better coherent validation unit. The experiment is an optimization strategy, not a permanent obligation to stay vertical.
+
+Re-evaluate batching using evidence such as:
+
+- runtime/toolchain setup latency;
+- validation latency;
+- number of remaining Applicable cells for that target;
+- amount of bounded debt retired;
+- probability that another push would merely repeat already-paid setup context.
+
+### Operational rules for the experiment
+
+- **One active PR per partial pattern is no longer required during an approved language-major sweep.** The target-language slice may be owned by one branch/PR across many patterns.
+- Outside the active matrix exception, the normal one-pattern-at-a-time / pattern-owned PR rule resumes.
+- Prefer staging a coherent target slice before moving the PR ref when practical, so one publication triggers one expensive target certification rather than dozens of nearly identical cycles.
+- A target ledger under `docs/pattern-sweeps/` is authoritative for partial matrix-cell state until each canonical pattern page is reconciled for final validation.
 - A partial language cell does **not** make its pattern `validated`, complete, stable for promotion or roadmap-complete. Those claims still require `implemented == applicable` and every other KB-006 gate.
-- Draft pattern branches must reconcile current `dev` before stability is claimed; valid work from the course lane must be preserved.
+- Draft sweep branches must reconcile current `dev` before any stability claim; valid work from the course lane must be preserved.
 - Partial work must remain factual: no fake implementation links, no speculative `N/A`, no invented CI evidence and no production architecture changes merely to showcase a pattern.
-- When lightweight instrumentation is practical, record `setup_seconds`, `validation_seconds` and `total_seconds` for target-specific CI evidence. Prefer medians across comparable green runs when ranking the next target. Timing telemetry must never weaken correctness checks or become a reason to skip a stronger reasonable validation.
-- The experiment is reversible. Removing the experiment restores the default one-pattern-at-a-time scheduling rule without changing completed pattern artifacts or their DoD.
+- A materialized cell is not called verified until the required target gate has actually passed on the reviewed head.
+- When lightweight instrumentation is practical, record setup/validation/total timing. Prefer medians across comparable green runs for ranking later targets.
+- Timing telemetry never weakens correctness checks and never justifies skipping a stronger reasonable validation.
+- If a batched gate fails, fix the scoped slice before expanding to another target; coalesce related fixes into the next meaningful validation boundary when safe.
+- The experiment is reversible. Removing it restores the default pattern-major scheduling rule without invalidating correct examples already produced.
 
 ### 20% cross-lane responsibility
 
-Before declaring a pattern increment stable, check at minimum:
+Before declaring a pattern/sweep increment stable, check at minimum:
 
 - no `learn/**` material or course metadata is deleted or reverted;
 - shared README/roadmap/navigation remains coherent;
@@ -237,16 +293,19 @@ For any increment:
 - Knowledge Base impact is considered for template or architecture changes.
 - Course changes respect the course DoD.
 - Pattern changes respect the approved pattern DoD, including an example for every Applicable language before `validated`.
-- The other active lane has been checked for compatibility before the increment is reported stable.
+- Matrix-sweep changes respect the target ledger and do not overstate partial pattern completion.
+- The other active lane has been checked for compatibility before an increment is reported stable.
 
 ## Promotion rhythm
 
-The expected rhythm is:
+The normal integration rhythm is:
 
 ```text
-lane increment -> PR to dev -> reconcile -> checks -> lane stable
-other lane increment -> PR to dev -> reconcile -> checks -> lane stable
+coherent lane increment -> PR to dev -> reconcile -> checks -> lane stable when promotable
+other lane increment    -> PR to dev -> reconcile -> checks -> lane stable when promotable
 both lanes stable on compatible dev -> owner may promote dev to main
 ```
 
-There is no requirement to wait for a fixed amount of work. The promotion boundary is **simultaneous integration stability**, not a calendar event or arbitrary commit count.
+For an intentionally partial matrix sweep, a green target slice may immediately lead to the next target slice without claiming promotion readiness for incomplete patterns.
+
+There is no requirement to wait for a fixed amount of work, nor to publish after an arbitrary number of changed files. The preferred boundary is **maximum coherent functional progress per certification cycle**, followed by simultaneous integration stability when promotion is actually sought.
