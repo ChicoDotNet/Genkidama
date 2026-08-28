@@ -1,0 +1,66 @@
+name: Pattern Chain of Responsibility Portable
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/Systems/Objective-C/chain_of_responsibility.m'
+      - 'src/Systems/Zig/chain_of_responsibility.zig'
+      - 'src/Niche/GDScript/chain_of_responsibility.gd'
+      - 'src/Other/MicroPython/chain_of_responsibility.py'
+      - 'wiki/ChainOfResponsibility.md'
+      - '.github/workflows/pattern-chain-of-responsibility-portable.yml'
+
+jobs:
+  portable:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Zig
+        uses: mlugg/setup-zig@v2
+        with:
+          version: master
+
+      - name: Install Objective-C GNUstep runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y clang libgnustep-base-dev
+
+      - name: Validate portable Chain examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='visited=faq>billing;handled=billing;result=refund(250)'
+          assert_output() {
+            test "$2" = "$expected" || {
+              printf '%s mismatch\nexpected: %s\nactual: %s\n' "$1" "$expected" "$2" >&2
+              exit 1
+            }
+          }
+          work="$(mktemp -d)"
+
+          # Objective-C: GNUstep gives this Foundation-based example a real compile/link/run gate.
+          clang $(gnustep-config --objc-flags) 'src/Systems/Objective-C/chain_of_responsibility.m' -o "$work/chain-objc" $(gnustep-config --base-libs)
+          assert_output Objective-C "$("$work/chain-objc")"
+
+          # Zig: compile and execute with the current toolchain to catch API and type drift.
+          assert_output Zig "$(zig run src/Systems/Zig/chain_of_responsibility.zig)"
+
+          # MicroPython example deliberately stays inside the Python language subset shared by CPython;
+          # CPython execution is a stronger lightweight gate than syntax-only validation here.
+          python -m py_compile src/Other/MicroPython/chain_of_responsibility.py
+          assert_output MicroPython "$(python src/Other/MicroPython/chain_of_responsibility.py)"
+
+          # Godot 4 is not installed on the generic runner. Use explicit structural evidence rather than
+          # claiming a runtime execution we did not perform: typed SceneTree script, ordered handlers,
+          # short-circuit, canonical observable and explicit quit are all required.
+          gd='src/Niche/GDScript/chain_of_responsibility.gd'
+          grep -Fqx 'extends SceneTree' "$gd"
+          grep -Fq 'for handler in handlers:' "$gd"
+          grep -Fq 'if amount <= handler.limit:' "$gd"
+          grep -Fq 'break' "$gd"
+          grep -Fq 'visited=%s;handled=%s;result=refund(%d)' "$gd"
+          grep -Fq 'quit()' "$gd"
