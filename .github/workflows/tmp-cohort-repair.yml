@@ -1,9 +1,9 @@
 name: Temporary Cohort Repair
 
 on:
-  push:
+  pull_request:
     branches:
-      - sweeps/high-overhead-cohort-kb006
+      - dev
     paths:
       - .github/workflows/tmp-cohort-repair.yml
       - src/Functional/Haskell/PatternSweep.hs
@@ -12,20 +12,32 @@ on:
       - src/Systems/Zig/pattern_sweep.zig
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  haskell:
+  repair:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: sweeps/high-overhead-cohort-kb006
+          fetch-depth: 0
+      - name: Start repair timer
+        run: echo "REPAIR_STARTED=$(date +%s)" >> "$GITHUB_ENV"
       - name: Install GHC
+        shell: bash
         run: |
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y ghc
-      - name: Apply known compiler repairs
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+      - uses: crystal-lang/install-crystal@v1
+      - uses: mlugg/setup-zig@v2
+      - name: Repair Haskell and canonicalize formatter-owned sources
         shell: bash
         run: |
+          set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
           p = Path('src/Functional/Haskell/PatternSweep.hs')
@@ -39,82 +51,61 @@ jobs:
           }
           for old, new in replacements.items():
               if old not in s:
-                  raise SystemExit(f'missing expected source fragment: {old[:50]}')
+                  raise SystemExit(f'missing expected source fragment: {old[:64]}')
               s = s.replace(old, new, 1)
           p.write_text(s)
           PY
-      - name: Compile and run Haskell sweep
+          dart format src/Web/Dart/pattern_sweep.dart
+          crystal tool format src/Niche/Crystal/pattern_sweep.cr
+          zig fmt src/Systems/Zig/pattern_sweep.zig
+      - name: Validate 156 repaired cells
         shell: bash
         run: |
           set -euo pipefail
           work="$(mktemp -d)"
+
           ghc -Wall -Werror -O0 -odir "$work" -hidir "$work" src/Functional/Haskell/PatternSweep.hs -o "$work/pattern-sweep-haskell"
-          output="$("$work/pattern-sweep-haskell")"
-          test "$output" = 'Haskell pattern sweep: 39/39 examples passed'
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: repaired-haskell
-          path: src/Functional/Haskell/PatternSweep.hs
+          test "$("$work/pattern-sweep-haskell")" = 'Haskell pattern sweep: 39/39 examples passed'
 
-  dart:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v7
-      - uses: dart-lang/setup-dart@v1
-        with:
-          sdk: stable
-      - name: Format, analyze and run Dart sweep
+          dart format --output=none --set-exit-if-changed src/Web/Dart/pattern_sweep.dart
+          dart analyze --fatal-infos --fatal-warnings src/Web/Dart/pattern_sweep.dart
+          test "$(dart run src/Web/Dart/pattern_sweep.dart)" = 'Dart pattern sweep: 39/39 examples passed'
+
+          crystal tool format --check src/Niche/Crystal/pattern_sweep.cr
+          crystal build --error-on-warnings src/Niche/Crystal/pattern_sweep.cr -o "$work/pattern-sweep-crystal"
+          test "$("$work/pattern-sweep-crystal")" = 'Crystal pattern sweep: 39/39 examples passed'
+
+          zig fmt --check src/Systems/Zig/pattern_sweep.zig
+          test "$(zig run src/Systems/Zig/pattern_sweep.zig 2>&1)" = 'Zig pattern sweep: 39/39 examples passed'
+      - name: Verify repair scope
         shell: bash
         run: |
           set -euo pipefail
-          file='src/Web/Dart/pattern_sweep.dart'
-          dart format "$file"
-          dart analyze --fatal-infos --fatal-warnings "$file"
-          output="$(dart run "$file")"
-          test "$output" = 'Dart pattern sweep: 39/39 examples passed'
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: repaired-dart
-          path: src/Web/Dart/pattern_sweep.dart
-
-  crystal:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v7
-      - uses: crystal-lang/install-crystal@v1
-      - name: Format, compile and run Crystal sweep
+          mapfile -t changed < <(git status --porcelain | sed 's/^...//' | sort)
+          printf '%s\n' "${changed[@]}"
+          expected=$(printf '%s\n' \
+            src/Functional/Haskell/PatternSweep.hs \
+            src/Niche/Crystal/pattern_sweep.cr \
+            src/Systems/Zig/pattern_sweep.zig \
+            src/Web/Dart/pattern_sweep.dart | sort)
+          actual=$(printf '%s\n' "${changed[@]}")
+          test "$actual" = "$expected"
+      - name: Commit repaired cohort sources
         shell: bash
         run: |
           set -euo pipefail
-          file='src/Niche/Crystal/pattern_sweep.cr'
-          work="$(mktemp -d)"
-          crystal tool format "$file"
-          crystal build --error-on-warnings "$file" -o "$work/pattern-sweep-crystal"
-          output="$("$work/pattern-sweep-crystal")"
-          test "$output" = 'Crystal pattern sweep: 39/39 examples passed'
-      - uses: actions/upload-artifact@v4
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            src/Functional/Haskell/PatternSweep.hs \
+            src/Web/Dart/pattern_sweep.dart \
+            src/Niche/Crystal/pattern_sweep.cr \
+            src/Systems/Zig/pattern_sweep.zig
+          git commit -m 'fix(patterns): repair high-overhead cohort gates'
+          git push origin HEAD:sweeps/high-overhead-cohort-kb006
+      - name: Record repair timing
         if: always()
-        with:
-          name: repaired-crystal
-          path: src/Niche/Crystal/pattern_sweep.cr
-
-  zig:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v7
-      - uses: mlugg/setup-zig@v2
-      - name: Format, compile and run Zig sweep
         shell: bash
         run: |
-          set -euo pipefail
-          file='src/Systems/Zig/pattern_sweep.zig'
-          zig fmt "$file"
-          output="$(zig run "$file" 2>&1)"
-          test "$output" = 'Zig pattern sweep: 39/39 examples passed'
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: repaired-zig
-          path: src/Systems/Zig/pattern_sweep.zig
+          now="$(date +%s)"
+          printf '### Temporary cohort repair\n- repaired_cells: 156\n- wall_seconds: %s\n' "$((now - REPAIR_STARTED))" >> "$GITHUB_STEP_SUMMARY"
