@@ -1,0 +1,1 @@
+object MessageBusExample { def run:Boolean=List[(String,Int)=>String]((t,i)=>s"audit:$t:$i",(t,i)=>s"billing:$t:$i").map(_("order-created",42)).mkString(">")=="audit:order-created:42>billing:order-created:42" }

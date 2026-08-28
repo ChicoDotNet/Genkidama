@@ -1,0 +1,1 @@
+object NullObjectExample { trait Logger{def log(m:String):String};object NullLogger extends Logger{def log(m:String)=""};object RealLogger extends Logger{def log(m:String)=s"log:$m"};def run:Boolean=NullLogger.log("x").isEmpty&&RealLogger.log("x")=="log:x" }

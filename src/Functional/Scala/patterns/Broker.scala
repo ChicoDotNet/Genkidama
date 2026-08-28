@@ -1,0 +1,1 @@
+object BrokerExample { def run:Boolean={val services=Map[String,String=>String]("inventory"->(k=>s"inventory:$k=7"),"customer"->(k=>s"customer:$k=active"));services("inventory")("sku-1")=="inventory:sku-1=7"&&services("customer")("17")=="customer:17=active"} }
