@@ -140,7 +140,12 @@ enterpriseBridgeCase = sendNotice "ALERT" "disk" ("kafka>"++) == "kafka>ALERT:di
 
 -- Enterprise Facade
 enterpriseFacadeCase :: Bool
-enterpriseFacadeCase = let crm i="crm:create:"++show i; billing i="billing:open:"++show i in crm 77 ++ ">" ++ billing 77 == "crm:create:77>billing:open:77"
+enterpriseFacadeCase =
+  let crm :: Int -> String
+      crm i = "crm:create:" ++ show i
+      billing :: Int -> String
+      billing i = "billing:open:" ++ show i
+  in crm 77 ++ ">" ++ billing 77 == "crm:create:77>billing:open:77"
 
 -- Broker
 type Broker = [(String, String -> String)]
@@ -163,7 +168,7 @@ serviceLocatorCase = let loc=[("email",("email>"++)),("audit",("audit>"++))] in 
 
 -- Active Object
 activeObjectCase :: Bool
-activeObjectCase = let queue=[(+3),(*4)]; before=0; after=foldl (flip ($)) before queue in before==0 && after==12
+activeObjectCase = let queue=[(+3),(*4)]; before=(0 :: Int); after=foldl (flip ($)) before queue in before==0 && after==12
 
 -- Monitor Object: state and synchronization are encapsulated in an MVar.
 monitorObjectCase :: IO Bool
@@ -182,7 +187,7 @@ halfSyncHalfAsyncCase = let queued=["job-1","job-2","job-3"]; processed=map ("do
 
 -- Leader / Followers
 leaderFollowersCase :: Bool
-leaderFollowersCase = let workers=cycle ["worker-1","worker-2","worker-3"]; events=["event-a","event-b","event-c"]; handled=zipWith (\w e->w++":"++e) workers events; next=workers!!3 in handled==["worker-1:event-a","worker-2:event-b","worker-3:event-c"] && next=="worker-1"
+leaderFollowersCase = let workers=cycle ["worker-1","worker-2","worker-3"]; events=["event-a","event-b","event-c"]; handled=zipWith (\w e->w++":"++e) workers events; nextWorker=workers!!3 in handled==["worker-1:event-a","worker-2:event-b","worker-3:event-c"] && nextWorker=="worker-1"
 
 -- Client-Server
 data Request = Request String
