@@ -1,0 +1,24 @@
+name: Pattern Chain of Responsibility Final
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/Niche/Solidity/ChainOfResponsibility.sol'
+      - 'wiki/ChainOfResponsibility.md'
+      - '.github/workflows/pattern-chain-of-responsibility-final.yml'
+
+jobs:
+  solidity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Compile and inspect Solidity Chain of Responsibility
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$(mktemp -d)"
+          npx --yes solc@0.8.30 --bin --abi src/Niche/Solidity/ChainOfResponsibility.sol -o "$out"
+          test -n "$(find "$out" -type f -name '*ChainOfResponsibilityExample.bin' -size +0c -print -quit)"
+          grep -Fq 'if (canHandle(Handler.Faq, amount))' src/Niche/Solidity/ChainOfResponsibility.sol
+          grep -Fq 'if (canHandle(Handler.Billing, amount))' src/Niche/Solidity/ChainOfResponsibility.sol
+          grep -Fq 'return ("faq>billing", "billing", "refund")' src/Niche/Solidity/ChainOfResponsibility.sol

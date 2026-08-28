@@ -18,7 +18,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y fp-compiler
+          sudo apt-get install --no-install-recommends -y fp-compiler gnat gfortran
       - name: Validate Chain of Responsibility compiled examples
         shell: bash
         run: |
@@ -34,3 +34,9 @@ jobs:
 
           fpc -O2 -S2 -FE"$work" -FU"$work" src/Systems/Pascal/chain_of_responsibility.pas >/dev/null
           assert_output Pascal "$("$work/chain_of_responsibility")"
+
+          gnatmake -q -gnat2022 -gnatwa -D "$work" -o "$work/chain-ada" src/Systems/Ada/chain_of_responsibility.adb
+          assert_output Ada "$("$work/chain-ada")"
+
+          gfortran -std=f2018 -Wall -Wextra -Werror src/Systems/Fortran/chain_of_responsibility.f90 -o "$work/chain-fortran"
+          assert_output Fortran "$("$work/chain-fortran" | xargs)"

@@ -18,7 +18,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y r-base octave ocaml-nox sbcl scala clojure elixir
+          sudo apt-get install --no-install-recommends -y r-base octave ocaml-nox sbcl scala clojure elixir swi-prolog-nox groovy
       - name: Validate Chain of Responsibility functional and data examples
         shell: bash
         run: |
@@ -52,3 +52,6 @@ jobs:
           mkdir -p "$work/erlang"
           erlc -Werror -o "$work/erlang" src/Functional/Erlang/chain_of_responsibility.erl
           assert_output Erlang "$(erl -noshell -pa "$work/erlang" -s chain_of_responsibility main -s init stop)"
+
+          assert_output Prolog "$(swipl -q -f src/Functional/Prolog/chain_of_responsibility.pl)"
+          assert_output Groovy "$(groovy src/Functional/Groovy/chain_of_responsibility.groovy)"
