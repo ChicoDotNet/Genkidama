@@ -1,0 +1,1 @@
+object ObjectPoolExample{fun run():Boolean{data class Item(val id:Int);val pool=mutableListOf(Item(1),Item(2));val borrowed=pool.removeLast();pool+=borrowed;return pool.size==2&&pool.any{it.id==borrowed.id}}}

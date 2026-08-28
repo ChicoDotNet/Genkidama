@@ -1,0 +1,1 @@
+object MonitorObjectExample{class Counter{private val lock=Any();private var value=0;fun add(x:Int)=synchronized(lock){value+=x};fun get()=synchronized(lock){value}};fun run():Boolean{val c=Counter();c.add(2);c.add(3);return c.get()==5}}

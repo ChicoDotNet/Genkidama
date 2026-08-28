@@ -1,0 +1,1 @@
+object ClientServerExample{fun run():Boolean{data class Resp(val status:Int,val body:String);val server={k:String->if(k=="sku-1")Resp(200,"stock=7")else Resp(404,"missing")};val r=server("sku-1");return r.status==200&&r.body=="stock=7"}}

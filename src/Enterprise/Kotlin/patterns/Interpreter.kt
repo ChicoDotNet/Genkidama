@@ -1,0 +1,1 @@
+object InterpreterExample{sealed interface Expr{data class Lit(val value:Int):Expr;data class Add(val l:Expr,val r:Expr):Expr;data class Mul(val l:Expr,val r:Expr):Expr};fun eval(e:Expr):Int=when(e){is Expr.Lit->e.value;is Expr.Add->eval(e.l)+eval(e.r);is Expr.Mul->eval(e.l)*eval(e.r)};fun run()=eval(Expr.Add(Expr.Lit(7),Expr.Mul(Expr.Lit(3),Expr.Lit(4))))==19}

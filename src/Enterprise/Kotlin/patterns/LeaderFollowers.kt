@@ -1,0 +1,1 @@
+object LeaderFollowersExample{fun run():Boolean{val w=listOf("worker-1","worker-2","worker-3");val e=listOf("a","b","c");val h=e.mapIndexed{i,x->"${w[i%w.size]}:$x"};return h.joinToString(">") == "worker-1:a>worker-2:b>worker-3:c"&&w[e.size%w.size]=="worker-1"}}

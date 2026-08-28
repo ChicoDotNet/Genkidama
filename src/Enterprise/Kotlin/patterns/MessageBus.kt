@@ -1,0 +1,1 @@
+object MessageBusExample{fun run():Boolean{val h=listOf<(String,Int)->String>({t,i->"audit:$t:$i"},{t,i->"billing:$t:$i"});return h.map{it("order-created",42)}.joinToString(">") == "audit:order-created:42>billing:order-created:42"}}

@@ -1,0 +1,1 @@
+object EnterpriseAdapterExample{fun run():Boolean{data class Legacy(val code:Int,val cents:Int);data class Canonical(val id:Int,val amount:Double);val l=Legacy(17,1250);val c=Canonical(l.code,l.cents/100.0);return c.id==17&&c.amount==12.5}}

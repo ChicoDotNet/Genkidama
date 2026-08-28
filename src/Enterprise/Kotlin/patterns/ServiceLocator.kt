@@ -1,0 +1,1 @@
+object ServiceLocatorExample{fun run():Boolean{val s=mapOf<String,(String)->String>("email" to {"email>$it"},"audit" to {"audit>$it"});return s.getValue("email")("a@example.test")=="email>a@example.test"&&s.getValue("audit")("created")=="audit>created"}}
