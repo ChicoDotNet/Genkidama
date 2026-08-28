@@ -1,11 +1,11 @@
 (let ((calls 0)
       (value nil))
-  (flet ((get ()
+  (flet ((resolve-value ()
            (or value
                (setf value
                      (progn
                        (incf calls)
                        7)))))
-    (get)
-    (get)
+    (resolve-value)
+    (resolve-value)
     (assert (= calls 1))))
