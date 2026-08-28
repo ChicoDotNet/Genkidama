@@ -1,0 +1,1 @@
+(let* ((state "draft")(snapshot state))(setf state "edited")(setf state snapshot)(assert(string= state "draft")))

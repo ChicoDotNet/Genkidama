@@ -1,0 +1,1 @@
+(let* ((item(cons 'id 1))(pool(list item))(borrowed(pop pool)))(push borrowed pool)(assert(eq item(first pool))))
