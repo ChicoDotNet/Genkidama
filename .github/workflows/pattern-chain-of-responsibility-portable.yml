@@ -27,7 +27,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y gobjc libgnustep-base-dev
+          sudo apt-get install --no-install-recommends -y gobjc libobjc-13-dev libgnustep-base-dev
 
       - name: Validate portable Chain examples
         shell: bash
