@@ -116,7 +116,7 @@ Before declaring a course increment stable, check at minimum:
 
 ### Mission
 
-Turn the Design Pattern catalog into a connected and executable learning reference, completing one pattern at a time under the approved canonical standard.
+Turn the Design Pattern catalog into a connected and executable learning reference under the approved canonical standard. The default cadence completes one pattern at a time; an explicitly recorded owner-approved scheduling experiment may change work order without changing the Definition of Done.
 
 ### Sources of truth
 
@@ -128,12 +128,34 @@ Turn the Design Pattern catalog into a connected and executable learning referen
 ### Primary work
 
 1. Retrofit `AbstractFactory.md` as the golden reference.
-2. Complete the full Applicable-language implementation set before moving to the next pattern.
+2. Keep full Applicable-language completeness as the completion gate for every pattern, regardless of scheduling order.
 3. Finish the remaining Creational family: Builder, Factory Method, Prototype and Singleton.
 4. Continue family by family while keeping the global relationship map coherent.
-5. Use one PR per pattern; multiple commits are expected when cross-language work is large.
+5. Use one active PR per pattern; multiple commits and multiple scheduling passes through that same PR are expected when cross-language work is large.
 
 A pattern is not complete until **every language in which the pattern can be implemented meaningfully has a verified example**. This is language-set completeness, not a demand for 100% code/test coverage. `N/A` requires technical justification and review; lack of classes/OOP syntax is not enough.
+
+### Owner-approved matrix scheduling experiment — MATLAB first
+
+The owner approved a bounded scheduling experiment after Chain of Responsibility was integrated into `dev`. It changes **work order only**; it does not weaken KB-006, pattern correctness, applicability rules, validation, coverage policy, the 80/20 cross-lane contract or promotion gates.
+
+The experiment starts from the current catalog state of **39 remaining patterns** and the current universe of **51 language targets**:
+
+1. **Vertical MATLAB sweep:** visit every remaining pattern and decide MATLAB applicability. For each MATLAB-Applicable pattern, add a real idiomatic MATLAB example and the strongest reasonable lightweight validation. For MATLAB `N/A`, record a technical justification that can survive review.
+2. **Horizontal Command sweep:** return to Command and complete every remaining Applicable language until Command satisfies the full pattern DoD.
+3. **Next vertical target:** choose the next language/target primarily from observed repository CI cost, preferring median setup + validation latency from comparable green runs over theoretical compiler-speed assumptions.
+4. **Next horizontal pattern:** complete the next pending pattern across all remaining Applicable targets.
+5. Alternate vertical target sweeps and horizontal pattern completions while the experiment remains useful.
+6. Re-evaluate the scheduling strategy after the first MATLAB + Command cycle. The owner may continue the matrix cadence, return to pattern-first delivery, or choose another bounded order based on evidence.
+
+Operational rules for the experiment:
+
+- **One active PR per pattern remains mandatory.** A vertical sweep may leave several pattern PRs in draft/in-progress state; later sweeps continue those same PRs rather than opening a second PR for the same pattern.
+- A partial language cell does **not** make its pattern `validated`, complete, stable for promotion or roadmap-complete. Those claims still require `implemented == applicable` and every other KB-006 gate.
+- Draft pattern branches must reconcile current `dev` before stability is claimed; valid work from the course lane must be preserved.
+- Partial work must remain factual: no fake implementation links, no speculative `N/A`, no invented CI evidence and no production architecture changes merely to showcase a pattern.
+- When lightweight instrumentation is practical, record `setup_seconds`, `validation_seconds` and `total_seconds` for target-specific CI evidence. Prefer medians across comparable green runs when ranking the next target. Timing telemetry must never weaken correctness checks or become a reason to skip a stronger reasonable validation.
+- The experiment is reversible. Removing the experiment restores the default one-pattern-at-a-time scheduling rule without changing completed pattern artifacts or their DoD.
 
 ### 20% cross-lane responsibility
 
