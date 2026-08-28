@@ -44,3 +44,12 @@ jobs:
 
           scalac -d "$work" src/Functional/Scala/Proxy.scala
           assert_output Scala "$(scala -cp "$work" ProxyExample)"
+
+  portable-functional-cohort:
+    if: github.head_ref == 'sweeps/portable-functional-cohort-kb006'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate 507 canonical cells before cohort workflow is integrated
+        shell: bash
+        run: bash scripts/validate-portable-functional-cohort.sh
