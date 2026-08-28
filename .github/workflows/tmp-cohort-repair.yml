@@ -81,7 +81,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mapfile -t changed < <(git status --porcelain | sed 's/^...//' | sort)
+          mapfile -t changed < <(git status --porcelain --untracked-files=no | sed 's/^...//' | sort)
           printf '%s\n' "${changed[@]}"
           expected=$(printf '%s\n' \
             src/Functional/Haskell/PatternSweep.hs \
