@@ -1,2 +1,10 @@
 module DocumentViewExample
-let run ()="editor:Final:120"="editor:Final:120"&&"summary:Final"="summary:Final"
+
+type Document = { Title: string; Words: int }
+
+let run () =
+    let document = { Title = "Final"; Words = 120 }
+    let editorView (doc: Document) = $"editor:{doc.Title}:{doc.Words}"
+    let summaryView (doc: Document) = $"summary:{doc.Title}"
+    editorView document = "editor:Final:120"
+    && summaryView document = "summary:Final"

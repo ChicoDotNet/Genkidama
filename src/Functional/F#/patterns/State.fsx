@@ -1,2 +1,14 @@
 module StateExample
-let run ()=let transition state action=if state="locked"&&action="unlock" then "unlocked" elif state="unlocked"&&action="lock" then "locked" else state in transition(transition "locked" "unlock")"lock"="locked"
+
+type Gate =
+    | Locked
+    | Unlocked
+
+let private transition state action =
+    match state, action with
+    | Locked, "unlock" -> Unlocked
+    | Unlocked, "lock" -> Locked
+    | _ -> state
+
+let run () =
+    transition (transition Locked "unlock") "lock" = Locked

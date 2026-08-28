@@ -1,2 +1,9 @@
 module ModelViewPresenterExample
-let run ()=let mutable count=0 in let mutable text="" in count<-count+1;text<-$"count={count}";count=1&&text="count=1"
+let run () =
+    let mutable count = 0
+    let mutable text = ""
+    let present () =
+        count <- count + 1
+        text <- $"count={count}"
+    present ()
+    count = 1 && text = "count=1"

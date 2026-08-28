@@ -1,2 +1,8 @@
 module MementoExample
-let run ()=let mutable state="draft" in let snapshot=state in state<-"published";state<-snapshot;state="draft"
+let run () =
+    let mutable state = "draft"
+    let snapshot = state
+    state <- "published"
+    let published = state = "published"
+    state <- snapshot
+    published && state = "draft"

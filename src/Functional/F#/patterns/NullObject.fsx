@@ -1,2 +1,17 @@
 module NullObjectExample
-let run ()=let nullLog _="" in let realLog message=$"log:{message}" in nullLog "x"=""&&realLog "x"="log:x"
+
+type ILogger =
+    abstract member Log: string -> string
+
+type NullLogger() =
+    interface ILogger with
+        member _.Log _ = ""
+
+type RealLogger() =
+    interface ILogger with
+        member _.Log message = $"log:{message}"
+
+let run () =
+    let nullLogger = NullLogger() :> ILogger
+    let realLogger = RealLogger() :> ILogger
+    nullLogger.Log("x") = "" && realLogger.Log("x") = "log:x"
