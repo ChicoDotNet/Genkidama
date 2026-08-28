@@ -1,1 +1,6 @@
-mailbox=[fn->:done end]; unless mailbox|>hd()|>.()==:done,do: raise "ActiveObject"
+mailbox = [fn -> :done end]
+task = hd(mailbox)
+
+unless task.() == :done do
+  raise "ActiveObject"
+end
