@@ -1,0 +1,54 @@
+name: Pattern Medium-High Fortran Canonical
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/Systems/Fortran/patterns/**'
+      - '.github/workflows/pattern-medium-high-fortran-canonical.yml'
+
+jobs:
+  fortran-canonical:
+    name: Fortran 2018 — 39 canonical cells
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: echo "JOB_START=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Install distro-stable gfortran
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y gfortran
+          gfortran --version | head -n 1
+      - run: echo "SETUP_END=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Compile and execute every canonical Fortran cell
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          count=0
+          while IFS= read -r -d '' file; do
+            base="$(basename "$file" .f90)"
+            module="${base}_example"
+            driver="$work/${base}_driver.f90"
+            binary="$work/${base}"
+            cat > "$driver" <<EOF
+          program canonical_cell
+            use ${module}, only: run
+            implicit none
+            if (.not. run()) error stop 'pattern failed: ${base}'
+          end program
+          EOF
+            gfortran -std=f2018 -Wall -Wextra -Werror "$file" "$driver" -J"$work" -I"$work" -o "$binary"
+            "$binary"
+            count=$((count+1))
+          done < <(find src/Systems/Fortran/patterns -maxdepth 1 -type f -name '*.f90' -print0 | sort -z)
+          test "$count" -eq 39
+          echo 'Fortran canonical examples: 39/39 passed'
+      - name: Timing summary
+        if: always()
+        shell: bash
+        run: |
+          now="$(date +%s)"; setup="$((SETUP_END-JOB_START))"; total="$((now-JOB_START))"; validation="$((total-setup))"
+          printf '### Fortran canonical\n\n- cells: 39\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$setup" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
