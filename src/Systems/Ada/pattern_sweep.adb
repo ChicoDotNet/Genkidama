@@ -25,9 +25,9 @@ procedure Pattern_Sweep is
       return Left = Right;
    end Same_Array;
 
-   function Apply_Delta (Value, Delta : Integer) return Integer is
+   function Apply_Delta (Value, Change : Integer) return Integer is
    begin
-      return Value + Delta;
+      return Value + Change;
    end Apply_Delta;
 
    function Command_Pattern return Boolean is
