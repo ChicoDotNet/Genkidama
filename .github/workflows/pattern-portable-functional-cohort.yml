@@ -1,12 +1,8 @@
 name: Pattern Portable Functional Cohort
 
 on:
-  push:
-    branches:
-      - sweeps/portable-functional-cohort-kb006
   pull_request:
-    branches:
-      - dev
+    branches: [dev]
     paths:
       - 'src/Systems/Rust/patterns/**'
       - 'src/Enterprise/Java/patterns/**'
