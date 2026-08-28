@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** encapsular una solicitud o acción como un valor autónomo para desacoplar quién la solicita de quién la ejecuta y permitir tratarla como dato cuando se necesita encolar, registrar, parametrizar o deshacer.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `0/49` — MATLAB ya está materializado; falta evidencia verde del gate nativo antes de contarlo como verificado.  
+> **Implementaciones de lenguaje:** `1/49`  
 > **Cobertura de pruebas:** N/A — el catálogo usa ejemplos standalone multi-ecosistema; para MATLAB se valida comportamiento real con MATLAB Actions en lugar de inventar un porcentaje agregado.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -169,7 +169,7 @@ Un retiro en memoria puede revertirse exactamente. Un correo enviado o un pago e
 
 Universo actual: **51 targets**. Command clasifica provisionalmente **49 Applicable** y **2 N/A**. HTML y CSS no poseen un modelo de ejecución capaz de encapsular y despachar una acción como valor. SQL declarativo permanece Applicable: una solicitud puede reificarse como datos relacionales (tipo de operación + parámetros + orden/estado) y un mecanismo SQL de despacho puede interpretar esa representación sin depender de clases.
 
-Actualmente hay **1 ejemplo materializado y 0 verificados**. MATLAB está pendiente de su ejecución nativa en CI; los demás targets Applicable siguen pendientes dentro del mismo PR de Command durante las siguientes pasadas del experimento.
+Actualmente hay **1 ejemplo materializado y 1 verificado**. MATLAB pasó el gate nativo de MATLAB Actions; los otros 48 targets Applicable siguen pendientes dentro del mismo PR de Command durante las siguientes pasadas del experimento.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -221,7 +221,7 @@ Actualmente hay **1 ejemplo materializado y 0 verificados**. MATLAB está pendie
 | Delphi | Applicable | — | Pendiente | interface/object + execute |
 | MicroPython | Applicable | — | Pendiente | callable/object + queue |
 | Rockstar | Applicable | — | Pendiente | datos de operación + función de despacho |
-| MATLAB | Applicable | [`command.m`](../src/DataScience/MATLAB/command.m) | Native MATLAB Actions pendiente | structs + function handles + cola + undo |
+| MATLAB | Applicable | [`command.m`](../src/DataScience/MATLAB/command.m) | Pattern Command MATLAB #2 ✅ — native MATLAB Actions; setup 92 s, validation 6 s, total 98 s | structs + function handles + cola + undo |
 | HTML | N/A | — | — | markup declarativo sin modelo de ejecución para encapsular o despachar acciones |
 | CSS | N/A | — | — | reglas declarativas de estilo sin solicitudes ejecutables ni invocador/receiver |
 
