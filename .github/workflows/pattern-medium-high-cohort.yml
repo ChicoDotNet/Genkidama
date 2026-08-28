@@ -187,7 +187,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          bash src/Systems/Swift/pattern_sweep.swift
+          swift src/Systems/Swift/pattern_sweep.swift
       - name: Timing summary
         if: always()
         shell: bash
