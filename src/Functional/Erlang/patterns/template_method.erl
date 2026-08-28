@@ -1,0 +1,1 @@
+-module(template_method). -export([main/0]). render(F)->"<"++F()++">". main()->"<sales>"=render(fun()->"sales" end),ok.

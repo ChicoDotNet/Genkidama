@@ -1,0 +1,1 @@
+-module(publish_subscribe). -export([main/0]). main()->Topic=[fun(V)->{received,V} end],[{received,"v1"}]=[F("v1")||F<-Topic],ok.

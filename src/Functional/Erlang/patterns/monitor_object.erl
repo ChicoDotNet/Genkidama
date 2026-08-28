@@ -1,0 +1,1 @@
+-module(monitor_object). -export([main/0]). guarded(#{value:=V}=S)->S#{value:=V+1}. main()->#{value:=1}=guarded(#{value=>0}),ok.

@@ -1,0 +1,1 @@
+-module(mediator). -export([main/0]). med(S,M)->{event,S,M}. main()->{event,checkout,paid}=med(checkout,paid),ok.

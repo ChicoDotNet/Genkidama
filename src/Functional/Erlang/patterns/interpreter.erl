@@ -1,0 +1,1 @@
+-module(interpreter). -export([main/0]). eval({lit,N},_)->N;eval({var,X},E)->maps:get(X,E);eval({add,A,B},E)->eval(A,E)+eval(B,E). main()->7=eval({add,{var,x},{lit,3}},#{x=>4}),ok.

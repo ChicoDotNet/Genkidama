@@ -1,0 +1,1 @@
+-module(active_object). -export([main/0]). main()->Mailbox=[fun()->done end],done=(hd(Mailbox))(),ok.

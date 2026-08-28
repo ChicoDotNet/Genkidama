@@ -1,0 +1,1 @@
+-module(state). -export([main/0]). toggle(closed)->open;toggle(open)->closed. main()->open=toggle(closed),ok.

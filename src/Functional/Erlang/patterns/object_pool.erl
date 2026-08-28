@@ -1,0 +1,1 @@
+-module(object_pool). -export([main/0]). main()->Item=#{id=>1},[Borrowed|Rest]=[Item],Pool=[Borrowed|Rest],Item=hd(Pool),ok.

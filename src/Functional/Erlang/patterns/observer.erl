@@ -1,0 +1,1 @@
+-module(observer). -export([main/0]). main()->Subs=[fun(E)->{seen,E} end],[{seen,changed}]=[F(changed)||F<-Subs],ok.

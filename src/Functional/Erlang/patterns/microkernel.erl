@@ -1,0 +1,1 @@
+-module(microkernel). -export([main/0]). main()->P=#{upper=>fun string:uppercase/1},"PLUGIN"=(maps:get(upper,P))("plugin"),ok.

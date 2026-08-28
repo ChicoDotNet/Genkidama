@@ -1,0 +1,1 @@
+-module(dependency_injection). -export([main/0]). greet(Clock)->"hello@"++Clock(). main()->"hello@noon"=greet(fun()->"noon" end),ok.

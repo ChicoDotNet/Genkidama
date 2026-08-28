@@ -1,0 +1,1 @@
+-module(memento). -export([main/0]). main()->State=#{text=>draft},Snap=State,_Edited=State#{text=>edited},#{text:=draft}=Snap,ok.

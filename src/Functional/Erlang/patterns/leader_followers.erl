@@ -1,0 +1,1 @@
+-module(leader_followers). -export([main/0]). main()->[{leader,one},{follower,two}]=lists:zip([leader,follower],[one,two]),ok.

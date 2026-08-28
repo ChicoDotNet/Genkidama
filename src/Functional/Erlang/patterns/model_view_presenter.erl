@@ -1,0 +1,1 @@
+-module(model_view_presenter). -export([main/0]). presenter(M,V)->V#{text=>string:uppercase(maps:get(name,M))}. main()->#{text:="ADA"}=presenter(#{name=>"Ada"},#{}),ok.

@@ -1,0 +1,1 @@
+-module(mvvm). -export([main/0]). vm(#{first:=F,last:=L})->F++" "++L. main()->"Ada Lovelace"=vm(#{first=>"Ada",last=>"Lovelace"}),ok.

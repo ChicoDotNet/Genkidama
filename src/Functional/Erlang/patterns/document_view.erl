@@ -1,0 +1,1 @@
+-module(document_view). -export([main/0]). a(D)->maps:get(title,D). b(D)->string:uppercase(maps:get(title,D)). main()->D=#{title=>"One"},"One"=a(D),"ONE"=b(D),ok.

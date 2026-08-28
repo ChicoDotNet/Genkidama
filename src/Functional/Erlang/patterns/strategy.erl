@@ -1,0 +1,1 @@
+-module(strategy). -export([main/0]). choose(X,F)->F(X). main()->1=choose([3,1,2],fun lists:min/1),3=choose([3,1,2],fun lists:max/1),ok.
