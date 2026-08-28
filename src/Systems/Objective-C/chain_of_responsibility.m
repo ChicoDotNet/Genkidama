@@ -6,7 +6,11 @@
 - (NSString *)handleAmount:(NSInteger)amount visited:(NSMutableArray<NSString *> *)visited;
 @end
 
-@interface Handler : NSObject <RefundHandler>
+@interface Handler : NSObject <RefundHandler> {
+    NSString *_handlerName;
+    NSInteger _limit;
+    Handler *_next;
+}
 @property(nonatomic, copy) NSString *handlerName;
 @property(nonatomic) NSInteger limit;
 @property(nonatomic, strong, nullable) Handler *next;
@@ -14,6 +18,10 @@
 @end
 
 @implementation Handler
+@synthesize handlerName = _handlerName;
+@synthesize limit = _limit;
+@synthesize next = _next;
+
 - (instancetype)initWithName:(NSString *)name limit:(NSInteger)limit next:(Handler *)next {
     self = [super init];
     if (self) {
