@@ -7,7 +7,7 @@
 
 ## Canonical sources
 
-Every cell is an individually addressable source artifact. There is no monolithic implementation sweep in this cohort; CI is the orchestration layer and amortizes each runtime across all 39 cells.
+Every cell is an individually addressable source artifact. There is no monolithic implementation sweep in this cohort; CI is the orchestration layer and amortizes each runtime across all 39 cells. PowerShell was integrated concurrently on `dev`; this cohort deliberately reuses that canonical column rather than introducing a duplicate path.
 
 | Target | Cells | Canonical sources | Validation context |
 |---|---:|---|---|
@@ -23,7 +23,7 @@ Every cell is an individually addressable source artifact. There is no monolithi
 | Erlang | 39 | `src/Functional/Erlang/patterns/*.erl` | functional runtimes |
 | Groovy | 39 | `src/Functional/Groovy/patterns/*.groovy` | JVM |
 | Prolog | 39 | `src/Functional/Prolog/patterns/*.pl` | functional runtimes |
-| PowerShell | 39 | `src/Shell/PowerShell/patterns/*.ps1` | data and shell |
+| PowerShell | 39 | `src/Scripting/PowerShell/patterns/*.ps1` | inherited canonical column + data and shell |
 
 ## Pattern cells
 

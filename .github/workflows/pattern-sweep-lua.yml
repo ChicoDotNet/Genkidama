@@ -1,0 +1,50 @@
+name: Pattern sweep - Lua canonical
+
+on:
+  pull_request:
+    paths:
+      - 'src/Scripting/Lua/patterns/**'
+      - 'src/Scripting/Lua/pattern_sweep.lua'
+      - 'docs/pattern-sweeps/lua.md'
+      - '.github/workflows/pattern-sweep-lua.yml'
+  workflow_dispatch:
+
+jobs:
+  lua:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build current stable Lua
+        shell: bash
+        run: |
+          set -euo pipefail
+          setup_start=$(date +%s)
+          version=5.5.1
+          archive="lua-${version}.tar.gz"
+          curl -fsSLO "https://www.lua.org/ftp/${archive}"
+          echo "1c4b4068d67061f2a2231ad2b5422e77acea1487ea9890f6320af614f4373dce  ${archive}" | sha256sum -c -
+          tar -xzf "${archive}"
+          make -C "lua-${version}" all test
+          echo "$PWD/lua-${version}/src" >> "$GITHUB_PATH"
+          echo "LUA_SETUP_SECONDS=$(($(date +%s)-setup_start))" >> "$GITHUB_ENV"
+          "lua-${version}/src/lua" -v
+      - name: Validate canonical cells
+        shell: bash
+        run: |
+          set -euo pipefail
+          validation_start=$(date +%s)
+          mapfile -t files < <(find src/Scripting/Lua/patterns -maxdepth 1 -type f -name '*.lua' | sort)
+          test "${#files[@]}" -eq 39
+          for file in "${files[@]}"; do
+            luac -p "$file"
+            lua "$file"
+          done
+          lua src/Scripting/Lua/pattern_sweep.lua
+          validation_seconds=$(($(date +%s)-validation_start))
+          total_seconds=$((LUA_SETUP_SECONDS+validation_seconds))
+          {
+            echo "cells=39"
+            echo "setup_seconds=${LUA_SETUP_SECONDS}"
+            echo "validation_seconds=${validation_seconds}"
+            echo "total_seconds=${total_seconds}"
+          } | tee -a "$GITHUB_STEP_SUMMARY"

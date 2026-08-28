@@ -1,0 +1,41 @@
+name: Pattern sweep - PHP canonical
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/Scripting/PHP/patterns/**'
+      - 'src/Scripting/PHP/pattern_sweep.php'
+      - 'docs/pattern-sweeps/php.md'
+      - '.github/workflows/pattern-sweep-php.yml'
+
+jobs:
+  php-canonical:
+    name: PHP 8.5 — 39 canonical cells
+    runs-on: ubuntu-latest
+    container: php:8.5-cli
+    steps:
+      - uses: actions/checkout@v7
+      - run: echo "JOB_START=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Report resolved runtime
+        run: php --version
+      - run: echo "SETUP_END=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Lint and execute all canonical PHP cells
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=0
+          while IFS= read -r -d '' file; do
+            php -l "$file" >/dev/null
+            php "$file"
+            count=$((count+1))
+          done < <(find src/Scripting/PHP/patterns -maxdepth 1 -type f -name '*.php' -print0 | sort -z)
+          test "$count" -eq 39
+          php -l src/Scripting/PHP/pattern_sweep.php >/dev/null
+          test "$(php src/Scripting/PHP/pattern_sweep.php | tail -n 1)" = 'php-pattern-sweep: 39/39 passed'
+      - name: Timing summary
+        if: always()
+        shell: bash
+        run: |
+          now="$(date +%s)"; setup="$((SETUP_END-JOB_START))"; total="$((now-JOB_START))"; validation="$((total-setup))"
+          printf '### PHP canonical\n\n- cells: 39\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$setup" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"

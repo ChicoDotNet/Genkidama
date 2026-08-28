@@ -16,7 +16,7 @@ on:
       - 'src/Functional/Erlang/patterns/**'
       - 'src/Functional/Groovy/patterns/**'
       - 'src/Functional/Prolog/patterns/**'
-      - 'src/Shell/PowerShell/patterns/**'
+      - 'src/Scripting/PowerShell/patterns/**'
       - 'docs/pattern-sweeps/portable-functional-cohort.md'
       - '.github/workflows/pattern-portable-functional-cohort.yml'
 
@@ -128,7 +128,7 @@ jobs:
           set -euo pipefail
           test "$(find src/DataScience/R/patterns -maxdepth 1 -name '*.R' | wc -l)" -eq 39
           test "$(find src/DataScience/Octave/patterns -maxdepth 1 -name '*.m' | wc -l)" -eq 39
-          test "$(find src/Shell/PowerShell/patterns -maxdepth 1 -name '*.ps1' | wc -l)" -eq 39
+          test "$(find src/Scripting/PowerShell/patterns -maxdepth 1 -name '*.ps1' | wc -l)" -eq 39
           docker pull r-base:latest
           docker run --rm r-base:latest R --version | head -n1
           for f in src/DataScience/R/patterns/*.R; do docker run --rm -v "$PWD:/work" -w /work r-base:latest Rscript "/work/$f"; done
@@ -140,5 +140,5 @@ jobs:
           done
           docker pull mcr.microsoft.com/powershell:latest-ubuntu-24.04
           docker run --rm mcr.microsoft.com/powershell:latest-ubuntu-24.04 pwsh --version
-          for f in src/Shell/PowerShell/patterns/*.ps1; do docker run --rm -v "$PWD:/work" -w /work mcr.microsoft.com/powershell:latest-ubuntu-24.04 pwsh -NoLogo -NoProfile -File "/work/$f"; done
+          for f in src/Scripting/PowerShell/patterns/*.ps1; do docker run --rm -v "$PWD:/work" -w /work mcr.microsoft.com/powershell:latest-ubuntu-24.04 pwsh -NoLogo -NoProfile -File "/work/$f"; done
           echo 'data-and-shell: 117/117 passed'
