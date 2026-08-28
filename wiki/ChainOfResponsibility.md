@@ -2,8 +2,8 @@
 
 > **Familia:** Behavioral  
 > **Intención:** permitir que una solicitud recorra una secuencia de posibles manejadores hasta que uno asuma la responsabilidad, sin acoplar al emisor con un receptor concreto.  
-> **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `45/49 verified; 49/49 materialized`  
+> **Estado:** `validated`  
+> **Implementaciones de lenguaje:** `49/49`  
 > **Cobertura de pruebas:** N/A — ejemplos standalone multi-ecosistema; se usa compilación, runtime, análisis o contrato por lenguaje en lugar de inventar un porcentaje agregado.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -152,9 +152,9 @@ Una cadena sin fallback o error explícito puede terminar sin respuesta. El ejem
 
 Universo actual: **51 targets**. Chain of Responsibility clasifica **49 Applicable** y **2 N/A**. SQL declarativo permanece Applicable porque una secuencia ordenada de reglas/CTEs puede representar receptores que se evalúan hasta que uno acepta; no requiere clases para preservar la intención.
 
-Actualmente hay **49 ejemplos materializados y 45 verificados** en este PR. VBA, Delphi, Rockstar y MATLAB permanecen pendientes únicamente de la evidencia de `Chain Edge #1`.
+Actualmente hay **49 ejemplos materializados y 49 verificados** en este PR. La tabla siguiente es la fuente autoritativa de completitud de lenguajes para este patrón.
 
-| Lenguaje / target | Aplicabilidad | Ejemplo | Validación | Nota |
+| Lenguaje / target | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
 | C# | Applicable | [`ChainOfResponsibilityExample.cs`](../src/Enterprise/C%23/ChainOfResponsibilityExample.cs) | Chain Mainstream ✅ | interfaz + handlers enlazados |
 | TypeScript | Applicable | [`chain-of-responsibility.ts`](../src/Web/TypeScriptTS/chain-of-responsibility.ts) | Chain Mainstream ✅ | clases + enlace explícito |
@@ -198,13 +198,13 @@ Actualmente hay **49 ejemplos materializados y 45 verificados** en este PR. VBA,
 | Dart | Applicable | [`chain_of_responsibility.dart`](../src/Web/Dart/chain_of_responsibility.dart) | Chain Portable #15 ✅ | clase + sucesor nullable; format/analyze/run |
 | Crystal | Applicable | [`chain_of_responsibility.cr`](../src/Niche/Crystal/chain_of_responsibility.cr) | Chain Portable #15 ✅ | handlers tipados + short-circuit; format/build/run |
 | COBOL | Applicable | [`chain_of_responsibility.cbl`](../src/Historical/Cobol/chain_of_responsibility.cbl) | Chain Compiled #32 ✅ | paragraphs ordenados + PERFORM al siguiente |
-| VBA | Applicable | [`chain_of_responsibility.bas`](../src/Shell/VBA/chain_of_responsibility.bas) | Chain Edge #1 pendiente | funciones encadenadas; source contract por toolchain propietario |
+| VBA | Applicable | [`chain_of_responsibility.bas`](../src/Shell/VBA/chain_of_responsibility.bas) | Chain Edge #2 ✅ | funciones encadenadas; source contract por toolchain propietario |
 | GDScript | Applicable | [`chain_of_responsibility.gd`](../src/Niche/GDScript/chain_of_responsibility.gd) | Chain Portable #10 ✅ — validación estructural; Godot 4 no está instalado en el runner genérico | objetos/scripts enlazados + short-circuit explícito |
 | Assembly | Applicable | [`chain_of_responsibility.asm`](../src/LowLevel/Assembly/chain_of_responsibility.asm) | Chain Compiled #32 ✅ | branches explícitos FAQ → Billing → Escalation; NASM link/run |
-| Delphi | Applicable | [`ChainOfResponsibility.pas`](../src/Enterprise/Delphi/ChainOfResponsibility.pas) | Chain Edge #1 pendiente | interface + handler enlazado; source contract por toolchain propietario |
+| Delphi | Applicable | [`ChainOfResponsibility.pas`](../src/Enterprise/Delphi/ChainOfResponsibility.pas) | Chain Edge #2 ✅ | interface + handler enlazado; source contract por toolchain propietario |
 | MicroPython | Applicable | [`chain_of_responsibility.py`](../src/Other/MicroPython/chain_of_responsibility.py) | Chain Portable #10 ✅ — sintaxis + ejecución en subconjunto compartido CPython | objetos/closures compatibles con MicroPython |
-| Rockstar | Applicable | [`chain_of_responsibility.rock`](../src/Other/Rockstar/chain_of_responsibility.rock) | Chain Edge #1 pendiente | funciones con delegación; runtime Rockstar v2.0.31 |
-| MATLAB | Applicable | [`chain_of_responsibility.m`](../src/DataScience/MATLAB/chain_of_responsibility.m) | Chain Edge #1 pendiente | structs ordenados + short-circuit; MATLAB Actions runtime |
+| Rockstar | Applicable | [`chain_of_responsibility.rock`](../src/Other/Rockstar/chain_of_responsibility.rock) | Chain Edge #2 ✅ | funciones con delegación; runtime Rockstar v2.0.31 |
+| MATLAB | Applicable | [`chain_of_responsibility.m`](../src/DataScience/MATLAB/chain_of_responsibility.m) | Chain Edge #2 ✅ | structs ordenados + short-circuit; MATLAB Actions runtime |
 | HTML | N/A | — | — | markup declarativo sin ejecución ni transferencia de una solicitud entre receptores |
 | CSS | N/A | — | — | reglas declarativas de estilo sin flujo ejecutable de responsabilidad entre handlers |
 
