@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** permitir que una solicitud recorra una secuencia de posibles manejadores hasta que uno asuma la responsabilidad, sin acoplar al emisor con un receptor concreto.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `31/49`  
+> **Implementaciones de lenguaje:** `36/49`  
 > **Cobertura de pruebas:** N/A — ejemplos standalone multi-ecosistema; se usa compilación, runtime, análisis o contrato por lenguaje en lugar de inventar un porcentaje agregado.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -152,7 +152,7 @@ Una cadena sin fallback o error explícito puede terminar sin respuesta. El ejem
 
 Universo actual: **51 targets**. Chain of Responsibility clasifica **49 Applicable** y **2 N/A**. SQL declarativo permanece Applicable porque una secuencia ordenada de reglas/CTEs puede representar receptores que se evalúan hasta que uno acepta; no requiere clases para preservar la intención.
 
-Actualmente hay **31 ejemplos materializados y 31 verificados** en este PR. Los demás Applicable permanecen pendientes hasta contar con ejemplo y evidencia propios.
+Actualmente hay **36 ejemplos materializados y 36 verificados** en este PR. Los demás Applicable permanecen pendientes hasta contar con ejemplo y evidencia propios.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -187,11 +187,11 @@ Actualmente hay **31 ejemplos materializados y 31 verificados** en este PR. Los 
 | Clojure | Applicable | [`chain_of_responsibility.clj`](../src/Functional/Clojure/chain_of_responsibility.clj) | Chain Functional #4 ✅ | mapas + predicados + `loop/recur` |
 | Elixir | Applicable | [`chain_of_responsibility.exs`](../src/Functional/Elixir/chain_of_responsibility.exs) | Chain Functional #4 ✅ | `Enum.reduce_while` + short-circuit |
 | Erlang | Applicable | [`chain_of_responsibility.erl`](../src/Functional/Erlang/chain_of_responsibility.erl) | Chain Functional #4 ✅ | tuplas ordenadas + recursión |
-| Prolog | Applicable | — | Pendiente | predicados ordenados con corte/recursión |
-| Groovy | Applicable | — | Pendiente | clases/duck typing |
-| Ada | Applicable | — | Pendiente | tagged types/records/procedures |
-| Solidity | Applicable | — | Pendiente | contratos/funciones encadenadas |
-| Fortran | Applicable | — | Pendiente | derived types/procedimientos |
+| Prolog | Applicable | [`chain_of_responsibility.pl`](../src/Functional/Prolog/chain_of_responsibility.pl) | Chain Functional #6 ✅ | predicados ordenados + corte |
+| Groovy | Applicable | [`chain_of_responsibility.groovy`](../src/Functional/Groovy/chain_of_responsibility.groovy) | Chain Functional #6 ✅ | objetos enlazados + short-circuit |
+| Ada | Applicable | [`chain_of_responsibility.adb`](../src/Systems/Ada/chain_of_responsibility.adb) | Chain Compiled #6 ✅ | records + selección ordenada |
+| Solidity | Applicable | [`ChainOfResponsibility.sol`](../src/Niche/Solidity/ChainOfResponsibility.sol) | Chain Final #1 ✅ | contrato + selección secuencial compilada |
+| Fortran | Applicable | [`chain_of_responsibility.f90`](../src/Systems/Fortran/chain_of_responsibility.f90) | Chain Compiled #6 ✅ | derived type array + short-circuit |
 | Objective-C | Applicable | — | Pendiente | protocol + next handler |
 | Zig | Applicable | — | Pendiente | structs/function pointers |
 | Nim | Applicable | — | Pendiente | ref objects/procs |
