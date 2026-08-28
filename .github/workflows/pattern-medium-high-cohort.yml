@@ -12,11 +12,11 @@ on:
       - 'src/Enterprise/VB.NET/**'
       - 'src/Functional/F#/**'
       - 'src/Niche/Solidity/**'
-      - 'src/Systems/Ada/pattern_sweep.adb'
-      - 'src/Systems/Pascal/pattern_sweep.pas'
-      - 'src/Historical/Cobol/pattern_sweep.cbl'
-      - 'src/Systems/Fortran/pattern_sweep.f90'
-      - 'src/Niche/Nim/pattern_sweep.nim'
+      - 'src/Systems/Ada/**'
+      - 'src/Systems/Pascal/**'
+      - 'src/Historical/Cobol/**'
+      - 'src/Systems/Fortran/**'
+      - 'src/Niche/Nim/**'
       - 'src/Web/TypeScriptTS/**'
       - 'docs/pattern-sweeps/medium-high-cohort.md'
       - '.github/workflows/pattern-medium-high-cohort.yml'
@@ -221,6 +221,7 @@ jobs:
           test "$(/tmp/nim-sweep | tail -n 1)" = 'Nim pattern sweep: 39/39 examples passed'
       - name: Timing summary
         if: always()
+        shell: bash
         run: |
           now="$(date +%s)"; setup="$((SETUP_END-JOB_START))"; total="$((now-JOB_START))"; validation="$((total-setup))"
           printf '### Nim cohort\n\n- cells: 39\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$setup" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"

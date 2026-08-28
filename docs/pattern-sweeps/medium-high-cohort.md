@@ -1,32 +1,36 @@
 # Medium-high Design Pattern cohort sweep
 
-> **State:** materialized; verification is owned by `Pattern Medium-High Cohort Sweep` on the reviewed head.  
+> **State:** canonicalized and behaviorally verified on the reviewed branch; final promotion still requires the current head to be green and reconciled with `dev`.  
 > **Scope:** 14 target languages × 39 patterns that remained incomplete after Chain of Responsibility = **546 matrix cells**.  
-> **Applicability:** 546 Applicable, 0 N/A in this cohort.  
-> **Promotion:** this ledger certifies only these target-language cells; it does not mark any canonical pattern `validated`.
+> **Applicability:** **546 Applicable, 0 N/A** in this cohort.  
+> **Promotion boundary:** this ledger certifies only these target-language cells; it does not mark any canonical pattern page `validated`.
+
+## Canonical-source rule
+
+Every cell in this ledger has an addressable source artifact whose primary purpose is that one pattern in that one target language. Sweep files are runners/orchestrators only: they may import, include, load, compile or execute the canonical artifacts so CI can amortize toolchain setup, but they do not substitute for the canonical examples and must not hide duplicate pattern implementations.
 
 ## Targets
 
-| Target | Cells | Source | Validation owner |
-|---|---:|---|---|
-| Scala | 39 | [`PatternSweep.scala`](../../src/Functional/Scala/PatternSweep.scala) | JVM job |
-| Clojure | 39 | [`pattern_sweep.clj`](../../src/Functional/Clojure/pattern_sweep.clj) | JVM job |
-| Kotlin | 39 | [`PatternSweep.kt`](../../src/Enterprise/Kotlin/PatternSweep.kt) | JVM job |
-| Swift | 39 | [`pattern_sweep.swift`](../../src/Systems/Swift/pattern_sweep.swift) | Swift stable job |
-| C# | 39 | [`PatternSweep.cs`](../../src/Enterprise/C%23/PatternSweep.cs) | .NET 10 LTS job |
-| Visual Basic .NET | 39 | [`PatternSweep.vb`](../../src/Enterprise/VB.NET/PatternSweep.vb) | .NET 10 LTS job |
-| F# | 39 | [`pattern_sweep.fsx`](../../src/Functional/F%23/pattern_sweep.fsx) | .NET 10 LTS job |
-| Solidity | 39 | [`PatternSweep.sol`](../../src/Niche/Solidity/PatternSweep.sol) | Node 24 / latest stable solc job |
-| Ada | 39 | [`pattern_sweep.adb`](../../src/Systems/Ada/pattern_sweep.adb) | GNU compiled job |
-| Pascal | 39 | [`pattern_sweep.pas`](../../src/Systems/Pascal/pattern_sweep.pas) | GNU compiled job |
-| COBOL | 39 | [`pattern_sweep.cbl`](../../src/Historical/Cobol/pattern_sweep.cbl) | GNU compiled job |
-| Fortran | 39 | [`pattern_sweep.f90`](../../src/Systems/Fortran/pattern_sweep.f90) | GNU compiled job |
-| Nim | 39 | [`pattern_sweep.nim`](../../src/Niche/Nim/pattern_sweep.nim) | Nim stable job |
-| TypeScript | 39 | [`pattern-sweep.ts`](../../src/Web/TypeScriptTS/pattern-sweep.ts) | Node 24 job |
+| Target | Cells | Canonical sources | Runner / orchestrator | Validation owner |
+|---|---:|---|---|---|
+| Scala | 39 | [`patterns/`](../../src/Functional/Scala/patterns/) | [`PatternSweep.scala`](../../src/Functional/Scala/PatternSweep.scala) | JVM cohort |
+| Clojure | 39 | [`patterns/`](../../src/Functional/Clojure/patterns/) | [`pattern_sweep.clj`](../../src/Functional/Clojure/pattern_sweep.clj) | JVM cohort |
+| Kotlin | 39 | [`patterns/`](../../src/Enterprise/Kotlin/patterns/) | [`PatternSweep.kt`](../../src/Enterprise/Kotlin/PatternSweep.kt) | JVM cohort |
+| Swift | 39 | [`patterns/`](../../src/Systems/Swift/patterns/) | [`pattern_sweep.swift`](../../src/Systems/Swift/pattern_sweep.swift) | Swift canonical + cohort |
+| C# | 39 | [`patterns/`](../../src/Enterprise/C%23/patterns/) | [`PatternSweep.cs`](../../src/Enterprise/C%23/PatternSweep.cs) | .NET 10 LTS cohort |
+| Visual Basic .NET | 39 | [`patterns/`](../../src/Enterprise/VB.NET/patterns/) | [`PatternSweep.vb`](../../src/Enterprise/VB.NET/PatternSweep.vb) | .NET 10 LTS cohort |
+| F# | 39 | [`patterns/`](../../src/Functional/F%23/patterns/) | [`pattern_sweep.fsx`](../../src/Functional/F%23/pattern_sweep.fsx) | .NET 10 LTS cohort |
+| Solidity | 39 | [`patterns/`](../../src/Niche/Solidity/patterns/) | [`PatternSweep.sol`](../../src/Niche/Solidity/PatternSweep.sol) | Solidity canonical + Node cohort |
+| Ada | 39 | [`patterns/`](../../src/Systems/Ada/patterns/) | [`pattern_sweep.adb`](../../src/Systems/Ada/pattern_sweep.adb) | Ada canonical + GNU cohort |
+| Pascal | 39 | [`*_pattern.pas`](../../src/Systems/Pascal/) | [`pattern_sweep.pas`](../../src/Systems/Pascal/pattern_sweep.pas) | Pascal canonical + GNU cohort |
+| COBOL | 39 | [`patterns/*.cpy`](../../src/Historical/Cobol/patterns/) | [`pattern_sweep.cbl`](../../src/Historical/Cobol/pattern_sweep.cbl) | COBOL canonical + GNU cohort |
+| Fortran | 39 | [`patterns/`](../../src/Systems/Fortran/patterns/) | [`pattern_sweep.f90`](../../src/Systems/Fortran/pattern_sweep.f90) | Fortran canonical + GNU cohort |
+| Nim | 39 | [`patterns/`](../../src/Niche/Nim/patterns/) | [`pattern_sweep.nim`](../../src/Niche/Nim/pattern_sweep.nim) | Nim canonical + cohort |
+| TypeScript | 39 | [`patterns/`](../../src/Web/TypeScriptTS/patterns/) | [`pattern-sweep.ts`](../../src/Web/TypeScriptTS/pattern-sweep.ts) | Node 24 cohort |
 
 ## Pattern cells
 
-Each target source contains an isolated behavioral check for the same 39 catalog entries: Command, Interpreter, Iterator, Mediator, Memento, Observer, State, Strategy, Template Method, Visitor, MVC, MVVM, Microkernel, Microservices, Enterprise Adapter, Enterprise Bridge, Enterprise Facade, Broker, Message Bus, Service Locator, Active Object, Monitor Object, Half-Sync / Half-Async, Leader / Followers, Client-Server, Peer-to-Peer, Publish-Subscribe, Distributed Proxy, Presentation-Abstraction-Control, Model-View-Presenter, Document-View, Active Record, Data Mapper, Unit of Work, Repository, Dependency Injection, Lazy Initialization, Object Pool and Null Object.
+Each target covers the same 39 catalog entries: Command, Interpreter, Iterator, Mediator, Memento, Observer, State, Strategy, Template Method, Visitor, MVC, MVVM, Microkernel, Microservices, Enterprise Adapter, Enterprise Bridge, Enterprise Facade, Broker, Message Bus, Service Locator, Active Object, Monitor Object, Half-Sync / Half-Async, Leader / Followers, Client-Server, Peer-to-Peer, Publish-Subscribe, Distributed Proxy, Presentation-Abstraction-Control, Model-View-Presenter, Document-View, Active Record, Data Mapper, Unit of Work, Repository, Dependency Injection, Lazy Initialization, Object Pool and Null Object.
 
 ## CI amortization
 
@@ -41,22 +45,22 @@ The cohort deliberately pays **six setup contexts rather than fourteen**:
 | Swift stable | Swift | 39 |
 | Nim stable | Nim | 39 |
 
-The gate records setup, validation and total seconds per context. A green reviewed head means all **546 cells** passed their target's strongest practical lightweight gate.
+Per-language canonical gates were used during structural extraction where they bought useful diagnostic isolation. The final cohort gate installs each expensive context once and verifies its complete aggregate. This preserves addressable examples without returning to one-runtime-per-pattern CI fragmentation.
 
 ## Toolchain freshness
 
-This sweep follows the owner rule that pattern CI uses the **most recent stable or LTS toolchain reasonably available**.
+This sweep follows KB-006: pattern CI uses the **most recent stable or LTS toolchain reasonably available** at validation time.
 
-- Prefer official `stable`, `latest` or LTS channels over stale hard-coded compiler versions.
-- CI actions themselves must not depend on a GitHub Actions runtime that GitHub has deprecated when a current alternative exists.
-- When the ecosystem's current action remains on a deprecated Node runtime, install from an official stable distribution/channel instead.
-- Do not enable dependency caching when the repository slice does not contain the dependency manifest required by that cache.
-- For distro-packaged GNU-family compilers, use the current `ubuntu-latest` stable repositories and record the resolved version; do not pin an older package merely for historical reproducibility.
+- Prefer official `stable`, `latest` or current LTS channels over stale compiler pins.
+- Do not rely on a GitHub Action whose embedded runtime is deprecated when a current alternative is reasonably available.
+- When an ecosystem action remains stale, install from the ecosystem's official stable distribution/channel and verify integrity where practical.
+- Do not enable dependency caching without the manifest/cache inputs that make that cache valid.
+- Distro-managed GNU-family compilers come from the current `ubuntu-latest` LTS repositories and their resolved versions are observable in CI.
 
-These rules affect toolchain freshness, not the pattern Definition of Done. They must never be used to weaken compile/analyze/runtime evidence.
+Freshness never weakens pattern validation; it only prevents a green catalog from silently depending on obsolete tooling.
 
 ## Evidence boundary
 
-Before the cohort workflow runs, these files are **materialized but not yet called verified**. After a green `Pattern Medium-High Cohort Sweep` on the reviewed head, that run is the verification evidence for this ledger.
+A cell is called verified only after its required native gate actually passes. Materialization alone is not verification. The reviewed cohort head must also have the generic repository CI green.
 
-Canonical pattern pages remain `in-progress` until every Applicable target in the complete 51-target universe is reconciled and verified under KB-006.
+Canonical pattern pages remain `in-progress` until every Applicable target in the full 51-target universe is reconciled and verified under KB-006. This sweep therefore does **not** change the global count of completed patterns by itself.
