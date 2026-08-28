@@ -42,11 +42,14 @@ jobs:
           }
           work="$(mktemp -d)"
 
-          # Objective-C: use Clang's modern Objective-C parser with GNUstep and the installed GCC runtime headers.
+          # Objective-C: use Clang's modern Objective-C parser with GNUstep, GCC runtime headers and libobjc path.
           objc_headers="$(gcc -print-file-name=include)"
+          objc_library="$(gcc -print-file-name=libobjc.so)"
+          test -f "$objc_library"
+          objc_libdir="$(dirname "$objc_library")"
           clang $(gnustep-config --objc-flags) -I"$objc_headers" \
             'src/Systems/Objective-C/chain_of_responsibility.m' \
-            -o "$work/chain-objc" $(gnustep-config --base-libs)
+            -o "$work/chain-objc" -L"$objc_libdir" $(gnustep-config --base-libs)
           assert_output Objective-C "$("$work/chain-objc")"
 
           # Zig: compile and execute with the current toolchain to catch API and type drift.
