@@ -1,175 +1,367 @@
-Imports System
-Imports System.Collections.Generic
-Imports System.Linq
+import std/[tables, sequtils, strformat, strutils, math, locks]
 
-Module PatternSweep
-    Private Function CommandPattern() As Boolean
-        Dim q As Func(Of Integer,Integer)()={Function(x) x+50,Function(x) x-20}
-        Dim balance=100
-        For Each command In q : balance=command(balance) : Next
-        Return balance=130 AndAlso q(1)(150)=130
-    End Function
-    Private Function EvalExpr(kind As String,a As Integer,b As Integer) As Integer
-        Return If(kind="add",a+b,a*b)
-    End Function
-    Private Function InterpreterPattern() As Boolean
-        Return EvalExpr("add",7,EvalExpr("mul",3,4))=19
-    End Function
-    Private Function IteratorPattern() As Boolean
-        Dim values={10,20,30},seen As New List(Of Integer)
-        For Each value In values : seen.Add(value) : Next
-        Return seen.SequenceEqual(values)
-    End Function
-    Private Function MediatorPattern() As Boolean
-        Dim events As New List(Of String)
-        Dim notify As Action(Of String,String)=Sub(sender,e)
-            If sender="button" AndAlso e="click" Then events.Add("panel.refresh")
-            If sender="panel" AndAlso e="loaded" Then events.Add("button.enable")
-        End Sub
-        notify("button","click") : notify("panel","loaded")
-        Return String.Join(">",events)="panel.refresh>button.enable"
-    End Function
-    Private Function MementoPattern() As Boolean
-        Dim state="draft",snapshot=state : state="published" : state=snapshot : Return state="draft"
-    End Function
-    Private Function ObserverPattern() As Boolean
-        Dim observers As Func(Of Integer,String)()={Function(i) $"audit:{i}",Function(i) $"dashboard:{i}"}
-        Return String.Join(">",observers.Select(Function(o) o(42)))="audit:42>dashboard:42"
-    End Function
-    Private Function StatePattern() As Boolean
-        Dim transition As Func(Of String,String,String)=Function(state,action)
-            If state="locked" AndAlso action="unlock" Then Return "unlocked"
-            If state="unlocked" AndAlso action="lock" Then Return "locked"
-            Return state
-        End Function
-        Return transition(transition("locked","unlock"),"lock")="locked"
-    End Function
-    Private Function StrategyPattern() As Boolean
-        Dim price As Func(Of Integer,Func(Of Integer,Integer),Integer)=Function(v,s) s(v)
-        Return price(100,Function(x)x)=100 AndAlso price(100,Function(x)x*80\100)=80
-    End Function
-    Private Function TemplateMethodPattern() As Boolean
-        Dim pipeline As Func(Of String,Func(Of String),String)=Function(read,transform) $"{read}>{transform()}>publish"
-        Return pipeline("read-csv",Function() "normalize")="read-csv>normalize>publish"
-    End Function
-    Private Function VisitorPattern() As Boolean
-        Dim area=Math.PI*2*2+3*4 : Return Math.Abs(area-(4*Math.PI+12))<0.000000001
-    End Function
-    Private Function MvcPattern() As Boolean
-        Dim count=0 : Dim view As Func(Of String)=Function() $"count={count}" : Dim before=view() : count+=1 : Return before="count=0" AndAlso view()="count=1"
-    End Function
-    Private Function MvvmPattern() As Boolean
-        Dim amount=10 : Dim text As Func(Of String)=Function() $"${amount}.00" : Dim before=text() : amount+=5 : Return before="$10.00" AndAlso text()="$15.00"
-    End Function
-    Private Function MicrokernelPattern() As Boolean
-        Dim plugins As New Dictionary(Of String,Func(Of Integer,Integer)) From {{"double",Function(x)x*2},{"square",Function(x)x*x}}
-        Return plugins("double")(4)=8 AndAlso plugins("square")(4)=16
-    End Function
-    Private Function MicroservicesPattern() As Boolean
-        Dim stock=7
-        Dim reserve As Func(Of Integer,Boolean)=Function(q)
-            If q>stock Then Return False
-            stock-=q
-            Return True
-        End Function
-        Return reserve(2) AndAlso stock=5
-    End Function
-    Private Function EnterpriseAdapterPattern() As Boolean
-        Dim code=17,cents=1250,amount=cents/100.0 : Return code=17 AndAlso amount=12.5
-    End Function
-    Private Function EnterpriseBridgePattern() As Boolean
-        Dim send As Func(Of String,String,String,String)=Function(t,k,m) $"{t}>{k}:{m}"
-        Return send("kafka","ALERT","disk")="kafka>ALERT:disk" AndAlso send("queue","REMINDER","backup")="queue>REMINDER:backup"
-    End Function
-    Private Function EnterpriseFacadePattern() As Boolean
-        Return "crm:create:77>billing:open:77"="crm:create:77>billing:open:77"
-    End Function
-    Private Function BrokerPattern() As Boolean
-        Return "inventory:sku-1=7"="inventory:sku-1=7" AndAlso "customer:17=active"="customer:17=active"
-    End Function
-    Private Function MessageBusPattern() As Boolean
-        Return "audit:order-created:42>billing:order-created:42"="audit:order-created:42>billing:order-created:42"
-    End Function
-    Private Function ServiceLocatorPattern() As Boolean
-        Return "email>a@example.test"="email>a@example.test" AndAlso "audit>created"="audit>created"
-    End Function
-    Private Function ActiveObjectPattern() As Boolean
-        Dim value=0 : value+=3 : value*=4 : Return value=12
-    End Function
-    Private Function MonitorObjectPattern() As Boolean
-        Dim gate As New Object(),value=0
-        SyncLock gate
-            value+=2
-        End SyncLock
-        SyncLock gate
-            value+=3
-        End SyncLock
-        Return value=5
-    End Function
-    Private Function HalfSyncHalfAsyncPattern() As Boolean
-        Return String.Join(">",{"job-1","job-2","job-3"}.Select(Function(j)$"done:{j}"))="done:job-1>done:job-2>done:job-3"
-    End Function
-    Private Function LeaderFollowersPattern() As Boolean
-        Return "worker-1:a>worker-2:b>worker-3:c"="worker-1:a>worker-2:b>worker-3:c"
-    End Function
-    Private Function ClientServerPattern() As Boolean
-        Return Tuple.Create(200,"stock=7").Equals(Tuple.Create(200,"stock=7"))
-    End Function
-    Private Function PeerToPeerPattern() As Boolean
-        Return "peer-a>peer-b:block-42>peer-a>peer-c:block-42"="peer-a>peer-b:block-42>peer-a>peer-c:block-42"
-    End Function
-    Private Function PublishSubscribePattern() As Boolean
-        Return "warehouse:51>analytics:51"="warehouse:51>analytics:51"
-    End Function
-    Private Function DistributedProxyPattern() As Boolean
-        Dim remote As Func(Of String,Integer)=Function(sku) If(sku="sku-1",7,0) : Dim proxy As Func(Of String,Integer)=Function(sku) remote(sku) : Return proxy("sku-1")=7
-    End Function
-    Private Function PacPattern() As Boolean
-        Return "child:view=42>root:view=42"="child:view=42>root:view=42"
-    End Function
-    Private Function MvpPattern() As Boolean
-        Dim count=0,text="" : count+=1 : text=$"count={count}" : Return count=1 AndAlso text="count=1"
-    End Function
-    Private Function DocumentViewPattern() As Boolean
-        Return "editor:Final:120"="editor:Final:120" AndAlso "summary:Final"="summary:Final"
-    End Function
-    Private Function ActiveRecordPattern() As Boolean
-        Dim table As New Dictionary(Of Integer,String) From {{7,"Ada"}} : Return table(7)="Ada"
-    End Function
-    Private Function DataMapperPattern() As Boolean
-        Dim id=8,name="Grace",key=$"person:{id}" : Return key="person:8" AndAlso name="Grace"
-    End Function
-    Private Function UnitOfWorkPattern() As Boolean
-        Dim store As New List(Of Integer),pending As New List(Of Integer) From {2,3} : store.AddRange(pending) : pending.Clear() : Return store.SequenceEqual({2,3}) AndAlso pending.Count=0
-    End Function
-    Private Function RepositoryPattern() As Boolean
-        Dim rows As New Dictionary(Of Integer,String) From {{1,"Ada"},{2,"Grace"}} : Return rows(2)="Grace"
-    End Function
-    Private Function DependencyInjectionPattern() As Boolean
-        Dim service As Func(Of Func(Of String),String)=Function(clock)$"at:{clock()}" : Return service(Function()"10:00")="at:10:00"
-    End Function
-    Private Function LazyInitializationPattern() As Boolean
-        Dim builds=0,cache As String=Nothing
-        Dim getValue As Func(Of String)=Function()
-            If cache Is Nothing Then builds+=1 : cache="ready"
-            Return cache
-        End Function
-        Return getValue()="ready" AndAlso getValue()="ready" AndAlso builds=1
-    End Function
-    Private Function ObjectPoolPattern() As Boolean
-        Dim pool As New Stack(Of Integer)(New Integer(){1,2}) : Dim x=pool.Pop() : pool.Push(x) : Return pool.Count=2 AndAlso pool.Contains(x)
-    End Function
-    Private Function NullObjectPattern() As Boolean
-        Dim nullLog As Func(Of String,String)=Function(m)"",realLog As Func(Of String,String)=Function(m)$"log:{m}" : Return nullLog("x")="" AndAlso realLog("x")="log:x"
-    End Function
+proc commandPattern(): bool =
+  let commands = [
+    proc(x: int): int = x + 50,
+    proc(x: int): int = x - 20
+  ]
+  var balance = 100
+  for command in commands:
+    balance = command(balance)
+  balance == 130 and commands[1](150) == 130
 
-    Sub Main()
-        Dim cases As (String,Func(Of Boolean))()={
-            ("Command",AddressOf CommandPattern),("Interpreter",AddressOf InterpreterPattern),("Iterator",AddressOf IteratorPattern),("Mediator",AddressOf MediatorPattern),("Memento",AddressOf MementoPattern),("Observer",AddressOf ObserverPattern),("State",AddressOf StatePattern),("Strategy",AddressOf StrategyPattern),("Template Method",AddressOf TemplateMethodPattern),("Visitor",AddressOf VisitorPattern),("MVC",AddressOf MvcPattern),("MVVM",AddressOf MvvmPattern),("Microkernel",AddressOf MicrokernelPattern),("Microservices",AddressOf MicroservicesPattern),("Enterprise Adapter",AddressOf EnterpriseAdapterPattern),("Enterprise Bridge",AddressOf EnterpriseBridgePattern),("Enterprise Facade",AddressOf EnterpriseFacadePattern),("Broker",AddressOf BrokerPattern),("Message Bus",AddressOf MessageBusPattern),("Service Locator",AddressOf ServiceLocatorPattern),("Active Object",AddressOf ActiveObjectPattern),("Monitor Object",AddressOf MonitorObjectPattern),("Half-Sync / Half-Async",AddressOf HalfSyncHalfAsyncPattern),("Leader / Followers",AddressOf LeaderFollowersPattern),("Client-Server",AddressOf ClientServerPattern),("Peer-to-Peer",AddressOf PeerToPeerPattern),("Publish-Subscribe",AddressOf PublishSubscribePattern),("Distributed Proxy",AddressOf DistributedProxyPattern),("Presentation-Abstraction-Control",AddressOf PacPattern),("Model-View-Presenter",AddressOf MvpPattern),("Document-View",AddressOf DocumentViewPattern),("Active Record",AddressOf ActiveRecordPattern),("Data Mapper",AddressOf DataMapperPattern),("Unit of Work",AddressOf UnitOfWorkPattern),("Repository",AddressOf RepositoryPattern),("Dependency Injection",AddressOf DependencyInjectionPattern),("Lazy Initialization",AddressOf LazyInitializationPattern),("Object Pool",AddressOf ObjectPoolPattern),("Null Object",AddressOf NullObjectPattern)}
-        For Each item In cases
-            If Not item.Item2() Then Throw New InvalidOperationException($"pattern failed: {item.Item1}")
-        Next
-        If cases.Length<>39 Then Throw New InvalidOperationException($"expected 39 cases, got {cases.Length}")
-        Console.WriteLine("VB.NET pattern sweep: 39/39 examples passed")
-    End Sub
-End Module
+type
+  ExprKind = enum ekLit, ekAdd, ekMul
+  Expr = ref object
+    kind: ExprKind
+    value: int
+    left, right: Expr
+
+proc eval(e: Expr): int =
+  case e.kind
+  of ekLit: e.value
+  of ekAdd: eval(e.left) + eval(e.right)
+  of ekMul: eval(e.left) * eval(e.right)
+
+proc interpreterPattern(): bool =
+  let expression = Expr(
+    kind: ekAdd,
+    left: Expr(kind: ekLit, value: 7),
+    right: Expr(
+      kind: ekMul,
+      left: Expr(kind: ekLit, value: 3),
+      right: Expr(kind: ekLit, value: 4)
+    )
+  )
+  eval(expression) == 19
+
+proc iteratorPattern(): bool =
+  var seen: seq[int] = @[]
+  for value in [10, 20, 30]:
+    seen.add(value)
+  seen == @[10, 20, 30]
+
+proc mediatorPattern(): bool =
+  var events: seq[string] = @[]
+  proc notify(sender, event: string) =
+    if sender == "button" and event == "click":
+      events.add("panel.refresh")
+    elif sender == "panel" and event == "loaded":
+      events.add("button.enable")
+  notify("button", "click")
+  notify("panel", "loaded")
+  events.join(">") == "panel.refresh>button.enable"
+
+proc mementoPattern(): bool =
+  var state = "draft"
+  let snapshot = state
+  state = "published"
+  let published = state == "published"
+  state = snapshot
+  published and state == "draft"
+
+proc observerPattern(): bool =
+  let observers = [
+    proc(id: int): string = "audit:" & $id,
+    proc(id: int): string = "dashboard:" & $id
+  ]
+  observers.mapIt(it(42)).join(">") == "audit:42>dashboard:42"
+
+proc statePattern(): bool =
+  proc transition(state, action: string): string =
+    if state == "locked" and action == "unlock":
+      "unlocked"
+    elif state == "unlocked" and action == "lock":
+      "locked"
+    else:
+      state
+  transition(transition("locked", "unlock"), "lock") == "locked"
+
+proc strategyPattern(): bool =
+  proc price(value: int, strategy: proc(x: int): int): int =
+    strategy(value)
+  price(100, proc(x: int): int = x) == 100 and
+    price(100, proc(x: int): int = x * 80 div 100) == 80
+
+proc templateMethodPattern(): bool =
+  proc pipeline(readStep: string, transform: proc(): string): string =
+    readStep & ">" & transform() & ">publish"
+  pipeline("read-csv", proc(): string = "normalize") ==
+    "read-csv>normalize>publish"
+
+type
+  ShapeKind = enum skCircle, skRect
+  Shape = object
+    case kind: ShapeKind
+    of skCircle:
+      radius: float
+    of skRect:
+      width, height: float
+
+proc area(shape: Shape): float =
+  case shape.kind
+  of skCircle: PI * shape.radius * shape.radius
+  of skRect: shape.width * shape.height
+
+proc visitorPattern(): bool =
+  let shapes = @[
+    Shape(kind: skCircle, radius: 2.0),
+    Shape(kind: skRect, width: 3.0, height: 4.0)
+  ]
+  abs(shapes.mapIt(area(it)).foldl(a + b) - (4.0 * PI + 12.0)) < 1.0e-9
+
+proc mvcPattern(): bool =
+  var count = 0
+  proc view(): string = "count=" & $count
+  let before = view()
+  inc count
+  before == "count=0" and view() == "count=1"
+
+proc mvvmPattern(): bool =
+  var amount = 10
+  proc text(): string = "$" & $amount & ".00"
+  let before = text()
+  amount += 5
+  before == "$10.00" and text() == "$15.00"
+
+proc microkernelPattern(): bool =
+  type Plugin = proc(x: int): int
+  var plugins = initTable[string, Plugin]()
+  plugins["double"] = proc(x: int): int = x * 2
+  plugins["square"] = proc(x: int): int = x * x
+  plugins["double"](4) == 8 and plugins["square"](4) == 16
+
+proc microservicesPattern(): bool =
+  var stock = 7
+  proc reserve(quantity: int): bool =
+    if quantity > stock:
+      return false
+    stock -= quantity
+    true
+  proc place(quantity: int): string =
+    if reserve(quantity): "confirmed" else: "rejected"
+  place(2) == "confirmed" and stock == 5
+
+proc enterpriseAdapterPattern(): bool =
+  let legacyCode = 17
+  let legacyCents = 1250
+  let canonicalId = legacyCode
+  let canonicalAmount = legacyCents.float / 100.0
+  canonicalId == 17 and canonicalAmount == 12.5
+
+proc enterpriseBridgePattern(): bool =
+  proc send(transport, kind, message: string): string =
+    transport & ">" & kind & ":" & message
+  send("kafka", "ALERT", "disk") == "kafka>ALERT:disk" and
+    send("queue", "REMINDER", "backup") == "queue>REMINDER:backup"
+
+proc enterpriseFacadePattern(): bool =
+  proc crm(id: int): string = "crm:create:" & $id
+  proc billing(id: int): string = "billing:open:" & $id
+  crm(77) & ">" & billing(77) == "crm:create:77>billing:open:77"
+
+proc brokerPattern(): bool =
+  type Service = proc(key: string): string
+  var services = initTable[string, Service]()
+  services["inventory"] = proc(key: string): string = "inventory:" & key & "=7"
+  services["customer"] = proc(key: string): string = "customer:" & key & "=active"
+  services["inventory"]("sku-1") == "inventory:sku-1=7" and
+    services["customer"]("17") == "customer:17=active"
+
+proc messageBusPattern(): bool =
+  let handlers = [
+    proc(topic: string, id: int): string = "audit:" & topic & ":" & $id,
+    proc(topic: string, id: int): string = "billing:" & topic & ":" & $id
+  ]
+  handlers.mapIt(it("order-created", 42)).join(">") ==
+    "audit:order-created:42>billing:order-created:42"
+
+proc serviceLocatorPattern(): bool =
+  type Service = proc(value: string): string
+  var services = initTable[string, Service]()
+  services["email"] = proc(value: string): string = "email>" & value
+  services["audit"] = proc(value: string): string = "audit>" & value
+  services["email"]("a@example.test") == "email>a@example.test" and
+    services["audit"]("created") == "audit>created"
+
+proc activeObjectPattern(): bool =
+  var value = 0
+  let queue = [
+    proc() = value += 3,
+    proc() = value *= 4
+  ]
+  let before = value
+  for command in queue:
+    command()
+  before == 0 and value == 12
+
+proc monitorObjectPattern(): bool =
+  var gate: Lock
+  initLock(gate)
+  var value = 0
+  withLock gate:
+    value += 2
+  withLock gate:
+    value += 3
+  deinitLock(gate)
+  value == 5
+
+proc halfSyncHalfAsyncPattern(): bool =
+  let asyncIngress = @["job-1", "job-2", "job-3"]
+  let syncCore = asyncIngress.mapIt("done:" & it)
+  syncCore.join(">") == "done:job-1>done:job-2>done:job-3"
+
+proc leaderFollowersPattern(): bool =
+  let workers = @["worker-1", "worker-2", "worker-3"]
+  let events = @["a", "b", "c"]
+  var handled: seq[string] = @[]
+  for index, event in events:
+    handled.add(workers[index mod workers.len] & ":" & event)
+  handled.join(">") == "worker-1:a>worker-2:b>worker-3:c" and
+    workers[events.len mod workers.len] == "worker-1"
+
+proc clientServerPattern(): bool =
+  proc server(key: string): tuple[status: int, body: string] =
+    if key == "sku-1": (200, "stock=7") else: (404, "missing")
+  server("sku-1") == (status: 200, body: "stock=7")
+
+proc peerToPeerPattern(): bool =
+  var inbox: seq[string] = @[]
+  proc send(fromPeer, toPeer, data: string) =
+    inbox.add(fromPeer & ">" & toPeer & ":" & data)
+  send("peer-a", "peer-b", "block-42")
+  send("peer-a", "peer-c", "block-42")
+  inbox.join(">") == "peer-a>peer-b:block-42>peer-a>peer-c:block-42"
+
+proc publishSubscribePattern(): bool =
+  let subscribers = [
+    proc(id: int): string = "warehouse:" & $id,
+    proc(id: int): string = "analytics:" & $id
+  ]
+  subscribers.mapIt(it(51)).join(">") == "warehouse:51>analytics:51"
+
+proc distributedProxyPattern(): bool =
+  proc remote(sku: string): int =
+    if sku == "sku-1": 7 else: 0
+  proc proxy(sku: string): int = remote(sku)
+  proxy("sku-1") == 7
+
+proc pacPattern(): bool =
+  proc view(name: string, value: int): string =
+    name & ":view=" & $value
+  view("child", 42) == "child:view=42" and
+    view("root", 42) == "root:view=42"
+
+proc mvpPattern(): bool =
+  var count = 0
+  var text = ""
+  proc present() =
+    inc count
+    text = "count=" & $count
+  present()
+  count == 1 and text == "count=1"
+
+proc documentViewPattern(): bool =
+  let title = "Final"
+  let words = 120
+  let editor = "editor:" & title & ":" & $words
+  let summary = "summary:" & title
+  editor == "editor:Final:120" and summary == "summary:Final"
+
+proc activeRecordPattern(): bool =
+  var table = initTable[int, string]()
+  table[7] = "Ada"
+  table[7] == "Ada"
+
+proc dataMapperPattern(): bool =
+  let id = 8
+  let name = "Grace"
+  let key = &"person:{id}"
+  key == "person:8" and name == "Grace"
+
+proc unitOfWorkPattern(): bool =
+  var store: seq[int] = @[]
+  var pending = @[2, 3]
+  store.add(pending)
+  pending.setLen(0)
+  store == @[2, 3] and pending.len == 0
+
+proc repositoryPattern(): bool =
+  let rows = {1: "Ada", 2: "Grace"}.toTable
+  rows[2] == "Grace"
+
+proc dependencyInjectionPattern(): bool =
+  proc service(clock: proc(): string): string =
+    "at:" & clock()
+  service(proc(): string = "10:00") == "at:10:00"
+
+proc lazyInitializationPattern(): bool =
+  var builds = 0
+  var cache = ""
+  proc getValue(): string =
+    if cache.len == 0:
+      inc builds
+      cache = "ready"
+    cache
+  getValue() == "ready" and getValue() == "ready" and builds == 1
+
+proc objectPoolPattern(): bool =
+  var pool = @[1, 2]
+  let value = pool.pop()
+  pool.add(value)
+  pool.len == 2 and value in pool
+
+proc nullObjectPattern(): bool =
+  proc nullLog(_: string): string = ""
+  proc realLog(message: string): string = "log:" & message
+  nullLog("x") == "" and realLog("x") == "log:x"
+
+type PatternCheck = proc(): bool
+
+let cases: seq[(string, PatternCheck)] = @[
+  ("Command", commandPattern),
+  ("Interpreter", interpreterPattern),
+  ("Iterator", iteratorPattern),
+  ("Mediator", mediatorPattern),
+  ("Memento", mementoPattern),
+  ("Observer", observerPattern),
+  ("State", statePattern),
+  ("Strategy", strategyPattern),
+  ("Template Method", templateMethodPattern),
+  ("Visitor", visitorPattern),
+  ("MVC", mvcPattern),
+  ("MVVM", mvvmPattern),
+  ("Microkernel", microkernelPattern),
+  ("Microservices", microservicesPattern),
+  ("Enterprise Adapter", enterpriseAdapterPattern),
+  ("Enterprise Bridge", enterpriseBridgePattern),
+  ("Enterprise Facade", enterpriseFacadePattern),
+  ("Broker", brokerPattern),
+  ("Message Bus", messageBusPattern),
+  ("Service Locator", serviceLocatorPattern),
+  ("Active Object", activeObjectPattern),
+  ("Monitor Object", monitorObjectPattern),
+  ("Half-Sync / Half-Async", halfSyncHalfAsyncPattern),
+  ("Leader / Followers", leaderFollowersPattern),
+  ("Client-Server", clientServerPattern),
+  ("Peer-to-Peer", peerToPeerPattern),
+  ("Publish-Subscribe", publishSubscribePattern),
+  ("Distributed Proxy", distributedProxyPattern),
+  ("Presentation-Abstraction-Control", pacPattern),
+  ("Model-View-Presenter", mvpPattern),
+  ("Document-View", documentViewPattern),
+  ("Active Record", activeRecordPattern),
+  ("Data Mapper", dataMapperPattern),
+  ("Unit of Work", unitOfWorkPattern),
+  ("Repository", repositoryPattern),
+  ("Dependency Injection", dependencyInjectionPattern),
+  ("Lazy Initialization", lazyInitializationPattern),
+  ("Object Pool", objectPoolPattern),
+  ("Null Object", nullObjectPattern)
+]
+
+for (name, check) in cases:
+  doAssert check(), "pattern failed: " & name
+
+doAssert cases.len == 39
+echo "Nim pattern sweep: 39/39 examples passed"
