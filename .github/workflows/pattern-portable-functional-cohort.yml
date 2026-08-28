@@ -1,0 +1,144 @@
+name: Pattern Portable Functional Cohort
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/Systems/Rust/patterns/**'
+      - 'src/Enterprise/Java/patterns/**'
+      - 'src/Systems/C++/patterns/**'
+      - 'src/Systems/C/patterns/**'
+      - 'src/DataScience/R/patterns/**'
+      - 'src/DataScience/Octave/patterns/**'
+      - 'src/Functional/OCaml/patterns/**'
+      - 'src/Functional/CommonLisp/patterns/**'
+      - 'src/Functional/Elixir/patterns/**'
+      - 'src/Functional/Erlang/patterns/**'
+      - 'src/Functional/Groovy/patterns/**'
+      - 'src/Functional/Prolog/patterns/**'
+      - 'src/Shell/PowerShell/patterns/**'
+      - 'docs/pattern-sweeps/portable-functional-cohort.md'
+      - '.github/workflows/pattern-portable-functional-cohort.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  native-compiled:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate Rust C++ and C canonical cells
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(find src/Systems/Rust/patterns -maxdepth 1 -name '*.rs' | wc -l)" -eq 39
+          test "$(find 'src/Systems/C++/patterns' -maxdepth 1 -name '*.cpp' | wc -l)" -eq 39
+          test "$(find src/Systems/C/patterns -maxdepth 1 -name '*.c' | wc -l)" -eq 39
+          mkdir -p .ci
+          docker pull rust:latest
+          docker run --rm rust:latest rustc --version
+          for f in src/Systems/Rust/patterns/*.rs; do
+            cat "$f" > .ci/cell.rs
+            printf '\nfn main(){assert!(run());}\n' >> .ci/cell.rs
+            docker run --rm -v "$PWD:/work" -w /work rust:latest rustc --edition=2024 -D warnings .ci/cell.rs -o .ci/cell
+            ./.ci/cell
+          done
+          docker pull gcc:latest
+          docker run --rm gcc:latest gcc --version | head -n1
+          for f in src/Systems/C/patterns/*.c; do
+            cat "$f" > .ci/cell.c
+            printf '\nint main(void){return run()?0:1;}\n' >> .ci/cell.c
+            docker run --rm -v "$PWD:/work" -w /work gcc:latest gcc -std=c23 -Wall -Wextra -Werror .ci/cell.c -o .ci/cell
+            ./.ci/cell
+          done
+          docker run --rm gcc:latest g++ --version | head -n1
+          for f in src/Systems/C++/patterns/*.cpp; do
+            cat "$f" > .ci/cell.cpp
+            printf '\nint main(){return run()?0:1;}\n' >> .ci/cell.cpp
+            docker run --rm -v "$PWD:/work" -w /work gcc:latest g++ -std=c++23 -Wall -Wextra -Werror .ci/cell.cpp -o .ci/cell
+            ./.ci/cell
+          done
+          echo 'native-compiled: 117/117 passed'
+
+  jvm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate Java and Groovy canonical cells
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(find src/Enterprise/Java/patterns -maxdepth 1 -name '*.java' | wc -l)" -eq 39
+          test "$(find src/Functional/Groovy/patterns -maxdepth 1 -name '*.groovy' | wc -l)" -eq 39
+          mkdir -p .ci/java
+          docker pull eclipse-temurin:25-jdk
+          docker run --rm eclipse-temurin:25-jdk java -version
+          for f in src/Enterprise/Java/patterns/*.java; do
+            rm -rf .ci/java/*
+            cp "$f" .ci/java/PatternCell.java
+            docker run --rm -v "$PWD:/work" -w /work eclipse-temurin:25-jdk sh -lc 'javac -Xlint:all -Werror .ci/java/PatternCell.java && java -cp .ci/java PatternCell'
+          done
+          docker pull groovy:latest
+          docker run --rm groovy:latest groovy --version
+          for f in src/Functional/Groovy/patterns/*.groovy; do
+            docker run --rm -v "$PWD:/work" -w /work groovy:latest groovy "/work/$f"
+          done
+          echo 'jvm: 78/78 passed'
+
+  functional-runtimes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate BEAM OCaml Lisp and Prolog canonical cells
+        shell: bash
+        run: |
+          set -euo pipefail
+          for spec in 'src/Functional/Elixir/patterns:*.exs' 'src/Functional/Erlang/patterns:*.erl' 'src/Functional/OCaml/patterns:*.ml' 'src/Functional/CommonLisp/patterns:*.lisp' 'src/Functional/Prolog/patterns:*.pl'; do
+            dir=${spec%%:*}; glob=${spec##*:}; test "$(find "$dir" -maxdepth 1 -name "$glob" | wc -l)" -eq 39
+          done
+          docker pull elixir:latest
+          docker run --rm elixir:latest elixir --version
+          for f in src/Functional/Elixir/patterns/*.exs; do docker run --rm -v "$PWD:/work" -w /work elixir:latest elixir "/work/$f"; done
+          mkdir -p .ci/erlang
+          for f in src/Functional/Erlang/patterns/*.erl; do
+            mod=$(basename "$f" .erl)
+            rm -f .ci/erlang/*.beam
+            docker run --rm -v "$PWD:/work" -w /work elixir:latest erlc -Werror -o .ci/erlang "/work/$f"
+            docker run --rm -v "$PWD:/work" -w /work elixir:latest erl -noshell -pa /work/.ci/erlang -eval "$mod:main(), halt()."
+          done
+          docker pull ocaml/opam:latest
+          docker run --rm ocaml/opam:latest ocamlc -version
+          for f in src/Functional/OCaml/patterns/*.ml; do docker run --rm -v "$PWD:/work" -w /work ocaml/opam:latest sh -lc "ocamlc -w +a -warn-error +a /work/$f -o /tmp/cell && /tmp/cell"; done
+          docker pull clfoundation/sbcl:latest
+          docker run --rm clfoundation/sbcl:latest --version
+          for f in src/Functional/CommonLisp/patterns/*.lisp; do docker run --rm -v "$PWD:/work" clfoundation/sbcl:latest --script "/work/$f"; done
+          docker pull swipl:latest
+          docker run --rm swipl:latest --version
+          for f in src/Functional/Prolog/patterns/*.pl; do docker run --rm -v "$PWD:/work" -w /work swipl:latest -q -f "/work/$f"; done
+          echo 'functional-runtimes: 195/195 passed'
+
+  data-and-shell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate R Octave and PowerShell canonical cells
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(find src/DataScience/R/patterns -maxdepth 1 -name '*.R' | wc -l)" -eq 39
+          test "$(find src/DataScience/Octave/patterns -maxdepth 1 -name '*.m' | wc -l)" -eq 39
+          test "$(find src/Shell/PowerShell/patterns -maxdepth 1 -name '*.ps1' | wc -l)" -eq 39
+          docker pull r-base:latest
+          docker run --rm r-base:latest R --version | head -n1
+          for f in src/DataScience/R/patterns/*.R; do docker run --rm -v "$PWD:/work" -w /work r-base:latest Rscript "/work/$f"; done
+          docker pull gnuoctave/octave:latest
+          docker run --rm gnuoctave/octave:latest --version | head -n1
+          for f in src/DataScience/Octave/patterns/*.m; do
+            name=$(basename "$f" .m)
+            docker run --rm -v "$PWD:/work" -w /work gnuoctave/octave:latest --no-gui --quiet --eval "addpath('/work/src/DataScience/Octave/patterns'); $name"
+          done
+          docker pull mcr.microsoft.com/powershell:latest-ubuntu-24.04
+          docker run --rm mcr.microsoft.com/powershell:latest-ubuntu-24.04 pwsh --version
+          for f in src/Shell/PowerShell/patterns/*.ps1; do docker run --rm -v "$PWD:/work" -w /work mcr.microsoft.com/powershell:latest-ubuntu-24.04 pwsh -NoLogo -NoProfile -File "/work/$f"; done
+          echo 'data-and-shell: 117/117 passed'
