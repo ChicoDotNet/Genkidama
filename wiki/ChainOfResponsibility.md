@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** permitir que una solicitud recorra una secuencia de posibles manejadores hasta que uno asuma la responsabilidad, sin acoplar al emisor con un receptor concreto.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `16/49`  
+> **Implementaciones de lenguaje:** `26/49`  
 > **Cobertura de pruebas:** N/A — ejemplos standalone multi-ecosistema; se usa compilación, runtime, análisis o contrato por lenguaje en lugar de inventar un porcentaje agregado.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -152,7 +152,7 @@ Una cadena sin fallback o error explícito puede terminar sin respuesta. El ejem
 
 Universo actual: **51 targets**. Chain of Responsibility clasifica **49 Applicable** y **2 N/A**. SQL declarativo permanece Applicable porque una secuencia ordenada de reglas/CTEs puede representar receptores que se evalúan hasta que uno acepta; no requiere clases para preservar la intención.
 
-Actualmente hay **21 ejemplos materializados y 16 verificados** en este PR. Lua, Bash, PowerShell, Haskell y Perl esperan evidencia verde del gate actual; los demás Applicable permanecen pendientes hasta contar con ejemplo y evidencia propios.
+Actualmente hay **26 ejemplos materializados y 26 verificados** en este PR. Los demás Applicable permanecen pendientes hasta contar con ejemplo y evidencia propios.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -172,16 +172,16 @@ Actualmente hay **21 ejemplos materializados y 16 verificados** en este PR. Lua,
 | Visual Basic .NET | Applicable | [`ChainOfResponsibilityExample.vb`](../src/Enterprise/VB.NET/ChainOfResponsibilityExample.vb) | Chain Mainstream #4 ✅ | interface + handlers enlazados |
 | C | Applicable | [`chain_of_responsibility.c`](../src/Systems/C/chain_of_responsibility.c) | Chain Mainstream #4 ✅ | structs + function pointers |
 | Ruby | Applicable | [`chain_of_responsibility.rb`](../src/Scripting/Ruby/chain_of_responsibility.rb) | Chain Mainstream #4 ✅ | duck typing/objetos enlazados |
-| Lua | Applicable | [`chain_of_responsibility.lua`](../src/Scripting/Lua/chain_of_responsibility.lua) | Gate actual pendiente | tablas + funciones |
-| Bash | Applicable | [`chain_of_responsibility.sh`](../src/Shell/Bash/chain_of_responsibility.sh) | Gate actual pendiente | funciones + cadena declarada |
-| PowerShell | Applicable | [`chain_of_responsibility.ps1`](../src/Shell/PowerShell/chain_of_responsibility.ps1) | Gate actual pendiente | objetos + función de recorrido |
-| Haskell | Applicable | [`ChainOfResponsibility.hs`](../src/Functional/Haskell/ChainOfResponsibility.hs) | Gate actual pendiente | ADT + recursión explícita |
-| Perl | Applicable | [`chain_of_responsibility.pl`](../src/Scripting/Perl/chain_of_responsibility.pl) | Gate actual pendiente | hashes + recorrido ordenado |
-| Pascal | Applicable | — | Pendiente | clases/procedimientos enlazados |
-| R | Applicable | — | Pendiente | closures/listas ordenadas |
-| GNU Octave | Applicable | — | Pendiente | funciones/handles |
-| OCaml | Applicable | — | Pendiente | records/variants/recursión |
-| Common Lisp | Applicable | — | Pendiente | CLOS o closures |
+| Lua | Applicable | [`chain_of_responsibility.lua`](../src/Scripting/Lua/chain_of_responsibility.lua) | Chain Mainstream #11 ✅ | tablas + funciones |
+| Bash | Applicable | [`chain_of_responsibility.sh`](../src/Shell/Bash/chain_of_responsibility.sh) | Chain Mainstream #11 ✅ | funciones + cadena declarada |
+| PowerShell | Applicable | [`chain_of_responsibility.ps1`](../src/Shell/PowerShell/chain_of_responsibility.ps1) | Chain Mainstream #11 ✅ | objetos + función de recorrido |
+| Haskell | Applicable | [`ChainOfResponsibility.hs`](../src/Functional/Haskell/ChainOfResponsibility.hs) | Chain Mainstream #11 ✅ | ADT + recursión explícita |
+| Perl | Applicable | [`chain_of_responsibility.pl`](../src/Scripting/Perl/chain_of_responsibility.pl) | Chain Mainstream #11 ✅ | hashes + recorrido ordenado |
+| Pascal | Applicable | [`chain_of_responsibility.pas`](../src/Systems/Pascal/chain_of_responsibility.pas) | Chain Compiled #1 ✅ | handlers enlazados + fallback explícito |
+| R | Applicable | [`chain_of_responsibility.R`](../src/DataScience/R/chain_of_responsibility.R) | Chain Functional #1 ✅ | closures + recursión sobre lista |
+| GNU Octave | Applicable | [`chain_of_responsibility.m`](../src/DataScience/Octave/chain_of_responsibility.m) | Chain Functional #1 ✅ | structs ordenados + short-circuit |
+| OCaml | Applicable | [`chain_of_responsibility.ml`](../src/Functional/OCaml/chain_of_responsibility.ml) | Chain Functional #1 ✅ | records + recursión |
+| Common Lisp | Applicable | [`chain_of_responsibility.lisp`](../src/Functional/CommonLisp/chain_of_responsibility.lisp) | Chain Functional #1 ✅ | structs + closures + recursión |
 | Scala | Applicable | — | Pendiente | traits/case classes |
 | Julia | Applicable | — | Pendiente | funciones/structs |
 | Clojure | Applicable | — | Pendiente | functions/protocols + secuencia |
