@@ -1,1 +1,7 @@
-let null_logger _=();;let service logger=logger"run";"ok";;let ()=assert(service null_logger="ok")
+let null_logger _message = ()
+
+let service logger =
+  logger "run";
+  "ok"
+
+let () = assert (service null_logger = "ok")

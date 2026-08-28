@@ -1,1 +1,5 @@
-let ()=let seen=ref[] in let bus=[fun v->seen:=v::!seen] in List.iter(fun f->f 42)bus;assert(!seen=[42])
+let () =
+  let seen = ref [] in
+  let bus = [ (fun value -> seen := value :: !seen) ] in
+  List.iter (fun handler -> handler 42) bus;
+  assert (!seen = [ 42 ])

@@ -1,1 +1,4 @@
-let ()=let model=("Ada","Lovelace") in let vm(a,b)=a^" "^b in assert(vm model="Ada Lovelace")
+let () =
+  let model = ("Ada", "Lovelace") in
+  let view_model (first, last) = first ^ " " ^ last in
+  assert (view_model model = "Ada Lovelace")

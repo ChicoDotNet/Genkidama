@@ -1,1 +1,7 @@
-let ()=let workers=["leader";"follower"]and events=["one";"two"]in assert(List.map2(fun w e->w^":"^e)workers events=["leader:one";"follower:two"])
+let () =
+  let workers = [ "leader"; "follower" ] in
+  let events = [ "one"; "two" ] in
+  let handled =
+    List.map2 (fun worker event -> worker ^ ":" ^ event) workers events
+  in
+  assert (handled = [ "leader:one"; "follower:two" ])

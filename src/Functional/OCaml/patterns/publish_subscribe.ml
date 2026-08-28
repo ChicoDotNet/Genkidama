@@ -1,1 +1,5 @@
-let ()=let received=ref[] in let topics=[fun v->received:=v::!received]in List.iter(fun f->f"v1")topics;assert(!received=["v1"])
+let () =
+  let received = ref [] in
+  let topic = [ (fun value -> received := value :: !received) ] in
+  List.iter (fun subscriber -> subscriber "v1") topic;
+  assert (!received = [ "v1" ])

@@ -1,1 +1,7 @@
-let ()=let events=ref[] in let med s m=events:=(s^":"^m)::!events in med"checkout""paid";assert(!events=["checkout:paid"])
+let () =
+  let events = ref [] in
+  let mediate sender message =
+    events := (sender ^ ":" ^ message) :: !events
+  in
+  mediate "checkout" "paid";
+  assert (!events = [ "checkout:paid" ])
