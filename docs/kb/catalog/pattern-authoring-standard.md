@@ -1,6 +1,6 @@
 # Canonical Design Pattern Authoring Standard
 
-> **Status:** Approved by the owner on 2026-08-14  
+> **Status:** Approved by the owner on 2026-08-14; bounded matrix-scheduling exception approved on 2026-08-27  
 > **Applies to:** pattern pages under `wiki/` and their executable examples  
 > **Catalog:** [`wiki/README.md`](../../../wiki/README.md)  
 > **Guiding principle:** architecture comes first; a pattern exists in the catalog to explain a real design force, not to force the pattern into production code.
@@ -289,6 +289,23 @@ When code coverage can be measured meaningfully:
 - never add low-value tests merely to increase a percentage;
 - never block the next pattern because coverage is below 100%; 100% is not a requirement.
 
+## Scheduling and delivery order
+
+The default delivery order remains **one incomplete pattern at a time**. A bounded exception is allowed only when the owner explicitly approves a matrix/language scheduling experiment and `docs/roadmap.md` records its scope, order and exit/review point.
+
+The exception changes **scheduling only**. During an approved matrix sweep:
+
+- one active branch/PR per pattern remains the delivery boundary;
+- a pattern may receive one verified target implementation and remain `in-progress` while another pattern receives the same target next;
+- later sweeps continue the same draft/in-progress PR for that pattern rather than opening a second pattern PR;
+- no partial pattern may be called `validated`, complete, stable for promotion or roadmap-complete until every Applicable target and every other item in this standard's DoD passes;
+- all applicability, idiomaticity, validation, coverage, Mermaid, relationship, factual `En Genkidama`, link-integrity and comprehension requirements remain unchanged;
+- `N/A` remains a technical conclusion, never a scheduling shortcut;
+- current `dev`, concurrent lane work and CI must still be reconciled before any stability claim;
+- the experiment must be reversible without rewriting already valid pattern artifacts.
+
+If no active roadmap exception exists, the default one-pattern-at-a-time rule applies.
+
 ## Content rules
 
 Pattern explanations are authored in Spanish. Code identifiers and canonical pattern names remain in their conventional form.
@@ -352,9 +369,9 @@ Correctness is non-compensable. A materially wrong pattern definition or a non-i
 
 1. Read this standard, `docs/roadmap.md`, the target page, actual example files and the relevant neighborhood of the relationship map.
 2. Repay bounded debt in the target pattern before adding breadth.
-3. Work on **one pattern at a time** until every Applicable language has a verified example.
-4. Use **one PR per pattern**. Multiple coherent commits are expected when the cross-language implementation is large; commits may be grouped by language family or validation boundary.
-5. Do not start the next pattern while the current pattern is incomplete unless an external technical blocker is documented and no safe work remains on it.
+3. By default, work on **one pattern at a time** until every Applicable language has a verified example. During an owner-approved matrix scheduling experiment explicitly recorded in `docs/roadmap.md`, follow that bounded order while keeping every partial pattern `in-progress`.
+4. Use **one active PR per pattern**. Multiple coherent commits and multiple approved scheduling passes are expected when the cross-language implementation is large; commits may be grouped by language family or validation boundary.
+5. Do not start the next pattern while the current pattern is incomplete unless an external technical blocker is documented and no safe work remains on it **or** the active roadmap explicitly authorizes a bounded matrix/language sweep. Neither exception changes the pattern DoD.
 6. Verify paths and applicability; never infer completion from naming conventions.
 7. Keep the language implementation table current after every increment.
 8. Update the global relationship map only when a relationship is useful and defensible.
@@ -366,5 +383,5 @@ Correctness is non-compensable. A materially wrong pattern definition or a non-i
 
 1. Retrofit [`AbstractFactory.md`](../../../wiki/AbstractFactory.md) first and make it the golden reference, including all Applicable language implementations.
 2. Complete Builder, Factory Method, Prototype and Singleton under the same DoD.
-3. Continue family by family so neighboring patterns and their relationships can be reviewed coherently.
+3. Continue family by family so neighboring patterns and their relationships can be reviewed coherently. An active owner-approved matrix scheduling experiment may change the traversal order without changing family membership, pattern DoD or promotion criteria.
 4. Coordinate with the Genkidama Learn lane through the unified repository roadmap: each lane spends roughly 80% of effort on its own delivery and 20% checking that its changes remain compatible with the other lane.
