@@ -1,9 +1,7 @@
 name: Pattern Chain of Responsibility Mainstream
 on:
   pull_request:
-    branches:
-      - patterns/proxy-kb006
-      - dev
+    branches: [dev]
     paths:
       - 'src/**/chain*'
       - 'src/**/ChainOfResponsibility*'
@@ -26,12 +24,12 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: actions/setup-go@v5
         with: { go-version: stable }
-      - name: Install SQL runtime
+      - name: Install SQL and scripting runtimes
         shell: bash
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y sqlite3
+          sudo apt-get install --no-install-recommends -y sqlite3 ruby
       - name: Validate Chain of Responsibility examples
         shell: bash
         run: |
@@ -74,5 +72,23 @@ jobs:
 
           node --check src/Web/JavaScriptJS/chain-of-responsibility.js
           assert_output JavaScript "$(node src/Web/JavaScriptJS/chain-of-responsibility.js)"
+
+          command -v kotlinc >/dev/null
+          kotlinc src/Enterprise/Kotlin/ChainOfResponsibilityExample.kt -include-runtime -d "$work/chain-kotlin.jar"
+          assert_output Kotlin "$(java -jar "$work/chain-kotlin.jar")"
+
+          command -v swiftc >/dev/null
+          swiftc -warnings-as-errors src/Systems/Swift/chain_of_responsibility.swift -o "$work/chain-swift"
+          assert_output Swift "$("$work/chain-swift")"
+
+          dotnet new console -lang VB --framework net10.0 -n ChainVb -o "$work/vb" >/dev/null
+          cp src/Enterprise/VB.NET/ChainOfResponsibilityExample.vb "$work/vb/Program.vb"
+          assert_output VB.NET "$(dotnet run --project "$work/vb/ChainVb.vbproj" --configuration Release)"
+
+          gcc -std=c17 -Wall -Wextra -Werror -pedantic src/Systems/C/chain_of_responsibility.c -o "$work/chain-c"
+          assert_output C "$("$work/chain-c")"
+
+          ruby -cw src/Scripting/Ruby/chain_of_responsibility.rb >/dev/null
+          assert_output Ruby "$(ruby src/Scripting/Ruby/chain_of_responsibility.rb)"
 
           assert_output SQL "$(sqlite3 :memory: < src/Data/SQL/chain_of_responsibility.sql)"
