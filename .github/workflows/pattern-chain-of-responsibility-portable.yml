@@ -51,7 +51,7 @@ jobs:
           assert_output Objective-C "$("$work/chain-objc")"
 
           # Zig: compile and execute with the repository-standard stable toolchain.
-          assert_output Zig "$(zig run src/Systems/Zig/chain_of_responsibility.zig)"
+          assert_output Zig "$(zig run src/Systems/Zig/chain_of_responsibility.zig 2>&1)"
 
           # MicroPython example deliberately stays inside the Python language subset shared by CPython;
           # CPython execution is a stronger lightweight gate than syntax-only validation here.
