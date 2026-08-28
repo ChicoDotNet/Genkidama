@@ -49,3 +49,13 @@ jobs:
           assert_output Prolog "$(swipl -q -s src/Functional/Prolog/proxy.pl)"
 
           assert_output Groovy "$(groovy src/Functional/Groovy/proxy.groovy)"
+
+  portable-functional-cohort:
+    if: github.event_name == 'pull_request' && github.head_ref == 'sweeps/portable-functional-cohort-kb006'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate 507 portable-functional cohort cells
+        shell: bash
+        run: bash scripts/validate-portable-functional-cohort.sh
