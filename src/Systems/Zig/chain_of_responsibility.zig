@@ -5,12 +5,26 @@ const Handler = struct {
     limit: u32,
 };
 
-fn handle(handlers: []const Handler, amount: u32, visited: *std.ArrayList(u8), result: []u8) ![]const u8 {
+fn appendBytes(buffer: []u8, length: *usize, bytes: []const u8) !void {
+    if (length.* + bytes.len > buffer.len) return error.NoSpaceLeft;
+    for (bytes) |byte| {
+        buffer[length.*] = byte;
+        length.* += 1;
+    }
+}
+
+fn handle(
+    handlers: []const Handler,
+    amount: u32,
+    visited_buffer: []u8,
+    visited_length: *usize,
+    result_buffer: []u8,
+) ![]const u8 {
     for (handlers, 0..) |handler, index| {
-        if (index > 0) try visited.append('>');
-        try visited.appendSlice(handler.name);
+        if (index > 0) try appendBytes(visited_buffer, visited_length, ">");
+        try appendBytes(visited_buffer, visited_length, handler.name);
         if (amount <= handler.limit) {
-            return std.fmt.bufPrint(result, "handled={s};result=refund({d})", .{ handler.name, amount });
+            return std.fmt.bufPrint(result_buffer, "handled={s};result=refund({d})", .{ handler.name, amount });
         }
     }
     return "handled=none;result=rejected";
@@ -24,12 +38,11 @@ pub fn main() !void {
     };
 
     var visited_buffer: [64]u8 = undefined;
-    var visited_stream = std.io.fixedBufferStream(&visited_buffer);
-    var visited = std.ArrayList(u8).initBuffer(visited_stream.buffer);
+    var visited_length: usize = 0;
     var result_buffer: [64]u8 = undefined;
-    const result = try handle(&handlers, 250, &visited, &result_buffer);
+    const result = try handle(&handlers, 250, &visited_buffer, &visited_length, &result_buffer);
 
     var output: [160]u8 = undefined;
-    const rendered = try std.fmt.bufPrint(&output, "visited={s};{s}", .{ visited.items, result });
+    const rendered = try std.fmt.bufPrint(&output, "visited={s};{s}", .{ visited_buffer[0..visited_length], result });
     try std.fs.File.stdout().writeAll(rendered);
 }
