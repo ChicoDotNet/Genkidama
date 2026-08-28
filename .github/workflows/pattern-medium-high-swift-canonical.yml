@@ -1,0 +1,50 @@
+name: Pattern Medium-High Swift Canonical
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/Systems/Swift/patterns/**'
+      - '.github/workflows/pattern-medium-high-swift-canonical.yml'
+
+jobs:
+  swift-canonical:
+    name: Swift stable — 39 canonical cells
+    runs-on: ubuntu-latest
+    container: swift:latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: echo "JOB_START=$(date +%s)" >> "$GITHUB_ENV"
+        shell: bash
+      - run: swift --version
+        shell: bash
+      - run: echo "SETUP_END=$(date +%s)" >> "$GITHUB_ENV"
+        shell: bash
+      - name: Compile and execute every canonical Swift example
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          count=0
+          while IFS= read -r -d '' file; do
+            base="$(basename "$file" .swift)"
+            type="${base}Example"
+            driver="$work/${base}.driver.swift"
+            binary="$work/${base}"
+            cat "$file" > "$driver"
+            printf '\nif !%s.run() { fatalError("pattern failed: %s") }\n' "$type" "$base" >> "$driver"
+            swiftc -warnings-as-errors "$driver" -o "$binary"
+            "$binary"
+            count=$((count+1))
+          done < <(find src/Systems/Swift/patterns -maxdepth 1 -type f -name '*.swift' -print0 | sort -z)
+          test "$count" -eq 39
+          echo 'Swift canonical examples: 39/39 passed'
+      - name: Timing summary
+        if: always()
+        shell: bash
+        run: |
+          now="$(date +%s)"
+          setup="$((SETUP_END-JOB_START))"
+          total="$((now-JOB_START))"
+          validation="$((total-setup))"
+          printf '### Swift canonical cohort\n\n- cells: 39\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$setup" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
