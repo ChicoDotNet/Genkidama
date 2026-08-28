@@ -1,0 +1,214 @@
+name: Pattern High-Overhead Cohort
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - '.github/workflows/pattern-high-overhead-cohort.yml'
+      - 'docs/pattern-sweeps/haskell.md'
+      - 'docs/pattern-sweeps/go.md'
+      - 'docs/pattern-sweeps/julia.md'
+      - 'docs/pattern-sweeps/dart.md'
+      - 'docs/pattern-sweeps/crystal.md'
+      - 'docs/pattern-sweeps/zig.md'
+      - 'docs/pattern-sweeps/objective-c.md'
+      - 'src/Functional/Haskell/pattern_sweep.hs'
+      - 'src/Systems/Go/pattern_sweep.go'
+      - 'src/DataScience/Julia/pattern_sweep.jl'
+      - 'src/Web/Dart/pattern_sweep.dart'
+      - 'src/Niche/Crystal/pattern_sweep.cr'
+      - 'src/Systems/Zig/pattern_sweep.zig'
+      - 'src/Systems/Objective-C/pattern_sweep.m'
+
+jobs:
+  haskell:
+    if: github.head_ref == 'patterns/high-overhead-cohort-kb006'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Start target timing
+        shell: bash
+        run: echo "TARGET_STARTED=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Install GHC once
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y ghc
+      - name: Validate 39 Haskell pattern cells
+        shell: bash
+        run: |
+          set -euo pipefail
+          setup_seconds=$(( $(date +%s) - TARGET_STARTED ))
+          validation_started=$(date +%s)
+          work="$(mktemp -d)"
+          ghc -Wall -Werror src/Functional/Haskell/pattern_sweep.hs -o "$work/pattern-sweep-haskell"
+          actual="$("$work/pattern-sweep-haskell")"
+          expected='Haskell pattern sweep: 39/39 examples passed'
+          test "$actual" = "$expected"
+          validation_seconds=$(( $(date +%s) - validation_started ))
+          total_seconds=$(( $(date +%s) - TARGET_STARTED ))
+          printf 'target=Haskell cells=39 setup_seconds=%d validation_seconds=%d total_seconds=%d\n' "$setup_seconds" "$validation_seconds" "$total_seconds"
+
+  go:
+    if: github.head_ref == 'patterns/high-overhead-cohort-kb006'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Start target timing
+        shell: bash
+        run: echo "TARGET_STARTED=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Setup Go once
+        uses: actions/setup-go@v7
+        with:
+          go-version: '1.26.5'
+      - name: Validate 39 Go pattern cells
+        shell: bash
+        run: |
+          set -euo pipefail
+          setup_seconds=$(( $(date +%s) - TARGET_STARTED ))
+          validation_started=$(date +%s)
+          test -z "$(gofmt -d src/Systems/Go/pattern_sweep.go)"
+          go vet src/Systems/Go/pattern_sweep.go
+          actual="$(go run src/Systems/Go/pattern_sweep.go)"
+          expected='Go pattern sweep: 39/39 examples passed'
+          test "$actual" = "$expected"
+          validation_seconds=$(( $(date +%s) - validation_started ))
+          total_seconds=$(( $(date +%s) - TARGET_STARTED ))
+          printf 'target=Go cells=39 setup_seconds=%d validation_seconds=%d total_seconds=%d\n' "$setup_seconds" "$validation_seconds" "$total_seconds"
+
+  julia:
+    if: github.head_ref == 'patterns/high-overhead-cohort-kb006'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Start target timing
+        shell: bash
+        run: echo "TARGET_STARTED=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Setup Julia once
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: '1'
+      - name: Validate 39 Julia pattern cells
+        shell: bash
+        run: |
+          set -euo pipefail
+          setup_seconds=$(( $(date +%s) - TARGET_STARTED ))
+          validation_started=$(date +%s)
+          actual="$(julia --startup-file=no src/DataScience/Julia/pattern_sweep.jl)"
+          expected='Julia pattern sweep: 39/39 examples passed'
+          test "$actual" = "$expected"
+          validation_seconds=$(( $(date +%s) - validation_started ))
+          total_seconds=$(( $(date +%s) - TARGET_STARTED ))
+          printf 'target=Julia cells=39 setup_seconds=%d validation_seconds=%d total_seconds=%d\n' "$setup_seconds" "$validation_seconds" "$total_seconds"
+
+  dart:
+    if: github.head_ref == 'patterns/high-overhead-cohort-kb006'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Start target timing
+        shell: bash
+        run: echo "TARGET_STARTED=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Setup Dart once
+        uses: dart-lang/setup-dart@v1
+      - name: Validate 39 Dart pattern cells
+        shell: bash
+        run: |
+          set -euo pipefail
+          setup_seconds=$(( $(date +%s) - TARGET_STARTED ))
+          validation_started=$(date +%s)
+          dart format --output=none --set-exit-if-changed src/Web/Dart/pattern_sweep.dart
+          dart analyze --fatal-infos --fatal-warnings src/Web/Dart/pattern_sweep.dart
+          actual="$(dart run src/Web/Dart/pattern_sweep.dart)"
+          expected='Dart pattern sweep: 39/39 examples passed'
+          test "$actual" = "$expected"
+          validation_seconds=$(( $(date +%s) - validation_started ))
+          total_seconds=$(( $(date +%s) - TARGET_STARTED ))
+          printf 'target=Dart cells=39 setup_seconds=%d validation_seconds=%d total_seconds=%d\n' "$setup_seconds" "$validation_seconds" "$total_seconds"
+
+  crystal:
+    if: github.head_ref == 'patterns/high-overhead-cohort-kb006'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Start target timing
+        shell: bash
+        run: echo "TARGET_STARTED=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Setup Crystal once
+        uses: crystal-lang/install-crystal@v1
+      - name: Validate 39 Crystal pattern cells
+        shell: bash
+        run: |
+          set -euo pipefail
+          setup_seconds=$(( $(date +%s) - TARGET_STARTED ))
+          validation_started=$(date +%s)
+          crystal tool format src/Niche/Crystal/pattern_sweep.cr
+          test -z "$(git status --short -- src/Niche/Crystal/pattern_sweep.cr)"
+          work="$(mktemp -d)"
+          crystal build --error-on-warnings src/Niche/Crystal/pattern_sweep.cr -o "$work/pattern-sweep-crystal"
+          actual="$("$work/pattern-sweep-crystal")"
+          expected='Crystal pattern sweep: 39/39 examples passed'
+          test "$actual" = "$expected"
+          validation_seconds=$(( $(date +%s) - validation_started ))
+          total_seconds=$(( $(date +%s) - TARGET_STARTED ))
+          printf 'target=Crystal cells=39 setup_seconds=%d validation_seconds=%d total_seconds=%d\n' "$setup_seconds" "$validation_seconds" "$total_seconds"
+
+  zig:
+    if: github.head_ref == 'patterns/high-overhead-cohort-kb006'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Start target timing
+        shell: bash
+        run: echo "TARGET_STARTED=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Setup Zig once
+        uses: mlugg/setup-zig@v2
+      - name: Validate 39 Zig pattern cells
+        shell: bash
+        run: |
+          set -euo pipefail
+          setup_seconds=$(( $(date +%s) - TARGET_STARTED ))
+          validation_started=$(date +%s)
+          zig fmt --check src/Systems/Zig/pattern_sweep.zig
+          actual="$(zig run src/Systems/Zig/pattern_sweep.zig 2>&1)"
+          expected='Zig pattern sweep: 39/39 examples passed'
+          test "$actual" = "$expected"
+          validation_seconds=$(( $(date +%s) - validation_started ))
+          total_seconds=$(( $(date +%s) - TARGET_STARTED ))
+          printf 'target=Zig cells=39 setup_seconds=%d validation_seconds=%d total_seconds=%d\n' "$setup_seconds" "$validation_seconds" "$total_seconds"
+
+  objective-c:
+    if: github.head_ref == 'patterns/high-overhead-cohort-kb006'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Start target timing
+        shell: bash
+        run: echo "TARGET_STARTED=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Install Objective-C toolchain once
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y gobjc libobjc-13-dev libgnustep-base-dev
+      - name: Validate 39 Objective-C pattern cells
+        shell: bash
+        run: |
+          set -euo pipefail
+          setup_seconds=$(( $(date +%s) - TARGET_STARTED ))
+          validation_started=$(date +%s)
+          work="$(mktemp -d)"
+          objc_headers="$(gcc -print-file-name=include)"
+          objc_library="$(gcc -print-file-name=libobjc.so)"
+          test -f "$objc_library"
+          objc_libdir="$(dirname "$objc_library")"
+          clang $(gnustep-config --objc-flags) -I"$objc_headers" \
+            src/Systems/Objective-C/pattern_sweep.m \
+            -o "$work/pattern-sweep-objc" -L"$objc_libdir" $(gnustep-config --base-libs)
+          actual="$("$work/pattern-sweep-objc")"
+          expected='Objective-C pattern sweep: 39/39 examples passed'
+          test "$actual" = "$expected"
+          validation_seconds=$(( $(date +%s) - validation_started ))
+          total_seconds=$(( $(date +%s) - TARGET_STARTED ))
+          printf 'target=Objective-C cells=39 setup_seconds=%d validation_seconds=%d total_seconds=%d\n' "$setup_seconds" "$validation_seconds" "$total_seconds"
