@@ -1,0 +1,125 @@
+name: Temporary Cohort Repair
+
+on:
+  push:
+    branches:
+      - sweeps/high-overhead-cohort-kb006
+    paths:
+      - .github/workflows/tmp-cohort-repair.yml
+      - src/Functional/Haskell/PatternSweep.hs
+      - src/Web/Dart/pattern_sweep.dart
+      - src/Niche/Crystal/pattern_sweep.cr
+      - src/Systems/Zig/pattern_sweep.zig
+
+permissions:
+  contents: read
+
+jobs:
+  haskell:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install GHC
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y ghc
+      - name: Apply known compiler repairs
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('src/Functional/Haskell/PatternSweep.hs')
+          s = p.read_text()
+          replacements = {
+              'enterpriseFacadeCase = let crm i="crm:create:"++show i; billing i="billing:open:"++show i in crm 77 ++ ">" ++ billing 77 == "crm:create:77>billing:open:77"': '''enterpriseFacadeCase =
+  let crm :: Int -> String
+      crm i = "crm:create:" ++ show i
+      billing :: Int -> String
+      billing i = "billing:open:" ++ show i
+  in crm 77 ++ ">" ++ billing 77 == "crm:create:77>billing:open:77"''',
+              'activeObjectCase = let queue=[(+3),(*4)]; before=0; after=foldl (flip ($)) before queue in before==0 && after==12': 'activeObjectCase = let queue=[(+3),(*4)]; before=(0 :: Int); after=foldl (flip ($)) before queue in before==0 && after==12',
+              'leaderFollowersCase = let workers=cycle ["worker-1","worker-2","worker-3"]; events=["event-a","event-b","event-c"]; handled=zipWith (\\w e->w++":"++e) workers events; next=workers!!3 in handled==["worker-1:event-a","worker-2:event-b","worker-3:event-c"] && next=="worker-1"': 'leaderFollowersCase = let workers=cycle ["worker-1","worker-2","worker-3"]; events=["event-a","event-b","event-c"]; handled=zipWith (\\w e->w++":"++e) workers events; nextWorker=workers!!3 in handled==["worker-1:event-a","worker-2:event-b","worker-3:event-c"] && nextWorker=="worker-1"',
+          }
+          for old, new in replacements.items():
+              if old not in s:
+                  raise SystemExit(f'missing expected source fragment: {old[:50]}')
+              s = s.replace(old, new, 1)
+          p.write_text(s)
+          PY
+      - name: Compile and run Haskell sweep
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          ghc -Wall -Werror -O0 -odir "$work" -hidir "$work" src/Functional/Haskell/PatternSweep.hs -o "$work/pattern-sweep-haskell"
+          output="$("$work/pattern-sweep-haskell")"
+          test "$output" = 'Haskell pattern sweep: 39/39 examples passed'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: repaired-haskell
+          path: src/Functional/Haskell/PatternSweep.hs
+
+  dart:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+      - name: Format, analyze and run Dart sweep
+        shell: bash
+        run: |
+          set -euo pipefail
+          file='src/Web/Dart/pattern_sweep.dart'
+          dart format "$file"
+          dart analyze --fatal-infos --fatal-warnings "$file"
+          output="$(dart run "$file")"
+          test "$output" = 'Dart pattern sweep: 39/39 examples passed'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: repaired-dart
+          path: src/Web/Dart/pattern_sweep.dart
+
+  crystal:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: crystal-lang/install-crystal@v1
+      - name: Format, compile and run Crystal sweep
+        shell: bash
+        run: |
+          set -euo pipefail
+          file='src/Niche/Crystal/pattern_sweep.cr'
+          work="$(mktemp -d)"
+          crystal tool format "$file"
+          crystal build --error-on-warnings "$file" -o "$work/pattern-sweep-crystal"
+          output="$("$work/pattern-sweep-crystal")"
+          test "$output" = 'Crystal pattern sweep: 39/39 examples passed'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: repaired-crystal
+          path: src/Niche/Crystal/pattern_sweep.cr
+
+  zig:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: 0.16.0
+      - name: Format, compile and run Zig sweep
+        shell: bash
+        run: |
+          set -euo pipefail
+          file='src/Systems/Zig/pattern_sweep.zig'
+          zig fmt "$file"
+          output="$(zig run "$file" 2>&1)"
+          test "$output" = 'Zig pattern sweep: 39/39 examples passed'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: repaired-zig
+          path: src/Systems/Zig/pattern_sweep.zig
