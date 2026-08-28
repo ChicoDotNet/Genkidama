@@ -1,0 +1,1 @@
+object MediatorExample{fun run():Boolean{val events=mutableListOf<String>();fun notify(sender:String,event:String){if(sender=="button"&&event=="click")events+="panel.refresh";if(sender=="panel"&&event=="loaded")events+="button.enable"};notify("button","click");notify("panel","loaded");return events.joinToString(">") == "panel.refresh>button.enable"}}

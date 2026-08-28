@@ -1,0 +1,1 @@
+function leaderFollowersPattern(){const workers=['worker-1','worker-2','worker-3'],events=['a','b','c'];const handled=events.map((e,i)=>`${workers[i%workers.length]}:${e}`);return handled.join('>')==='worker-1:a>worker-2:b>worker-3:c'&&workers[events.length%workers.length]==='worker-1'}

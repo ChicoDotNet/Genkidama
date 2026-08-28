@@ -1,0 +1,1 @@
+function statePattern(){const transition=(s:string,a:string)=>s==='locked'&&a==='unlock'?'unlocked':s==='unlocked'&&a==='lock'?'locked':s;return transition(transition('locked','unlock'),'lock')==='locked'}

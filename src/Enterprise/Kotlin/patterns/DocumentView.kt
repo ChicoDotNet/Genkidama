@@ -1,0 +1,1 @@
+object DocumentViewExample{fun run():Boolean{data class Doc(val title:String,val words:Int);val d=Doc("Final",120);val editor={"editor:${d.title}:${d.words}"};val summary={"summary:${d.title}"};return editor()=="editor:Final:120"&&summary()=="summary:Final"}}

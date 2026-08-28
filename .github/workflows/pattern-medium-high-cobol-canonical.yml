@@ -1,0 +1,80 @@
+name: Pattern Medium-High COBOL Canonical
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/Historical/Cobol/patterns/**'
+      - 'src/Historical/Cobol/pattern_sweep.cbl'
+      - '.github/workflows/pattern-medium-high-cobol-canonical.yml'
+
+jobs:
+  cobol-canonical:
+    name: GnuCOBOL — 39 canonical cells
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: echo "JOB_START=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Install distro-stable GnuCOBOL
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y gnucobol3
+          cobc --version | head -n 1
+      - run: echo "SETUP_END=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Compile every canonical COBOL copybook in isolation and aggregate
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          count=0
+          while IFS= read -r -d '' file; do
+            stem="$(basename "$file" .cpy)"
+            paragraph="${stem^^}"
+            paragraph="${paragraph//_/-}"
+            harness="$work/${stem}.cbl"
+            binary="$work/${stem}"
+            cat > "$harness" <<EOF
+          >>SOURCE FORMAT FREE
+          IDENTIFICATION DIVISION.
+          PROGRAM-ID. CELL-HARNESS.
+          DATA DIVISION.
+          WORKING-STORAGE SECTION.
+          01 PASS-COUNT PIC 99 VALUE 0.
+          01 BALANCE PIC S9(9) COMP-5 VALUE 0.
+          01 VALUE-N PIC S9(9) COMP-5 VALUE 0.
+          01 STOCK PIC S9(9) COMP-5 VALUE 0.
+          01 BUILDS PIC S9(9) COMP-5 VALUE 0.
+          01 AUX-N PIC S9(9) COMP-5 VALUE 0.
+          01 INDEX-N PIC 9 COMP-5 VALUE 0.
+          01 TEXT-A PIC X(96) VALUE SPACES.
+          01 TEXT-B PIC X(96) VALUE SPACES.
+          01 TEXT-C PIC X(96) VALUE SPACES.
+          01 TEXT-D PIC X(96) VALUE SPACES.
+          01 VALUE-TABLE.
+             05 VALUE-ITEM PIC S9(9) COMP-5 OCCURS 3 TIMES.
+          01 SEEN-TABLE.
+             05 SEEN-ITEM PIC S9(9) COMP-5 OCCURS 3 TIMES.
+          PROCEDURE DIVISION.
+          MAIN.
+              PERFORM $paragraph
+              IF PASS-COUNT = 1 STOP RUN RETURNING 0 ELSE STOP RUN RETURNING 1 END-IF.
+          PASS. ADD 1 TO PASS-COUNT.
+          FAIL. STOP RUN RETURNING 1.
+          COPY "$file".
+          EOF
+            cobc -free -x -Wall -Werror "$harness" -o "$binary"
+            "$binary"
+            count=$((count+1))
+          done < <(find src/Historical/Cobol/patterns -maxdepth 1 -type f -name '*.cpy' -print0 | sort -z)
+          test "$count" -eq 39
+          cobc -free -x -Wall -Werror src/Historical/Cobol/pattern_sweep.cbl -o "$work/cobol-sweep"
+          test "$("$work/cobol-sweep" | tail -n 1)" = 'COBOL pattern sweep: 39/39 examples passed'
+          echo 'COBOL canonical examples: 39/39 passed'
+      - name: Timing summary
+        if: always()
+        shell: bash
+        run: |
+          now="$(date +%s)"; setup="$((SETUP_END-JOB_START))"; total="$((now-JOB_START))"; validation="$((total-setup))"
+          printf '### COBOL canonical\n\n- cells: 39\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$setup" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"

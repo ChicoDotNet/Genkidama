@@ -1,0 +1,1 @@
+object StateExample{enum class Gate{LOCKED,UNLOCKED};fun transition(s:Gate,a:String)=if(s==Gate.LOCKED&&a=="unlock")Gate.UNLOCKED else if(s==Gate.UNLOCKED&&a=="lock")Gate.LOCKED else s;fun run()=transition(transition(Gate.LOCKED,"unlock"),"lock")==Gate.LOCKED}

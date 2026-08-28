@@ -1,0 +1,1 @@
+object ServiceLocatorExample { def run:Boolean={val services=Map[String,String=>String]("email"->(v=>s"email>$v"),"audit"->(v=>s"audit>$v"));services("email")("a@example.test")=="email>a@example.test"&&services("audit")("created")=="audit>created"} }

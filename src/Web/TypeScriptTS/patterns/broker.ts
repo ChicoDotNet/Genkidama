@@ -1,0 +1,1 @@
+function brokerPattern(){const services={inventory:(k:string)=>`inventory:${k}=7`,customer:(k:string)=>`customer:${k}=active`};return services.inventory('sku-1')==='inventory:sku-1=7'&&services.customer('17')==='customer:17=active'}

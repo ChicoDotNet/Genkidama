@@ -1,0 +1,1 @@
+(defn interpreter-pattern [] (letfn [(ev [e] (case (first e) :lit (second e) :add (+ (ev (second e)) (ev (nth e 2))) :mul (* (ev (second e)) (ev (nth e 2)))))] (= 19 (ev [:add [:lit 7] [:mul [:lit 3] [:lit 4]]]))))

@@ -1,0 +1,47 @@
+name: Pattern Medium-High Nim Canonical
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/Niche/Nim/**'
+      - '.github/workflows/pattern-medium-high-nim-canonical.yml'
+
+jobs:
+  nim-canonical:
+    name: Nim stable — 39 canonical cells
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: echo "JOB_START=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Install latest stable Nim through official choosenim
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL https://nim-lang.org/choosenim/init.sh -o /tmp/choosenim.sh
+          sh /tmp/choosenim.sh -y
+          echo "$HOME/.nimble/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.nimble/bin:$PATH"
+          choosenim stable
+          nim --version
+      - run: echo "SETUP_END=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Check all canonical Nim modules and execute aggregate
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$HOME/.nimble/bin:$PATH"
+          count=0
+          while IFS= read -r -d '' file; do
+            nim check --threads:on --hints:off "$file"
+            count=$((count+1))
+          done < <(find src/Niche/Nim/patterns -maxdepth 1 -type f -name '*.nim' -print0 | sort -z)
+          test "$count" -eq 39
+          nim c --threads:on --hints:off -o:/tmp/nim-sweep src/Niche/Nim/pattern_sweep.nim
+          test "$(/tmp/nim-sweep | tail -n 1)" = 'Nim pattern sweep: 39/39 examples passed'
+          echo 'Nim canonical examples: 39/39 passed'
+      - name: Timing summary
+        if: always()
+        shell: bash
+        run: |
+          now="$(date +%s)"; setup="$((SETUP_END-JOB_START))"; total="$((now-JOB_START))"; validation="$((total-setup))"
+          printf '### Nim canonical\n\n- cells: 39\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$setup" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"

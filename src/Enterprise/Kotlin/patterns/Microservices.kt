@@ -1,0 +1,1 @@
+object MicroservicesExample{fun run():Boolean{data class Inventory(var stock:Int);val inv=Inventory(7);val reserve={q:Int->if(q>inv.stock)false else{inv.stock-=q;true}};val place={q:Int->if(reserve(q))"confirmed" else "rejected"};return place(2)=="confirmed"&&inv.stock==5}}

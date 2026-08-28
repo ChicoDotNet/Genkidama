@@ -1,0 +1,2 @@
+namespace Genkidama.PatternExamples;
+public static class InterpreterExample { private abstract record Expr; private sealed record Lit(int V):Expr; private sealed record Add(Expr L,Expr R):Expr; private sealed record Mul(Expr L,Expr R):Expr; private static int Eval(Expr e)=>e switch{Lit x=>x.V,Add x=>Eval(x.L)+Eval(x.R),Mul x=>Eval(x.L)*Eval(x.R),_=>throw new System.InvalidOperationException()}; public static bool Run()=>Eval(new Add(new Lit(7),new Mul(new Lit(3),new Lit(4))))==19; }

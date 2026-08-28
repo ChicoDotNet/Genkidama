@@ -1,0 +1,1 @@
+function peerToPeerPattern(){const inbox:string[]=[];const send=(from:string,to:string,data:string)=>inbox.push(`${from}>${to}:${data}`);send('peer-a','peer-b','block-42');send('peer-a','peer-c','block-42');return inbox.join('>')==='peer-a>peer-b:block-42>peer-a>peer-c:block-42'}

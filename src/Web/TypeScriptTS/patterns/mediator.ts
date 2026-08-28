@@ -1,0 +1,1 @@
+function mediatorPattern(){const events:string[]=[];const notify=(s:string,e:string)=>{if(s==='button'&&e==='click')events.push('panel.refresh');if(s==='panel'&&e==='loaded')events.push('button.enable')};notify('button','click');notify('panel','loaded');return events.join('>')==='panel.refresh>button.enable'}

@@ -1,0 +1,1 @@
+object EnterpriseBridgeExample { def run:Boolean={def send(t:String,k:String,m:String)=s"$t>$k:$m";send("kafka","ALERT","disk")=="kafka>ALERT:disk"&&send("queue","REMINDER","backup")=="queue>REMINDER:backup"} }

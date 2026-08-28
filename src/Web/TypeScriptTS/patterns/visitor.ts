@@ -1,0 +1,1 @@
+type VisitorShape={kind:'circle',r:number}|{kind:'rect',w:number,h:number};function visitorArea(s:VisitorShape){return s.kind==='circle'?Math.PI*s.r*s.r:s.w*s.h}function visitorPattern(){return Math.abs(([{kind:'circle',r:2},{kind:'rect',w:3,h:4}] as VisitorShape[]).map(visitorArea).reduce((a,b)=>a+b,0)-(4*Math.PI+12))<1e-9}

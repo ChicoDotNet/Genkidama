@@ -1,0 +1,1 @@
+object InterpreterExample { sealed trait Expr;case class Lit(v:Int)extends Expr;case class Add(l:Expr,r:Expr)extends Expr;case class Mul(l:Expr,r:Expr)extends Expr;def eval(e:Expr):Int=e match{case Lit(v)=>v;case Add(l,r)=>eval(l)+eval(r);case Mul(l,r)=>eval(l)*eval(r)};def run:Boolean=eval(Add(Lit(7),Mul(Lit(3),Lit(4))))==19 }

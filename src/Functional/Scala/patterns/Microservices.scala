@@ -1,0 +1,1 @@
+object MicroservicesExample { def run:Boolean={var stock=7;def reserve(q:Int)=if(q>stock)false else{stock-=q;true};def place(q:Int)=if(reserve(q))"confirmed"else"rejected";place(2)=="confirmed"&&stock==5} }

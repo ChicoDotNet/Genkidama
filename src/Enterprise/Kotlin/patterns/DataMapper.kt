@@ -1,0 +1,1 @@
+object DataMapperExample{fun run():Boolean{data class P(val id:Int,val name:String);data class R(val key:String,val name:String);val p=P(8,"Grace");val r=R("person:${p.id}",p.name);val restored=P(r.key.substringAfter(':').toInt(),r.name);return r.key=="person:8"&&restored.name=="Grace"}}

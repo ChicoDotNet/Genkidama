@@ -1,0 +1,1 @@
+(defn visitor-pattern [] (let [area #(case (:kind %) :circle (* Math/PI (:r %) (:r %)) :rect (* (:w %) (:h %)))] (< (Math/abs (- (reduce + (map area [{:kind :circle :r 2.0}{:kind :rect :w 3.0 :h 4.0}])) (+ (* 4 Math/PI) 12))) 1e-9)))

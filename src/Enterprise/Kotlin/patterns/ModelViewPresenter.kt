@@ -1,0 +1,1 @@
+object ModelViewPresenterExample{fun run():Boolean{data class Model(var count:Int);data class View(var text:String);val m=Model(0);val v=View("");fun present(){m.count++;v.text="count=${m.count}"};present();return m.count==1&&v.text=="count=1"}}

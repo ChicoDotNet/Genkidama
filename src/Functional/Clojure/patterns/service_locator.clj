@@ -1,0 +1,1 @@
+(defn service-locator-pattern [] (let [s {:email #(str "email>" %) :audit #(str "audit>" %)}] (and (= "email>a@example.test" ((:email s) "a@example.test"))(= "audit>created" ((:audit s) "created")))))

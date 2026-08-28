@@ -1,0 +1,1 @@
+object VisitorExample { sealed trait Shape;case class Circle(r:Double)extends Shape;case class Rect(w:Double,h:Double)extends Shape;def area(s:Shape):Double=s match{case Circle(r)=>math.Pi*r*r;case Rect(w,h)=>w*h};def run:Boolean=math.abs(List[Shape](Circle(2),Rect(3,4)).map(area).sum-(4*math.Pi+12))<1e-9 }

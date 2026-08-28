@@ -1,0 +1,1 @@
+object BrokerExample{fun run():Boolean{val s=mapOf<String,(String)->String>("inventory" to {"inventory:$it=7"},"customer" to {"customer:$it=active"});return s.getValue("inventory")("sku-1")=="inventory:sku-1=7"&&s.getValue("customer")("17")=="customer:17=active"}}

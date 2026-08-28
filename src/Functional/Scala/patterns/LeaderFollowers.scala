@@ -1,0 +1,1 @@
+object LeaderFollowersExample { def run:Boolean={val w=Vector("worker-1","worker-2","worker-3");val e=Vector("a","b","c");e.indices.map(i=>s"${w(i%w.size)}:${e(i)}").mkString(">")=="worker-1:a>worker-2:b>worker-3:c"&&w(e.size%w.size)=="worker-1"} }

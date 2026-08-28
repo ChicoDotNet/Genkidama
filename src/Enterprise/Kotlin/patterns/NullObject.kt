@@ -1,0 +1,1 @@
+object NullObjectExample{interface Logger{fun log(m:String):String};object NullLogger:Logger{override fun log(m:String)=""};object RealLogger:Logger{override fun log(m:String)="log:$m"};fun run()=NullLogger.log("x")==""&&RealLogger.log("x")=="log:x"}

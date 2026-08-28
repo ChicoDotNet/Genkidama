@@ -1,0 +1,1 @@
+object EnterpriseBridgeExample{fun run():Boolean{val send={t:String,k:String,m:String->"$t>$k:$m"};return send("kafka","ALERT","disk")=="kafka>ALERT:disk"&&send("queue","REMINDER","backup")=="queue>REMINDER:backup"}}

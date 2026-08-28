@@ -1,0 +1,1 @@
+object PeerToPeerExample{fun run():Boolean{val b=mutableListOf<String>();val c=mutableListOf<String>();fun send(f:String,t:String,d:String,i:MutableList<String>){i+="$f>$t:$d"};send("peer-a","peer-b","block-42",b);send("peer-a","peer-c","block-42",c);return (b+c).joinToString(">") == "peer-a>peer-b:block-42>peer-a>peer-c:block-42"}}
