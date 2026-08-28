@@ -26,4 +26,4 @@ handlers = [
 
 amount = 250
 {visited, handled} = HandlerChain.route(amount, handlers)
-IO.puts("visited=#{Enum.join(visited, ">");handled=#{handled};result=refund(#{amount})")
+IO.puts("visited=#{Enum.join(visited, ">")};handled=#{handled};result=refund(#{amount})")
