@@ -30,13 +30,10 @@ jobs:
           from pathlib import Path
           p = Path('src/Functional/Haskell/PatternSweep.hs')
           s = p.read_text()
+          old_facade = 'enterpriseFacadeCase = let crm i="crm:create:"++show i; billing i="billing:open:"++show i in crm 77 ++ ">" ++ billing 77 == "crm:create:77>billing:open:77"'
+          new_facade = 'enterpriseFacadeCase =\n  let crm :: Int -> String\n      crm i = "crm:create:" ++ show i\n      billing :: Int -> String\n      billing i = "billing:open:" ++ show i\n  in crm 77 ++ ">" ++ billing 77 == "crm:create:77>billing:open:77"'
           replacements = {
-              'enterpriseFacadeCase = let crm i="crm:create:"++show i; billing i="billing:open:"++show i in crm 77 ++ ">" ++ billing 77 == "crm:create:77>billing:open:77"': '''enterpriseFacadeCase =
-  let crm :: Int -> String
-      crm i = "crm:create:" ++ show i
-      billing :: Int -> String
-      billing i = "billing:open:" ++ show i
-  in crm 77 ++ ">" ++ billing 77 == "crm:create:77>billing:open:77"''',
+              old_facade: new_facade,
               'activeObjectCase = let queue=[(+3),(*4)]; before=0; after=foldl (flip ($)) before queue in before==0 && after==12': 'activeObjectCase = let queue=[(+3),(*4)]; before=(0 :: Int); after=foldl (flip ($)) before queue in before==0 && after==12',
               'leaderFollowersCase = let workers=cycle ["worker-1","worker-2","worker-3"]; events=["event-a","event-b","event-c"]; handled=zipWith (\\w e->w++":"++e) workers events; next=workers!!3 in handled==["worker-1:event-a","worker-2:event-b","worker-3:event-c"] && next=="worker-1"': 'leaderFollowersCase = let workers=cycle ["worker-1","worker-2","worker-3"]; events=["event-a","event-b","event-c"]; handled=zipWith (\\w e->w++":"++e) workers events; nextWorker=workers!!3 in handled==["worker-1:event-a","worker-2:event-b","worker-3:event-c"] && nextWorker=="worker-1"',
           }
@@ -108,8 +105,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: mlugg/setup-zig@v2
-        with:
-          version: 0.16.0
       - name: Format, compile and run Zig sweep
         shell: bash
         run: |
