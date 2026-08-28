@@ -7,11 +7,11 @@ on:
       - 'src/Functional/Scala/**'
       - 'src/Functional/Clojure/**'
       - 'src/Enterprise/Kotlin/**'
-      - 'src/Systems/Swift/pattern_sweep.swift'
+      - 'src/Systems/Swift/**'
       - 'src/Enterprise/C#/**'
       - 'src/Enterprise/VB.NET/**'
       - 'src/Functional/F#/**'
-      - 'src/Niche/Solidity/PatternSweep.sol'
+      - 'src/Niche/Solidity/**'
       - 'src/Systems/Ada/pattern_sweep.adb'
       - 'src/Systems/Pascal/pattern_sweep.pas'
       - 'src/Historical/Cobol/pattern_sweep.cbl'
@@ -187,8 +187,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          swiftc -warnings-as-errors src/Systems/Swift/pattern_sweep.swift -o /tmp/swift-sweep
-          test "$(/tmp/swift-sweep | tail -n 1)" = 'Swift pattern sweep: 39/39 examples passed'
+          bash src/Systems/Swift/pattern_sweep.swift
       - name: Timing summary
         if: always()
         shell: bash

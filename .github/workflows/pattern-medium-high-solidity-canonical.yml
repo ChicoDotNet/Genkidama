@@ -1,0 +1,46 @@
+name: Pattern Medium-High Solidity Canonical
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/Niche/Solidity/PatternSweep.sol'
+      - 'src/Niche/Solidity/patterns/**'
+      - '.github/workflows/pattern-medium-high-solidity-canonical.yml'
+
+jobs:
+  solidity:
+    name: Solidity latest — 39 canonical cells
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: echo "JOB_START=$(date +%s)" >> "$GITHUB_ENV"
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          check-latest: true
+          package-manager-cache: false
+      - name: Resolve latest stable solc once
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --yes solc@latest --version
+      - run: echo "SETUP_END=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Compile every canonical Solidity cell and the orchestrator
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          npx --yes solc@latest --bin --abi src/Niche/Solidity/patterns/*.sol -o "$work/cells"
+          test "$(find "$work/cells" -type f -name '*.abi' | wc -l)" -eq 39
+          npx --yes solc@latest --bin --abi src/Niche/Solidity/PatternSweep.sol -o "$work/sweep"
+          test -n "$(find "$work/sweep" -type f -name '*PatternSweep.bin' -size +0c -print -quit)"
+          test "$(grep -c '^import "./patterns/' src/Niche/Solidity/PatternSweep.sol)" -eq 39
+          grep -Fq 'function runAll() external pure returns(uint passed)' src/Niche/Solidity/PatternSweep.sol
+          printf 'Solidity canonical sweep: 39/39 examples compiled\n'
+      - name: Timing summary
+        if: always()
+        shell: bash
+        run: |
+          now="$(date +%s)"; setup="$((SETUP_END-JOB_START))"; total="$((now-JOB_START))"; validation="$((total-setup))"
+          printf '### Solidity canonical\n\n- cells: 39\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$setup" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
