@@ -1,2 +1,10 @@
 #include <string>
-bool run(){auto m=[](std::string s){return s=="ping"?"pong":"unknown";};return m("ping")=="pong";}
+
+bool run()
+{
+    auto mediate = [](const std::string& message) -> std::string {
+        return message == "ping" ? "pong" : "unknown";
+    };
+
+    return mediate("ping") == "pong";
+}
