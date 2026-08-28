@@ -1,0 +1,1 @@
+(defn broker-pattern [] (let [s {:inventory #(str "inventory:" % "=7") :customer #(str "customer:" % "=active")}] (and (= "inventory:sku-1=7" ((:inventory s) "sku-1"))(= "customer:17=active" ((:customer s) "17")))))
