@@ -136,8 +136,10 @@ static BOOL VisitorExample(void) {
         @{ @"area": @12, @"perimeter": @12 },
         @{ @"area": @12, @"perimeter": @14 },
     ];
-    return [[shapes[0] objectForKey:@"area"] integerValue] == 12 &&
-           [[shapes[1] objectForKey:@"perimeter"] integerValue] == 14;
+    NSDictionary<NSString *, NSNumber *> *firstShape = [shapes objectAtIndex:0];
+    NSDictionary<NSString *, NSNumber *> *secondShape = [shapes objectAtIndex:1];
+    return [[firstShape objectForKey:@"area"] integerValue] == 12 &&
+           [[secondShape objectForKey:@"perimeter"] integerValue] == 14;
 }
 
 static BOOL MVCExample(void) {
@@ -148,7 +150,10 @@ static BOOL MVCExample(void) {
 }
 
 static BOOL MVVMExample(void) {
-    NSDictionary<NSString *, id> *viewModel = @{ @"greeting": @"Hello Ada", @"enabled": @YES };
+    NSDictionary<NSString *, id> *viewModel = @{
+        @"greeting": @"Hello Ada",
+        @"enabled": [NSNumber numberWithBool:YES],
+    };
     return [[viewModel objectForKey:@"greeting"] isEqual:@"Hello Ada"] &&
            [[viewModel objectForKey:@"enabled"] boolValue];
 }
@@ -193,8 +198,9 @@ static BOOL BrokerExample(void) {
 static BOOL MessageBusExample(void) {
     NSArray<NSString *> *handlers = @[@"audit", @"mail"];
     NSString *message = @"paid";
-    return [[handlers[0] stringByAppendingFormat:@":%@", message] isEqualToString:@"audit:paid"] &&
-           [[handlers[1] stringByAppendingFormat:@":%@", message] isEqualToString:@"mail:paid"];
+    NSString *audit = [[handlers objectAtIndex:0] stringByAppendingFormat:@":%@", message];
+    NSString *mail = [[handlers objectAtIndex:1] stringByAppendingFormat:@":%@", message];
+    return [audit isEqualToString:@"audit:paid"] && [mail isEqualToString:@"mail:paid"];
 }
 
 static BOOL ServiceLocatorExample(void) {
@@ -299,7 +305,7 @@ static BOOL UnitOfWorkExample(void) {
     NSMutableArray<NSDictionary<NSString *, id> *> *store = [NSMutableArray array];
     [store addObjectsFromArray:pending];
     [pending removeAllObjects];
-    return [store count] == 1 && pending.count == 0;
+    return [store count] == 1 && [pending count] == 0;
 }
 
 static BOOL RepositoryExample(void) {
