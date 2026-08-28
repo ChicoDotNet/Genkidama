@@ -1,0 +1,44 @@
+name: Pattern sweep - JavaScript canonical
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/Web/JavaScriptJS/patterns/**'
+      - 'src/Web/JavaScriptJS/pattern_sweep.js'
+      - 'docs/pattern-sweeps/javascript.md'
+      - '.github/workflows/pattern-sweep-javascript.yml'
+
+jobs:
+  javascript-canonical:
+    name: Node LTS — 39 canonical cells
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: echo "JOB_START=$(date +%s)" >> "$GITHUB_ENV"
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 'lts/*'
+          check-latest: true
+      - name: Report resolved runtime
+        run: node --version
+      - run: echo "SETUP_END=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Check and execute all canonical JavaScript cells
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=0
+          while IFS= read -r -d '' file; do
+            node --check "$file"
+            node "$file"
+            count=$((count+1))
+          done < <(find src/Web/JavaScriptJS/patterns -maxdepth 1 -type f -name '*.js' -print0 | sort -z)
+          test "$count" -eq 39
+          node --check src/Web/JavaScriptJS/pattern_sweep.js
+          test "$(node src/Web/JavaScriptJS/pattern_sweep.js | tail -n 1)" = 'javascript-pattern-sweep: 39/39 passed'
+      - name: Timing summary
+        if: always()
+        shell: bash
+        run: |
+          now="$(date +%s)"; setup="$((SETUP_END-JOB_START))"; total="$((now-JOB_START))"; validation="$((total-setup))"
+          printf '### JavaScript canonical\n\n- cells: 39\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$setup" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
