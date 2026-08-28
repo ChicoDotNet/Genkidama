@@ -1,0 +1,24 @@
+Escalation takes Amount
+Give back "visited=faq>billing>escalation;handled=escalation;result=refund(250)"
+Yeah
+
+Billing takes Amount
+If Amount is 250
+Give back "visited=faq>billing;handled=billing;result=refund(250)"
+Else
+Call Escalation with Amount into Result
+Give back Result
+Yeah
+Yeah
+
+Faq takes Amount
+If Amount is 50
+Give back "visited=faq;handled=faq;result=refund(250)"
+Else
+Call Billing with Amount into Result
+Give back Result
+Yeah
+Yeah
+
+Call Faq with 250 into Result
+Print Result
