@@ -19,7 +19,6 @@ on:
       - 'src/Niche/Nim/pattern_sweep.nim'
       - 'src/Web/TypeScriptTS/pattern-sweep.ts'
       - 'docs/pattern-sweeps/medium-high-cohort.md'
-      - 'docs/kb/catalog/pattern-authoring-standard.md'
       - '.github/workflows/pattern-medium-high-cohort.yml'
 
 jobs:
@@ -36,20 +35,33 @@ jobs:
           check-latest: true
       - name: Install latest stable JVM languages
         shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           curl -fsSL https://github.com/VirtusLab/scala-cli/releases/latest/download/scala-cli-x86_64-pc-linux.gz -o /tmp/scala-cli.gz
           gzip -d /tmp/scala-cli.gz
           sudo install -m 0755 /tmp/scala-cli /usr/local/bin/scala-cli
+
           curl -fsSL https://github.com/clojure/brew-install/releases/latest/download/linux-install.sh -o /tmp/clojure-install.sh
           chmod +x /tmp/clojure-install.sh
           sudo /tmp/clojure-install.sh
-          kotlin_url="$(curl -fsSL https://api.github.com/repos/JetBrains/kotlin/releases/latest | jq -r '.assets[] | select(.name | test("^kotlin-compiler-[0-9.]+\\.zip$")) | .browser_download_url' | head -n 1)"
+
+          kotlin_url="$(
+            curl -fsSL \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -H 'Accept: application/vnd.github+json' \
+              -H 'X-GitHub-Api-Version: 2022-11-28' \
+              https://api.github.com/repos/JetBrains/kotlin/releases/latest |
+            jq -r '.assets[] | select(.name | test("^kotlin-compiler-[0-9.]+\\.zip$")) | .browser_download_url' |
+            head -n 1
+          )"
           test -n "$kotlin_url"
           curl -fsSL "$kotlin_url" -o /tmp/kotlin.zip
           sudo rm -rf /opt/kotlinc
           sudo unzip -q /tmp/kotlin.zip -d /opt
           echo "/opt/kotlinc/bin" >> "$GITHUB_PATH"
+
           java -version
           scala-cli version
           clojure --version
@@ -112,7 +124,6 @@ jobs:
       - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: '10.0.x'
-          cache: false
       - run: dotnet --info
       - run: echo "SETUP_END=$(date +%s)" >> "$GITHUB_ENV"
       - name: Validate 117 .NET cells and expose every subtarget
@@ -178,7 +189,7 @@ jobs:
         with:
           node-version: '24'
           check-latest: true
-          cache: false
+          package-manager-cache: false
       - run: node --version
       - run: echo "SETUP_END=$(date +%s)" >> "$GITHUB_ENV"
       - name: Validate 78 Node-owned cells
@@ -252,7 +263,7 @@ jobs:
               "$work/pascal/pattern_sweep"
           }
           validate_cobol() {
-            cobc -x -Wall -Werror src/Historical/Cobol/pattern_sweep.cbl -o "$work/cobol-sweep" &&
+            cobc -free -x -Wall -Werror src/Historical/Cobol/pattern_sweep.cbl -o "$work/cobol-sweep" &&
               "$work/cobol-sweep"
           }
           validate_fortran() {
