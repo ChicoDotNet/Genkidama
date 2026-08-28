@@ -1,1 +1,6 @@
-sub=fn e->{:seen,e} end; unless Enum.map([sub],& &1.(:changed))==[seen: :changed],do: raise "Observer"
+subscriber = fn event -> {:seen, event} end
+seen = Enum.map([subscriber], fn notify -> notify.(:changed) end)
+
+unless seen == [{:seen, :changed}] do
+  raise "Observer"
+end

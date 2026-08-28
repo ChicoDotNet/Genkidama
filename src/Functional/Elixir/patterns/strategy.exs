@@ -1,1 +1,6 @@
-choose=fn xs,f->f.(xs) end; unless choose.([3,1,2],&Enum.min/1)==1 and choose.([3,1,2],&Enum.max/1)==3,do: raise "Strategy"
+choose = fn values, strategy -> strategy.(values) end
+values = [3, 1, 2]
+
+unless choose.(values, &Enum.min/1) == 1 and choose.(values, &Enum.max/1) == 3 do
+  raise "Strategy"
+end

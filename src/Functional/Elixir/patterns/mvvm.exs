@@ -1,1 +1,6 @@
-vm=fn m->"#{m.first} #{m.last}" end; unless vm.(%{first:"Ada",last:"Lovelace"})=="Ada Lovelace",do: raise "MVVM"
+view_model = fn model -> "#{model.first} #{model.last}" end
+model = %{first: "Ada", last: "Lovelace"}
+
+unless view_model.(model) == "Ada Lovelace" do
+  raise "MVVM"
+end

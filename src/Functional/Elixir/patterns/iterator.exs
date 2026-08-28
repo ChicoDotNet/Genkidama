@@ -1,1 +1,6 @@
-unless Enum.map([3,2,1],& &1)==[3,2,1],do: raise "Iterator"
+values = [3, 2, 1]
+visited = Enum.map(values, & &1)
+
+unless visited == values do
+  raise "Iterator"
+end

@@ -1,1 +1,6 @@
-commit=fn pending,db->{db++pending,[]} end; unless commit.([%{id:1}],[])=={[%{id:1}],[]},do: raise "UoW"
+commit = fn pending, database -> {database ++ pending, []} end
+pending = [%{id: 1}]
+
+unless commit.(pending, []) == {[%{id: 1}], []} do
+  raise "UoW"
+end

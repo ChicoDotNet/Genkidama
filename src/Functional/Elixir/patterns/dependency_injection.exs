@@ -1,1 +1,6 @@
-greet=fn clock->"hello@#{clock.()}" end; unless greet.(fn->"noon" end)=="hello@noon",do: raise "DI"
+greet = fn clock -> "hello@#{clock.()}" end
+clock = fn -> "noon" end
+
+unless greet.(clock) == "hello@noon" do
+  raise "DI"
+end

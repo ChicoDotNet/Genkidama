@@ -1,1 +1,6 @@
-topics=%{news:[fn v->{:received,v} end]}; unless Enum.map(topics.news,& &1.("v1"))==[{:received,"v1"}],do: raise "PubSub"
+topics = %{news: [fn value -> {:received, value} end]}
+received = Enum.map(topics.news, fn subscriber -> subscriber.("v1") end)
+
+unless received == [{:received, "v1"}] do
+  raise "PubSub"
+end

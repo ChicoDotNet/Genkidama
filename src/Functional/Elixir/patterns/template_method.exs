@@ -1,1 +1,6 @@
-render=fn body->"<#{body.()}>" end; unless render.(fn->"sales" end)=="<sales>",do: raise "Template"
+render = fn body -> "<#{body.()}>" end
+body = fn -> "sales" end
+
+unless render.(body) == "<sales>" do
+  raise "Template"
+end

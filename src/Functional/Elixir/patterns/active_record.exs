@@ -1,1 +1,10 @@
-save=fn record,table->Map.put(table,record.id,%{name:record.name}) end; unless save.(%{id:1,name:"Ada"},%{})[1].name=="Ada",do: raise "ActiveRecord"
+save = fn record, table ->
+  Map.put(table, record.id, %{name: record.name})
+end
+
+record = %{id: 1, name: "Ada"}
+saved = save.(record, %{})
+
+unless saved[1].name == "Ada" do
+  raise "ActiveRecord"
+end

@@ -1,1 +1,7 @@
-doc=%{title:"One"}; a=fn d->d.title end;b=fn d->String.upcase(d.title) end;unless {a.(doc),b.(doc)}=={"One","ONE"},do: raise "DocumentView"
+document = %{title: "One"}
+plain_view = fn value -> value.title end
+upper_view = fn value -> String.upcase(value.title) end
+
+unless {plain_view.(document), upper_view.(document)} == {"One", "ONE"} do
+  raise "DocumentView"
+end

@@ -1,1 +1,8 @@
-state=%{text:"draft"}; snapshot=state; state=%{state|text:"edited"}; state=snapshot; unless state.text=="draft",do: raise "Memento"
+state = %{text: "draft"}
+snapshot = state
+_state = %{state | text: "edited"}
+restored = snapshot
+
+unless restored.text == "draft" do
+  raise "Memento"
+end

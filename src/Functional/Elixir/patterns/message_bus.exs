@@ -1,1 +1,6 @@
-bus=%{paid:[fn v->{:seen,v} end]}; unless Enum.map(bus.paid,& &1.(42))==[{:seen,42}],do: raise "MessageBus"
+bus = %{paid: [fn value -> {:seen, value} end]}
+seen = Enum.map(bus.paid, fn handler -> handler.(42) end)
+
+unless seen == [{:seen, 42}] do
+  raise "MessageBus"
+end
