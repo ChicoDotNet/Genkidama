@@ -1,0 +1,217 @@
+name: Pattern Medium-High Cohort Sweep
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/Functional/Scala/PatternSweep.scala'
+      - 'src/Functional/Clojure/pattern_sweep.clj'
+      - 'src/Enterprise/Kotlin/PatternSweep.kt'
+      - 'src/Systems/Swift/pattern_sweep.swift'
+      - 'src/Enterprise/C#/PatternSweep.cs'
+      - 'src/Enterprise/VB.NET/PatternSweep.vb'
+      - 'src/Functional/F#/pattern_sweep.fsx'
+      - 'src/Niche/Solidity/PatternSweep.sol'
+      - 'src/Systems/Ada/pattern_sweep.adb'
+      - 'src/Systems/Pascal/pattern_sweep.pas'
+      - 'src/Historical/Cobol/pattern_sweep.cbl'
+      - 'src/Systems/Fortran/pattern_sweep.f90'
+      - 'src/Niche/Nim/pattern_sweep.nim'
+      - 'src/Web/TypeScriptTS/pattern-sweep.ts'
+      - 'docs/pattern-sweeps/medium-high-cohort.md'
+      - '.github/workflows/pattern-medium-high-cohort.yml'
+
+jobs:
+  jvm:
+    name: JVM — Scala + Clojure + Kotlin (117 cells)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: echo "JOB_START=$(date +%s)" >> "$GITHUB_ENV"
+      - uses: actions/setup-java@v6
+        with: { distribution: temurin, java-version: '25' }
+      - name: Install latest stable JVM languages
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL https://github.com/VirtusLab/scala-cli/releases/latest/download/scala-cli-x86_64-pc-linux.gz -o /tmp/scala-cli.gz
+          gzip -d /tmp/scala-cli.gz
+          sudo install -m 0755 /tmp/scala-cli /usr/local/bin/scala-cli
+          curl -fsSL https://github.com/clojure/brew-install/releases/latest/download/linux-install.sh -o /tmp/clojure-install.sh
+          chmod +x /tmp/clojure-install.sh
+          sudo /tmp/clojure-install.sh
+          kotlin_url="$(curl -fsSL https://api.github.com/repos/JetBrains/kotlin/releases/latest | jq -r '.assets[] | select(.name | test("^kotlin-compiler-[0-9.]+\\.zip$")) | .browser_download_url' | head -n 1)"
+          test -n "$kotlin_url"
+          curl -fsSL "$kotlin_url" -o /tmp/kotlin.zip
+          sudo rm -rf /opt/kotlinc
+          sudo unzip -q /tmp/kotlin.zip -d /opt
+          echo "/opt/kotlinc/bin" >> "$GITHUB_PATH"
+          java -version
+          scala-cli version
+          clojure --version
+          /opt/kotlinc/bin/kotlinc -version
+      - run: echo "SETUP_END=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Validate 117 JVM cells
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          test "$(scala-cli run src/Functional/Scala/PatternSweep.scala --server=false 2>&1 | tail -n 1)" = 'Scala pattern sweep: 39/39 examples passed'
+          test "$(clojure src/Functional/Clojure/pattern_sweep.clj | tail -n 1)" = 'Clojure pattern sweep: 39/39 examples passed'
+          /opt/kotlinc/bin/kotlinc src/Enterprise/Kotlin/PatternSweep.kt -include-runtime -d "$work/kotlin.jar"
+          test "$(java -jar "$work/kotlin.jar" | tail -n 1)" = 'Kotlin pattern sweep: 39/39 examples passed'
+      - name: Timing summary
+        if: always()
+        shell: bash
+        run: |
+          now="$(date +%s)"; setup="$((SETUP_END-JOB_START))"; total="$((now-JOB_START))"; validation="$((total-setup))"
+          printf '### JVM cohort\n\n- cells: 117\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$setup" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
+
+  dotnet:
+    name: .NET 10 LTS — C# + VB.NET + F# (117 cells)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: echo "JOB_START=$(date +%s)" >> "$GITHUB_ENV"
+      - uses: actions/setup-dotnet@v6
+        with: { dotnet-version: '10.0.x' }
+      - run: dotnet --info
+      - run: echo "SETUP_END=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Validate 117 .NET cells
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          dotnet new console --framework net10.0 -n SweepCs -o "$work/cs" --force >/dev/null
+          cp 'src/Enterprise/C#/PatternSweep.cs' "$work/cs/Program.cs"
+          dotnet build "$work/cs/SweepCs.csproj" -c Release -warnaserror >/dev/null
+          test "$(dotnet run --project "$work/cs/SweepCs.csproj" -c Release --no-build | tail -n 1)" = 'C# pattern sweep: 39/39 examples passed'
+          dotnet new console --language VB --framework net10.0 -n SweepVb -o "$work/vb" --force >/dev/null
+          cp 'src/Enterprise/VB.NET/PatternSweep.vb' "$work/vb/Program.vb"
+          dotnet build "$work/vb/SweepVb.vbproj" -c Release -warnaserror >/dev/null
+          test "$(dotnet run --project "$work/vb/SweepVb.vbproj" -c Release --no-build | tail -n 1)" = 'VB.NET pattern sweep: 39/39 examples passed'
+          test "$(dotnet fsi 'src/Functional/F#/pattern_sweep.fsx' | tail -n 1)" = 'F# pattern sweep: 39/39 examples passed'
+      - name: Timing summary
+        if: always()
+        shell: bash
+        run: |
+          now="$(date +%s)"; setup="$((SETUP_END-JOB_START))"; total="$((now-JOB_START))"; validation="$((total-setup))"
+          printf '### .NET cohort\n\n- cells: 117\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$setup" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
+
+  node:
+    name: Node 24 LTS — TypeScript + Solidity (78 cells)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: echo "JOB_START=$(date +%s)" >> "$GITHUB_ENV"
+      - uses: actions/setup-node@v6
+        with: { node-version: '24' }
+      - run: node --version
+      - run: echo "SETUP_END=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Validate 78 Node-owned cells
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          npx --yes --package typescript@latest tsc --noEmit --strict --target ES2022 src/Web/TypeScriptTS/pattern-sweep.ts
+          test "$(npx --yes tsx@latest src/Web/TypeScriptTS/pattern-sweep.ts | tail -n 1)" = 'TypeScript pattern sweep: 39/39 examples passed'
+          npx --yes solc@latest --version
+          npx --yes solc@latest --bin --abi src/Niche/Solidity/PatternSweep.sol -o "$work/solidity"
+          test -n "$(find "$work/solidity" -type f -name '*PatternSweep.bin' -size +0c -print -quit)"
+          grep -Fq 'function runAll() external pure returns(uint passed)' src/Niche/Solidity/PatternSweep.sol
+      - name: Timing summary
+        if: always()
+        shell: bash
+        run: |
+          now="$(date +%s)"; setup="$((SETUP_END-JOB_START))"; total="$((now-JOB_START))"; validation="$((total-setup))"
+          printf '### Node cohort\n\n- cells: 78\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$setup" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
+
+  gnu:
+    name: GNU compiled — Ada + Pascal + COBOL + Fortran (156 cells)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: echo "JOB_START=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Install current distro-stable compiler toolchains
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y gnat fp-compiler gnucobol3 gfortran
+          gnatmake --version | head -n 1
+          fpc -iV
+          cobc --version | head -n 1
+          gfortran --version | head -n 1
+      - run: echo "SETUP_END=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Validate 156 GNU-compiled cells
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"; mkdir -p "$work/ada" "$work/pascal"
+          gnatmake -q -gnat2022 -gnatwa -gnatwe -D "$work/ada" -o "$work/ada-sweep" src/Systems/Ada/pattern_sweep.adb
+          test "$("$work/ada-sweep" | tail -n 1)" = 'Ada pattern sweep: 39/39 examples passed'
+          fpc -O2 -S2 -vw -FE"$work/pascal" -FU"$work/pascal" src/Systems/Pascal/pattern_sweep.pas >/dev/null
+          test "$("$work/pascal/pattern_sweep" | tail -n 1)" = 'Pascal pattern sweep: 39/39 examples passed'
+          cobc -x -Wall -Werror src/Historical/Cobol/pattern_sweep.cbl -o "$work/cobol-sweep"
+          test "$("$work/cobol-sweep" | tail -n 1)" = 'COBOL pattern sweep: 39/39 examples passed'
+          gfortran -std=f2018 -Wall -Wextra -Werror src/Systems/Fortran/pattern_sweep.f90 -o "$work/fortran-sweep"
+          test "$("$work/fortran-sweep" | tail -n 1)" = 'Fortran pattern sweep: 39/39 examples passed'
+      - name: Timing summary
+        if: always()
+        shell: bash
+        run: |
+          now="$(date +%s)"; setup="$((SETUP_END-JOB_START))"; total="$((now-JOB_START))"; validation="$((total-setup))"
+          printf '### GNU compiled cohort\n\n- cells: 156\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$setup" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
+
+  swift:
+    name: Swift stable (39 cells)
+    runs-on: ubuntu-latest
+    container: swift:latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: echo "JOB_START=$(date +%s)" >> "$GITHUB_ENV"
+      - run: swift --version
+      - run: echo "SETUP_END=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Validate 39 Swift cells
+        shell: bash
+        run: |
+          set -euo pipefail
+          swiftc -warnings-as-errors src/Systems/Swift/pattern_sweep.swift -o /tmp/swift-sweep
+          test "$(/tmp/swift-sweep | tail -n 1)" = 'Swift pattern sweep: 39/39 examples passed'
+      - name: Timing summary
+        if: always()
+        shell: bash
+        run: |
+          now="$(date +%s)"; setup="$((SETUP_END-JOB_START))"; total="$((now-JOB_START))"; validation="$((total-setup))"
+          printf '### Swift cohort\n\n- cells: 39\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$setup" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
+
+  nim:
+    name: Nim stable (39 cells)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: echo "JOB_START=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Install latest stable Nim through official choosenim
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL https://nim-lang.org/choosenim/init.sh -o /tmp/choosenim.sh
+          sh /tmp/choosenim.sh -y
+          echo "$HOME/.nimble/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.nimble/bin:$PATH"
+          choosenim stable -y
+          nim --version
+      - run: echo "SETUP_END=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Validate 39 Nim cells
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$HOME/.nimble/bin:$PATH"
+          nim c --hints:off --warnings:on -d:release -o:/tmp/nim-sweep src/Niche/Nim/pattern_sweep.nim
+          test "$(/tmp/nim-sweep | tail -n 1)" = 'Nim pattern sweep: 39/39 examples passed'
+      - name: Timing summary
+        if: always()
+        shell: bash
+        run: |
+          now="$(date +%s)"; setup="$((SETUP_END-JOB_START))"; total="$((now-JOB_START))"; validation="$((total-setup))"
+          printf '### Nim cohort\n\n- cells: 39\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$setup" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
