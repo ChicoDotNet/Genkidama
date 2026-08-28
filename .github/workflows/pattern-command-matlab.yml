@@ -54,12 +54,21 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          if [[ ! -f "$RUNNER_TEMP/matlab-setup-start" || ! -f "$RUNNER_TEMP/matlab-setup-seconds" || ! -f "$RUNNER_TEMP/matlab-validation-start" ]]; then
+            echo 'MATLAB timing telemetry unavailable because setup did not reach the validation boundary.'
+            exit 0
+          fi
+
           setup_start="$(cat "$RUNNER_TEMP/matlab-setup-start")"
           validation_start="$(cat "$RUNNER_TEMP/matlab-validation-start")"
           now="$(date +%s)"
           setup_seconds="$(cat "$RUNNER_TEMP/matlab-setup-seconds")"
           validation_seconds="$((now - validation_start))"
           total_seconds="$((now - setup_start))"
+
+          printf 'setup_seconds=%s\nvalidation_seconds=%s\ntotal_seconds=%s\n' \
+            "$setup_seconds" "$validation_seconds" "$total_seconds"
+
           {
             echo '### MATLAB target timing'
             echo
