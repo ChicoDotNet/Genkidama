@@ -18,7 +18,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y r-base octave ocaml-nox sbcl
+          sudo apt-get install --no-install-recommends -y r-base octave ocaml-nox sbcl scala clojure elixir
       - name: Validate Chain of Responsibility functional and data examples
         shell: bash
         run: |
@@ -39,3 +39,16 @@ jobs:
           assert_output OCaml "$("$work/chain-ocaml")"
 
           assert_output CommonLisp "$(sbcl --script src/Functional/CommonLisp/chain_of_responsibility.lisp)"
+
+          scalac -d "$work" src/Functional/Scala/ChainOfResponsibility.scala
+          assert_output Scala "$(scala -cp "$work" ChainOfResponsibilityExample)"
+
+          assert_output Clojure "$(clojure src/Functional/Clojure/chain_of_responsibility.clj)"
+
+          mkdir -p "$work/elixir"
+          elixirc --warnings-as-errors -o "$work/elixir" src/Functional/Elixir/chain_of_responsibility.exs >/dev/null
+          assert_output Elixir "$(elixir src/Functional/Elixir/chain_of_responsibility.exs)"
+
+          mkdir -p "$work/erlang"
+          erlc -Werror -o "$work/erlang" src/Functional/Erlang/chain_of_responsibility.erl
+          assert_output Erlang "$(erl -noshell -pa "$work/erlang" -s chain_of_responsibility main -s init stop)"
