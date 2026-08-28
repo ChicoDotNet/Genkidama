@@ -42,26 +42,15 @@ jobs:
           curl -fsSL https://github.com/VirtusLab/scala-cli/releases/latest/download/scala-cli-x86_64-pc-linux.gz -o /tmp/scala-cli.gz
           gzip -d /tmp/scala-cli.gz
           sudo install -m 0755 /tmp/scala-cli /usr/local/bin/scala-cli
-
           curl -fsSL https://github.com/clojure/brew-install/releases/latest/download/linux-install.sh -o /tmp/clojure-install.sh
           chmod +x /tmp/clojure-install.sh
           sudo /tmp/clojure-install.sh
-
-          kotlin_url="$(
-            curl -fsSL \
-              -H "Authorization: Bearer $GITHUB_TOKEN" \
-              -H 'Accept: application/vnd.github+json' \
-              -H 'X-GitHub-Api-Version: 2022-11-28' \
-              https://api.github.com/repos/JetBrains/kotlin/releases/latest |
-            jq -r '.assets[] | select(.name | test("^kotlin-compiler-[0-9.]+\\.zip$")) | .browser_download_url' |
-            head -n 1
-          )"
+          kotlin_url="$(curl -fsSL -H "Authorization: Bearer $GITHUB_TOKEN" -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28' https://api.github.com/repos/JetBrains/kotlin/releases/latest | jq -r '.assets[] | select(.name | test("^kotlin-compiler-[0-9.]+\\.zip$")) | .browser_download_url' | head -n 1)"
           test -n "$kotlin_url"
           curl -fsSL "$kotlin_url" -o /tmp/kotlin.zip
           sudo rm -rf /opt/kotlinc
           sudo unzip -q /tmp/kotlin.zip -d /opt
           echo "/opt/kotlinc/bin" >> "$GITHUB_PATH"
-
           java -version
           scala-cli version
           clojure --version
@@ -71,26 +60,11 @@ jobs:
         shell: bash
         run: |
           set -uo pipefail
-          work="$(mktemp -d)"
-          failures=0
-          check_target() {
-            local name="$1" expected="$2"; shift 2
-            local log="$work/${name}.log"
-            echo "::group::$name"
-            set +e; "$@" 2>&1 | tee "$log"; local status=${PIPESTATUS[0]}; set -e
-            local last=""; if [ -s "$log" ]; then last="$(tail -n 1 "$log")"; fi
-            if [ "$status" -ne 0 ] || [ "$last" != "$expected" ]; then
-              echo "::error::$name failed (status=$status, last=$last)"; failures=$((failures+1))
-            fi
-            echo "::endgroup::"
-          }
-          validate_scala() {
-            scala-cli run src/Functional/Scala/PatternSweep.scala src/Functional/Scala/patterns/*.scala --server=false
-          }
-          validate_clojure() { clojure -M src/Functional/Clojure/pattern_sweep.clj; }
-          validate_kotlin() {
-            /opt/kotlinc/bin/kotlinc src/Enterprise/Kotlin/PatternSweep.kt src/Enterprise/Kotlin/patterns/*.kt -include-runtime -d "$work/kotlin.jar" && java -jar "$work/kotlin.jar"
-          }
+          work="$(mktemp -d)"; failures=0
+          check_target(){ local name="$1" expected="$2"; shift 2; local log="$work/${name}.log"; echo "::group::$name"; set +e; "$@" 2>&1 | tee "$log"; local status=${PIPESTATUS[0]}; set -e; local last=""; if [ -s "$log" ]; then last="$(tail -n 1 "$log")"; fi; if [ "$status" -ne 0 ] || [ "$last" != "$expected" ]; then echo "::error::$name failed (status=$status, last=$last)"; failures=$((failures+1)); fi; echo "::endgroup::"; }
+          validate_scala(){ scala-cli run src/Functional/Scala/PatternSweep.scala src/Functional/Scala/patterns/*.scala --server=false; }
+          validate_clojure(){ clojure -M src/Functional/Clojure/pattern_sweep.clj; }
+          validate_kotlin(){ /opt/kotlinc/bin/kotlinc src/Enterprise/Kotlin/PatternSweep.kt src/Enterprise/Kotlin/patterns/*.kt -include-runtime -d "$work/kotlin.jar" && java -jar "$work/kotlin.jar"; }
           check_target scala 'Scala pattern sweep: 39/39 examples passed' validate_scala
           check_target clojure 'Clojure pattern sweep: 39/39 examples passed' validate_clojure
           check_target kotlin 'Kotlin pattern sweep: 39/39 examples passed' validate_kotlin
@@ -116,34 +90,11 @@ jobs:
         shell: bash
         run: |
           set -uo pipefail
-          work="$(mktemp -d)"
-          failures=0
-          check_target() {
-            local name="$1" expected="$2"; shift 2
-            local log="$work/${name}.log"
-            echo "::group::$name"
-            set +e; "$@" 2>&1 | tee "$log"; local status=${PIPESTATUS[0]}; set -e
-            local last=""; if [ -s "$log" ]; then last="$(tail -n 1 "$log")"; fi
-            if [ "$status" -ne 0 ] || [ "$last" != "$expected" ]; then
-              echo "::error::$name failed (status=$status, last=$last)"; failures=$((failures+1))
-            fi
-            echo "::endgroup::"
-          }
-          validate_csharp() {
-            dotnet new console --framework net10.0 -n SweepCs -o "$work/cs" --force &&
-              cp 'src/Enterprise/C#/PatternSweep.cs' "$work/cs/Program.cs" &&
-              cp src/Enterprise/C#/patterns/*.cs "$work/cs/" &&
-              dotnet build "$work/cs/SweepCs.csproj" -c Release -warnaserror &&
-              dotnet run --project "$work/cs/SweepCs.csproj" -c Release --no-build
-          }
-          validate_vb() {
-            dotnet new console --language VB --framework net10.0 -n SweepVb -o "$work/vb" --force &&
-              cp 'src/Enterprise/VB.NET/PatternSweep.vb' "$work/vb/Program.vb" &&
-              cp src/Enterprise/VB.NET/patterns/*.vb "$work/vb/" &&
-              dotnet build "$work/vb/SweepVb.vbproj" -c Release -warnaserror &&
-              dotnet run --project "$work/vb/SweepVb.vbproj" -c Release --no-build
-          }
-          validate_fsharp() { dotnet fsi 'src/Functional/F#/pattern_sweep.fsx'; }
+          work="$(mktemp -d)"; failures=0
+          check_target(){ local name="$1" expected="$2"; shift 2; local log="$work/${name}.log"; echo "::group::$name"; set +e; "$@" 2>&1 | tee "$log"; local status=${PIPESTATUS[0]}; set -e; local last=""; if [ -s "$log" ]; then last="$(tail -n 1 "$log")"; fi; if [ "$status" -ne 0 ] || [ "$last" != "$expected" ]; then echo "::error::$name failed (status=$status, last=$last)"; failures=$((failures+1)); fi; echo "::endgroup::"; }
+          validate_csharp(){ dotnet new console --framework net10.0 -n SweepCs -o "$work/cs" --force && cp 'src/Enterprise/C#/PatternSweep.cs' "$work/cs/Program.cs" && cp src/Enterprise/C#/patterns/*.cs "$work/cs/" && dotnet build "$work/cs/SweepCs.csproj" -c Release -warnaserror && dotnet run --project "$work/cs/SweepCs.csproj" -c Release --no-build; }
+          validate_vb(){ dotnet new console --language VB --framework net10.0 -n SweepVb -o "$work/vb" --force && cp 'src/Enterprise/VB.NET/PatternSweep.vb' "$work/vb/Program.vb" && cp src/Enterprise/VB.NET/patterns/*.vb "$work/vb/" && dotnet build "$work/vb/SweepVb.vbproj" -c Release -warnaserror && dotnet run --project "$work/vb/SweepVb.vbproj" -c Release --no-build; }
+          validate_fsharp(){ dotnet fsi 'src/Functional/F#/pattern_sweep.fsx'; }
           check_target csharp 'C# pattern sweep: 39/39 examples passed' validate_csharp
           check_target vbnet 'VB.NET pattern sweep: 39/39 examples passed' validate_vb
           check_target fsharp 'F# pattern sweep: 39/39 examples passed' validate_fsharp
@@ -172,8 +123,9 @@ jobs:
         run: |
           set -euo pipefail
           work="$(mktemp -d)"
-          npx --yes --package typescript@latest tsc --strict --target ES2022 --module none --outFile "$work/typescript-sweep.js" src/Web/TypeScriptTS/patterns/*.ts src/Web/TypeScriptTS/pattern-sweep.ts
-          test "$(node "$work/typescript-sweep.js" | tail -n 1)" = 'TypeScript pattern sweep: 39/39 examples passed'
+          cat src/Web/TypeScriptTS/patterns/*.ts src/Web/TypeScriptTS/pattern-sweep.ts > "$work/typescript-sweep.ts"
+          npx --yes --package typescript@latest tsc --noEmit --strict --target ES2022 "$work/typescript-sweep.ts"
+          test "$(npx --yes tsx@latest "$work/typescript-sweep.ts" | tail -n 1)" = 'TypeScript pattern sweep: 39/39 examples passed'
           npx --yes solc@latest --version
           npx --yes solc@latest --bin --abi src/Niche/Solidity/PatternSweep.sol -o "$work/solidity"
           test -n "$(find "$work/solidity" -type f -name '*PatternSweep.bin' -size +0c -print -quit)"
@@ -206,17 +158,11 @@ jobs:
         run: |
           set -uo pipefail
           work="$(mktemp -d)"; mkdir -p "$work/ada" "$work/pascal"; failures=0
-          check_target() {
-            local name="$1" expected="$2"; shift 2; local log="$work/${name}.log"
-            echo "::group::$name"; set +e; "$@" 2>&1 | tee "$log"; local status=${PIPESTATUS[0]}; set -e
-            local last=""; if [ -s "$log" ]; then last="$(tail -n 1 "$log")"; fi
-            if [ "$status" -ne 0 ] || [ "$last" != "$expected" ]; then echo "::error::$name failed (status=$status, last=$last)"; failures=$((failures+1)); fi
-            echo "::endgroup::"
-          }
-          validate_ada() { gnatmake -q -gnat2022 -gnatwa -gnatwe -D "$work/ada" -o "$work/ada-sweep" src/Systems/Ada/pattern_sweep.adb && "$work/ada-sweep"; }
-          validate_pascal() { fpc -O2 -S2 -vw -FE"$work/pascal" -FU"$work/pascal" src/Systems/Pascal/pattern_sweep.pas && "$work/pascal/pattern_sweep"; }
-          validate_cobol() { cobc -free -x -Wall -Werror src/Historical/Cobol/pattern_sweep.cbl -o "$work/cobol-sweep" && "$work/cobol-sweep"; }
-          validate_fortran() { gfortran -std=f2018 -Wall -Wextra -Werror src/Systems/Fortran/pattern_sweep.f90 -o "$work/fortran-sweep" && "$work/fortran-sweep"; }
+          check_target(){ local name="$1" expected="$2"; shift 2; local log="$work/${name}.log"; echo "::group::$name"; set +e; "$@" 2>&1 | tee "$log"; local status=${PIPESTATUS[0]}; set -e; local last=""; if [ -s "$log" ]; then last="$(tail -n 1 "$log")"; fi; if [ "$status" -ne 0 ] || [ "$last" != "$expected" ]; then echo "::error::$name failed (status=$status, last=$last)"; failures=$((failures+1)); fi; echo "::endgroup::"; }
+          validate_ada(){ gnatmake -q -gnat2022 -gnatwa -gnatwe -D "$work/ada" -o "$work/ada-sweep" src/Systems/Ada/pattern_sweep.adb && "$work/ada-sweep"; }
+          validate_pascal(){ fpc -O2 -S2 -vw -FE"$work/pascal" -FU"$work/pascal" src/Systems/Pascal/pattern_sweep.pas && "$work/pascal/pattern_sweep"; }
+          validate_cobol(){ cobc -free -x -Wall -Werror src/Historical/Cobol/pattern_sweep.cbl -o "$work/cobol-sweep" && "$work/cobol-sweep"; }
+          validate_fortran(){ gfortran -std=f2018 -Wall -Wextra -Werror src/Systems/Fortran/pattern_sweep.f90 -o "$work/fortran-sweep" && "$work/fortran-sweep"; }
           check_target ada 'Ada pattern sweep: 39/39 examples passed' validate_ada
           check_target pascal 'Pascal pattern sweep: 39/39 examples passed' validate_pascal
           check_target cobol 'COBOL pattern sweep: 39/39 examples passed' validate_cobol
@@ -238,12 +184,14 @@ jobs:
       - run: swift --version
       - run: echo "SETUP_END=$(date +%s)" >> "$GITHUB_ENV"
       - name: Validate 39 Swift cells
+        shell: bash
         run: |
           set -euo pipefail
           swiftc -warnings-as-errors src/Systems/Swift/pattern_sweep.swift -o /tmp/swift-sweep
           test "$(/tmp/swift-sweep | tail -n 1)" = 'Swift pattern sweep: 39/39 examples passed'
       - name: Timing summary
         if: always()
+        shell: bash
         run: |
           now="$(date +%s)"; setup="$((SETUP_END-JOB_START))"; total="$((now-JOB_START))"; validation="$((total-setup))"
           printf '### Swift cohort\n\n- cells: 39\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$setup" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
