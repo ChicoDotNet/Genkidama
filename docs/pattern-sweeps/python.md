@@ -70,4 +70,4 @@ The source has one clearly named check per catalog cell and a final guard requir
 
 These are standalone pedagogical examples, not a Python package with a meaningful line-coverage denominator. This sweep therefore does not invent a code-coverage percentage. The gate compiles the source and executes behavioral assertions for every cell using Python 3.13.
 
-The workflow records `cells=39`, setup, validation and total elapsed seconds. Timing is batching telemetry only and never weakens the correctness gate.
+Reviewed-head run #1 certified `cells=39` with `setup_seconds=1`, `validation_seconds=0` and `total_seconds=1`. Timing is batching telemetry only and never weakens the correctness gate.
