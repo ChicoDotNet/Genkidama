@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** permitir que una solicitud recorra una secuencia de posibles manejadores hasta que uno asuma la responsabilidad, sin acoplar al emisor con un receptor concreto.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `11/49`  
+> **Implementaciones de lenguaje:** `16/49`  
 > **Cobertura de pruebas:** N/A — ejemplos standalone multi-ecosistema; se usa compilación, runtime, análisis o contrato por lenguaje en lugar de inventar un porcentaje agregado.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -152,7 +152,7 @@ Una cadena sin fallback o error explícito puede terminar sin respuesta. El ejem
 
 Universo actual: **51 targets**. Chain of Responsibility clasifica **49 Applicable** y **2 N/A**. SQL declarativo permanece Applicable porque una secuencia ordenada de reglas/CTEs puede representar receptores que se evalúan hasta que uno acepta; no requiere clases para preservar la intención.
 
-Actualmente hay **11 ejemplos materializados y 11 verificados** en este PR. Los demás Applicable permanecen pendientes hasta contar con ejemplo y evidencia propios.
+Actualmente hay **21 ejemplos materializados y 16 verificados** en este PR. Lua, Bash, PowerShell, Haskell y Perl esperan evidencia verde del gate actual; los demás Applicable permanecen pendientes hasta contar con ejemplo y evidencia propios.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -167,16 +167,16 @@ Actualmente hay **11 ejemplos materializados y 11 verificados** en este PR. Los 
 | F# | Applicable | [`chain_of_responsibility.fsx`](../src/Functional/F%23/chain_of_responsibility.fsx) | Chain Mainstream ✅ | records + recursión |
 | JavaScript | Applicable | [`chain-of-responsibility.js`](../src/Web/JavaScriptJS/chain-of-responsibility.js) | Chain Mainstream ✅ | objetos enlazados |
 | SQL declarativo | Applicable | [`chain_of_responsibility.sql`](../src/Data/SQL/chain_of_responsibility.sql) | Chain Mainstream ✅ | CTE recursivo + reglas ordenadas |
-| Kotlin | Applicable | — | Pendiente | interfaces/handlers o funciones enlazadas |
-| Swift | Applicable | — | Pendiente | protocolos/closures |
-| Visual Basic .NET | Applicable | — | Pendiente | interfaces/handlers |
-| C | Applicable | — | Pendiente | structs + function pointers |
-| Ruby | Applicable | — | Pendiente | duck typing/objetos enlazados |
-| Lua | Applicable | — | Pendiente | tablas/closures |
-| Bash | Applicable | — | Pendiente | funciones y estado explícito |
-| PowerShell | Applicable | — | Pendiente | scriptblocks/objetos |
-| Haskell | Applicable | — | Pendiente | ADTs/funciones y recorrido explícito |
-| Perl | Applicable | — | Pendiente | paquetes/referencias |
+| Kotlin | Applicable | [`ChainOfResponsibilityExample.kt`](../src/Enterprise/Kotlin/ChainOfResponsibilityExample.kt) | Chain Mainstream #4 ✅ | sealed handler chain |
+| Swift | Applicable | [`chain_of_responsibility.swift`](../src/Systems/Swift/chain_of_responsibility.swift) | Chain Mainstream #4 ✅ | protocol + linked handlers |
+| Visual Basic .NET | Applicable | [`ChainOfResponsibilityExample.vb`](../src/Enterprise/VB.NET/ChainOfResponsibilityExample.vb) | Chain Mainstream #4 ✅ | interface + handlers enlazados |
+| C | Applicable | [`chain_of_responsibility.c`](../src/Systems/C/chain_of_responsibility.c) | Chain Mainstream #4 ✅ | structs + function pointers |
+| Ruby | Applicable | [`chain_of_responsibility.rb`](../src/Scripting/Ruby/chain_of_responsibility.rb) | Chain Mainstream #4 ✅ | duck typing/objetos enlazados |
+| Lua | Applicable | [`chain_of_responsibility.lua`](../src/Scripting/Lua/chain_of_responsibility.lua) | Gate actual pendiente | tablas + funciones |
+| Bash | Applicable | [`chain_of_responsibility.sh`](../src/Shell/Bash/chain_of_responsibility.sh) | Gate actual pendiente | funciones + cadena declarada |
+| PowerShell | Applicable | [`chain_of_responsibility.ps1`](../src/Shell/PowerShell/chain_of_responsibility.ps1) | Gate actual pendiente | objetos + función de recorrido |
+| Haskell | Applicable | [`ChainOfResponsibility.hs`](../src/Functional/Haskell/ChainOfResponsibility.hs) | Gate actual pendiente | ADT + recursión explícita |
+| Perl | Applicable | [`chain_of_responsibility.pl`](../src/Scripting/Perl/chain_of_responsibility.pl) | Gate actual pendiente | hashes + recorrido ordenado |
 | Pascal | Applicable | — | Pendiente | clases/procedimientos enlazados |
 | R | Applicable | — | Pendiente | closures/listas ordenadas |
 | GNU Octave | Applicable | — | Pendiente | funciones/handles |
