@@ -18,7 +18,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y fp-compiler gnat gfortran
+          sudo apt-get install --no-install-recommends -y fp-compiler gnat gfortran gnucobol3 nasm
       - name: Validate Chain of Responsibility compiled examples
         shell: bash
         run: |
@@ -40,3 +40,10 @@ jobs:
 
           gfortran -std=f2018 -Wall -Wextra -Werror src/Systems/Fortran/chain_of_responsibility.f90 -o "$work/chain-fortran"
           assert_output Fortran "$("$work/chain-fortran" | xargs)"
+
+          cobc -x -Wall src/Historical/Cobol/chain_of_responsibility.cbl -o "$work/chain-cobol"
+          assert_output COBOL "$("$work/chain-cobol")"
+
+          nasm -f elf64 -Wall src/LowLevel/Assembly/chain_of_responsibility.asm -o "$work/chain-assembly.o"
+          ld "$work/chain-assembly.o" -o "$work/chain-assembly"
+          assert_output Assembly "$("$work/chain-assembly")"
