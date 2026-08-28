@@ -1,0 +1,47 @@
+name: Pattern sweep - Ruby canonical
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/Scripting/Ruby/**'
+      - 'docs/pattern-sweeps/ruby.md'
+      - '.github/workflows/pattern-sweep-ruby.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ruby-pattern-sweep:
+    name: Ruby stable — 39 canonical cells
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - run: echo "JOB_START=$(date +%s)" >> "$GITHUB_ENV"
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ruby
+      - run: ruby --version
+      - run: echo "SETUP_END=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Validate 39 canonical Ruby cells and aggregate
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=0
+          while IFS= read -r -d '' file; do
+            ruby -c "$file" >/dev/null
+            ruby "$file"
+            count=$((count+1))
+          done < <(find src/Scripting/Ruby/patterns -maxdepth 1 -type f -name '*.rb' -print0 | sort -z)
+          test "$count" -eq 39
+          ruby -c src/Scripting/Ruby/pattern_sweep.rb >/dev/null
+          test "$(ruby src/Scripting/Ruby/pattern_sweep.rb | tail -n 1)" = 'ruby-pattern-sweep: 39/39 passed'
+          echo 'Ruby canonical examples: 39/39 passed'
+      - name: Timing summary
+        if: always()
+        shell: bash
+        run: |
+          now="$(date +%s)"; setup="$((SETUP_END-JOB_START))"; total="$((now-JOB_START))"; validation="$((total-setup))"
+          printf '### Ruby canonical\n\n- cells: 39\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$setup" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
