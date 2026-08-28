@@ -6,7 +6,9 @@ Module PatternSweep
     Private Function CommandPattern() As Boolean
         Dim q As Func(Of Integer,Integer)()={Function(x) x+50,Function(x) x-20}
         Dim balance=100
-        For Each command In q : balance=command(balance) : Next
+        For Each operation In q
+            balance=operation(balance)
+        Next
         Return balance=130 AndAlso q(1)(150)=130
     End Function
     Private Function EvalExpr(kind As String,a As Integer,b As Integer) As Integer
