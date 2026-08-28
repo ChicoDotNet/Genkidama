@@ -1,0 +1,1 @@
+class PatternCell{static boolean run(){java.util.function.IntBinaryOperator a=(x,y)->x+y,m=(x,y)->x*y;return a.applyAsInt(2,3)==5&&m.applyAsInt(2,3)==6;}public static void main(String[]a){if(!run())throw new AssertionError();}}

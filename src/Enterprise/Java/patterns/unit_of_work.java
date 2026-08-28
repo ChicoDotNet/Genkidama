@@ -1,0 +1,1 @@
+class PatternCell{static boolean run(){var p=new java.util.ArrayList<>(java.util.List.of("insert","update"));var c=java.util.List.copyOf(p);p.clear();return c.size()==2&&p.isEmpty();}public static void main(String[]a){if(!run())throw new AssertionError();}}

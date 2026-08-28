@@ -1,0 +1,1 @@
+class PatternCell{static boolean run(){java.util.function.Predicate<String>s=x->x.equals("A");java.util.function.ToIntFunction<String>p=x->x.equals("A")?9:0;return s.test("A")&&p.applyAsInt("A")==9;}public static void main(String[]a){if(!run())throw new AssertionError();}}

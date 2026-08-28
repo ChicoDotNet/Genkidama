@@ -1,0 +1,1 @@
+class PatternCell{record D(int id,String name){}static boolean run(){Object[]r={1,"Ada"};var d=new D((int)r[0],(String)r[1]);return d.id()==1&&d.name().equals("Ada");}public static void main(String[]a){if(!run())throw new AssertionError();}}

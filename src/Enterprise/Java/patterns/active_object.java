@@ -1,0 +1,1 @@
+class PatternCell{static boolean run(){var q=new java.util.ArrayDeque<java.util.function.IntSupplier>();q.add(()->2);q.add(()->3);return q.remove().getAsInt()+q.remove().getAsInt()==5;}public static void main(String[]a){if(!run())throw new AssertionError();}}

@@ -1,0 +1,1 @@
+class PatternCell{static boolean run(){var h=java.util.Map.of("price",9);java.util.function.Function<String,Integer>b=t->h.getOrDefault(t,0);return b.apply("price")==9;}public static void main(String[]a){if(!run())throw new AssertionError();}}

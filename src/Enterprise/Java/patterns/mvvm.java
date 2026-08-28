@@ -1,0 +1,1 @@
+class PatternCell{static boolean run(){int m=5;java.util.function.IntFunction<String>vm=x->"count:"+x;return vm.apply(m).equals("count:5");}public static void main(String[]a){if(!run())throw new AssertionError();}}

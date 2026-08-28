@@ -1,0 +1,1 @@
+class PatternCell{static boolean run(){java.util.function.Predicate<String>s=x->true;java.util.function.IntPredicate p=n->n==9;return s.test("A")&&p.test(9);}public static void main(String[]a){if(!run())throw new AssertionError();}}

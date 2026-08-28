@@ -1,0 +1,1 @@
+class PatternCell{static boolean run(){java.util.function.Function<String,String>a=m->"a:"+m,b=m->"b:"+m;return b.apply(a.apply("hi")).equals("b:a:hi");}public static void main(String[]a){if(!run())throw new AssertionError();}}

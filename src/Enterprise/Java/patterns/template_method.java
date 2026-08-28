@@ -1,0 +1,1 @@
+class PatternCell{static boolean run(){java.util.function.Function<String,String>h=String::toUpperCase;return ("start>"+h.apply("work")+">end").equals("start>WORK>end");}public static void main(String[]a){if(!run())throw new AssertionError();}}

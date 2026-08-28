@@ -1,0 +1,1 @@
+class PatternCell{static class L{Integer v;int get(){if(v==null)v=7;return v;}}static boolean run(){var l=new L();return l.get()==7&&l.get()==7;}public static void main(String[]a){if(!run())throw new AssertionError();}}

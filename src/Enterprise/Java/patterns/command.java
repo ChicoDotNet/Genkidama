@@ -1,0 +1,1 @@
+class PatternCell{static boolean run(){int b=100;java.util.function.IntUnaryOperator[] o={x->x+50,x->x-20};for(var f:o)b=f.applyAsInt(b);return b==130;}public static void main(String[]a){if(!run())throw new AssertionError();}}

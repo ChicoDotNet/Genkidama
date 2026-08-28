@@ -1,0 +1,1 @@
+class PatternCell{static boolean run(){java.util.function.Function<String,String>m=x->x.equals("ping")?"pong":"unknown";return m.apply("ping").equals("pong");}public static void main(String[]a){if(!run())throw new AssertionError();}}

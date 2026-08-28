@@ -1,0 +1,1 @@
+class PatternCell{sealed interface N permits Num,Txt{}record Num(int v)implements N{}record Txt(String v)implements N{}static int visit(N n){return n instanceof Num x?x.v():((Txt)n).v().length();}static boolean run(){return visit(new Num(3))+visit(new Txt("ab"))==5;}public static void main(String[]a){if(!run())throw new AssertionError();}}
