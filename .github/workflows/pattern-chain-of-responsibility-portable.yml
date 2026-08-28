@@ -27,7 +27,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y clang libgnustep-base-dev
+          sudo apt-get install --no-install-recommends -y gobjc libgnustep-base-dev
 
       - name: Validate portable Chain examples
         shell: bash
@@ -42,8 +42,8 @@ jobs:
           }
           work="$(mktemp -d)"
 
-          # Objective-C: GNUstep gives this Foundation-based example a real compile/link/run gate.
-          clang $(gnustep-config --objc-flags) 'src/Systems/Objective-C/chain_of_responsibility.m' -o "$work/chain-objc" $(gnustep-config --base-libs)
+          # Objective-C: GNUstep plus GCC's Objective-C frontend provides a real compile/link/run gate.
+          gcc $(gnustep-config --objc-flags) 'src/Systems/Objective-C/chain_of_responsibility.m' -o "$work/chain-objc" $(gnustep-config --base-libs)
           assert_output Objective-C "$("$work/chain-objc")"
 
           # Zig: compile and execute with the current toolchain to catch API and type drift.
