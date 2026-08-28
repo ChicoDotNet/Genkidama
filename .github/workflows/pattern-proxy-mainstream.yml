@@ -22,7 +22,7 @@ jobs:
       - uses: actions/setup-java@v5
         with: { distribution: temurin, java-version: '25' }
       - uses: dtolnay/rust-toolchain@stable
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v7
         with: { go-version: stable }
       - name: Install SQL and scripting runtimes
         shell: bash
