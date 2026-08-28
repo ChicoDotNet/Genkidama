@@ -24,12 +24,12 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: actions/setup-go@v5
         with: { go-version: stable }
-      - name: Install SQL and scripting runtimes
+      - name: Install SQL and portable runtimes
         shell: bash
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y sqlite3 ruby
+          sudo apt-get install --no-install-recommends -y sqlite3 ruby lua5.4 ghc
       - name: Validate Chain of Responsibility examples
         shell: bash
         run: |
@@ -90,5 +90,20 @@ jobs:
 
           ruby -cw src/Scripting/Ruby/chain_of_responsibility.rb >/dev/null
           assert_output Ruby "$(ruby src/Scripting/Ruby/chain_of_responsibility.rb)"
+
+          luac5.4 -p src/Scripting/Lua/chain_of_responsibility.lua
+          assert_output Lua "$(lua5.4 src/Scripting/Lua/chain_of_responsibility.lua)"
+
+          bash -n src/Shell/Bash/chain_of_responsibility.sh
+          assert_output Bash "$(bash src/Shell/Bash/chain_of_responsibility.sh)"
+
+          command -v pwsh >/dev/null
+          assert_output PowerShell "$(pwsh -NoLogo -NoProfile -File src/Shell/PowerShell/chain_of_responsibility.ps1)"
+
+          ghc -Wall -Werror src/Functional/Haskell/ChainOfResponsibility.hs -o "$work/chain-hs"
+          assert_output Haskell "$("$work/chain-hs")"
+
+          perl -c src/Scripting/Perl/chain_of_responsibility.pl >/dev/null
+          assert_output Perl "$(perl src/Scripting/Perl/chain_of_responsibility.pl)"
 
           assert_output SQL "$(sqlite3 :memory: < src/Data/SQL/chain_of_responsibility.sql)"
