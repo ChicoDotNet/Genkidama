@@ -2,6 +2,8 @@ module Main where
 
 import Data.List (intercalate)
 
+default (Int)
+
 data Expr = Lit Int | Add Expr Expr | Mul Expr Expr
   deriving (Eq, Show)
 
@@ -63,7 +65,7 @@ mementoExample =
 
 observerExample :: Bool
 observerExample =
-  let publish value observers = map ($ value) observers
+  let publish value sinks = map ($ value) sinks
       observers = [(\x -> "audit:" ++ show x), (\x -> "ui:" ++ show x)]
   in publish (7 :: Int) observers == ["audit:7", "ui:7"]
 
@@ -105,7 +107,7 @@ mvvmExample =
 
 microkernelExample :: Bool
 microkernelExample =
-  let core plugins name value = case lookup name plugins of
+  let core availablePlugins name value = case lookup name availablePlugins of
         Just plugin -> plugin value
         Nothing -> value
       plugins = [("double", (*2)), ("square", (\x -> x*x))]
@@ -172,7 +174,7 @@ monitorObjectExample =
 
 halfSyncHalfAsyncExample :: Bool
 halfSyncHalfAsyncExample =
-  let asyncArrive queue event = queue ++ [event]
+  let asyncArrive pendingQueue event = pendingQueue ++ [event]
       syncProcess [] = Nothing
       syncProcess (x:xs) = Just ("processed:" ++ x, xs)
       queue = asyncArrive [] "evt"
@@ -251,8 +253,8 @@ unitOfWorkExample =
 
 repositoryExample :: Bool
 repositoryExample =
-  let findById rid store = lookup rid store
-      save rid name store = (rid,name) : filter ((/= rid) . fst) store
+  let findById rid entries = lookup rid entries
+      save rid name entries = (rid,name) : filter ((/= rid) . fst) entries
       store = save 1 "Ada" []
   in findById 1 store == Just "Ada"
 
@@ -263,7 +265,7 @@ dependencyInjectionExample =
 
 lazyInitializationExample :: Bool
 lazyInitializationExample =
-  let getOrCreate Nothing factory = (factory (), True)
+  let getOrCreate Nothing createResource = (createResource (), True)
       getOrCreate (Just x) _ = (x, False)
       factory () = "resource"
   in getOrCreate Nothing factory == ("resource", True) && getOrCreate (Just "resource") factory == ("resource", False)
