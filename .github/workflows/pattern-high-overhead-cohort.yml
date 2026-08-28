@@ -20,6 +20,10 @@ on:
       - 'src/Systems/Zig/pattern_sweep.zig'
       - 'src/Systems/Objective-C/pattern_sweep.m'
 
+concurrency:
+  group: pattern-high-overhead-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   haskell:
     if: github.head_ref == 'patterns/high-overhead-cohort-kb006'
@@ -62,13 +66,16 @@ jobs:
         uses: actions/setup-go@v7
         with:
           go-version: '1.26.5'
+          cache: false
       - name: Validate 39 Go pattern cells
         shell: bash
         run: |
           set -euo pipefail
           setup_seconds=$(( $(date +%s) - TARGET_STARTED ))
           validation_started=$(date +%s)
-          test -z "$(gofmt -d src/Systems/Go/pattern_sweep.go)"
+          gofmt -w src/Systems/Go/pattern_sweep.go
+          git diff -- src/Systems/Go/pattern_sweep.go
+          git diff --exit-code -- src/Systems/Go/pattern_sweep.go
           go vet src/Systems/Go/pattern_sweep.go
           actual="$(go run src/Systems/Go/pattern_sweep.go)"
           expected='Go pattern sweep: 39/39 examples passed'
@@ -118,7 +125,9 @@ jobs:
           set -euo pipefail
           setup_seconds=$(( $(date +%s) - TARGET_STARTED ))
           validation_started=$(date +%s)
-          dart format --output=none --set-exit-if-changed src/Web/Dart/pattern_sweep.dart
+          dart format src/Web/Dart/pattern_sweep.dart
+          git diff -- src/Web/Dart/pattern_sweep.dart
+          git diff --exit-code -- src/Web/Dart/pattern_sweep.dart
           dart analyze --fatal-infos --fatal-warnings src/Web/Dart/pattern_sweep.dart
           actual="$(dart run src/Web/Dart/pattern_sweep.dart)"
           expected='Dart pattern sweep: 39/39 examples passed'
@@ -144,7 +153,8 @@ jobs:
           setup_seconds=$(( $(date +%s) - TARGET_STARTED ))
           validation_started=$(date +%s)
           crystal tool format src/Niche/Crystal/pattern_sweep.cr
-          test -z "$(git status --short -- src/Niche/Crystal/pattern_sweep.cr)"
+          git diff -- src/Niche/Crystal/pattern_sweep.cr
+          git diff --exit-code -- src/Niche/Crystal/pattern_sweep.cr
           work="$(mktemp -d)"
           crystal build --error-on-warnings src/Niche/Crystal/pattern_sweep.cr -o "$work/pattern-sweep-crystal"
           actual="$("$work/pattern-sweep-crystal")"
@@ -170,7 +180,9 @@ jobs:
           set -euo pipefail
           setup_seconds=$(( $(date +%s) - TARGET_STARTED ))
           validation_started=$(date +%s)
-          zig fmt --check src/Systems/Zig/pattern_sweep.zig
+          zig fmt src/Systems/Zig/pattern_sweep.zig
+          git diff -- src/Systems/Zig/pattern_sweep.zig
+          git diff --exit-code -- src/Systems/Zig/pattern_sweep.zig
           actual="$(zig run src/Systems/Zig/pattern_sweep.zig 2>&1)"
           expected='Zig pattern sweep: 39/39 examples passed'
           test "$actual" = "$expected"
