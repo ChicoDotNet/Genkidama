@@ -1,0 +1,19 @@
+Number takes Value
+Give back Value
+Yeah
+
+Add takes Left and Right
+Give back Left plus Right
+Yeah
+
+Call Number with 2 into Two
+Call Number with 3 into Three
+Call Number with 4 into Four
+Call Add with Two and Three into Five
+Call Add with Five and Four into Result
+
+If Result is 9
+Print "interpreter=9"
+Else
+Print "interpreter-failed"
+Yeah
