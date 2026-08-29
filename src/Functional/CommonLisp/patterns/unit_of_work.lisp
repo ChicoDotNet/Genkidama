@@ -1,0 +1,6 @@
+(let ((pending '(1))
+      (database nil))
+  (setf database (copy-list pending)
+        pending nil)
+  (assert (equal database '(1)))
+  (assert (null pending)))

@@ -1,0 +1,1 @@
+class PatternCell{static boolean run(){String[]t={"2","+","3"};int x=Integer.parseInt(t[0]),y=Integer.parseInt(t[2]);return (t[1].equals("+")?x+y:0)==5;}public static void main(String[]a){if(!run())throw new AssertionError();}}

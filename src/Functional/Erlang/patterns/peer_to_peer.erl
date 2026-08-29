@@ -1,0 +1,1 @@
+-module(peer_to_peer). -export([main/0]). send(S,T,M)->{T,{S,M}}. main()->{b,{a,"hello"}}=send(a,b,"hello"),ok.

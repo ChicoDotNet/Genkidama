@@ -1,0 +1,1 @@
+-module(data_mapper). -export([main/0]). map_row(R)->#{user_name=>maps:get(name,R)}. main()->#{user_name:="Ada"}=map_row(#{name=>"Ada"}),ok.

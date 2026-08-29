@@ -1,0 +1,1 @@
+class PatternCell{static boolean run(){var q=new java.util.ArrayDeque<String>();q.add("created");return q.remove().equals("created");}public static void main(String[]a){if(!run())throw new AssertionError();}}

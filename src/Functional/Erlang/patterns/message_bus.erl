@@ -1,0 +1,1 @@
+-module(message_bus). -export([main/0]). main()->Bus=#{paid=>[fun(V)->{seen,V} end]},[{seen,42}]=[F(42)||F<-maps:get(paid,Bus)],ok.

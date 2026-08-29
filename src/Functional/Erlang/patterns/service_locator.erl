@@ -1,0 +1,1 @@
+-module(service_locator). -export([main/0]). main()->S=#{clock=>fun()->"12:00" end},"12:00"=(maps:get(clock,S))(),ok.

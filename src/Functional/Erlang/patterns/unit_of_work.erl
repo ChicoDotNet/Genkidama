@@ -1,0 +1,1 @@
+-module(unit_of_work). -export([main/0]). commit(P,D)->{D++P,[]}. main()->{[#{id:=1}],[]}=commit([#{id=>1}],[]),ok.

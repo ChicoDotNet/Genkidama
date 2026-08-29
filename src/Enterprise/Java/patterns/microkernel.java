@@ -1,0 +1,1 @@
+class PatternCell{static boolean run(){var p=java.util.List.<java.util.function.IntUnaryOperator>of(x->x+1,x->x*2);int v=3;for(var f:p)v=f.applyAsInt(v);return v==8;}public static void main(String[]a){if(!run())throw new AssertionError();}}

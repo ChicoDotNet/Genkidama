@@ -1,0 +1,1 @@
+class PatternCell{static boolean run(){var p=new java.util.ArrayDeque<String>();p.push("conn");var x=p.pop();p.push(x);return p.size()==1&&p.peek().equals("conn");}public static void main(String[]a){if(!run())throw new AssertionError();}}

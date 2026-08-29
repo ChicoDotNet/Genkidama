@@ -1,0 +1,1 @@
+class PatternCell{record R(int id,String name){}static boolean run(){var t=new java.util.HashMap<Integer,R>();var r=new R(1,"Ada");t.put(r.id(),r);return t.get(1).name().equals("Ada");}public static void main(String[]a){if(!run())throw new AssertionError();}}

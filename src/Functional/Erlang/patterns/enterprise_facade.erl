@@ -1,0 +1,1 @@
+-module(enterprise_facade). -export([main/0]). stock()->true. charge()->paid. checkout()->case stock() of true->charge();false->sold_out end. main()->paid=checkout(),ok.

@@ -1,0 +1,1 @@
+-module(null_object). -export([main/0]). service(Logger)->Logger("run"),ok. main()->ok=service(fun(_)->ok end),ok.

@@ -1,0 +1,1 @@
+-module(active_record). -export([main/0]). save(R,T)->T#{maps:get(id,R)=>#{name=>maps:get(name,R)}}. main()->#{1:=#{name:="Ada"}}=save(#{id=>1,name=>"Ada"},#{}),ok.

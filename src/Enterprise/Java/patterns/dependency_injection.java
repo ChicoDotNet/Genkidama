@@ -1,0 +1,1 @@
+class PatternCell{static boolean run(){java.util.function.IntFunction<String>f=n->"#"+n;java.util.function.Supplier<String>s=()->f.apply(7);return s.get().equals("#7");}public static void main(String[]a){if(!run())throw new AssertionError();}}

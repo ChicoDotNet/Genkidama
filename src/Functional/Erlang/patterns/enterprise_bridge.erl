@@ -1,0 +1,1 @@
+-module(enterprise_bridge). -export([main/0]). sender(X)->"sms:"++X. notify(X)->sender(X). main()->"sms:ok"=notify("ok"),ok.

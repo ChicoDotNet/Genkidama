@@ -1,0 +1,5 @@
+(let ((events nil))
+  (flet ((mediate (sender message)
+           (push (format nil "~A:~A" sender message) events)))
+    (mediate 'checkout 'paid))
+  (assert (string= (first events) "CHECKOUT:PAID")))

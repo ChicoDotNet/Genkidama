@@ -1,0 +1,1 @@
+-module(enterprise_adapter). -export([main/0]). legacy(C)->C. adapter(A)->legacy(round(A*100)). main()->1234=adapter(12.34),ok.

@@ -1,0 +1,1 @@
+-module(broker). -export([main/0]). main()->H=#{price=>fun(_)->9 end},9=(maps:get(price,H))("A"),ok.

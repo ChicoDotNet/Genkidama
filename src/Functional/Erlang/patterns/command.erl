@@ -1,0 +1,1 @@
+-module(command). -export([main/0]). main()->130=lists:foldl(fun(D,B)->B+D end,100,[50,-20]),ok.

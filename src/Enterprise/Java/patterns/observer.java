@@ -1,0 +1,1 @@
+class PatternCell{static boolean run(){var o=java.util.List.<java.util.function.IntUnaryOperator>of(x->x+1,x->x*2);return o.get(0).applyAsInt(3)==4&&o.get(1).applyAsInt(3)==6;}public static void main(String[]a){if(!run())throw new AssertionError();}}

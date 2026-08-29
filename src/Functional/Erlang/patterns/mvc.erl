@@ -1,0 +1,1 @@
+-module(mvc). -export([main/0]). controller(M=#{count:=C})->M#{count:=C+1}. view(#{count:=C})->lists:flatten(io_lib:format("count=~p",[C])). main()->"count=1"=view(controller(#{count=>0})),ok.

@@ -1,0 +1,1 @@
+-module(half_sync_half_async). -export([main/0]). main()->["A","B"]=[string:uppercase(X)||X<-["a","b"]],ok.

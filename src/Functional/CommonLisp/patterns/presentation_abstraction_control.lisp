@@ -1,0 +1,7 @@
+(let ((abstraction 1))
+  (flet ((control (delta)
+           (incf abstraction delta))
+         (presentation ()
+           abstraction))
+    (control 2)
+    (assert (= 3 (presentation)))))

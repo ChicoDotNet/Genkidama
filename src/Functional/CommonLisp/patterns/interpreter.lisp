@@ -1,0 +1,7 @@
+(labels ((evaluate (node)
+           (case (first node)
+             (lit (second node))
+             (var 4)
+             (add (+ (evaluate (second node))
+                     (evaluate (third node)))))))
+  (assert (= 7 (evaluate '(add (var x) (lit 3))))))

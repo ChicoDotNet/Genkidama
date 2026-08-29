@@ -1,0 +1,1 @@
+-module(distributed_proxy). -export([main/0]). remote(Id)->#{id=>Id,name=>"Ada"}. proxy(Id)->maps:get(name,remote(Id)). main()->"Ada"=proxy(7),ok.

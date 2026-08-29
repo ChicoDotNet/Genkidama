@@ -1,0 +1,1 @@
+class PatternCell{static class M{int n;synchronized void inc(){n++;}synchronized int get(){return n;}}static boolean run(){var m=new M();m.inc();return m.get()==1;}public static void main(String[]a){if(!run())throw new AssertionError();}}

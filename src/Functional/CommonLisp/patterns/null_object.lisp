@@ -1,0 +1,7 @@
+(flet ((null-log (message)
+         (declare (ignore message))
+         nil)
+       (service (logger)
+         (funcall logger "run")
+         'ok))
+  (assert (eq (service #'null-log) 'ok)))

@@ -1,0 +1,1 @@
+-module(repository). -export([main/0]). get(Id,D)->maps:get(Id,D). main()->#{name:="Ada"}=get(1,#{1=>#{name=>"Ada"}}),ok.

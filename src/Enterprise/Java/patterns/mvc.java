@@ -1,0 +1,1 @@
+class PatternCell{static boolean run(){int m=4;java.util.function.IntUnaryOperator c=x->x+1;java.util.function.IntFunction<String>v=x->"value="+x;return v.apply(c.applyAsInt(m)).equals("value=5");}public static void main(String[]a){if(!run())throw new AssertionError();}}

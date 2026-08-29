@@ -1,0 +1,1 @@
+-module(microservices). -export([main/0]). inventory(S)->#{sku=>S,available=>true}. order(S)->maps:get(available,inventory(S)). main()->true=order("A-1"),ok.

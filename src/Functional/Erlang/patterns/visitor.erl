@@ -1,0 +1,1 @@
+-module(visitor). -export([main/0]). visit(#{value:=V})->V*2. main()->10=visit(#{value=>5}),ok.

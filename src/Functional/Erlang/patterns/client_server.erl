@@ -1,0 +1,1 @@
+-module(client_server). -export([main/0]). server(R)->#{echo=>R}. client(V)->maps:get(echo,server(V)). main()->"ping"=client("ping"),ok.

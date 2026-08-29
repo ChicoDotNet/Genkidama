@@ -1,0 +1,1 @@
+class PatternCell{static boolean run(){var q=new java.util.concurrent.ConcurrentLinkedQueue<String>();q.add("job");return q.poll().equals("job");}public static void main(String[]a){if(!run())throw new AssertionError();}}

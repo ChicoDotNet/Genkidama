@@ -1,0 +1,1 @@
+-module(presentation_abstraction_control). -export([main/0]). control(#{value:=V}=A,D)->A#{value:=V+D}. presentation(#{value:=V})->V. main()->3=presentation(control(#{value=>1},2)),ok.

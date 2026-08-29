@@ -1,0 +1,1 @@
+-module(iterator). -export([main/0]). main()->[3,2,1]=lists:map(fun(X)->X end,[3,2,1]),ok.
