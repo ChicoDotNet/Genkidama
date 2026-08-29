@@ -1,9 +1,9 @@
-Addition takes Amount and Request
+Calculator takes Amount and Request
 Give back Amount plus Request
 Yeah
 
-Call Addition with 2 and 3 into Five
-Call Addition with Five and 4 into Result
+Call Calculator with 2 and 3 into Five
+Call Calculator with Five and 4 into Result
 
 If Result is 9
 Print "interpreter=9"
