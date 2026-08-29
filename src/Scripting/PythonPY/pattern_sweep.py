@@ -7,9 +7,8 @@ from __future__ import annotations
 
 from collections import deque
 from dataclasses import dataclass
+from runpy import run_path
 from typing import Callable
-
-from patterns.iterator import run as run_iterator
 
 
 def command() -> None:
@@ -24,22 +23,14 @@ def command() -> None:
 
 
 def interpreter() -> None:
-    env = {"x": 4}
-    expr = ("add", ("var", "x"), ("lit", 3))
-
-    def evaluate(node):
-        kind, *args = node
-        return {
-            "lit": lambda: args[0],
-            "var": lambda: env[args[0]],
-            "add": lambda: evaluate(args[0]) + evaluate(args[1]),
-        }[kind]()
-
-    assert evaluate(expr) == 7
+    module = run_path("src/Scripting/PythonPY/patterns/interpreter.py")
+    value = module["interpret"](("add", ("var", "x"), ("lit", 3)), {"x": 4})
+    assert value == 7
 
 
 def iterator() -> None:
-    assert run_iterator()
+    module = run_path("src/Scripting/PythonPY/patterns/iterator.py")
+    assert module["run"]()
 
 
 def mediator() -> None:
