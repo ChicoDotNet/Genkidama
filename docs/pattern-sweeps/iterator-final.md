@@ -17,13 +17,14 @@ All **49 Applicable** targets now have an individually addressable canonical Ite
 
 ## Debt-first findings
 
-- `wiki/Iterator.md` is still incomplete on this branch and remains required before promotion.
+- `wiki/Iterator.md` is now fully authored to the KB-006 content structure with the complete 51-target table, but remains `in-progress` until runner deduplication and final-head certification finish.
 - Python originally had Iterator only inside `src/Scripting/PythonPY/pattern_sweep.py`; this branch added `src/Scripting/PythonPY/patterns/iterator.py` and made the aggregate runner delegate to it. The Python gate is green.
 - Portable-functional contributes 13 verified canonical Iterator cells; medium-high contributes 14 verified canonical cells.
-- Haskell, Dart, Crystal, Zig, Julia, Go and Objective-C now have individually addressable canonical files and a green dedicated high-overhead gate. Their seven historical sweep runners still contain duplicate Iterator implementations; runner deduplication remains bounded debt because KB-006 permits orchestration, not hidden duplicate canonical implementations.
+- Haskell, Dart, Crystal, Zig, Julia, Go and Objective-C have individually addressable canonical files and a green dedicated high-overhead gate. Their seven historical sweep runners still contain duplicate Iterator implementations; runner deduplication remains the only known implementation debt because KB-006 permits orchestration, not hidden duplicate canonical implementations.
 - Existing language-major canonical sources cover PHP, JavaScript, Ruby, Lua, Bash and MATLAB.
 - The eight tail sources added here are validated by `.github/workflows/pattern-iterator-tail.yml`: SQL/Perl/Assembly by native execution, GDScript by Godot, MicroPython by its Unix runtime, Rockstar by the official runtime, and VBA/Delphi by source contracts where hosted Linux cannot reasonably execute the proprietary toolchains.
 - The Delphi source is self-contained (`SysUtils` imported for `Exception`) rather than merely matching the source contract.
+- Consolidated head `f8e74aff7053c309ad6a4ac79e5c949026d2bfe9` passed all nine applicable pull-request workflows before the canonical page was authored. The documentation head must earn its own green evidence and does not inherit that result.
 
 ## Applicability and canonical-source state
 
@@ -32,13 +33,13 @@ All **49 Applicable** targets now have an individually addressable canonical Ite
 | Portable-functional cohort | 13 Applicable | 13/13 | verified on integrated cohort |
 | Medium-high cohort | 14 Applicable | 14/14 | verified on integrated cohort |
 | Python | 1 Applicable | 1/1 | Python target gate green |
-| High-overhead: Haskell, Dart, Crystal, Zig, Julia, Go, Objective-C | 7 Applicable | 7/7 | dedicated canonical gate green |
+| High-overhead: Haskell, Dart, Crystal, Zig, Julia, Go, Objective-C | 7 Applicable | 7/7 | dedicated canonical gate green on pre-page consolidated head; current head recertifying |
 | Existing language-major: PHP, JavaScript, Ruby, Lua, Bash, MATLAB | 6 Applicable | 6/6 | canonical sources already integrated/validated by their language-major lanes |
-| Tail: SQL, Perl, VBA, GDScript, Assembly, Delphi, MicroPython, Rockstar | 8 Applicable | 8/8 | dedicated tail gate recertifying current head |
+| Tail: SQL, Perl, VBA, GDScript, Assembly, Delphi, MicroPython, Rockstar | 8 Applicable | 8/8 | dedicated tail gate green on pre-page consolidated head; current head recertifying |
 | HTML | N/A | — | pure markup has no author-programmable traversal cursor/protocol |
 | CSS | N/A | — | selector matching is not author-controlled iteration state/current/next |
 
-Current materialization: **49/49 Applicable canonical sources**. Verification is complete for the previously audited 41 cells; the eight tail cells are materialized and their dedicated gate is running on the current head. Do not promote this ledger to `validated` until that gate and the final page/CI head are green.
+Current materialization: **49/49 Applicable canonical sources**. The full denominator is reconciled. Promotion remains blocked only by the bounded high-overhead runner duplication and final-head certification; no materialized-but-unrun cell is called verified on the new documentation head.
 
 ## Tail canonical paths
 
@@ -53,6 +54,6 @@ Current materialization: **49/49 Applicable canonical sources**. Verification is
 
 ## Exit boundary
 
-Iterator remains `in-progress` until the current head certifies all applicable gates, the seven high-overhead runners are deduplicated into orchestration-only roles, `wiki/Iterator.md` satisfies the full KB-006 page DoD with links to all 49 Applicable sources and the two defensible N/A cells, and the final PR head remains mergeable against the then-current `dev` after the 20% Learn compatibility check.
+Iterator remains `in-progress` until the current head certifies all applicable gates, the seven high-overhead runners no longer hide duplicate Iterator implementations, `wiki/Iterator.md` is green with all 49 Applicable links and the two defensible N/A cells, and the final PR head remains mergeable against the then-current `dev` after the 20% Learn compatibility check.
 
 No aggregate code/test coverage percentage is claimed for this heterogeneous polyglot matrix. The repository 44% floor remains controlling where coverage is meaningfully measurable; otherwise the strongest lightweight ecosystem validation is used without inventing numbers.
