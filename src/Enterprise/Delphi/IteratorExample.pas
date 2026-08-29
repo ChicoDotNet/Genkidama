@@ -2,6 +2,9 @@ program IteratorExample;
 
 {$APPTYPE CONSOLE}
 
+uses
+  SysUtils;
+
 type
   TNumberIterator = class
   private
