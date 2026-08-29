@@ -101,6 +101,24 @@
         }
       ]
     },
+    "learn-native": {
+      "setup": [],
+      "validation": [
+        {
+          "label": "Validate Native Learn profile",
+          "argv": ["{python}", "eng/ci/adapters/learn_native.py"]
+        }
+      ]
+    },
+    "patterns-native": {
+      "setup": [],
+      "validation": [
+        {
+          "label": "Validate Native pattern profile",
+          "argv": ["{python}", "eng/ci/adapters/native_patterns.py"]
+        }
+      ]
+    },
     "patterns-prototype-dotnet": {
       "setup": [
         {
@@ -181,7 +199,8 @@
       "patterns": "patterns-jvm"
     },
     "native": {
-      "patterns": "patterns-prototype-native"
+      "learn": "learn-native",
+      "patterns": "patterns-native"
     },
     "platform": {
       "patterns": "patterns-platform-source"
@@ -231,7 +250,15 @@
         "src/Functional/Groovy/"
       ],
       "native": [
-        "src/Systems/Rust/prototype.rs"
+        "learn/es/c/",
+        "learn/es/cpp/",
+        "learn/es/rust/",
+        "learn/es/go/",
+        "src/Systems/C/patterns/",
+        "src/Systems/C++/patterns/",
+        "src/Systems/Rust/patterns/",
+        "src/Systems/Rust/prototype.rs",
+        "src/Systems/Go/pattern_sweep.go"
       ],
       "platform": [
         "src/Shell/VBA/example1.bas",
