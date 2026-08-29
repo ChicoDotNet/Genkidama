@@ -5,6 +5,7 @@ on:
     branches: [dev]
     paths:
       - 'src/Scripting/PythonPY/pattern_sweep.py'
+      - 'src/Scripting/PythonPY/patterns/command.py'
       - 'docs/pattern-sweeps/python.md'
       - '.github/workflows/pattern-sweep-python.yml'
   workflow_dispatch:
@@ -21,16 +22,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
-      - name: Compile and execute 39 pattern cells
+      - name: Compile and execute 39 pattern cells plus canonical Command
         shell: bash
         run: |
           set -euo pipefail
           start=$(date +%s)
-          python -m compileall -q src/Scripting/PythonPY/pattern_sweep.py
+          python -m compileall -q src/Scripting/PythonPY/pattern_sweep.py src/Scripting/PythonPY/patterns/command.py
           setup_done=$(date +%s)
           python -B src/Scripting/PythonPY/pattern_sweep.py
+          test "$(python -B src/Scripting/PythonPY/patterns/command.py)" = 'balance=130;commands=2'
           finish=$(date +%s)
-          echo "cells=39"
+          echo "cells=39+canonical-command"
           echo "setup_seconds=$((setup_done-start))"
           echo "validation_seconds=$((finish-setup_done))"
           echo "total_seconds=$((finish-start))"
