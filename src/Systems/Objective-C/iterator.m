@@ -24,7 +24,9 @@
 }
 
 - (NSNumber *)next {
-    return _values[_index++];
+    NSNumber *value = [_values objectAtIndex:_index];
+    _index += 1;
+    return value;
 }
 @end
 
