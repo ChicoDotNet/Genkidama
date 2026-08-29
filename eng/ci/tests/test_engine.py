@@ -64,10 +64,21 @@ class RegistryTests(unittest.TestCase):
                 self.assertEqual(result["polyglot"], ["functional"])
                 self.assertFalse(result["full"])
 
-    def test_remaining_pattern_cohort_change_selects_portable_functional(self) -> None:
-        result = engine.classify_paths(["src/DataScience/R/patterns/adapter.R"], self.registry)
-        self.assertEqual(result["polyglot"], ["portable-functional"])
-        self.assertFalse(result["full"])
+    def test_data_shell_pattern_changes_select_data_shell_only(self) -> None:
+        paths = [
+            "src/DataScience/R/patterns/enterprise_adapter.R",
+            "src/DataScience/Octave/patterns/enterprise_adapter.m",
+            "src/Scripting/PowerShell/patterns/enterprise_adapter.ps1",
+        ]
+        for path in paths:
+            with self.subTest(path=path):
+                result = engine.classify_paths([path], self.registry)
+                self.assertEqual(result["polyglot"], ["data-shell"])
+                self.assertFalse(result["full"])
+
+    def test_portable_functional_cohort_is_no_longer_a_family(self) -> None:
+        self.assertNotIn("portable-functional", self.registry["families"])
+        self.assertNotIn("patterns-portable-functional-507", self.registry["targets"])
 
     def test_unknown_path_fails_safe_to_full(self) -> None:
         result = engine.classify_paths(["new-surface/contract.txt"], self.registry)

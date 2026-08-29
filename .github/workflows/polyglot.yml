@@ -24,6 +24,7 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       beam: ${{ steps.classify.outputs.beam }}
+      data_shell: ${{ steps.classify.outputs.data_shell }}
       dotnet: ${{ steps.classify.outputs.dotnet }}
       functional: ${{ steps.classify.outputs.functional }}
       jvm: ${{ steps.classify.outputs.jvm }}
@@ -51,11 +52,13 @@ jobs:
           fi
           echo "$result"
           beam="$(python -c 'import json,sys; d=json.loads(sys.argv[1]); print("true" if "beam" in d["polyglot"] else "false")' "$result")"
+          data_shell="$(python -c 'import json,sys; d=json.loads(sys.argv[1]); print("true" if "data-shell" in d["polyglot"] else "false")' "$result")"
           dotnet="$(python -c 'import json,sys; d=json.loads(sys.argv[1]); print("true" if "dotnet" in d["polyglot"] else "false")' "$result")"
           functional="$(python -c 'import json,sys; d=json.loads(sys.argv[1]); print("true" if "functional" in d["polyglot"] else "false")' "$result")"
           jvm="$(python -c 'import json,sys; d=json.loads(sys.argv[1]); print("true" if "jvm" in d["polyglot"] else "false")' "$result")"
           native="$(python -c 'import json,sys; d=json.loads(sys.argv[1]); print("true" if "native" in d["polyglot"] else "false")' "$result")"
           echo "beam=$beam" >> "$GITHUB_OUTPUT"
+          echo "data_shell=$data_shell" >> "$GITHUB_OUTPUT"
           echo "dotnet=$dotnet" >> "$GITHUB_OUTPUT"
           echo "functional=$functional" >> "$GITHUB_OUTPUT"
           echo "jvm=$jvm" >> "$GITHUB_OUTPUT"
@@ -432,6 +435,40 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+  data-shell:
+    name: Data/Shell / R + Octave + PowerShell
+    needs: detect
+    if: needs.detect.outputs.data_shell == 'true'
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Python 3.14.7
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+
+      - name: Install R and GNU Octave runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y r-base octave
+
+      - name: Run Data/Shell Pattern contracts
+        run: python eng/ci/run-family data-shell --patterns --telemetry-file artifacts/ci/data-shell.jsonl
+
+      - name: Upload Data/Shell telemetry
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: data-shell-ci-telemetry-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/ci/data-shell.jsonl
+          if-no-files-found: warn
+          retention-days: 14
+
   gate:
     name: Polyglot CI
     if: always()
@@ -448,6 +485,7 @@ jobs:
       - native-msvc
       - beam
       - functional
+      - data-shell
     runs-on: ubuntu-24.04
 
     steps:
@@ -457,6 +495,8 @@ jobs:
           DETECT_RESULT: ${{ needs.detect.result }}
           BEAM_SELECTED: ${{ needs.detect.outputs.beam }}
           BEAM_RESULT: ${{ needs.beam.result }}
+          DATA_SHELL_SELECTED: ${{ needs.detect.outputs.data_shell }}
+          DATA_SHELL_RESULT: ${{ needs.data-shell.result }}
           DOTNET_SELECTED: ${{ needs.detect.outputs.dotnet }}
           DOTNET_LINUX_RESULT: ${{ needs.dotnet-linux.result }}
           DOTNET_WINDOWS_RESULT: ${{ needs.dotnet-windows.result }}
@@ -481,6 +521,13 @@ jobs:
           if [[ "$BEAM_SELECTED" == "true" ]]; then
             if [[ "$BEAM_RESULT" != "success" ]]; then
               echo "BEAM family failed: beam=$BEAM_RESULT" >&2
+              exit 1
+            fi
+          fi
+
+          if [[ "$DATA_SHELL_SELECTED" == "true" ]]; then
+            if [[ "$DATA_SHELL_RESULT" != "success" ]]; then
+              echo "Data/Shell family failed: data-shell=$DATA_SHELL_RESULT" >&2
               exit 1
             fi
           fi
@@ -513,4 +560,4 @@ jobs:
             fi
           fi
 
-          echo "Polyglot CI gate passed. beam=$BEAM_SELECTED dotnet=$DOTNET_SELECTED functional=$FUNCTIONAL_SELECTED jvm=$JVM_SELECTED native=$NATIVE_SELECTED"
+          echo "Polyglot CI gate passed. beam=$BEAM_SELECTED data-shell=$DATA_SHELL_SELECTED dotnet=$DOTNET_SELECTED functional=$FUNCTIONAL_SELECTED jvm=$JVM_SELECTED native=$NATIVE_SELECTED"

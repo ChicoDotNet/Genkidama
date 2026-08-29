@@ -137,6 +137,15 @@
         }
       ]
     },
+    "patterns-data-shell": {
+      "setup": [],
+      "validation": [
+        {
+          "label": "Validate R, GNU Octave, and PowerShell pattern family",
+          "argv": ["{python}", "eng/ci/adapters/data_shell_patterns.py"]
+        }
+      ]
+    },
     "patterns-prototype-dotnet": {
       "setup": [
         {
@@ -191,25 +200,14 @@
           "argv": ["{python}", "eng/ci/adapters/platform_source_contracts.py"]
         }
       ]
-    },
-    "patterns-portable-functional-507": {
-      "setup": [
-        {
-          "label": "Inspect Docker engine",
-          "argv": ["docker", "version"]
-        }
-      ],
-      "validation": [
-        {
-          "label": "Validate 507 portable-functional pattern cells",
-          "argv": ["bash", "scripts/validate-portable-functional-cohort.sh"]
-        }
-      ]
     }
   },
   "families": {
     "beam": {
       "patterns": "patterns-beam"
+    },
+    "data-shell": {
+      "patterns": "patterns-data-shell"
     },
     "dotnet": {
       "learn": "learn-dotnet",
@@ -228,9 +226,6 @@
     },
     "platform": {
       "patterns": "patterns-platform-source"
-    },
-    "portable-functional": {
-      "patterns": "patterns-portable-functional-507"
     }
   },
   "change_detection": {
@@ -261,6 +256,11 @@
       "beam": [
         "src/Functional/Elixir/patterns/",
         "src/Functional/Erlang/patterns/"
+      ],
+      "data-shell": [
+        "src/DataScience/R/patterns/",
+        "src/DataScience/Octave/patterns/",
+        "src/Scripting/PowerShell/patterns/"
       ],
       "dotnet": [
         "learn/es/csharp/",
@@ -296,17 +296,6 @@
       "platform": [
         "src/Shell/VBA/example1.bas",
         "src/Enterprise/Delphi/Example1.pas"
-      ],
-      "portable-functional": [
-        "scripts/validate-portable-functional-cohort.sh",
-        "src/Systems/Rust/patterns/",
-        "src/Systems/C/patterns/",
-        "src/Systems/C++/patterns/",
-        "src/Enterprise/Java/patterns/",
-        "src/Functional/Groovy/patterns/",
-        "src/DataScience/R/patterns/",
-        "src/DataScience/Octave/patterns/",
-        "src/Scripting/PowerShell/patterns/"
       ]
     }
   }
