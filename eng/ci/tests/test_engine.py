@@ -44,7 +44,15 @@ class RegistryTests(unittest.TestCase):
         self.assertEqual(result["learn_languages"], ["rust"])
         self.assertFalse(result["full"])
 
-    def test_pattern_cohort_change_selects_507_family(self) -> None:
+    def test_beam_pattern_change_selects_beam_only(self) -> None:
+        result = engine.classify_paths(
+            ["src/Functional/Elixir/patterns/enterprise_adapter.exs"],
+            self.registry,
+        )
+        self.assertEqual(result["polyglot"], ["beam"])
+        self.assertFalse(result["full"])
+
+    def test_remaining_pattern_cohort_change_selects_portable_functional(self) -> None:
         result = engine.classify_paths(["src/Functional/OCaml/patterns/adapter.ml"], self.registry)
         self.assertEqual(result["polyglot"], ["portable-functional"])
         self.assertFalse(result["full"])
