@@ -25,6 +25,7 @@ jobs:
     outputs:
       dotnet: ${{ steps.classify.outputs.dotnet }}
       jvm: ${{ steps.classify.outputs.jvm }}
+      native: ${{ steps.classify.outputs.native }}
 
     steps:
       - name: Checkout
@@ -49,8 +50,10 @@ jobs:
           echo "$result"
           dotnet="$(python -c 'import json,sys; d=json.loads(sys.argv[1]); print("true" if "dotnet" in d["polyglot"] else "false")' "$result")"
           jvm="$(python -c 'import json,sys; d=json.loads(sys.argv[1]); print("true" if "jvm" in d["polyglot"] else "false")' "$result")"
+          native="$(python -c 'import json,sys; d=json.loads(sys.argv[1]); print("true" if "native" in d["polyglot"] else "false")' "$result")"
           echo "dotnet=$dotnet" >> "$GITHUB_OUTPUT"
           echo "jvm=$jvm" >> "$GITHUB_OUTPUT"
+          echo "native=$native" >> "$GITHUB_OUTPUT"
 
   dotnet-linux:
     name: .NET / Linux
@@ -199,6 +202,163 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+  native-gnu:
+    name: Native / GCC
+    needs: detect
+    if: needs.detect.outputs.native == 'true'
+    runs-on: ubuntu-24.04
+    env:
+      GENKIDAMA_NATIVE_PROFILE: gnu
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Python 3.14.7
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+
+      - name: Run GCC Learn and C/C++ Patterns contracts
+        run: python eng/ci/run-family native --all --telemetry-file artifacts/ci/native-gnu.jsonl
+
+      - name: Upload GCC telemetry
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-gnu-ci-telemetry-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/ci/native-gnu.jsonl
+          if-no-files-found: warn
+          retention-days: 14
+
+  native-clang:
+    name: Native / Clang
+    needs: detect
+    if: needs.detect.outputs.native == 'true'
+    runs-on: ubuntu-24.04
+    env:
+      GENKIDAMA_NATIVE_PROFILE: clang
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Python 3.14.7
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+
+      - name: Run Clang C/C++ Learn contracts
+        run: python eng/ci/run-family native --learn --telemetry-file artifacts/ci/native-clang.jsonl
+
+      - name: Upload Clang telemetry
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-clang-ci-telemetry-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/ci/native-clang.jsonl
+          if-no-files-found: warn
+          retention-days: 14
+
+  native-rust:
+    name: Native / Rust 1.97.1
+    needs: detect
+    if: needs.detect.outputs.native == 'true'
+    runs-on: ubuntu-24.04
+    env:
+      GENKIDAMA_NATIVE_PROFILE: rust
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install Rust 1.97.1
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.97.1
+          components: rustfmt, clippy
+
+      - name: Setup Python 3.14.7
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+
+      - name: Run Rust Learn and Patterns contracts
+        run: python eng/ci/run-family native --all --telemetry-file artifacts/ci/native-rust.jsonl
+
+      - name: Upload Rust telemetry
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-rust-ci-telemetry-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/ci/native-rust.jsonl
+          if-no-files-found: warn
+          retention-days: 14
+
+  native-go:
+    name: Native / Go 1.26.5
+    needs: detect
+    if: needs.detect.outputs.native == 'true'
+    runs-on: ubuntu-24.04
+    env:
+      GENKIDAMA_NATIVE_PROFILE: go
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Go 1.26.5
+        uses: actions/setup-go@v7
+        with:
+          go-version: '1.26.5'
+          cache-dependency-path: learn/es/go/app/go.mod
+
+      - name: Setup Python 3.14.7
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+
+      - name: Run Go Learn and Pattern sweep contracts
+        run: python eng/ci/run-family native --all --telemetry-file artifacts/ci/native-go.jsonl
+
+      - name: Upload Go telemetry
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-go-ci-telemetry-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/ci/native-go.jsonl
+          if-no-files-found: warn
+          retention-days: 14
+
+  native-msvc:
+    name: Native / MSVC
+    needs: detect
+    if: needs.detect.outputs.native == 'true'
+    runs-on: windows-latest
+    env:
+      GENKIDAMA_NATIVE_PROFILE: msvc
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Python 3.14.7
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+
+      - name: Run MSVC C++ Learn contract
+        run: python eng/ci/run-family native --learn --telemetry-file artifacts/ci/native-msvc.jsonl
+
+      - name: Upload MSVC telemetry
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-msvc-ci-telemetry-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/ci/native-msvc.jsonl
+          if-no-files-found: warn
+          retention-days: 14
+
   gate:
     name: Polyglot CI
     if: always()
@@ -208,6 +368,11 @@ jobs:
       - dotnet-windows
       - jvm-java25
       - jvm17
+      - native-gnu
+      - native-clang
+      - native-rust
+      - native-go
+      - native-msvc
     runs-on: ubuntu-24.04
 
     steps:
@@ -221,6 +386,12 @@ jobs:
           JVM_SELECTED: ${{ needs.detect.outputs.jvm }}
           JVM_JAVA25_RESULT: ${{ needs.jvm-java25.result }}
           JVM17_RESULT: ${{ needs.jvm17.result }}
+          NATIVE_SELECTED: ${{ needs.detect.outputs.native }}
+          NATIVE_GNU_RESULT: ${{ needs.native-gnu.result }}
+          NATIVE_CLANG_RESULT: ${{ needs.native-clang.result }}
+          NATIVE_RUST_RESULT: ${{ needs.native-rust.result }}
+          NATIVE_GO_RESULT: ${{ needs.native-go.result }}
+          NATIVE_MSVC_RESULT: ${{ needs.native-msvc.result }}
         run: |
           set -euo pipefail
           if [[ "$DETECT_RESULT" != "success" ]]; then
@@ -242,4 +413,11 @@ jobs:
             fi
           fi
 
-          echo "Polyglot CI gate passed. dotnet=$DOTNET_SELECTED jvm=$JVM_SELECTED"
+          if [[ "$NATIVE_SELECTED" == "true" ]]; then
+            if [[ "$NATIVE_GNU_RESULT" != "success" || "$NATIVE_CLANG_RESULT" != "success" || "$NATIVE_RUST_RESULT" != "success" || "$NATIVE_GO_RESULT" != "success" || "$NATIVE_MSVC_RESULT" != "success" ]]; then
+              echo "Native family failed: gnu=$NATIVE_GNU_RESULT clang=$NATIVE_CLANG_RESULT rust=$NATIVE_RUST_RESULT go=$NATIVE_GO_RESULT msvc=$NATIVE_MSVC_RESULT" >&2
+              exit 1
+            fi
+          fi
+
+          echo "Polyglot CI gate passed. dotnet=$DOTNET_SELECTED jvm=$JVM_SELECTED native=$NATIVE_SELECTED"
