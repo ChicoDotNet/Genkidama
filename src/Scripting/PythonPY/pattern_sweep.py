@@ -9,6 +9,8 @@ from collections import deque
 from dataclasses import dataclass
 from typing import Callable
 
+from patterns.iterator import run as run_iterator
+
 
 def command() -> None:
     balance = {"value": 100}
@@ -37,16 +39,7 @@ def interpreter() -> None:
 
 
 def iterator() -> None:
-    class Countdown:
-        def __init__(self, n):
-            self.n = n
-
-        def __iter__(self):
-            while self.n:
-                yield self.n
-                self.n -= 1
-
-    assert list(Countdown(3)) == [3, 2, 1]
+    assert run_iterator()
 
 
 def mediator() -> None:
