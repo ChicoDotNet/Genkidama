@@ -2,8 +2,8 @@ Literal takes Value
 Give back Value
 Yeah
 
-Addition takes Left and Right
-Give back Left plus Right
+Addition takes First and Second
+Give back First plus Second
 Yeah
 
 Call Literal with 2 into Two
