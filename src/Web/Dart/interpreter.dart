@@ -22,7 +22,10 @@ final class AddExpr implements Expr {
 }
 
 void main() {
-  const Expr expression = AddExpr(AddExpr(NumberExpr(2), NumberExpr(3)), NumberExpr(4));
+  const Expr expression = AddExpr(
+    AddExpr(NumberExpr(2), NumberExpr(3)),
+    NumberExpr(4),
+  );
   final result = expression.interpret();
   if (result != 9) {
     throw StateError('Interpreter expected 9, got $result');
