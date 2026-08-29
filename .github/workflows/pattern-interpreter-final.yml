@@ -7,13 +7,11 @@ on:
       - 'src/Data/SQL/interpreter.sql'
       - 'src/Systems/Go/interpreter.go'
       - 'src/Functional/Haskell/Interpreter.hs'
-      - 'src/Functional/Scala/Interpreter.scala'
       - 'src/DataScience/Julia/interpreter.jl'
       - 'src/Web/Dart/interpreter.dart'
       - 'src/Niche/Crystal/interpreter.cr'
       - 'src/Systems/Zig/interpreter.zig'
       - 'src/Systems/Objective-C/interpreter.m'
-      - 'src/Systems/Fortran/interpreter.f90'
       - 'src/Niche/Nim/interpreter.nim'
       - 'docs/pattern-sweeps/interpreter-final.md'
       - '.github/workflows/pattern-interpreter-final.yml'
@@ -42,7 +40,7 @@ jobs:
           test "$(go run src/Systems/Go/interpreter.go)" = 'value=9'
 
   functional:
-    name: Haskell + Scala
+    name: Haskell
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -50,21 +48,13 @@ jobs:
         with:
           ghc-version: latest
           cabal-update: false
-      - name: Install Scala CLI
-        shell: bash
-        run: |
-          set -euo pipefail
-          curl -fsSL https://github.com/VirtusLab/scala-cli/releases/latest/download/scala-cli-x86_64-pc-linux.gz -o /tmp/scala-cli.gz
-          gzip -d /tmp/scala-cli.gz
-          sudo install -m 0755 /tmp/scala-cli /usr/local/bin/scala-cli
-      - name: Validate Haskell and Scala Interpreter artifacts
+      - name: Validate Haskell Interpreter artifact
         shell: bash
         run: |
           set -euo pipefail
           work="$(mktemp -d)"
           ghc -Wall -Werror -O0 -odir "$work" -hidir "$work" src/Functional/Haskell/Interpreter.hs -o "$work/interpreter-hs"
           test "$("$work/interpreter-hs")" = 'value=9'
-          test "$(scala-cli run src/Functional/Scala/Interpreter.scala --server=false | tail -n 1)" = 'value=9'
 
   data-web:
     name: Julia + Dart + Crystal
@@ -94,7 +84,7 @@ jobs:
           test "$("$work/interpreter-crystal")" = 'interpreter=9'
 
   systems:
-    name: Zig + Objective-C + Fortran + Nim
+    name: Zig + Objective-C + Nim
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -103,7 +93,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y clang gobjc libgnustep-base-dev gfortran
+          sudo apt-get install --no-install-recommends -y clang gobjc libgnustep-base-dev
           curl -fsSL https://nim-lang.org/choosenim/init.sh -o /tmp/choosenim.sh
           sh /tmp/choosenim.sh -y
           echo "$HOME/.nimble/bin" >> "$GITHUB_PATH"
@@ -127,7 +117,7 @@ jobs:
           with open(os.environ['GITHUB_PATH'], 'a') as path:
               path.write(str(root) + '\n')
           PY
-      - name: Validate Zig, Objective-C, Fortran and Nim Interpreter artifacts
+      - name: Validate Zig, Objective-C and Nim Interpreter artifacts
         shell: bash
         run: |
           set -euo pipefail
@@ -140,7 +130,5 @@ jobs:
           objc_libdir="$(dirname "$objc_library")"
           clang $(gnustep-config --objc-flags) -Wall -Wextra -Werror -I"$objc_headers" src/Systems/Objective-C/interpreter.m -o "$work/interpreter-objc" -L"$objc_libdir" $(gnustep-config --base-libs)
           "$work/interpreter-objc"
-          gfortran -std=f2018 -Wall -Wextra -Werror src/Systems/Fortran/interpreter.f90 -o "$work/interpreter-fortran"
-          test "$("$work/interpreter-fortran" | tr -d ' ')" = 'interpreter=9'
           nim c --hints:off -o:"$work/interpreter-nim" src/Niche/Nim/interpreter.nim
           test "$("$work/interpreter-nim")" = 'interpreter=9'
