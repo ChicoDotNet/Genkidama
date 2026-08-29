@@ -186,6 +186,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.6.1'
+          cache-cleanup: on-success
 
       - name: Setup Python 3.14.7
         uses: actions/setup-python@v7
@@ -561,3 +562,25 @@ jobs:
           fi
 
           echo "Polyglot CI gate passed. beam=$BEAM_SELECTED data-shell=$DATA_SHELL_SELECTED dotnet=$DOTNET_SELECTED functional=$FUNCTIONAL_SELECTED jvm=$JVM_SELECTED native=$NATIVE_SELECTED"
+
+  cache-hygiene:
+    name: Cache hygiene / Polyglot
+    needs: gate
+    if: always() && github.event_name != 'pull_request' && needs.gate.result == 'success'
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: write
+      contents: read
+      pull-requests: read
+    concurrency:
+      group: genkidama-cache-hygiene
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Apply Polyglot cache hygiene
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 eng/ci/cache_hygiene.py --scope jvm --scope go --apply
