@@ -8,4 +8,7 @@ Base.iterate(iterator::CursorIterator, state::Int = 1) =
 
 visited = collect(CursorIterator([10, 20, 30]))
 visited == [10, 20, 30] || error("iterator contract failed")
-println("iterator=$(join(visited, ','))")
+
+if abspath(PROGRAM_FILE) == @__FILE__
+    println("iterator=$(join(visited, ','))")
+end
