@@ -1,16 +1,16 @@
-Literal takes Value
-Give back Value
+Leaf takes X
+Give back X
 Yeah
 
-Addition takes First and Second
-Give back First plus Second
+Branch takes X and Y
+Give back X plus Y
 Yeah
 
-Call Literal with 2 into Two
-Call Literal with 3 into Three
-Call Literal with 4 into Four
-Call Addition with Two and Three into Five
-Call Addition with Five and Four into Result
+Call Leaf with 2 into Two
+Call Leaf with 3 into Three
+Call Leaf with 4 into Four
+Call Branch with Two and Three into Five
+Call Branch with Five and Four into Result
 
 If Result is 9
 Print "interpreter=9"
