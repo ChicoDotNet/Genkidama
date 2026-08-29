@@ -1,8 +1,7 @@
-Sum takes x and y
-Give back x with y
+Sum takes X and Y giving X with Y
 
-Five is Sum taking 2, 3
-Result is Sum taking Five, 4
+Put Sum taking 2, 3 into Five
+Put Sum taking Five, 4 into Result
 
 If Result is 9
 Print "interpreter=9"
