@@ -9,38 +9,50 @@
 
 This ledger owns the final horizontal reconciliation of Iterator under KB-006. Search hits and language-major runners are evidence inputs, not a language-completeness count. Every current Genkidama target must end as `Applicable` or technically justified `N/A`, and every Applicable cell must resolve to an individually addressable canonical source.
 
+## Final applicability denominator
+
+The current target universe is closed at **51 targets = 49 Applicable + 2 N/A**. HTML and CSS are the only `N/A` cells: pure markup/style evaluation does not expose author-controlled traversal state or a programmable `next/current` protocol. These are intent-level exclusions, not OOP-based shortcuts.
+
+All **49 Applicable** targets now have an individually addressable canonical Iterator source. Existing language-major/cohort evidence accounts for 41 canonical cells; this branch materializes the eight previously missing tail cells: SQL, Perl, VBA, GDScript, Assembly, Delphi, MicroPython and Rockstar.
+
 ## Debt-first findings
 
-- `wiki/Iterator.md` is currently empty on the audited `dev` base.
-- Python is Applicable and originally had executable Iterator behavior only inside `src/Scripting/PythonPY/pattern_sweep.py`; this branch added `src/Scripting/PythonPY/patterns/iterator.py` and changed the aggregate runner to delegate to the canonical source. The Python target gate passed on `7fc617c799a33262caacc02cee9f8162a754dd96`.
-- The integrated portable-functional cohort contributes 13 Iterator-Applicable canonical sources and the integrated medium-high cohort contributes 14 more; both ledgers guarantee individually addressable canonical artifacts for their cells.
-- The integrated high-overhead cohort classifies Haskell, Dart, Crystal, Zig, Julia, Go and Objective-C as Iterator-Applicable, but its historical ledger points to seven 39-pattern sweep runners. This branch now materializes individually addressable Iterator sources for all seven: `src/Functional/Haskell/Iterator.hs`, `src/Web/Dart/iterator.dart`, `src/Niche/Crystal/iterator.cr`, `src/Systems/Zig/iterator.zig`, `src/DataScience/Julia/iterator.jl`, `src/Systems/Go/iterator.go` and `src/Systems/Objective-C/iterator.m`.
-- `.github/workflows/pattern-iterator-high-overhead.yml` validates those seven canonical sources with current stable/LTS toolchains using format/analyze/compile/runtime evidence as appropriate. The dedicated gate is green on `fc48c708b04b784804083a39f99ff75a8861d0f9`, including the Julia `Base.IteratorSize` contract required for `collect` over the custom iterator.
-- The seven historical high-overhead runners still contain duplicate Iterator implementations. Under KB-006 they may remain orchestration only, so runner deduplication is bounded debt that must be paid before Iterator promotion; the new canonical files do not erase that debt.
-- Pure HTML and pure CSS are both Iterator `N/A`: document/style evaluation does not expose author-controlled traversal state or a programmable `next/current` iteration protocol. These are intent-level exclusions, not OOP-based shortcuts.
-- Existing `iterator` search results use several naming/layout conventions, so raw search-result counts must not be reported as the final `implemented/applicable` denominator.
+- `wiki/Iterator.md` is still incomplete on this branch and remains required before promotion.
+- Python originally had Iterator only inside `src/Scripting/PythonPY/pattern_sweep.py`; this branch added `src/Scripting/PythonPY/patterns/iterator.py` and made the aggregate runner delegate to it. The Python gate is green.
+- Portable-functional contributes 13 verified canonical Iterator cells; medium-high contributes 14 verified canonical cells.
+- Haskell, Dart, Crystal, Zig, Julia, Go and Objective-C now have individually addressable canonical files and a green dedicated high-overhead gate. Their seven historical sweep runners still contain duplicate Iterator implementations; runner deduplication remains bounded debt because KB-006 permits orchestration, not hidden duplicate canonical implementations.
+- Existing language-major canonical sources cover PHP, JavaScript, Ruby, Lua, Bash and MATLAB.
+- The eight tail sources added here are validated by `.github/workflows/pattern-iterator-tail.yml`: SQL/Perl/Assembly by native execution, GDScript by Godot, MicroPython by its Unix runtime, Rockstar by the official runtime, and VBA/Delphi by source contracts where hosted Linux cannot reasonably execute the proprietary toolchains.
+- The Delphi source is self-contained (`SysUtils` imported for `Exception`) rather than merely matching the source contract.
 
-## Audited applicability and canonical-source state
+## Applicability and canonical-source state
 
-| Slice / lenguaje | Aplicabilidad | Fuente canónica | Estado | Evidencia |
-|---|---|---|---|---|
-| Portable-functional cohort (13 targets) | 13 Applicable | `patterns/*` per target | 13 canonical on `dev` | Cohort ledger requires individually addressable sources and native/runtime verification |
-| Medium-high cohort (14 targets) | 14 Applicable | `patterns/*` / ecosystem-native equivalents | 14 canonical on `dev` | Cohort ledger requires individually addressable sources and behavioral verification |
-| Python | Applicable | [`iterator.py`](../../src/Scripting/PythonPY/patterns/iterator.py) | canonical; runner deduplicated; target gate green | Native `__iter__` + generator; repeatable traversal contract |
-| Haskell | Applicable | [`Iterator.hs`](../../src/Functional/Haskell/Iterator.hs) | canonical; dedicated gate green; runner duplicate remains | Explicit immutable iterator state returning `(Maybe value, nextIterator)` |
-| Dart | Applicable | [`iterator.dart`](../../src/Web/Dart/iterator.dart) | canonical; dedicated gate green; runner duplicate remains | Generic cursor with `hasNext` / `next` traversal |
-| Crystal | Applicable | [`iterator.cr`](../../src/Niche/Crystal/iterator.cr) | canonical; dedicated gate green; runner duplicate remains | Cursor object returning successive optional values |
-| Zig | Applicable | [`iterator.zig`](../../src/Systems/Zig/iterator.zig) | canonical; dedicated gate green; runner duplicate remains | Explicit slice + index state with optional `next` |
-| Julia | Applicable | [`iterator.jl`](../../src/DataScience/Julia/iterator.jl) | canonical; dedicated gate green; runner duplicate remains | Idiomatic `Base.iterate` protocol with explicit state and iterator-size trait |
-| Go | Applicable | [`iterator.go`](../../src/Systems/Go/iterator.go) | canonical; dedicated gate green; runner duplicate remains | Generic iterator returning `(value, ok)` |
-| Objective-C | Applicable | [`iterator.m`](../../src/Systems/Objective-C/iterator.m) | canonical; dedicated gate green; runner duplicate remains | Cocoa-style iterator object over an encapsulated collection |
-| HTML | N/A | — | classified | No programmable author-controlled traversal cursor/protocol in pure markup |
-| CSS | N/A | — | classified | Selector matching is browser style evaluation, not an author-controlled iteration protocol |
+| Slice / language | Applicability | Canonical state | Validation state |
+|---|---:|---:|---|
+| Portable-functional cohort | 13 Applicable | 13/13 | verified on integrated cohort |
+| Medium-high cohort | 14 Applicable | 14/14 | verified on integrated cohort |
+| Python | 1 Applicable | 1/1 | Python target gate green |
+| High-overhead: Haskell, Dart, Crystal, Zig, Julia, Go, Objective-C | 7 Applicable | 7/7 | dedicated canonical gate green |
+| Existing language-major: PHP, JavaScript, Ruby, Lua, Bash, MATLAB | 6 Applicable | 6/6 | canonical sources already integrated/validated by their language-major lanes |
+| Tail: SQL, Perl, VBA, GDScript, Assembly, Delphi, MicroPython, Rockstar | 8 Applicable | 8/8 | dedicated tail gate recertifying current head |
+| HTML | N/A | — | pure markup has no author-programmable traversal cursor/protocol |
+| CSS | N/A | — | selector matching is not author-controlled iteration state/current/next |
 
-Current audited subtotal: **35 Applicable targets, 35 with canonical sources materialized and verified; 2 N/A**. Of those 35 Applicable targets, the seven newly extracted high-overhead cells are green in their dedicated gate, while their historical runners still require deduplication. This is an audited subtotal, not the final 51-target denominator. The remaining targets must still be reconciled before Iterator can claim final `implemented/applicable`.
+Current materialization: **49/49 Applicable canonical sources**. Verification is complete for the previously audited 41 cells; the eight tail cells are materialized and their dedicated gate is running on the current head. Do not promote this ledger to `validated` until that gate and the final page/CI head are green.
+
+## Tail canonical paths
+
+- SQL: [`src/Data/SQL/iterator.sql`](../../src/Data/SQL/iterator.sql)
+- Perl: [`src/Scripting/Perl/iterator.pl`](../../src/Scripting/Perl/iterator.pl)
+- VBA: [`src/Shell/VBA/IteratorExample.bas`](../../src/Shell/VBA/IteratorExample.bas)
+- GDScript: [`src/Niche/GDScript/iterator.gd`](../../src/Niche/GDScript/iterator.gd)
+- Assembly: [`src/LowLevel/Assembly/iterator.asm`](../../src/LowLevel/Assembly/iterator.asm)
+- Delphi: [`src/Enterprise/Delphi/IteratorExample.pas`](../../src/Enterprise/Delphi/IteratorExample.pas)
+- MicroPython: [`src/Other/MicroPython/iterator.py`](../../src/Other/MicroPython/iterator.py)
+- Rockstar: [`src/Other/Rockstar/iterator.rock`](../../src/Other/Rockstar/iterator.rock)
 
 ## Exit boundary
 
-Iterator remains `in-progress` until all 51 current targets have been reconciled, every Applicable target has a linked canonical source with the strongest reasonable validation, every N/A has an intent-level justification, aggregate runners contain no hidden duplicate canonical implementations, and `wiki/Iterator.md` satisfies the full KB-006 page DoD.
+Iterator remains `in-progress` until the current head certifies all applicable gates, the seven high-overhead runners are deduplicated into orchestration-only roles, `wiki/Iterator.md` satisfies the full KB-006 page DoD with links to all 49 Applicable sources and the two defensible N/A cells, and the final PR head remains mergeable against the then-current `dev` after the 20% Learn compatibility check.
 
-No code/test coverage percentage is claimed for the heterogeneous polyglot matrix unless an ecosystem exposes a meaningful measurement. The repository 44% floor remains controlling where coverage is measurable.
+No aggregate code/test coverage percentage is claimed for this heterogeneous polyglot matrix. The repository 44% floor remains controlling where coverage is meaningfully measurable; otherwise the strongest lightweight ecosystem validation is used without inventing numbers.
