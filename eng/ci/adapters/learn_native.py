@@ -2,12 +2,9 @@
 from __future__ import annotations
 
 import os
-import shutil
 import subprocess
 import sys
 import tempfile
-import time
-import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -189,45 +186,28 @@ def go_contract() -> None:
 
     with tempfile.TemporaryDirectory(prefix="genkidama-go-smoke-") as temp:
         work = Path(temp)
-        binary = work / ("uptimelab.exe" if os.name == "nt" else "uptimelab")
+        binary = work / "uptimelab"
+        log_path = work / "uptimelab.log"
         run(["go", "build", "-o", str(binary), "./cmd/uptimelab"], cwd=app)
 
-        env = os.environ.copy()
-        env["UPTIMELAB_TARGETS"] = "Local=http://127.0.0.1:65534"
-        env["UPTIMELAB_ADDR"] = "127.0.0.1:18080"
-        log_path = work / "uptimelab.log"
-        print(f"$ {binary}", flush=True)
-        with log_path.open("w", encoding="utf-8") as log:
-            process = subprocess.Popen(
-                [str(binary)],
-                cwd=app,
-                env=env,
-                stdout=log,
-                stderr=subprocess.STDOUT,
-                text=True,
-            )
-            try:
-                for _ in range(20):
-                    if process.poll() is not None:
-                        break
-                    try:
-                        with urllib.request.urlopen("http://127.0.0.1:18080/health", timeout=1) as response:
-                            if response.status == 200:
-                                print("Go UptimeLab smoke: PASS", flush=True)
-                                return
-                    except Exception:
-                        time.sleep(0.25)
-                if log_path.exists():
-                    print(log_path.read_text(encoding="utf-8"), file=sys.stderr)
-                raise ContractError("Go UptimeLab process did not become healthy in time")
-            finally:
-                if process.poll() is None:
-                    process.terminate()
-                    try:
-                        process.wait(timeout=5)
-                    except subprocess.TimeoutExpired:
-                        process.kill()
-                        process.wait(timeout=5)
+        smoke_script = r'''set -euo pipefail
+binary="$1"
+log="$2"
+UPTIMELAB_TARGETS='Local=http://127.0.0.1:65534' UPTIMELAB_ADDR='127.0.0.1:18080' "$binary" > "$log" 2>&1 &
+pid=$!
+trap 'kill "$pid" 2>/dev/null || true' EXIT
+for _ in {1..20}; do
+  if curl --fail --silent --output /dev/null http://127.0.0.1:18080/health; then
+    exit 0
+  fi
+  sleep 0.25
+done
+cat "$log"
+exit 1
+'''
+        run(["bash", "-c", smoke_script, "_", str(binary), str(log_path)], cwd=app)
+    print("Go UptimeLab smoke: PASS", flush=True)
+    print("Go Learn contract: PASS", flush=True)
 
 
 def main() -> int:
