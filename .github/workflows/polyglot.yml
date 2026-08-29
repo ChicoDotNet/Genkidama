@@ -25,6 +25,7 @@ jobs:
     outputs:
       beam: ${{ steps.classify.outputs.beam }}
       dotnet: ${{ steps.classify.outputs.dotnet }}
+      functional: ${{ steps.classify.outputs.functional }}
       jvm: ${{ steps.classify.outputs.jvm }}
       native: ${{ steps.classify.outputs.native }}
 
@@ -51,10 +52,12 @@ jobs:
           echo "$result"
           beam="$(python -c 'import json,sys; d=json.loads(sys.argv[1]); print("true" if "beam" in d["polyglot"] else "false")' "$result")"
           dotnet="$(python -c 'import json,sys; d=json.loads(sys.argv[1]); print("true" if "dotnet" in d["polyglot"] else "false")' "$result")"
+          functional="$(python -c 'import json,sys; d=json.loads(sys.argv[1]); print("true" if "functional" in d["polyglot"] else "false")' "$result")"
           jvm="$(python -c 'import json,sys; d=json.loads(sys.argv[1]); print("true" if "jvm" in d["polyglot"] else "false")' "$result")"
           native="$(python -c 'import json,sys; d=json.loads(sys.argv[1]); print("true" if "native" in d["polyglot"] else "false")' "$result")"
           echo "beam=$beam" >> "$GITHUB_OUTPUT"
           echo "dotnet=$dotnet" >> "$GITHUB_OUTPUT"
+          echo "functional=$functional" >> "$GITHUB_OUTPUT"
           echo "jvm=$jvm" >> "$GITHUB_OUTPUT"
           echo "native=$native" >> "$GITHUB_OUTPUT"
 
@@ -395,6 +398,40 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+  functional:
+    name: Functional / OCaml + Common Lisp + Prolog
+    needs: detect
+    if: needs.detect.outputs.functional == 'true'
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Python 3.14.7
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+
+      - name: Install functional runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y ocaml sbcl swi-prolog-nox
+
+      - name: Run Functional Pattern contracts
+        run: python eng/ci/run-family functional --patterns --telemetry-file artifacts/ci/functional.jsonl
+
+      - name: Upload Functional telemetry
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: functional-ci-telemetry-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/ci/functional.jsonl
+          if-no-files-found: warn
+          retention-days: 14
+
   gate:
     name: Polyglot CI
     if: always()
@@ -410,6 +447,7 @@ jobs:
       - native-go
       - native-msvc
       - beam
+      - functional
     runs-on: ubuntu-24.04
 
     steps:
@@ -422,6 +460,8 @@ jobs:
           DOTNET_SELECTED: ${{ needs.detect.outputs.dotnet }}
           DOTNET_LINUX_RESULT: ${{ needs.dotnet-linux.result }}
           DOTNET_WINDOWS_RESULT: ${{ needs.dotnet-windows.result }}
+          FUNCTIONAL_SELECTED: ${{ needs.detect.outputs.functional }}
+          FUNCTIONAL_RESULT: ${{ needs.functional.result }}
           JVM_SELECTED: ${{ needs.detect.outputs.jvm }}
           JVM_JAVA25_RESULT: ${{ needs.jvm-java25.result }}
           JVM17_RESULT: ${{ needs.jvm17.result }}
@@ -452,6 +492,13 @@ jobs:
             fi
           fi
 
+          if [[ "$FUNCTIONAL_SELECTED" == "true" ]]; then
+            if [[ "$FUNCTIONAL_RESULT" != "success" ]]; then
+              echo "Functional family failed: functional=$FUNCTIONAL_RESULT" >&2
+              exit 1
+            fi
+          fi
+
           if [[ "$JVM_SELECTED" == "true" ]]; then
             if [[ "$JVM_JAVA25_RESULT" != "success" || "$JVM17_RESULT" != "success" ]]; then
               echo "JVM family failed: java25=$JVM_JAVA25_RESULT jvm17=$JVM17_RESULT" >&2
@@ -466,4 +513,4 @@ jobs:
             fi
           fi
 
-          echo "Polyglot CI gate passed. beam=$BEAM_SELECTED dotnet=$DOTNET_SELECTED jvm=$JVM_SELECTED native=$NATIVE_SELECTED"
+          echo "Polyglot CI gate passed. beam=$BEAM_SELECTED dotnet=$DOTNET_SELECTED functional=$FUNCTIONAL_SELECTED jvm=$JVM_SELECTED native=$NATIVE_SELECTED"
