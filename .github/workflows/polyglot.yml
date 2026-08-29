@@ -23,6 +23,7 @@ jobs:
     name: Detect changes
     runs-on: ubuntu-24.04
     outputs:
+      beam: ${{ steps.classify.outputs.beam }}
       dotnet: ${{ steps.classify.outputs.dotnet }}
       jvm: ${{ steps.classify.outputs.jvm }}
       native: ${{ steps.classify.outputs.native }}
@@ -48,9 +49,11 @@ jobs:
             result="$(eng/ci/detect-changes "$BASE_SHA" "$HEAD_SHA")"
           fi
           echo "$result"
+          beam="$(python -c 'import json,sys; d=json.loads(sys.argv[1]); print("true" if "beam" in d["polyglot"] else "false")' "$result")"
           dotnet="$(python -c 'import json,sys; d=json.loads(sys.argv[1]); print("true" if "dotnet" in d["polyglot"] else "false")' "$result")"
           jvm="$(python -c 'import json,sys; d=json.loads(sys.argv[1]); print("true" if "jvm" in d["polyglot"] else "false")' "$result")"
           native="$(python -c 'import json,sys; d=json.loads(sys.argv[1]); print("true" if "native" in d["polyglot"] else "false")' "$result")"
+          echo "beam=$beam" >> "$GITHUB_OUTPUT"
           echo "dotnet=$dotnet" >> "$GITHUB_OUTPUT"
           echo "jvm=$jvm" >> "$GITHUB_OUTPUT"
           echo "native=$native" >> "$GITHUB_OUTPUT"
@@ -359,6 +362,39 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+  beam:
+    name: BEAM / OTP 28 + Elixir 1.19
+    needs: detect
+    if: needs.detect.outputs.beam == 'true'
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Erlang OTP 28.5.0.4 and Elixir 1.19.1
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '28.5.0.4'
+          elixir-version: '1.19.1'
+
+      - name: Setup Python 3.14.7
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+
+      - name: Run BEAM Pattern contracts
+        run: python eng/ci/run-family beam --patterns --telemetry-file artifacts/ci/beam.jsonl
+
+      - name: Upload BEAM telemetry
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: beam-ci-telemetry-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/ci/beam.jsonl
+          if-no-files-found: warn
+          retention-days: 14
+
   gate:
     name: Polyglot CI
     if: always()
@@ -373,6 +409,7 @@ jobs:
       - native-rust
       - native-go
       - native-msvc
+      - beam
     runs-on: ubuntu-24.04
 
     steps:
@@ -380,6 +417,8 @@ jobs:
         shell: bash
         env:
           DETECT_RESULT: ${{ needs.detect.result }}
+          BEAM_SELECTED: ${{ needs.detect.outputs.beam }}
+          BEAM_RESULT: ${{ needs.beam.result }}
           DOTNET_SELECTED: ${{ needs.detect.outputs.dotnet }}
           DOTNET_LINUX_RESULT: ${{ needs.dotnet-linux.result }}
           DOTNET_WINDOWS_RESULT: ${{ needs.dotnet-windows.result }}
@@ -397,6 +436,13 @@ jobs:
           if [[ "$DETECT_RESULT" != "success" ]]; then
             echo "detect-changes failed: $DETECT_RESULT" >&2
             exit 1
+          fi
+
+          if [[ "$BEAM_SELECTED" == "true" ]]; then
+            if [[ "$BEAM_RESULT" != "success" ]]; then
+              echo "BEAM family failed: beam=$BEAM_RESULT" >&2
+              exit 1
+            fi
           fi
 
           if [[ "$DOTNET_SELECTED" == "true" ]]; then
@@ -420,4 +466,4 @@ jobs:
             fi
           fi
 
-          echo "Polyglot CI gate passed. dotnet=$DOTNET_SELECTED jvm=$JVM_SELECTED native=$NATIVE_SELECTED"
+          echo "Polyglot CI gate passed. beam=$BEAM_SELECTED dotnet=$DOTNET_SELECTED jvm=$JVM_SELECTED native=$NATIVE_SELECTED"
