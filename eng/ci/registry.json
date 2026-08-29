@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "targets": {
+    "product": {
+      "setup": [
+        {
+          "label": "Restore .NET solution",
+          "argv": ["dotnet", "restore", "Genkidama.slnx"]
+        }
+      ],
+      "validation": [
+        {
+          "label": "Build .NET solution",
+          "argv": ["dotnet", "build", "Genkidama.slnx", "--configuration", "Release", "--no-restore"]
+        },
+        {
+          "label": "Test .NET solution",
+          "argv": ["dotnet", "test", "Genkidama.slnx", "--configuration", "Release", "--no-build", "--collect:XPlat Code Coverage", "--logger", "trx", "--results-directory", "TestResults"]
+        },
+        {
+          "label": "Pack Genkidama CLI",
+          "argv": ["dotnet", "pack", "src/Genkidama.Cli/Genkidama.Cli.csproj", "--configuration", "Release", "--no-build", "--output", "artifacts/packages"]
+        }
+      ]
+    },
+    "quality": {
+      "setup": [
+        {
+          "label": "Install Learn validator dependency",
+          "argv": ["{python}", "-m", "pip", "install", "--disable-pip-version-check", "-r", "learn/_meta/requirements.txt"]
+        }
+      ],
+      "validation": [
+        {
+          "label": "Test local CI engine",
+          "argv": ["{python}", "-m", "unittest", "discover", "-s", "eng/ci/tests", "-p", "test_*.py"]
+        },
+        {
+          "label": "Validate Learn foundation",
+          "argv": ["{python}", "learn/_meta/validate.py"]
+        }
+      ]
+    },
+    "patterns-prototype-dotnet": {
+      "setup": [
+        {
+          "label": "Inspect .NET toolchain",
+          "argv": ["dotnet", "--version"]
+        }
+      ],
+      "validation": [
+        {
+          "label": "Validate C# Prototype contract",
+          "argv": ["{python}", "eng/ci/adapters/prototype.py", "dotnet"]
+        }
+      ]
+    },
+    "patterns-prototype-jvm": {
+      "setup": [
+        {
+          "label": "Inspect Java toolchain",
+          "argv": ["java", "-version"]
+        },
+        {
+          "label": "Inspect javac toolchain",
+          "argv": ["javac", "-version"]
+        }
+      ],
+      "validation": [
+        {
+          "label": "Validate Java Prototype contract",
+          "argv": ["{python}", "eng/ci/adapters/prototype.py", "jvm"]
+        }
+      ]
+    },
+    "patterns-prototype-native": {
+      "setup": [
+        {
+          "label": "Inspect Rust toolchain",
+          "argv": ["rustc", "--version"]
+        }
+      ],
+      "validation": [
+        {
+          "label": "Validate Rust Prototype contract",
+          "argv": ["{python}", "eng/ci/adapters/prototype.py", "native"]
+        }
+      ]
+    },
+    "patterns-platform-source": {
+      "setup": [],
+      "validation": [
+        {
+          "label": "Validate VBA and Delphi source contracts",
+          "argv": ["{python}", "eng/ci/adapters/platform_source_contracts.py"]
+        }
+      ]
+    },
+    "patterns-portable-functional-507": {
+      "setup": [
+        {
+          "label": "Inspect Docker engine",
+          "argv": ["docker", "version"]
+        }
+      ],
+      "validation": [
+        {
+          "label": "Validate 507 portable-functional pattern cells",
+          "argv": ["bash", "scripts/validate-portable-functional-cohort.sh"]
+        }
+      ]
+    }
+  },
+  "families": {
+    "dotnet": {
+      "patterns": "patterns-prototype-dotnet"
+    },
+    "jvm": {
+      "patterns": "patterns-prototype-jvm"
+    },
+    "native": {
+      "patterns": "patterns-prototype-native"
+    },
+    "platform": {
+      "patterns": "patterns-platform-source"
+    },
+    "portable-functional": {
+      "patterns": "patterns-portable-functional-507"
+    }
+  },
+  "change_detection": {
+    "full_paths": [
+      "eng/ci/"
+    ],
+    "product_paths": [
+      "Genkidama.slnx",
+      "src/Genkidama.Access/",
+      "src/Genkidama.Application/",
+      "src/Genkidama.Blueprints/",
+      "src/Genkidama.Cli/",
+      "src/Genkidama.Contracts/",
+      "src/Genkidama.Data/",
+      "src/Genkidama.Events/",
+      "src/Genkidama.Http/",
+      "src/Genkidama.Jobs/",
+      "clients/",
+      "tests/"
+    ],
+    "quality_paths": [
+      "README.md",
+      "learn/_meta/"
+    ],
+    "learn_root": "learn/es/",
+    "family_paths": {
+      "dotnet": [
+        "src/Enterprise/C#/PrototypeExample.cs"
+      ],
+      "jvm": [
+        "src/Enterprise/Java/PrototypeExample.java"
+      ],
+      "native": [
+        "src/Systems/Rust/prototype.rs"
+      ],
+      "platform": [
+        "src/Shell/VBA/example1.bas",
+        "src/Enterprise/Delphi/Example1.pas"
+      ],
+      "portable-functional": [
+        "scripts/validate-portable-functional-cohort.sh",
+        "src/Systems/Rust/patterns/",
+        "src/Systems/C/patterns/",
+        "src/Systems/C++/patterns/",
+        "src/Enterprise/Java/patterns/",
+        "src/Functional/Groovy/patterns/",
+        "src/Functional/Elixir/patterns/",
+        "src/Functional/Erlang/patterns/",
+        "src/Functional/OCaml/patterns/",
+        "src/Functional/CommonLisp/patterns/",
+        "src/Functional/Prolog/patterns/",
+        "src/DataScience/R/patterns/",
+        "src/DataScience/Octave/patterns/",
+        "src/Scripting/PowerShell/patterns/"
+      ]
+    }
+  }
+}
