@@ -119,6 +119,15 @@
         }
       ]
     },
+    "patterns-beam": {
+      "setup": [],
+      "validation": [
+        {
+          "label": "Validate BEAM pattern family",
+          "argv": ["{python}", "eng/ci/adapters/beam_patterns.py"]
+        }
+      ]
+    },
     "patterns-prototype-dotnet": {
       "setup": [
         {
@@ -190,6 +199,9 @@
     }
   },
   "families": {
+    "beam": {
+      "patterns": "patterns-beam"
+    },
     "dotnet": {
       "learn": "learn-dotnet",
       "patterns": "patterns-dotnet"
@@ -234,6 +246,10 @@
     ],
     "learn_root": "learn/es/",
     "family_paths": {
+      "beam": [
+        "src/Functional/Elixir/patterns/",
+        "src/Functional/Erlang/patterns/"
+      ],
       "dotnet": [
         "learn/es/csharp/",
         "learn/es/fsharp/",
@@ -271,8 +287,6 @@
         "src/Systems/C++/patterns/",
         "src/Enterprise/Java/patterns/",
         "src/Functional/Groovy/patterns/",
-        "src/Functional/Elixir/patterns/",
-        "src/Functional/Erlang/patterns/",
         "src/Functional/OCaml/patterns/",
         "src/Functional/CommonLisp/patterns/",
         "src/Functional/Prolog/patterns/",
