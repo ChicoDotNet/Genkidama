@@ -70,7 +70,7 @@ def main() -> int:
             for compiled in elixir_out.glob("*.beam"):
                 compiled.unlink()
             run(["elixirc", "--warnings-as-errors", "-o", str(elixir_out), str(source)])
-            run(["elixir", "--warnings-as-errors", str(source)])
+            run(["elixir", str(source)])
             print(f"PASS Elixir {source.name}", flush=True)
 
         for source in erlang_files:
