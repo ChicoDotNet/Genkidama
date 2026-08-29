@@ -1,7 +1,17 @@
-require "./iterator"
-
 def must(value : Bool)
   raise "pattern assertion failed" unless value
+end
+
+def iterator_canonical_pattern
+  output = IO::Memory.new
+  error = IO::Memory.new
+  status = Process.run(
+    "crystal",
+    ["run", "src/Niche/Crystal/iterator.cr"],
+    output: output,
+    error: error,
+  )
+  must(status.success? && output.to_s.strip == "iterator=10,20,30")
 end
 
 # Command
@@ -59,7 +69,7 @@ def interpreter_pattern
   must(AddExpr.new(Literal.new(7), MulExpr.new(Literal.new(3), Literal.new(4))).eval == 19)
 end
 
-# Iterator is executed from the canonical source by the require above.
+# Iterator delegates to src/Niche/Crystal/iterator.cr through iterator_canonical_pattern.
 
 # Mediator
 class UiMediator
@@ -690,7 +700,7 @@ patterns = [
 ]
 must(patterns.size == 39)
 
-command_pattern; interpreter_pattern; mediator_pattern; memento_pattern; observer_pattern; state_pattern; strategy_pattern; template_method_pattern; visitor_pattern
+command_pattern; interpreter_pattern; iterator_canonical_pattern; mediator_pattern; memento_pattern; observer_pattern; state_pattern; strategy_pattern; template_method_pattern; visitor_pattern
 mvc_pattern; mvvm_pattern; microkernel_pattern; microservices_pattern; enterprise_adapter_pattern; enterprise_bridge_pattern; enterprise_facade_pattern; broker_pattern; message_bus_pattern; service_locator_pattern
 active_object_pattern; monitor_object_pattern; half_sync_half_async_pattern; leader_followers_pattern; client_server_pattern; peer_to_peer_pattern; publish_subscribe_pattern; distributed_proxy_pattern
 presentation_abstraction_control_pattern; model_view_presenter_pattern; document_view_pattern; active_record_pattern; data_mapper_pattern; unit_of_work_pattern; repository_pattern
