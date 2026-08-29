@@ -1,0 +1,47 @@
+name: Quality
+
+on:
+  pull_request:
+    branches:
+      - dev
+      - main
+  push:
+    branches:
+      - dev
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Quality
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Python 3.14.7
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+          cache: pip
+          cache-dependency-path: learn/_meta/requirements.txt
+
+      - name: Run Quality contract
+        run: eng/ci/run-quality --telemetry-file artifacts/ci/quality.jsonl
+
+      - name: Upload Quality telemetry
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-ci-telemetry-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/ci/quality.jsonl
+          if-no-files-found: warn
+          retention-days: 14
