@@ -14,12 +14,15 @@ on:
       - 'src/Systems/Objective-C/interpreter.m'
       - 'src/Niche/Nim/interpreter.nim'
       - 'src/Scripting/Perl/interpreter.pl'
+      - 'src/Scripting/PythonPY/patterns/interpreter.py'
+      - 'src/Scripting/PythonPY/pattern_sweep.py'
       - 'src/Niche/GDScript/interpreter.gd'
       - 'src/LowLevel/Assembly/interpreter.asm'
       - 'src/Enterprise/Delphi/InterpreterExample.pas'
       - 'src/Other/MicroPython/interpreter.py'
       - 'src/Other/Rockstar/interpreter.rock'
       - 'src/Shell/VBA/InterpreterExample.bas'
+      - 'wiki/Interpreter.md'
       - 'docs/pattern-sweeps/interpreter-final.md'
       - '.github/workflows/pattern-interpreter-final.yml'
 
@@ -28,7 +31,7 @@ permissions:
 
 jobs:
   lightweight:
-    name: SQL + Go + Perl + Assembly
+    name: SQL + Go + Perl + Assembly + Python
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -39,7 +42,7 @@ jobs:
           cache: false
       - name: Install portable runtimes
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y sqlite3 perl nasm
-      - name: Validate SQL, Go, Perl and Assembly Interpreter artifacts
+      - name: Validate SQL, Go, Perl, Assembly and Python Interpreter artifacts
         shell: bash
         run: |
           set -euo pipefail
@@ -52,6 +55,9 @@ jobs:
           nasm -f elf64 -Wall src/LowLevel/Assembly/interpreter.asm -o /tmp/interpreter.o
           ld /tmp/interpreter.o -o /tmp/interpreter
           test "$(/tmp/interpreter)" = 'interpreter=9'
+          python3 -m py_compile src/Scripting/PythonPY/patterns/interpreter.py src/Scripting/PythonPY/pattern_sweep.py
+          test "$(python3 src/Scripting/PythonPY/patterns/interpreter.py)" = 'interpreter=7'
+          test "$(python3 src/Scripting/PythonPY/pattern_sweep.py)" = 'python-pattern-sweep: 39/39 passed'
 
   functional:
     name: Haskell
