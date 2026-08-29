@@ -43,8 +43,10 @@ def exact_files(path: Path, suffix: str, label: str) -> list[Path]:
 def validate_c_cpp() -> int:
     c_files = exact_files(ROOT / "src/Systems/C/patterns", ".c", "C")
     cpp_files = exact_files(ROOT / "src/Systems/C++/patterns", ".cpp", "C++")
-    run(["gcc", "--version"])
-    run(["g++", "--version"])
+    c_compiler = "gcc-14"
+    cpp_compiler = "g++-14"
+    run([c_compiler, "--version"])
+    run([cpp_compiler, "--version"])
 
     with tempfile.TemporaryDirectory(prefix="genkidama-native-patterns-") as temp:
         work = Path(temp)
@@ -55,7 +57,7 @@ def validate_c_cpp() -> int:
                 source.read_text(encoding="utf-8") + "\nint main(void){return run()?0:1;}\n",
                 encoding="utf-8",
             )
-            run(["gcc", "-std=c23", "-Wall", "-Wextra", "-Werror", str(cell_source), "-o", str(cell_binary)])
+            run([c_compiler, "-std=c23", "-Wall", "-Wextra", "-Werror", str(cell_source), "-o", str(cell_binary)])
             run([str(cell_binary)])
             print(f"PASS C {source.name}", flush=True)
 
@@ -66,7 +68,7 @@ def validate_c_cpp() -> int:
                 source.read_text(encoding="utf-8") + "\nint main(){return run()?0:1;}\n",
                 encoding="utf-8",
             )
-            run(["g++", "-std=c++23", "-Wall", "-Wextra", "-Werror", str(cell_source), "-o", str(cell_binary)])
+            run([cpp_compiler, "-std=c++23", "-Wall", "-Wextra", "-Werror", str(cell_source), "-o", str(cell_binary)])
             run([str(cell_binary)])
             print(f"PASS C++ {source.name}", flush=True)
 
