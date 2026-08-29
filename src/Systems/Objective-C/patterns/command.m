@@ -4,22 +4,24 @@
 - (NSInteger)execute:(NSInteger)balance;
 @end
 
-@interface DepositCommand : NSObject <Command>
-@property(nonatomic, assign) NSInteger amount;
+@interface DepositCommand : NSObject <Command> {
+    NSInteger _amount;
+}
 - (instancetype)initWithAmount:(NSInteger)amount;
 @end
 @implementation DepositCommand
 - (instancetype)initWithAmount:(NSInteger)amount { if ((self = [super init])) { _amount = amount; } return self; }
-- (NSInteger)execute:(NSInteger)balance { return balance + self.amount; }
+- (NSInteger)execute:(NSInteger)balance { return balance + _amount; }
 @end
 
-@interface WithdrawCommand : NSObject <Command>
-@property(nonatomic, assign) NSInteger amount;
+@interface WithdrawCommand : NSObject <Command> {
+    NSInteger _amount;
+}
 - (instancetype)initWithAmount:(NSInteger)amount;
 @end
 @implementation WithdrawCommand
 - (instancetype)initWithAmount:(NSInteger)amount { if ((self = [super init])) { _amount = amount; } return self; }
-- (NSInteger)execute:(NSInteger)balance { return balance - self.amount; }
+- (NSInteger)execute:(NSInteger)balance { return balance - _amount; }
 @end
 
 int main(void) {
