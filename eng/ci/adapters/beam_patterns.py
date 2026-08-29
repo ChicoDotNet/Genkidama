@@ -52,7 +52,12 @@ def main() -> int:
         )
 
     run(["elixir", "--version"])
-    run(["erlc", "-version"], capture=True)
+    run([
+        "erl",
+        "-noshell",
+        "-eval",
+        'io:format("OTP ~s~n", [erlang:system_info(otp_release)]), halt().',
+    ])
 
     with tempfile.TemporaryDirectory(prefix="genkidama-beam-patterns-") as temp:
         work = Path(temp)
