@@ -128,6 +128,15 @@
         }
       ]
     },
+    "patterns-functional": {
+      "setup": [],
+      "validation": [
+        {
+          "label": "Validate OCaml, Common Lisp, and Prolog pattern family",
+          "argv": ["{python}", "eng/ci/adapters/functional_patterns.py"]
+        }
+      ]
+    },
     "patterns-prototype-dotnet": {
       "setup": [
         {
@@ -206,6 +215,9 @@
       "learn": "learn-dotnet",
       "patterns": "patterns-dotnet"
     },
+    "functional": {
+      "patterns": "patterns-functional"
+    },
     "jvm": {
       "learn": "learn-jvm",
       "patterns": "patterns-jvm"
@@ -258,6 +270,11 @@
         "src/Functional/F#/",
         "src/Enterprise/VisualBasic/"
       ],
+      "functional": [
+        "src/Functional/OCaml/patterns/",
+        "src/Functional/CommonLisp/patterns/",
+        "src/Functional/Prolog/patterns/"
+      ],
       "jvm": [
         "learn/es/java/",
         "learn/es/kotlin/",
@@ -287,9 +304,6 @@
         "src/Systems/C++/patterns/",
         "src/Enterprise/Java/patterns/",
         "src/Functional/Groovy/patterns/",
-        "src/Functional/OCaml/patterns/",
-        "src/Functional/CommonLisp/patterns/",
-        "src/Functional/Prolog/patterns/",
         "src/DataScience/R/patterns/",
         "src/DataScience/Octave/patterns/",
         "src/Scripting/PowerShell/patterns/"
