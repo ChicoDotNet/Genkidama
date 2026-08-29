@@ -7,9 +7,11 @@ type Command interface {
 }
 
 type Deposit struct{ Amount int }
+
 func (c Deposit) Execute(balance int) int { return balance + c.Amount }
 
 type Withdraw struct{ Amount int }
+
 func (c Withdraw) Execute(balance int) int { return balance - c.Amount }
 
 func main() {
