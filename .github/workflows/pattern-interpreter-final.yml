@@ -1,0 +1,232 @@
+name: Pattern Interpreter Final
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/Data/SQL/interpreter.sql'
+      - 'src/Systems/Go/interpreter.go'
+      - 'src/Functional/Haskell/Interpreter.hs'
+      - 'src/DataScience/Julia/interpreter.jl'
+      - 'src/Web/Dart/interpreter.dart'
+      - 'src/Niche/Crystal/interpreter.cr'
+      - 'src/Systems/Zig/interpreter.zig'
+      - 'src/Systems/Objective-C/interpreter.m'
+      - 'src/Niche/Nim/interpreter.nim'
+      - 'src/Scripting/Perl/interpreter.pl'
+      - 'src/Scripting/PythonPY/patterns/interpreter.py'
+      - 'src/Scripting/PythonPY/pattern_sweep.py'
+      - 'src/Niche/GDScript/interpreter.gd'
+      - 'src/LowLevel/Assembly/interpreter.asm'
+      - 'src/Enterprise/Delphi/InterpreterExample.pas'
+      - 'src/Other/MicroPython/interpreter.py'
+      - 'src/Other/Rockstar/interpreter.rock'
+      - 'src/Shell/VBA/InterpreterExample.bas'
+      - 'wiki/Interpreter.md'
+      - 'docs/pattern-sweeps/interpreter-final.md'
+      - '.github/workflows/pattern-interpreter-final.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  lightweight:
+    name: SQL + Go + Perl + Assembly + Python
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: stable
+          check-latest: true
+          cache: false
+      - name: Install portable runtimes
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y sqlite3 perl nasm
+      - name: Validate SQL, Go, Perl, Assembly and Python Interpreter artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(sqlite3 :memory: < src/Data/SQL/interpreter.sql | tail -n 1)" = 'value=9'
+          test -z "$(gofmt -d src/Systems/Go/interpreter.go)"
+          go vet src/Systems/Go/interpreter.go
+          test "$(go run src/Systems/Go/interpreter.go)" = 'value=9'
+          perl -c src/Scripting/Perl/interpreter.pl
+          test "$(perl src/Scripting/Perl/interpreter.pl)" = 'interpreter=9'
+          nasm -f elf64 -Wall src/LowLevel/Assembly/interpreter.asm -o /tmp/interpreter.o
+          ld /tmp/interpreter.o -o /tmp/interpreter
+          test "$(/tmp/interpreter)" = 'interpreter=9'
+          python3 -m py_compile src/Scripting/PythonPY/patterns/interpreter.py src/Scripting/PythonPY/pattern_sweep.py
+          test "$(python3 src/Scripting/PythonPY/patterns/interpreter.py)" = 'interpreter=7'
+          test "$(python3 src/Scripting/PythonPY/pattern_sweep.py)" = 'python-pattern-sweep: 39/39 passed'
+
+  functional:
+    name: Haskell
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: haskell-actions/setup@v2
+        with:
+          ghc-version: latest
+          cabal-update: false
+      - name: Validate Haskell Interpreter artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          ghc -Wall -Werror -O0 -odir "$work" -hidir "$work" src/Functional/Haskell/Interpreter.hs -o "$work/interpreter-hs"
+          test "$("$work/interpreter-hs")" = 'value=9'
+
+  data-web:
+    name: Julia + Dart + Crystal
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: julia-actions/setup-julia@v3
+        with:
+          version: '1'
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+      - uses: crystal-lang/install-crystal@v1
+        with:
+          crystal: latest
+      - name: Validate Julia, Dart and Crystal Interpreter artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(julia --startup-file=no --check-bounds=yes src/DataScience/Julia/interpreter.jl)" = 'value=9'
+          dart format --output=none --set-exit-if-changed src/Web/Dart/interpreter.dart
+          dart analyze --fatal-infos --fatal-warnings src/Web/Dart/interpreter.dart
+          test "$(dart run src/Web/Dart/interpreter.dart)" = 'interpreter=9'
+          crystal tool format --check src/Niche/Crystal/interpreter.cr
+          work="$(mktemp -d)"
+          crystal build --error-on-warnings src/Niche/Crystal/interpreter.cr -o "$work/interpreter-crystal"
+          test "$("$work/interpreter-crystal")" = 'interpreter=9'
+
+  systems:
+    name: Zig + Objective-C + Nim
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install compiled toolchains
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y clang gobjc libgnustep-base-dev
+          curl -fsSL https://nim-lang.org/choosenim/init.sh -o /tmp/choosenim.sh
+          sh /tmp/choosenim.sh -y
+          echo "$HOME/.nimble/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.nimble/bin:$PATH"
+          choosenim stable
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, re, tarfile, urllib.request
+          index = json.load(urllib.request.urlopen('https://ziglang.org/download/index.json'))
+          stable = max((v for v in index if re.fullmatch(r'\d+\.\d+\.\d+', v)), key=lambda v: tuple(map(int, v.split('.'))))
+          package = index[stable]['x86_64-linux']
+          archive = pathlib.Path(os.environ['RUNNER_TEMP']) / 'zig.tar.xz'
+          urllib.request.urlretrieve(package['tarball'], archive)
+          digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+          if digest != package['shasum']:
+              raise SystemExit(f'Zig SHA-256 mismatch: {digest} != {package["shasum"]}')
+          target = pathlib.Path(os.environ['RUNNER_TEMP']) / 'zig-stable'
+          target.mkdir(exist_ok=True)
+          with tarfile.open(archive, 'r:xz') as tar:
+              tar.extractall(target, filter='data')
+          root = next(target.iterdir())
+          with open(os.environ['GITHUB_PATH'], 'a') as path:
+              path.write(str(root) + '\n')
+          PY
+      - name: Validate Zig, Objective-C and Nim Interpreter artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$HOME/.nimble/bin:$PATH"
+          work="$(mktemp -d)"
+          zig fmt --check src/Systems/Zig/interpreter.zig
+          test "$(zig run src/Systems/Zig/interpreter.zig 2>&1)" = 'interpreter=9'
+          objc_headers="$(gcc -print-file-name=include)"
+          objc_library="$(gcc -print-file-name=libobjc.so)"
+          objc_libdir="$(dirname "$objc_library")"
+          clang $(gnustep-config --objc-flags) -Wall -Wextra -Werror -I"$objc_headers" src/Systems/Objective-C/interpreter.m -o "$work/interpreter-objc" -L"$objc_libdir" $(gnustep-config --base-libs)
+          "$work/interpreter-objc"
+          nim c --hints:off -o:"$work/interpreter-nim" src/Niche/Nim/interpreter.nim
+          test "$("$work/interpreter-nim")" = 'interpreter=9'
+
+  gdscript:
+    name: GDScript
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Setup Godot 4.6.3
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 'https://github.com/godotengine/godot-builds/releases/download/4.6.3-stable/Godot_v4.6.3-stable_linux.x86_64.zip' -o /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          sudo install -m 0755 /tmp/godot/Godot_v4.6.3-stable_linux.x86_64 /usr/local/bin/godot
+      - name: Validate GDScript Interpreter
+        shell: bash
+        run: |
+          output="$(godot --headless --script src/Niche/GDScript/interpreter.gd 2>&1)"
+          grep -Fxq 'interpreter=9' <<<"$output"
+
+  micropython:
+    name: MicroPython
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build MicroPython 1.28.0 Unix port
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libffi-dev pkg-config
+          git clone --depth 1 --branch v1.28.0 --recurse-submodules https://github.com/micropython/micropython.git /tmp/micropython
+          make -C /tmp/micropython/mpy-cross -j2
+          make -C /tmp/micropython/ports/unix -j2
+      - name: Validate MicroPython Interpreter
+        shell: bash
+        run: test "$(/tmp/micropython/ports/unix/build-standard/micropython src/Other/MicroPython/interpreter.py)" = 'interpreter=9'
+
+  rockstar:
+    name: Rockstar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Setup Rockstar v2.0.31
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 'https://github.com/RockstarLang/rockstar/releases/download/v2.0.31/rockstar-v2.0.31-linux-x64.tar.gz' -o /tmp/rockstar.tar.gz
+          echo '3d265c80d9d039ad92524f42951eb546d8b42c680965dfa551210457e399653f  /tmp/rockstar.tar.gz' | sha256sum -c -
+          mkdir -p /tmp/rockstar
+          tar -xzf /tmp/rockstar.tar.gz -C /tmp/rockstar
+          echo "ROCKSTAR=$(find /tmp/rockstar -type f -name rockstar -perm -111 | head -n 1)" >> "$GITHUB_ENV"
+      - name: Validate Rockstar Interpreter
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$("$ROCKSTAR" src/Other/Rockstar/interpreter.rock)"
+          printf 'Rockstar Interpreter output: <%s>\n' "$output"
+          test "$output" = 'interpreter=9'
+
+  proprietary-source-contracts:
+    name: VBA + Delphi source contracts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate VBA and Delphi Interpreter contracts
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          def req(text, pattern, label):
+              if re.search(pattern, text, re.I | re.M | re.S) is None:
+                  raise SystemExit('Missing source contract: ' + label)
+          vba = Path('src/Shell/VBA/InterpreterExample.bas').read_text()
+          req(vba, r'InterpretExpression', 'VBA interpreter')
+          req(vba, r'Split\(expression', 'VBA grammar tokenization')
+          req(vba, r'tokens\(index\)\s*<>\s*"\+"', 'VBA plus grammar')
+          delphi = Path('src/Enterprise/Delphi/InterpreterExample.pas').read_text()
+          req(delphi, r'IExpression\s*=\s*interface', 'Delphi expression contract')
+          req(delphi, r'TNumberExpression', 'Delphi number expression')
+          req(delphi, r'TAddExpression', 'Delphi add expression')
+          req(delphi, r'function\s+TAddExpression\.Interpret', 'Delphi recursive interpreter')
