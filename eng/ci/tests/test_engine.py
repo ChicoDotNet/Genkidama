@@ -52,8 +52,20 @@ class RegistryTests(unittest.TestCase):
         self.assertEqual(result["polyglot"], ["beam"])
         self.assertFalse(result["full"])
 
+    def test_functional_pattern_changes_select_functional_only(self) -> None:
+        paths = [
+            "src/Functional/OCaml/patterns/enterprise_adapter.ml",
+            "src/Functional/CommonLisp/patterns/enterprise_adapter.lisp",
+            "src/Functional/Prolog/patterns/enterprise_adapter.pl",
+        ]
+        for path in paths:
+            with self.subTest(path=path):
+                result = engine.classify_paths([path], self.registry)
+                self.assertEqual(result["polyglot"], ["functional"])
+                self.assertFalse(result["full"])
+
     def test_remaining_pattern_cohort_change_selects_portable_functional(self) -> None:
-        result = engine.classify_paths(["src/Functional/OCaml/patterns/adapter.ml"], self.registry)
+        result = engine.classify_paths(["src/DataScience/R/patterns/adapter.R"], self.registry)
         self.assertEqual(result["polyglot"], ["portable-functional"])
         self.assertFalse(result["full"])
 
