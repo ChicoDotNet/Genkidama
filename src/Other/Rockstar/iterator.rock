@@ -1,0 +1,10 @@
+Next takes Position giving Position times 10
+
+Put Next taking 1 into First
+Put Next taking 2 into Second
+Put Next taking 3 into Third
+
+If First is 10 and Second is 20 and Third is 30
+Print "iterator=10,20,30"
+Else
+Print "iterator-failed"
