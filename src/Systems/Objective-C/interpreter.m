@@ -4,13 +4,13 @@
 - (NSInteger)interpret;
 @end
 
-@interface NumberExpression : NSObject <InterpreterExpression>
+@interface NumberExpression : NSObject <InterpreterExpression> {
+    NSInteger _value;
+}
 - (instancetype)initWithValue:(NSInteger)value;
 @end
 
-@implementation NumberExpression {
-    NSInteger _value;
-}
+@implementation NumberExpression
 
 - (instancetype)initWithValue:(NSInteger)value {
     self = [super init];
@@ -25,14 +25,14 @@
 }
 @end
 
-@interface AddExpression : NSObject <InterpreterExpression>
-- (instancetype)initWithLeft:(id<InterpreterExpression>)left right:(id<InterpreterExpression>)right;
-@end
-
-@implementation AddExpression {
+@interface AddExpression : NSObject <InterpreterExpression> {
     id<InterpreterExpression> _left;
     id<InterpreterExpression> _right;
 }
+- (instancetype)initWithLeft:(id<InterpreterExpression>)left right:(id<InterpreterExpression>)right;
+@end
+
+@implementation AddExpression
 
 - (instancetype)initWithLeft:(id<InterpreterExpression>)left right:(id<InterpreterExpression>)right {
     self = [super init];
