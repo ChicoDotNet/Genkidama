@@ -39,7 +39,7 @@ jobs:
           test "$(sqlite3 :memory: < src/Data/SQL/interpreter.sql | tail -n 1)" = 'value=9'
           test -z "$(gofmt -d src/Systems/Go/interpreter.go)"
           go vet src/Systems/Go/interpreter.go
-          test "$(go run src/Systems/Go/interpreter.go)" = 'interpreter=9'
+          test "$(go run src/Systems/Go/interpreter.go)" = 'value=9'
 
   functional:
     name: Haskell + Scala
@@ -63,8 +63,8 @@ jobs:
           set -euo pipefail
           work="$(mktemp -d)"
           ghc -Wall -Werror -O0 -odir "$work" -hidir "$work" src/Functional/Haskell/Interpreter.hs -o "$work/interpreter-hs"
-          test "$("$work/interpreter-hs")" = 'interpreter=9'
-          test "$(scala-cli run src/Functional/Scala/Interpreter.scala --server=false | tail -n 1)" = 'interpreter=9'
+          test "$("$work/interpreter-hs")" = 'value=9'
+          test "$(scala-cli run src/Functional/Scala/Interpreter.scala --server=false | tail -n 1)" = 'value=9'
 
   data-web:
     name: Julia + Dart + Crystal
@@ -84,7 +84,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(julia --startup-file=no --check-bounds=yes src/DataScience/Julia/interpreter.jl)" = 'interpreter=9'
+          test "$(julia --startup-file=no --check-bounds=yes src/DataScience/Julia/interpreter.jl)" = 'value=9'
           dart format --output=none --set-exit-if-changed src/Web/Dart/interpreter.dart
           dart analyze --fatal-infos --fatal-warnings src/Web/Dart/interpreter.dart
           test "$(dart run src/Web/Dart/interpreter.dart)" = 'interpreter=9'
