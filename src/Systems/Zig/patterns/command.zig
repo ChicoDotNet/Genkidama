@@ -12,7 +12,7 @@ const Command = union(enum) {
     }
 };
 
-pub fn main() !void {
+pub fn main() void {
     const queue = [_]Command{ .{ .deposit = 50 }, .{ .withdraw = 20 } };
     var balance: i32 = 100;
     for (queue) |command| {
@@ -20,6 +20,5 @@ pub fn main() !void {
     }
     std.debug.assert(balance == 130);
     std.debug.assert(queue.len == 2);
-    var out = std.io.getStdOut().writer();
-    try out.print("balance={d};commands={d}\n", .{ balance, queue.len });
+    std.debug.print("balance={d};commands={d}\n", .{ balance, queue.len });
 }
