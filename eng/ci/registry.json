@@ -73,6 +73,34 @@
         }
       ]
     },
+    "learn-jvm": {
+      "setup": [
+        {
+          "label": "Inspect Java runtime",
+          "argv": ["java", "--version"]
+        }
+      ],
+      "validation": [
+        {
+          "label": "Validate JVM Learn profile",
+          "argv": ["{python}", "eng/ci/adapters/learn_jvm.py"]
+        }
+      ]
+    },
+    "patterns-jvm": {
+      "setup": [
+        {
+          "label": "Inspect Java runtime",
+          "argv": ["java", "--version"]
+        }
+      ],
+      "validation": [
+        {
+          "label": "Validate JVM pattern profile",
+          "argv": ["{python}", "eng/ci/adapters/jvm_patterns.py"]
+        }
+      ]
+    },
     "patterns-prototype-dotnet": {
       "setup": [
         {
@@ -149,7 +177,8 @@
       "patterns": "patterns-dotnet"
     },
     "jvm": {
-      "patterns": "patterns-prototype-jvm"
+      "learn": "learn-jvm",
+      "patterns": "patterns-jvm"
     },
     "native": {
       "patterns": "patterns-prototype-native"
@@ -195,7 +224,11 @@
         "src/Enterprise/VisualBasic/"
       ],
       "jvm": [
-        "src/Enterprise/Java/PrototypeExample.java"
+        "learn/es/java/",
+        "learn/es/kotlin/",
+        "src/Enterprise/Java/",
+        "src/Enterprise/Kotlin/",
+        "src/Functional/Groovy/"
       ],
       "native": [
         "src/Systems/Rust/prototype.rs"
