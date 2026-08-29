@@ -1,0 +1,147 @@
+name: Polyglot CI
+
+on:
+  pull_request:
+    branches:
+      - dev
+      - main
+  push:
+    branches:
+      - dev
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: polyglot-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  detect:
+    name: Detect changes
+    runs-on: ubuntu-24.04
+    outputs:
+      dotnet: ${{ steps.classify.outputs.dotnet }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Classify affected runtime families
+        id: classify
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == "workflow_dispatch" || -z "$BASE_SHA" || "$BASE_SHA" =~ ^0+$ ]]; then
+            result="$(eng/ci/detect-changes --full)"
+          else
+            result="$(eng/ci/detect-changes "$BASE_SHA" "$HEAD_SHA")"
+          fi
+          echo "$result"
+          dotnet="$(python -c 'import json,sys; d=json.loads(sys.argv[1]); print("true" if "dotnet" in d["polyglot"] else "false")' "$result")"
+          echo "dotnet=$dotnet" >> "$GITHUB_OUTPUT"
+
+  dotnet-linux:
+    name: .NET / Linux
+    needs: detect
+    if: needs.detect.outputs.dotnet == 'true'
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.111'
+
+      - name: Setup Python 3.14.7
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+
+      - name: Run .NET Learn and Patterns contracts
+        run: python eng/ci/run-family dotnet --all --telemetry-file artifacts/ci/dotnet-linux.jsonl
+
+      - name: Upload .NET Linux telemetry
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-linux-ci-telemetry-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/ci/dotnet-linux.jsonl
+          if-no-files-found: warn
+          retention-days: 14
+
+  dotnet-windows:
+    name: .NET / Windows
+    needs: detect
+    if: needs.detect.outputs.dotnet == 'true'
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.111'
+
+      - name: Setup Python 3.14.7
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+
+      - name: Run .NET Windows Learn contracts
+        run: python eng/ci/run-family dotnet --learn --telemetry-file artifacts/ci/dotnet-windows.jsonl
+
+      - name: Upload .NET Windows telemetry
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-windows-ci-telemetry-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/ci/dotnet-windows.jsonl
+          if-no-files-found: warn
+          retention-days: 14
+
+  gate:
+    name: Polyglot CI
+    if: always()
+    needs:
+      - detect
+      - dotnet-linux
+      - dotnet-windows
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Enforce aggregate Polyglot result
+        shell: bash
+        env:
+          DETECT_RESULT: ${{ needs.detect.result }}
+          DOTNET_SELECTED: ${{ needs.detect.outputs.dotnet }}
+          DOTNET_LINUX_RESULT: ${{ needs.dotnet-linux.result }}
+          DOTNET_WINDOWS_RESULT: ${{ needs.dotnet-windows.result }}
+        run: |
+          set -euo pipefail
+          if [[ "$DETECT_RESULT" != "success" ]]; then
+            echo "detect-changes failed: $DETECT_RESULT" >&2
+            exit 1
+          fi
+
+          if [[ "$DOTNET_SELECTED" == "true" ]]; then
+            if [[ "$DOTNET_LINUX_RESULT" != "success" || "$DOTNET_WINDOWS_RESULT" != "success" ]]; then
+              echo ".NET family failed: linux=$DOTNET_LINUX_RESULT windows=$DOTNET_WINDOWS_RESULT" >&2
+              exit 1
+            fi
+          fi
+
+          echo "Polyglot CI gate passed. dotnet=$DOTNET_SELECTED"

@@ -32,12 +32,44 @@
       ],
       "validation": [
         {
+          "label": "Compile local CI Python",
+          "argv": ["{python}", "-m", "compileall", "-q", "eng/ci"]
+        },
+        {
           "label": "Test local CI engine",
           "argv": ["{python}", "-m", "unittest", "discover", "-s", "eng/ci/tests", "-p", "test_*.py"]
         },
         {
           "label": "Validate Learn foundation",
           "argv": ["{python}", "learn/_meta/validate.py"]
+        }
+      ]
+    },
+    "learn-dotnet": {
+      "setup": [
+        {
+          "label": "Inspect .NET toolchain",
+          "argv": ["dotnet", "--version"]
+        }
+      ],
+      "validation": [
+        {
+          "label": "Validate .NET Learn contracts for current platform",
+          "argv": ["{python}", "eng/ci/adapters/learn_dotnet.py"]
+        }
+      ]
+    },
+    "patterns-dotnet": {
+      "setup": [
+        {
+          "label": "Inspect .NET toolchain",
+          "argv": ["dotnet", "--version"]
+        }
+      ],
+      "validation": [
+        {
+          "label": "Validate .NET pattern family",
+          "argv": ["{python}", "eng/ci/adapters/dotnet_patterns.py"]
         }
       ]
     },
@@ -113,7 +145,8 @@
   },
   "families": {
     "dotnet": {
-      "patterns": "patterns-prototype-dotnet"
+      "learn": "learn-dotnet",
+      "patterns": "patterns-dotnet"
     },
     "jvm": {
       "patterns": "patterns-prototype-jvm"
@@ -130,7 +163,8 @@
   },
   "change_detection": {
     "full_paths": [
-      "eng/ci/"
+      "eng/ci/",
+      ".github/workflows/polyglot.yml"
     ],
     "product_paths": [
       "Genkidama.slnx",
@@ -153,7 +187,12 @@
     "learn_root": "learn/es/",
     "family_paths": {
       "dotnet": [
-        "src/Enterprise/C#/PrototypeExample.cs"
+        "learn/es/csharp/",
+        "learn/es/fsharp/",
+        "learn/es/vbnet/",
+        "src/Enterprise/C#/",
+        "src/Functional/F#/",
+        "src/Enterprise/VisualBasic/"
       ],
       "jvm": [
         "src/Enterprise/Java/PrototypeExample.java"
