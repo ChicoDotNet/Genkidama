@@ -1,21 +1,19 @@
 # Interpreter — final KB-006 reconciliation
 
-This ledger records factual progress for the horizontal Interpreter close-out. The canonical pattern page remains `wiki/Interpreter.md`; this file must not be used to claim pattern completion before the full KB-006 page is reconciled.
+This ledger records factual progress for the horizontal Interpreter close-out. The canonical authority is `wiki/Interpreter.md`; this ledger records how that page and its language cells were certified.
 
 ## Baseline
 
-- Base: `dev@57d5d439d1105ef8e380869866a697f0c4ef17bd`.
+- Base observed for the reconciliation: `dev@57d5d439d1105ef8e380869866a697f0c4ef17bd`.
 - KB-006 is approved on `dev`.
 - Current target universe: **51 targets**.
 - Final applicability inventory: **49 Applicable, 2 N/A**.
 - `HTML` and `CSS` are the only N/A targets. HTML can describe syntax-shaped markup but cannot itself execute an evaluator for another grammar; CSS is a browser-evaluated styling rule language and does not provide an author-programmable evaluation mechanism for such a grammar. These exclusions are based on Interpreter intent, not on lack of classes/OOP.
-- `wiki/Interpreter.md` is still empty on this branch and is not yet a KB-006 completion claim.
+- `wiki/Interpreter.md` now carries the complete KB-006 pattern page and the individually linked 51-target table.
 
 ## Canonical-source audit
 
-The complete 49-Applicable inventory now has an individually addressable canonical source for Interpreter on this branch.
-
-Existing canonical coverage was established through integrated language-major ledgers and individual target extractions. During final horizontal reconciliation, every claim that mattered was checked against the actual source layout rather than treating a sweep runner as a canonical cell.
+The complete 49-Applicable inventory has an individually addressable canonical source for Interpreter on this branch. Sweep runners are orchestration/evidence only and are not counted as canonical cells.
 
 The horizontal audit materialized **17 canonical Interpreter gaps** in this PR:
 
@@ -45,17 +43,24 @@ The audit also corrected false gaps caused by naming/layout differences. Scala a
 
 `Pattern Interpreter Final` is the horizontal certification boundary for close-out artifacts added during this reconciliation. It performs the strongest practical lightweight evidence by ecosystem: format/analyze/compile/runtime where the runtime is available, source-contract validation for VBA/Delphi where hosted Linux lacks the proprietary runtime/compiler, and Python bytecode compilation + standalone execution + aggregate runner execution for the extracted Python cell.
 
-The common close-out teaching contract is a small expression language with a deterministic result; each executable artifact fails or exits non-zero on a wrong result. Existing cells may use a different tiny expression while preserving the same Interpreter intent.
+The predecessor head `b7fa20c345007a2013fcd83d2a875e7b80989e25` completed its applicable workflows green: generic CI, Interpreter Final, Python sweep, Medium-High Cohort and Nim Canonical. That predecessor green is evidence for the implementation state only; it is not reused as certification of the documentation commits that follow.
 
-The previously reviewed head `e28f34a94a7468b6cc300e14cc588182aa8bde12` was green before the final Python addressability audit. The current reviewed head must be recertified; predecessor green is not reused as evidence for the newly extracted Python cell or its orchestration change.
+`Pattern Interpreter Final` watches `wiki/Interpreter.md`, so the final documentation head must execute the horizontal certification again. Promotion is evaluated only from that final head after generic CI, applicable pattern workflows, links/page validation, `dev` reconciliation, reviews and mergeability have been re-read.
 
-## Remaining reconciliation
+## Canonical page
 
-Before Interpreter can be marked `validated`:
+`wiki/Interpreter.md` now records:
 
-1. certify the Python extraction and all close-out artifacts on the reviewed head;
-2. reconcile `wiki/Interpreter.md` with the full 49 Applicable / 2 N/A table, problem, forces, intent, trade-offs, use/no-use guidance, relationships/confusions, Mermaid, verification and factual `En Genkidama` usage;
-3. validate links/Mermaid/page structure and generic CI on the resulting documentation head; `Pattern Interpreter Final` now watches `wiki/Interpreter.md` so that documentation changes are recertified;
-4. re-read `dev`, reviews and mergeability before promotion readiness.
+- problem, intent and competing forces;
+- participants, flow and Mermaid;
+- trade-offs and use/no-use guidance;
+- relationships and common confusions, including parser ≠ Interpreter;
+- factual `En Genkidama`: no deliberate current product use was found, so no architecture was introduced to manufacture one;
+- behavioral verification guidance;
+- the complete **49/49 Applicable + 2 N/A** implementation table with direct canonical links.
 
 No aggregate code/test coverage percentage is claimed for this polyglot set. Where percentage coverage is meaningful the repository policy applies; otherwise compile/analyze/runtime evidence is preferred and no number is invented.
+
+## Promotion gate
+
+Interpreter is eligible for `stable for promotion: yes` only after the current documentation head is confirmed mergeable against the then-current `dev`, all applicable workflows are green, the canonical links/page checks are green, own debt remains zero, and the 20% Learn/metadata/navigation/workflow compatibility check finds no regression. Until those facts are observed, the PR remains Draft and this ledger makes no premature promotion claim.
