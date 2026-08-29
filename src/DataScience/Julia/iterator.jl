@@ -2,6 +2,7 @@ struct CursorIterator{T}
     values::Vector{T}
 end
 
+Base.IteratorSize(::Type{<:CursorIterator}) = Base.SizeUnknown()
 Base.iterate(iterator::CursorIterator, state::Int = 1) =
     state > length(iterator.values) ? nothing : (iterator.values[state], state + 1)
 
