@@ -196,7 +196,11 @@ jobs:
           echo "ROCKSTAR=$(find /tmp/rockstar -type f -name rockstar -perm -111 | head -n 1)" >> "$GITHUB_ENV"
       - name: Validate Rockstar Interpreter
         shell: bash
-        run: test "$("$ROCKSTAR" src/Other/Rockstar/interpreter.rock)" = 'interpreter=9'
+        run: |
+          set -euo pipefail
+          output="$("$ROCKSTAR" src/Other/Rockstar/interpreter.rock)"
+          printf 'Rockstar Interpreter output: <%s>\n' "$output"
+          test "$output" = 'interpreter=9'
 
   proprietary-source-contracts:
     name: VBA + Delphi source contracts
