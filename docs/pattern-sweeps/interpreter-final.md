@@ -11,12 +11,13 @@ This ledger records factual progress for the horizontal Interpreter close-out. T
 
 ## Debt-first increments
 
-The audit has identified and materialized four unambiguous canonical-source gaps so far:
+The audit has identified and materialized five unambiguous canonical-source gaps so far:
 
 1. **SQL** — `src/Data/SQL/interpreter.sql` models `Expr := Number ('+' Number)*` as relational tokens and interprets it with a recursive SQLite CTE. Behavioral validation: `2 + 3 + 4` => `value=9`.
 2. **Go** — `src/Systems/Go/interpreter.go` models grammar nodes as an `Expr` interface implemented by `Number` and recursive `Add` structs. The executable fails if interpretation is not `9`.
 3. **Haskell** — `src/Functional/Haskell/Interpreter.hs` models the grammar as an algebraic data type and interprets it through structural recursion. The executable fails if interpretation is not `9`.
 4. **Scala** — `src/Functional/Scala/Interpreter.scala` models grammar nodes as a sealed hierarchy with recursive interpretation and requires the result to equal `9`.
+5. **Julia** — `src/DataScience/Julia/interpreter.jl` models grammar nodes as an abstract type with `Number` and recursive `Add` variants and dispatches interpretation by concrete grammar node; it errors unless the result is `9`.
 
 The audit also corrected false gaps caused by naming/layout differences: canonical Interpreter sources already exist for Ada, Pascal, Clojure, COBOL, Solidity, MATLAB, Lua, and Bash, among others. Those discoveries are inventory facts, not a claim that the complete 51-target matrix is already verified.
 
