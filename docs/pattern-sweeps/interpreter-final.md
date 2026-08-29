@@ -9,19 +9,15 @@ This ledger records factual progress for the horizontal Interpreter close-out. T
 - Current target universe: **51 targets**.
 - Final applicability inventory: **49 Applicable, 2 N/A**.
 - `HTML` and `CSS` are the only N/A targets. HTML can describe syntax-shaped markup but cannot itself execute an evaluator for another grammar; CSS is a browser-evaluated styling rule language and does not provide an author-programmable evaluation mechanism for such a grammar. These exclusions are based on Interpreter intent, not on lack of classes/OOP.
-- `wiki/Interpreter.md` is still historical/incomplete and is not yet a KB-006 completion claim.
+- `wiki/Interpreter.md` is still empty on this branch and is not yet a KB-006 completion claim.
 
 ## Canonical-source audit
 
-The complete 49-Applicable inventory now has an individually addressable canonical source for Interpreter.
+The complete 49-Applicable inventory now has an individually addressable canonical source for Interpreter on this branch.
 
-Existing canonical coverage was established through the integrated language-major ledgers and individual target sweeps:
+Existing canonical coverage was established through integrated language-major ledgers and individual target extractions. During final horizontal reconciliation, every claim that mattered was checked against the actual source layout rather than treating a sweep runner as a canonical cell.
 
-- portable-functional cohort: Rust, Java, C++, C, R, GNU Octave, OCaml, Common Lisp, Elixir, Erlang, Groovy, Prolog and PowerShell;
-- medium-high cohort: Scala, Clojure, Kotlin, Swift, C#, Visual Basic .NET, F#, Solidity, Ada, Pascal, COBOL, Fortran, Nim and TypeScript;
-- existing individual canonical sweeps/sources: Python, PHP, Ruby, JavaScript, Lua, Bash and MATLAB.
-
-The horizontal audit identified **16 canonical gaps** that were not satisfied by an aggregate runner or previous per-pattern source and materialized them in this PR:
+The horizontal audit materialized **17 canonical Interpreter gaps** in this PR:
 
 1. **SQL** — `src/Data/SQL/interpreter.sql`: relational tokens + recursive SQLite CTE.
 2. **Go** — `src/Systems/Go/interpreter.go`: `Expr` interface with recursive number/add nodes.
@@ -39,24 +35,27 @@ The horizontal audit identified **16 canonical gaps** that were not satisfied by
 14. **MicroPython** — `src/Other/MicroPython/interpreter.py`: lightweight recursive expression objects.
 15. **Rockstar** — `src/Other/Rockstar/interpreter.rock`: expression functions composing number/add evaluation.
 16. **VBA** — `src/Shell/VBA/InterpreterExample.bas`: tokenized `Number ('+' Number)*` grammar + evaluator.
+17. **Python** — `src/Scripting/PythonPY/patterns/interpreter.py`: tuple-based AST + recursive evaluator.
+
+The Python gap was discovered during final link reconciliation. Its historical `src/Scripting/PythonPY/pattern_sweep.py` contained a correct Interpreter check, but KB-006 explicitly says a multi-pattern runner cannot substitute for an individually addressable canonical `pattern × language` artifact. The runner now orchestrates the extracted Python source instead of owning a second hidden Interpreter implementation.
 
 The audit also corrected false gaps caused by naming/layout differences. Scala and Fortran already had canonical Interpreter sources and duplicate close-out files were removed rather than retained.
 
 ## Validation
 
-`Pattern Interpreter Final` is the horizontal certification boundary for the 16 canonical artifacts added during this close-out. It performs the strongest practical lightweight evidence by ecosystem: format/analyze/compile/runtime where the runtime is available, and source-contract validation for VBA/Delphi where hosted Linux lacks the proprietary runtime/compiler.
+`Pattern Interpreter Final` is the horizontal certification boundary for close-out artifacts added during this reconciliation. It performs the strongest practical lightweight evidence by ecosystem: format/analyze/compile/runtime where the runtime is available, source-contract validation for VBA/Delphi where hosted Linux lacks the proprietary runtime/compiler, and Python bytecode compilation + standalone execution + aggregate runner execution for the extracted Python cell.
 
-The common teaching contract is the grammar/evaluation result `2 + 3 + 4 = 9`; each executable example fails or exits non-zero on a wrong result.
+The common close-out teaching contract is a small expression language with a deterministic result; each executable artifact fails or exits non-zero on a wrong result. Existing cells may use a different tiny expression while preserving the same Interpreter intent.
 
-The previously reviewed head `4a060df25293b7426afebabd17e6936b25699ba7` was fully green for CI, Medium-High Cohort, Nim Canonical and Interpreter Final before the seven remaining gaps were added. The current head must be recertified; no predecessor green is reused as evidence for newly added cells.
+The previously reviewed head `e28f34a94a7468b6cc300e14cc588182aa8bde12` was green before the final Python addressability audit. The current reviewed head must be recertified; predecessor green is not reused as evidence for the newly extracted Python cell or its orchestration change.
 
 ## Remaining reconciliation
 
 Before Interpreter can be marked `validated`:
 
-1. certify all 16 close-out artifacts on the reviewed head;
+1. certify the Python extraction and all close-out artifacts on the reviewed head;
 2. reconcile `wiki/Interpreter.md` with the full 49 Applicable / 2 N/A table, problem, forces, intent, trade-offs, use/no-use guidance, relationships/confusions, Mermaid, verification and factual `En Genkidama` usage;
-3. validate links/Mermaid/page structure and generic CI on the resulting documentation head;
+3. validate links/Mermaid/page structure and generic CI on the resulting documentation head; `Pattern Interpreter Final` now watches `wiki/Interpreter.md` so that documentation changes are recertified;
 4. re-read `dev`, reviews and mergeability before promotion readiness.
 
 No aggregate code/test coverage percentage is claimed for this polyglot set. Where percentage coverage is meaningful the repository policy applies; otherwise compile/analyze/runtime evidence is preferred and no number is invented.
