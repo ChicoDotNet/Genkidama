@@ -1,0 +1,146 @@
+name: Pattern Interpreter Final
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/Data/SQL/interpreter.sql'
+      - 'src/Systems/Go/interpreter.go'
+      - 'src/Functional/Haskell/Interpreter.hs'
+      - 'src/Functional/Scala/Interpreter.scala'
+      - 'src/DataScience/Julia/interpreter.jl'
+      - 'src/Web/Dart/interpreter.dart'
+      - 'src/Niche/Crystal/interpreter.cr'
+      - 'src/Systems/Zig/interpreter.zig'
+      - 'src/Systems/Objective-C/interpreter.m'
+      - 'src/Systems/Fortran/interpreter.f90'
+      - 'src/Niche/Nim/interpreter.nim'
+      - 'docs/pattern-sweeps/interpreter-final.md'
+      - '.github/workflows/pattern-interpreter-final.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  lightweight:
+    name: SQL + Go
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: stable
+          check-latest: true
+          cache: false
+      - name: Validate SQL and Go Interpreter artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(sqlite3 :memory: < src/Data/SQL/interpreter.sql | tail -n 1)" = 'value=9'
+          test -z "$(gofmt -d src/Systems/Go/interpreter.go)"
+          go vet src/Systems/Go/interpreter.go
+          test "$(go run src/Systems/Go/interpreter.go)" = 'interpreter=9'
+
+  functional:
+    name: Haskell + Scala
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: haskell-actions/setup@v2
+        with:
+          ghc-version: latest
+          cabal-update: false
+      - name: Install Scala CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL https://github.com/VirtusLab/scala-cli/releases/latest/download/scala-cli-x86_64-pc-linux.gz -o /tmp/scala-cli.gz
+          gzip -d /tmp/scala-cli.gz
+          sudo install -m 0755 /tmp/scala-cli /usr/local/bin/scala-cli
+      - name: Validate Haskell and Scala Interpreter artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          ghc -Wall -Werror -O0 -odir "$work" -hidir "$work" src/Functional/Haskell/Interpreter.hs -o "$work/interpreter-hs"
+          test "$("$work/interpreter-hs")" = 'interpreter=9'
+          test "$(scala-cli run src/Functional/Scala/Interpreter.scala --server=false | tail -n 1)" = 'interpreter=9'
+
+  data-web:
+    name: Julia + Dart + Crystal
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: julia-actions/setup-julia@v3
+        with:
+          version: '1'
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+      - uses: crystal-lang/install-crystal@v1
+        with:
+          crystal: latest
+      - name: Validate Julia, Dart and Crystal Interpreter artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(julia --startup-file=no --check-bounds=yes src/DataScience/Julia/interpreter.jl)" = 'interpreter=9'
+          dart format --output=none --set-exit-if-changed src/Web/Dart/interpreter.dart
+          dart analyze --fatal-infos --fatal-warnings src/Web/Dart/interpreter.dart
+          test "$(dart run src/Web/Dart/interpreter.dart)" = 'interpreter=9'
+          crystal tool format --check src/Niche/Crystal/interpreter.cr
+          work="$(mktemp -d)"
+          crystal build --error-on-warnings src/Niche/Crystal/interpreter.cr -o "$work/interpreter-crystal"
+          test "$("$work/interpreter-crystal")" = 'interpreter=9'
+
+  systems:
+    name: Zig + Objective-C + Fortran + Nim
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install compiled toolchains
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y clang gobjc libgnustep-base-dev gfortran
+          curl -fsSL https://nim-lang.org/choosenim/init.sh -o /tmp/choosenim.sh
+          sh /tmp/choosenim.sh -y
+          echo "$HOME/.nimble/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.nimble/bin:$PATH"
+          choosenim stable
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, re, tarfile, urllib.request
+          index = json.load(urllib.request.urlopen('https://ziglang.org/download/index.json'))
+          stable = max((v for v in index if re.fullmatch(r'\d+\.\d+\.\d+', v)), key=lambda v: tuple(map(int, v.split('.'))))
+          package = index[stable]['x86_64-linux']
+          archive = pathlib.Path(os.environ['RUNNER_TEMP']) / 'zig.tar.xz'
+          urllib.request.urlretrieve(package['tarball'], archive)
+          digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+          if digest != package['shasum']:
+              raise SystemExit(f'Zig SHA-256 mismatch: {digest} != {package["shasum"]}')
+          target = pathlib.Path(os.environ['RUNNER_TEMP']) / 'zig-stable'
+          target.mkdir(exist_ok=True)
+          with tarfile.open(archive, 'r:xz') as tar:
+              tar.extractall(target, filter='data')
+          root = next(target.iterdir())
+          with open(os.environ['GITHUB_PATH'], 'a') as path:
+              path.write(str(root) + '\n')
+          PY
+      - name: Validate Zig, Objective-C, Fortran and Nim Interpreter artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$HOME/.nimble/bin:$PATH"
+          work="$(mktemp -d)"
+          zig fmt --check src/Systems/Zig/interpreter.zig
+          test "$(zig run src/Systems/Zig/interpreter.zig 2>&1)" = 'interpreter=9'
+          objc_headers="$(gcc -print-file-name=include)"
+          objc_library="$(gcc -print-file-name=libobjc.so)"
+          objc_libdir="$(dirname "$objc_library")"
+          clang $(gnustep-config --objc-flags) -Wall -Wextra -Werror -I"$objc_headers" src/Systems/Objective-C/interpreter.m -o "$work/interpreter-objc" -L"$objc_libdir" $(gnustep-config --base-libs)
+          "$work/interpreter-objc"
+          gfortran -std=f2018 -Wall -Wextra -Werror src/Systems/Fortran/interpreter.f90 -o "$work/interpreter-fortran"
+          test "$("$work/interpreter-fortran" | tr -d ' ')" = 'interpreter=9'
+          nim c --hints:off -o:"$work/interpreter-nim" src/Niche/Nim/interpreter.nim
+          test "$("$work/interpreter-nim")" = 'interpreter=9'
