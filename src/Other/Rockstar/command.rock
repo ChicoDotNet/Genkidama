@@ -1,0 +1,11 @@
+Balance is 100
+Deposit Amount is 50
+Withdraw Amount is 20
+
+Put Balance plus Deposit Amount into Balance
+Put Balance minus Withdraw Amount into Balance
+
+If Balance is 130
+Print "balance=130;commands=2"
+Else
+Print "command-failed"
