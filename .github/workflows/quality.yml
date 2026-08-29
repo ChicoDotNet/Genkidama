@@ -45,3 +45,44 @@ jobs:
           path: artifacts/ci/quality.jsonl
           if-no-files-found: warn
           retention-days: 14
+
+  cache-hygiene-plan:
+    name: Cache hygiene / Dry run
+    needs: quality
+    if: always() && github.event_name == 'pull_request' && needs.quality.result == 'success'
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Plan cache hygiene
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 eng/ci/cache_hygiene.py --scope quality --scope jvm --scope go
+
+  cache-hygiene-quality:
+    name: Cache hygiene / Quality
+    needs: quality
+    if: always() && github.event_name != 'pull_request' && needs.quality.result == 'success'
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: write
+      contents: read
+      pull-requests: read
+    concurrency:
+      group: genkidama-cache-hygiene
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Apply Quality cache hygiene
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 eng/ci/cache_hygiene.py --scope quality --apply
