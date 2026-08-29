@@ -5,12 +5,19 @@ on:
     branches: [dev]
     paths:
       - 'src/Functional/Haskell/PatternSweep.hs'
+      - 'src/Functional/Haskell/patterns/Command.hs'
       - 'src/Web/Dart/pattern_sweep.dart'
+      - 'src/Web/Dart/patterns/command.dart'
       - 'src/Niche/Crystal/pattern_sweep.cr'
+      - 'src/Niche/Crystal/patterns/command.cr'
       - 'src/Systems/Zig/pattern_sweep.zig'
+      - 'src/Systems/Zig/patterns/command.zig'
       - 'src/DataScience/Julia/pattern_sweep.jl'
+      - 'src/DataScience/Julia/patterns/command.jl'
       - 'src/Systems/Go/pattern_sweep.go'
+      - 'src/Systems/Go/patterns/command.go'
       - 'src/Systems/Objective-C/pattern_sweep.m'
+      - 'src/Systems/Objective-C/patterns/command.m'
       - 'docs/pattern-sweeps/high-overhead-cohort.md'
       - '.github/workflows/pattern-high-overhead-cohort.yml'
 
@@ -36,19 +43,21 @@ jobs:
           echo "SETUP_SECONDS=$((now - SETUP_STARTED))" >> "$GITHUB_ENV"
           echo "VALIDATION_STARTED=$now" >> "$GITHUB_ENV"
           echo "TOOLCHAIN_VERSION=GHC $(ghc --numeric-version)" >> "$GITHUB_ENV"
-      - name: Validate 39 Haskell pattern cells
+      - name: Validate 39 Haskell pattern cells plus canonical Command
         shell: bash
         run: |
           set -euo pipefail
           work="$(mktemp -d)"
           ghc -Wall -Werror -O0 -odir "$work" -hidir "$work" src/Functional/Haskell/PatternSweep.hs -o "$work/pattern-sweep-haskell"
           test "$("$work/pattern-sweep-haskell")" = 'Haskell pattern sweep: 39/39 examples passed'
+          ghc -Wall -Werror -O0 -odir "$work" -hidir "$work" src/Functional/Haskell/patterns/Command.hs -o "$work/command-haskell"
+          test "$("$work/command-haskell")" = 'balance=130;commands=2'
       - name: Record Haskell timing
         if: always()
         shell: bash
         run: |
           now="$(date +%s)"; validation="$((now - VALIDATION_STARTED))"; total="$((SETUP_SECONDS + validation))"
-          printf '### Haskell cohort timing\n- cells: 39\n- toolchain: %s\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$TOOLCHAIN_VERSION" "$SETUP_SECONDS" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
+          printf '### Haskell cohort timing\n- cells: 39 + canonical Command\n- toolchain: %s\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$TOOLCHAIN_VERSION" "$SETUP_SECONDS" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
 
   dart:
     runs-on: ubuntu-latest
@@ -67,20 +76,22 @@ jobs:
           echo "SETUP_SECONDS=$((now - SETUP_STARTED))" >> "$GITHUB_ENV"
           echo "VALIDATION_STARTED=$now" >> "$GITHUB_ENV"
           echo "TOOLCHAIN_VERSION=$(dart --version 2>&1)" >> "$GITHUB_ENV"
-      - name: Validate 39 Dart pattern cells
+      - name: Validate 39 Dart pattern cells plus canonical Command
         shell: bash
         run: |
           set -euo pipefail
-          file='src/Web/Dart/pattern_sweep.dart'
-          dart format --output=none --set-exit-if-changed "$file"
-          dart analyze --fatal-infos --fatal-warnings "$file"
-          test "$(dart run "$file")" = 'Dart pattern sweep: 39/39 examples passed'
+          for file in src/Web/Dart/pattern_sweep.dart src/Web/Dart/patterns/command.dart; do
+            dart format --output=none --set-exit-if-changed "$file"
+            dart analyze --fatal-infos --fatal-warnings "$file"
+          done
+          test "$(dart run src/Web/Dart/pattern_sweep.dart)" = 'Dart pattern sweep: 39/39 examples passed'
+          test "$(dart run src/Web/Dart/patterns/command.dart)" = 'balance=130;commands=2'
       - name: Record Dart timing
         if: always()
         shell: bash
         run: |
           now="$(date +%s)"; validation="$((now - VALIDATION_STARTED))"; total="$((SETUP_SECONDS + validation))"
-          printf '### Dart cohort timing\n- cells: 39\n- toolchain: %s\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$TOOLCHAIN_VERSION" "$SETUP_SECONDS" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
+          printf '### Dart cohort timing\n- cells: 39 + canonical Command\n- toolchain: %s\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$TOOLCHAIN_VERSION" "$SETUP_SECONDS" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
 
   crystal:
     runs-on: ubuntu-latest
@@ -99,21 +110,22 @@ jobs:
           echo "SETUP_SECONDS=$((now - SETUP_STARTED))" >> "$GITHUB_ENV"
           echo "VALIDATION_STARTED=$now" >> "$GITHUB_ENV"
           echo "TOOLCHAIN_VERSION=$(crystal --version | head -n1)" >> "$GITHUB_ENV"
-      - name: Validate 39 Crystal pattern cells
+      - name: Validate 39 Crystal pattern cells plus canonical Command
         shell: bash
         run: |
           set -euo pipefail
-          file='src/Niche/Crystal/pattern_sweep.cr'
           work="$(mktemp -d)"
-          crystal tool format --check "$file"
-          crystal build --error-on-warnings "$file" -o "$work/pattern-sweep-crystal"
+          for file in src/Niche/Crystal/pattern_sweep.cr src/Niche/Crystal/patterns/command.cr; do crystal tool format --check "$file"; done
+          crystal build --error-on-warnings src/Niche/Crystal/pattern_sweep.cr -o "$work/pattern-sweep-crystal"
           test "$("$work/pattern-sweep-crystal")" = 'Crystal pattern sweep: 39/39 examples passed'
+          crystal build --error-on-warnings src/Niche/Crystal/patterns/command.cr -o "$work/command-crystal"
+          test "$("$work/command-crystal")" = 'balance=130;commands=2'
       - name: Record Crystal timing
         if: always()
         shell: bash
         run: |
           now="$(date +%s)"; validation="$((now - VALIDATION_STARTED))"; total="$((SETUP_SECONDS + validation))"
-          printf '### Crystal cohort timing\n- cells: 39\n- toolchain: %s\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$TOOLCHAIN_VERSION" "$SETUP_SECONDS" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
+          printf '### Crystal cohort timing\n- cells: 39 + canonical Command\n- toolchain: %s\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$TOOLCHAIN_VERSION" "$SETUP_SECONDS" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
 
   zig:
     runs-on: ubuntu-latest
@@ -128,10 +140,7 @@ jobs:
           python3 - <<'PY'
           import hashlib, json, os, pathlib, re, tarfile, urllib.request
           index = json.load(urllib.request.urlopen('https://ziglang.org/download/index.json'))
-          stable = max(
-              (v for v in index if re.fullmatch(r'\d+\.\d+\.\d+', v)),
-              key=lambda v: tuple(map(int, v.split('.')))
-          )
+          stable = max((v for v in index if re.fullmatch(r'\d+\.\d+\.\d+', v)), key=lambda v: tuple(map(int, v.split('.'))))
           package = index[stable]['x86_64-linux']
           archive = pathlib.Path(os.environ['RUNNER_TEMP']) / 'zig.tar.xz'
           urllib.request.urlretrieve(package['tarball'], archive)
@@ -140,13 +149,10 @@ jobs:
               raise SystemExit(f'Zig SHA-256 mismatch: {digest} != {package["shasum"]}')
           target = pathlib.Path(os.environ['RUNNER_TEMP']) / 'zig-stable'
           target.mkdir(exist_ok=True)
-          with tarfile.open(archive, 'r:xz') as tar:
-              tar.extractall(target, filter='data')
+          with tarfile.open(archive, 'r:xz') as tar: tar.extractall(target, filter='data')
           root = next(target.iterdir())
-          with open(os.environ['GITHUB_PATH'], 'a') as path:
-              path.write(str(root) + '\n')
-          with open(os.environ['GITHUB_ENV'], 'a') as env:
-              env.write(f'ZIG_STABLE_VERSION={stable}\n')
+          with open(os.environ['GITHUB_PATH'], 'a') as path: path.write(str(root) + '\n')
+          with open(os.environ['GITHUB_ENV'], 'a') as env: env.write(f'ZIG_STABLE_VERSION={stable}\n')
           print(f'Installed Zig {stable}')
           PY
       - name: Mark validation start
@@ -157,19 +163,19 @@ jobs:
           echo "VALIDATION_STARTED=$now" >> "$GITHUB_ENV"
           echo "TOOLCHAIN_VERSION=Zig $(zig version)" >> "$GITHUB_ENV"
           test "$(zig version)" = "$ZIG_STABLE_VERSION"
-      - name: Validate 39 Zig pattern cells
+      - name: Validate 39 Zig pattern cells plus canonical Command
         shell: bash
         run: |
           set -euo pipefail
-          file='src/Systems/Zig/pattern_sweep.zig'
-          zig fmt --check "$file"
-          test "$(zig run "$file" 2>&1)" = 'Zig pattern sweep: 39/39 examples passed'
+          for file in src/Systems/Zig/pattern_sweep.zig src/Systems/Zig/patterns/command.zig; do zig fmt --check "$file"; done
+          test "$(zig run src/Systems/Zig/pattern_sweep.zig 2>&1)" = 'Zig pattern sweep: 39/39 examples passed'
+          test "$(zig run src/Systems/Zig/patterns/command.zig 2>&1)" = 'balance=130;commands=2'
       - name: Record Zig timing
         if: always()
         shell: bash
         run: |
           now="$(date +%s)"; validation="$((now - VALIDATION_STARTED))"; total="$((SETUP_SECONDS + validation))"
-          printf '### Zig cohort timing\n- cells: 39\n- toolchain: %s\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$TOOLCHAIN_VERSION" "$SETUP_SECONDS" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
+          printf '### Zig cohort timing\n- cells: 39 + canonical Command\n- toolchain: %s\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$TOOLCHAIN_VERSION" "$SETUP_SECONDS" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
 
   julia:
     runs-on: ubuntu-latest
@@ -188,17 +194,18 @@ jobs:
           echo "SETUP_SECONDS=$((now - SETUP_STARTED))" >> "$GITHUB_ENV"
           echo "VALIDATION_STARTED=$now" >> "$GITHUB_ENV"
           echo "TOOLCHAIN_VERSION=$(julia --version)" >> "$GITHUB_ENV"
-      - name: Validate 39 Julia pattern cells
+      - name: Validate 39 Julia pattern cells plus canonical Command
         shell: bash
         run: |
           set -euo pipefail
           test "$(julia --startup-file=no --check-bounds=yes src/DataScience/Julia/pattern_sweep.jl)" = 'Julia pattern sweep: 39/39 examples passed'
+          test "$(julia --startup-file=no --check-bounds=yes src/DataScience/Julia/patterns/command.jl)" = 'balance=130;commands=2'
       - name: Record Julia timing
         if: always()
         shell: bash
         run: |
           now="$(date +%s)"; validation="$((now - VALIDATION_STARTED))"; total="$((SETUP_SECONDS + validation))"
-          printf '### Julia cohort timing\n- cells: 39\n- toolchain: %s\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$TOOLCHAIN_VERSION" "$SETUP_SECONDS" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
+          printf '### Julia cohort timing\n- cells: 39 + canonical Command\n- toolchain: %s\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$TOOLCHAIN_VERSION" "$SETUP_SECONDS" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
 
   go:
     runs-on: ubuntu-latest
@@ -219,20 +226,19 @@ jobs:
           echo "SETUP_SECONDS=$((now - SETUP_STARTED))" >> "$GITHUB_ENV"
           echo "VALIDATION_STARTED=$now" >> "$GITHUB_ENV"
           echo "TOOLCHAIN_VERSION=$(go version)" >> "$GITHUB_ENV"
-      - name: Validate 39 Go pattern cells
+      - name: Validate 39 Go pattern cells plus canonical Command
         shell: bash
         run: |
           set -euo pipefail
-          file='src/Systems/Go/pattern_sweep.go'
-          test -z "$(gofmt -d "$file")"
-          go vet "$file"
-          test "$(go run "$file")" = 'Go pattern sweep: 39/39 examples passed'
+          for file in src/Systems/Go/pattern_sweep.go src/Systems/Go/patterns/command.go; do test -z "$(gofmt -d "$file")"; go vet "$file"; done
+          test "$(go run src/Systems/Go/pattern_sweep.go)" = 'Go pattern sweep: 39/39 examples passed'
+          test "$(go run src/Systems/Go/patterns/command.go)" = 'balance=130;commands=2'
       - name: Record Go timing
         if: always()
         shell: bash
         run: |
           now="$(date +%s)"; validation="$((now - VALIDATION_STARTED))"; total="$((SETUP_SECONDS + validation))"
-          printf '### Go cohort timing\n- cells: 39\n- toolchain: %s\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$TOOLCHAIN_VERSION" "$SETUP_SECONDS" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
+          printf '### Go cohort timing\n- cells: 39 + canonical Command\n- toolchain: %s\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$TOOLCHAIN_VERSION" "$SETUP_SECONDS" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
 
   objective-c:
     runs-on: ubuntu-latest
@@ -253,22 +259,22 @@ jobs:
           echo "SETUP_SECONDS=$((now - SETUP_STARTED))" >> "$GITHUB_ENV"
           echo "VALIDATION_STARTED=$now" >> "$GITHUB_ENV"
           echo "TOOLCHAIN_VERSION=$(clang --version | head -n1)" >> "$GITHUB_ENV"
-      - name: Validate 39 Objective-C pattern cells
+      - name: Validate 39 Objective-C pattern cells plus canonical Command
         shell: bash
         run: |
           set -euo pipefail
-          file='src/Systems/Objective-C/pattern_sweep.m'
           work="$(mktemp -d)"
           objc_headers="$(gcc -print-file-name=include)"
           objc_library="$(gcc -print-file-name=libobjc.so)"
           test -f "$objc_library"
           objc_libdir="$(dirname "$objc_library")"
-          clang $(gnustep-config --objc-flags) -Wall -Wextra -Werror -I"$objc_headers" \
-            "$file" -o "$work/pattern-sweep-objc" -L"$objc_libdir" $(gnustep-config --base-libs)
+          clang $(gnustep-config --objc-flags) -Wall -Wextra -Werror -I"$objc_headers" src/Systems/Objective-C/pattern_sweep.m -o "$work/pattern-sweep-objc" -L"$objc_libdir" $(gnustep-config --base-libs)
           test "$("$work/pattern-sweep-objc")" = 'Objective-C pattern sweep: 39/39 examples passed'
+          clang $(gnustep-config --objc-flags) -Wall -Wextra -Werror -I"$objc_headers" src/Systems/Objective-C/patterns/command.m -o "$work/command-objc" -L"$objc_libdir" $(gnustep-config --base-libs)
+          test "$("$work/command-objc")" = 'balance=130;commands=2'
       - name: Record Objective-C timing
         if: always()
         shell: bash
         run: |
           now="$(date +%s)"; validation="$((now - VALIDATION_STARTED))"; total="$((SETUP_SECONDS + validation))"
-          printf '### Objective-C cohort timing\n- cells: 39\n- toolchain: %s\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$TOOLCHAIN_VERSION" "$SETUP_SECONDS" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
+          printf '### Objective-C cohort timing\n- cells: 39 + canonical Command\n- toolchain: %s\n- setup_seconds: %s\n- validation_seconds: %s\n- total_seconds: %s\n' "$TOOLCHAIN_VERSION" "$SETUP_SECONDS" "$validation" "$total" >> "$GITHUB_STEP_SUMMARY"
