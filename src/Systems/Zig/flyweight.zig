@@ -23,7 +23,7 @@ const Factory = struct {
     }
 };
 
-pub fn main() !void {
+pub fn main(init: std.process.Init) !void {
     var factory = Factory{};
     const red1 = factory.get("Inter", 12, "red");
     const red2 = factory.get("Inter", 12, "red");
@@ -35,5 +35,5 @@ pub fn main() !void {
         factory.used,
         if (red1 == red2) "true" else "false",
     });
-    try std.fs.File.stdout().writeAll(output);
+    try std.Io.File.stdout().writeStreamingAll(init.io, output);
 }
