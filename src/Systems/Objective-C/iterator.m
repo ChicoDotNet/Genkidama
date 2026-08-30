@@ -30,17 +30,23 @@
 }
 @end
 
+static BOOL iteratorExamplePasses(void) {
+    NumberIterator *iterator = [[NumberIterator alloc] initWithValues:@[@10, @20, @30]];
+    NSMutableArray<NSNumber *> *visited = [NSMutableArray array];
+    while ([iterator hasNext]) {
+        [visited addObject:[iterator next]];
+    }
+    return [visited isEqualToArray:@[@10, @20, @30]] && ![iterator hasNext];
+}
+
+#ifndef GENKIDAMA_ITERATOR_EMBEDDED
 int main(void) {
     @autoreleasepool {
-        NumberIterator *iterator = [[NumberIterator alloc] initWithValues:@[@10, @20, @30]];
-        NSMutableArray<NSNumber *> *visited = [NSMutableArray array];
-        while ([iterator hasNext]) {
-            [visited addObject:[iterator next]];
-        }
-        if (![visited isEqualToArray:@[@10, @20, @30]] || [iterator hasNext]) {
+        if (!iteratorExamplePasses()) {
             return 1;
         }
         printf("iterator=10,20,30\n");
     }
     return 0;
 }
+#endif
