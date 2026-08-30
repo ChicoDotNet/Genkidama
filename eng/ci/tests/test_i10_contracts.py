@@ -119,6 +119,9 @@ class I10LegacyEntrypointTests(unittest.TestCase):
             "same=true\ncount=1",
         )
 
+    def test_rockstar_singleton_accepts_historical_raw_count_line(self) -> None:
+        early_patterns_runner.assert_legacy_output("Rockstar", "singleton", "same=true\n1\n")
+
 
 if __name__ == "__main__":
     unittest.main()
