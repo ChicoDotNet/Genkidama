@@ -128,6 +128,26 @@ class I10LegacyEntrypointTests(unittest.TestCase):
     def test_rockstar_singleton_accepts_historical_raw_count_line(self) -> None:
         early_patterns_runner.assert_legacy_output("Rockstar", "singleton", "same=true\n1\n")
 
+    def test_zig_stdout_contract_is_015_and_016_compatible(self) -> None:
+        for filename in ("facade.zig", "flyweight.zig", "proxy.zig"):
+            with self.subTest(filename=filename):
+                text = (ROOT / "src/Systems/Zig" / filename).read_text(encoding="utf-8")
+                self.assertIn("std.posix.write", text)
+                self.assertIn("std.posix.STDOUT_FILENO", text)
+                self.assertNotIn("std.fs.File.stdout()", text)
+                self.assertNotIn("std.process.Init", text)
+
+    def test_longtail_toolchain_script_pins_zig_and_nim(self) -> None:
+        text = (CI_DIR / "toolchains/setup_longtail.sh").read_text(encoding="utf-8")
+        self.assertIn('ZIG_VERSION="0.16.0"', text)
+        self.assertIn(
+            'ZIG_SHA256="70e49664a74374b48b51e6f3fdfbf437f6395d42509050588bd49abe52ba3d00"',
+            text,
+        )
+        self.assertIn('NIM_VERSION="2.2.10"', text)
+        self.assertNotIn("choosenim stable", text)
+        self.assertNotIn("download/index.json", text)
+
 
 if __name__ == "__main__":
     unittest.main()
