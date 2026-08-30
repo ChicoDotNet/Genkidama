@@ -1,5 +1,6 @@
 # Language-major Design Pattern sweep: 39 remaining patterns.
 must(value::Bool) = value || error("pattern assertion failed")
+include("patterns/mediator.jl")
 
 # Command
 struct BalanceCommand
@@ -48,17 +49,8 @@ function iterator_pattern()
     must(visited == [10, 20, 30] && next_value(iterator) === nothing)
 end
 
-# Mediator
-mutable struct UiMediator; events::Vector{String}; end
-UiMediator() = UiMediator(String[])
-function notify!(mediator::UiMediator, sender::String, event::String)
-    sender == "button" && event == "click" && push!(mediator.events, "panel.refresh")
-    sender == "panel" && event == "loaded" && push!(mediator.events, "button.enable")
-end
-function mediator_pattern()
-    mediator = UiMediator(); notify!(mediator, "button", "click"); notify!(mediator, "panel", "loaded")
-    must(join(mediator.events, ">") == "panel.refresh>button.enable")
-end
+# Mediator: delegate to the individually addressable canonical source.
+mediator_pattern() = must(verify_mediator())
 
 # Memento
 struct EditorMemento; state::String; end
