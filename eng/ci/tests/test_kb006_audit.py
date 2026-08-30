@@ -129,6 +129,31 @@ flowchart LR
         self.assertEqual(result["status"], "GREEN")
         self.assertNotIn("VALIDATED_DEBT_MARKER", result["debt_by_code"])
 
+    def test_url_encoded_hash_in_repository_path_is_not_an_anchor(self) -> None:
+        temp, root = self._root()
+        self.addCleanup(temp.cleanup)
+        source = root / "src" / "Enterprise" / "C#"
+        source.mkdir(parents=True)
+        (source / "Example.cs").write_text("// example", encoding="utf-8")
+        page = self._validated_page("[C#](../src/Enterprise/C%23/Example.cs)")
+        self._write_full_catalog(root, page)
+
+        result = kb.audit(root)
+
+        self.assertEqual(result["status"], "GREEN")
+        self.assertEqual(result["summary"]["broken_links"], 0)
+
+    def test_markdown_anchor_must_resolve(self) -> None:
+        temp, root = self._root()
+        self.addCleanup(temp.cleanup)
+        page = self._validated_page("[Mapa estable](README.md#relationship-map)")
+        self._write_full_catalog(root, page)
+
+        result = kb.audit(root)
+
+        self.assertEqual(result["status"], "RED")
+        self.assertEqual(result["summary"]["broken_links"], kb.EXPECTED_PATTERN_COUNT)
+
 
 if __name__ == "__main__":
     unittest.main()
