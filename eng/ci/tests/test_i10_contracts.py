@@ -139,6 +139,26 @@ class I10LegacyEntrypointTests(unittest.TestCase):
                 self.assertNotIn("std.fs.File.stdout()", text)
                 self.assertNotIn("std.process.Init", text)
 
+    def test_objective_c_gnustep_properties_are_explicit(self) -> None:
+        cases = {
+            "adapter.m": ("LegacyFahrenheitSensor *_adaptee;", "@synthesize adaptee = _adaptee;"),
+            "proxy.m": (
+                "NSInteger _fetches;",
+                "@synthesize fetches = _fetches;",
+                "RemoteDocumentStore *_backend;",
+                "NSMutableDictionary<NSNumber *, NSString *> *_cache;",
+                "NSInteger _backendCreations;",
+                "@synthesize backend = _backend;",
+                "@synthesize cache = _cache;",
+                "@synthesize backendCreations = _backendCreations;",
+            ),
+        }
+        for filename, markers in cases.items():
+            with self.subTest(filename=filename):
+                text = (ROOT / "src/Systems/Objective-C" / filename).read_text(encoding="utf-8")
+                for marker in markers:
+                    self.assertIn(marker, text)
+
     def test_longtail_toolchain_script_pins_zig_and_nim(self) -> None:
         text = (CI_DIR / "toolchains/setup_longtail.sh").read_text(encoding="utf-8")
         self.assertIn('ZIG_VERSION="0.16.0"', text)
