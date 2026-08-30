@@ -493,43 +493,18 @@ jobs:
           python-version: '3.14.7'
       - uses: haskell-actions/setup@v2
         with:
-          ghc-version: latest
+          ghc-version: '9.14.1'
+          cabal-version: '3.16.1.0'
           cabal-update: false
       - uses: crystal-lang/install-crystal@v1
         with:
-          crystal: latest
+          crystal: '1.21.0'
       - uses: julia-actions/setup-julia@v3
         with:
-          version: '1'
-      - name: Install Zig, Nim and Objective-C toolchains
+          version: '1.12.7'
+      - name: Install pinned Zig, Nim and Objective-C toolchains
         shell: bash
-        run: |
-          set -euo pipefail
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends -y clang gobjc libgnustep-base-dev xz-utils
-          python3 - <<'PY'
-          import hashlib, json, os, pathlib, re, tarfile, urllib.request
-          index = json.load(urllib.request.urlopen('https://ziglang.org/download/index.json'))
-          stable = max((v for v in index if re.fullmatch(r'\d+\.\d+\.\d+', v)), key=lambda v: tuple(map(int, v.split('.'))))
-          package = index[stable]['x86_64-linux']
-          archive = pathlib.Path(os.environ['RUNNER_TEMP']) / 'zig.tar.xz'
-          urllib.request.urlretrieve(package['tarball'], archive)
-          digest = hashlib.sha256(archive.read_bytes()).hexdigest()
-          if digest != package['shasum']:
-              raise SystemExit(f'Zig SHA-256 mismatch: {digest} != {package["shasum"]}')
-          target = pathlib.Path(os.environ['RUNNER_TEMP']) / 'zig-stable'
-          target.mkdir(exist_ok=True)
-          with tarfile.open(archive, 'r:xz') as tar:
-              tar.extractall(target, filter='data')
-          root = next(target.iterdir())
-          with open(os.environ['GITHUB_PATH'], 'a') as path:
-              path.write(str(root) + '\n')
-          PY
-          curl -fsSL https://nim-lang.org/choosenim/init.sh -o /tmp/choosenim.sh
-          sh /tmp/choosenim.sh -y
-          echo "$HOME/.nimble/bin" >> "$GITHUB_PATH"
-          export PATH="$HOME/.nimble/bin:$PATH"
-          choosenim stable
+        run: bash eng/ci/toolchains/setup_longtail.sh
       - name: Run long-tail Pattern contracts
         run: python eng/ci/run-family longtail --patterns --telemetry-file artifacts/ci/longtail.jsonl
 
