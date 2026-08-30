@@ -1,13 +1,33 @@
 module MediatorExample
-open System.Collections.Generic
+
+type Message =
+    | PaymentPaid
+    | InventoryReserved
+
+type Colleague = Message -> string
+
+type Mediator = Map<string, Colleague>
+
+let payment = function
+    | InventoryReserved -> "payment.ack"
+    | _ -> "payment.ignore"
+
+let inventory = function
+    | PaymentPaid -> "inventory.reserve"
+    | _ -> "inventory.ignore"
+
+let send (mediator: Mediator) recipient message =
+    match mediator |> Map.tryFind recipient with
+    | Some receive -> Ok (receive message)
+    | None -> Error "unknown-colleague"
 
 let run () =
-    let events = ResizeArray<string>()
-    let notify sender event =
-        match sender, event with
-        | "button", "click" -> events.Add("panel.refresh")
-        | "panel", "loaded" -> events.Add("button.enable")
-        | _ -> ()
-    notify "button" "click"
-    notify "panel" "loaded"
-    String.concat ">" events = "panel.refresh>button.enable"
+    let mediator =
+        Map [
+            "payment", payment
+            "inventory", inventory
+        ]
+
+    send mediator "inventory" PaymentPaid = Ok "inventory.reserve"
+    && send mediator "payment" InventoryReserved = Ok "payment.ack"
+    && send mediator "shipping" PaymentPaid = Error "unknown-colleague"
