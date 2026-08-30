@@ -577,13 +577,10 @@ jobs:
       - uses: matlab-actions/setup-matlab@v3
         with:
           release: latest
-      - uses: actions/setup-python@v7
+      - name: Run repository MATLAB Pattern contract
+        uses: matlab-actions/run-command@v3
         with:
-          python-version: '3.14.7'
-      - name: Run MATLAB Pattern contract
-        env:
-          GENKIDAMA_PLATFORM_PROFILE: matlab
-        run: python eng/ci/run-family platform --patterns --telemetry-file artifacts/ci/platform-matlab.jsonl
+          command: run('eng/ci/adapters/matlab_contract.m')
 
   gate:
     name: Polyglot CI

@@ -15,8 +15,8 @@
     "learn-git": {"setup": [], "validation": [{"label": "Validate extracted git learn contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "git", "learn"]}]},
     "learn-web": {"setup": [], "validation": [{"label": "Validate extracted web learn contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "web", "learn"]}]},
     "patterns-web": {"setup": [], "validation": [{"label": "Validate extracted web patterns contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "web", "patterns"]}]},
-    "learn-scripting": {"setup": [], "validation": [{"label": "Validate extracted scripting learn contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "scripting", "learn"]}]},
-    "patterns-scripting": {"setup": [], "validation": [{"label": "Validate extracted scripting patterns contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "scripting", "patterns"]}]},
+    "learn-scripting": {"setup": [], "validation": [{"label": "Validate scripting learn contracts", "argv": ["{python}", "eng/ci/adapters/scripting_learn.py"]}]},
+    "patterns-scripting": {"setup": [], "validation": [{"label": "Validate scripting pattern contracts", "argv": ["{python}", "eng/ci/adapters/scripting_patterns.py"]}]},
     "learn-gnu": {"setup": [], "validation": [{"label": "Validate extracted gnu learn contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "gnu", "learn"]}]},
     "patterns-gnu": {"setup": [], "validation": [{"label": "Validate extracted gnu patterns contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "gnu", "patterns"]}]},
     "learn-dart": {"setup": [], "validation": [{"label": "Validate extracted dart learn contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "dart", "learn"]}]},
@@ -24,7 +24,7 @@
     "learn-swift": {"setup": [], "validation": [{"label": "Validate extracted swift learn contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "swift", "learn"]}]},
     "patterns-swift": {"setup": [], "validation": [{"label": "Validate extracted swift patterns contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "swift", "patterns"]}]},
     "patterns-longtail": {"setup": [], "validation": [{"label": "Validate extracted longtail patterns contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "longtail", "patterns"]}]},
-    "patterns-platform": {"setup": [], "validation": [{"label": "Validate extracted platform patterns contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "platform", "patterns"]}]}
+    "patterns-platform": {"setup": [], "validation": [{"label": "Validate platform pattern contracts", "argv": ["{python}", "eng/ci/adapters/platform_patterns.py"]}]}
   },
   "families": {
     "beam": {"patterns": "patterns-beam"},
