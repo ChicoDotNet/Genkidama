@@ -6,7 +6,7 @@ ZIG_SHA256="70e49664a74374b48b51e6f3fdfbf437f6395d42509050588bd49abe52ba3d00"
 NIM_VERSION="2.2.10"
 
 sudo apt-get update
-sudo apt-get install --no-install-recommends -y gobjc libgnustep-base-dev xz-utils
+sudo apt-get install --no-install-recommends -y clang gobjc libgnustep-base-dev xz-utils
 
 zig_archive="${RUNNER_TEMP:-/tmp}/zig-${ZIG_VERSION}.tar.xz"
 zig_root="${RUNNER_TEMP:-/tmp}/zig-${ZIG_VERSION}"
