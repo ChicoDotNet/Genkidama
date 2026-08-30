@@ -1,5 +1,13 @@
 const std = @import("std");
 
+fn writeAllStdout(bytes: []const u8) !void {
+    var remaining = bytes;
+    while (remaining.len > 0) {
+        const written = try std.posix.write(std.posix.STDOUT_FILENO, remaining);
+        remaining = remaining[written..];
+    }
+}
+
 const RealDocumentStore = struct {
     fetches: usize = 0,
 
@@ -31,7 +39,7 @@ const DocumentStoreProxy = struct {
     }
 };
 
-pub fn main(init: std.process.Init) !void {
+pub fn main() !void {
     var proxy = DocumentStoreProxy{};
 
     const first = try proxy.get(42);
@@ -50,5 +58,5 @@ pub fn main(init: std.process.Init) !void {
         first_copy[0..first_len],
         second,
     });
-    try std.Io.File.stdout().writeStreamingAll(init.io, rendered);
+    try writeAllStdout(rendered);
 }
