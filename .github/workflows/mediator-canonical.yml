@@ -1,0 +1,51 @@
+name: Mediator Canonical CI
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - 'src/Functional/Haskell/patterns/mediator.hs'
+      - 'src/Systems/Go/patterns/mediator.go'
+      - '.github/workflows/mediator-canonical.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  haskell:
+    name: Haskell Mediator canonical
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: haskell-actions/setup@v2
+        with:
+          ghc-version: '9.14.1'
+          cabal-version: '3.16.1.0'
+          cabal-update: false
+      - name: Compile and run canonical
+        shell: bash
+        run: |
+          set -euo pipefail
+          ghc --version
+          work="$(mktemp -d)"
+          ghc -Wall -Werror -O0 -odir "$work" -hidir "$work" src/Functional/Haskell/patterns/mediator.hs -o "$work/mediator"
+          test "$("$work/mediator")" = 'Haskell Mediator: passed'
+
+  go:
+    name: Go Mediator canonical
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: '1.26.5'
+      - name: Format, vet and run canonical
+        shell: bash
+        run: |
+          set -euo pipefail
+          go version
+          test -z "$(gofmt -l src/Systems/Go/patterns/mediator.go)"
+          go vet src/Systems/Go/patterns/mediator.go
+          test "$(go run src/Systems/Go/patterns/mediator.go)" = 'Go Mediator: passed'
