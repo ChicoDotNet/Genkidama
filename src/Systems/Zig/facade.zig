@@ -1,5 +1,13 @@
 const std = @import("std");
 
+fn writeAllStdout(bytes: []const u8) !void {
+    var remaining = bytes;
+    while (remaining.len > 0) {
+        const written = try std.posix.write(std.posix.STDOUT_FILENO, remaining);
+        remaining = remaining[written..];
+    }
+}
+
 fn authenticate(buffer: []u8, user: []const u8) ![]const u8 {
     return try std.fmt.bufPrint(buffer, "auth({s})", .{user});
 }
@@ -24,10 +32,9 @@ fn checkout(buffer: []u8, user: []const u8, sku: []const u8, cents: u32) ![]cons
     return try std.fmt.bufPrint(buffer, "checkout={s}>{s}>{s}", .{ auth, inventory, billing });
 }
 
-pub fn main(init: std.process.Init) !void {
+pub fn main() !void {
     var output_buffer: [192]u8 = undefined;
     const output = try checkout(&output_buffer, "alice", "SKU-42", 499);
-    const stdout = std.Io.File.stdout();
-    try stdout.writeStreamingAll(init.io, output);
-    try stdout.writeStreamingAll(init.io, "\n");
+    try writeAllStdout(output);
+    try writeAllStdout("\n");
 }
