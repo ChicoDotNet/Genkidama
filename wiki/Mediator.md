@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Centralizar la coordinación entre colegas para que colaboren sin conocerse ni llamarse directamente entre sí.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `33/?` — 33 targets Applicable ya tienen canónico auditado/materializado en PR #128; la clasificación total de 51 targets aún no está cerrada.  
+> **Implementaciones de lenguaje:** `35/?` — 35 targets Applicable ya tienen canónico auditado y verificado; la clasificación total de 51 targets aún no está cerrada.  
 > **Cobertura de pruebas:** `N/A` — los ejemplos son standalone y heterogéneos; se usa compile/analyze/runtime y failure modes cuando es la evidencia más fuerte razonable.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -150,7 +150,7 @@ Centralizar coordinación no significa mover toda la lógica de negocio al media
 
 ## Implementaciones por lenguaje
 
-La tabla final será autoritativa cuando las 51 celdas estén reconciliadas. Las 33 filas Applicable siguientes corresponden a canónicos individualmente direccionables presentes en el diff de PR #128 y certificados por Product CI, Quality y Polyglot CI verdes en `54ebb7c4827a840ffea51c1dfa80efccdc82976f`. El commit posterior de esta página sólo modifica documentación.
+La tabla final será autoritativa cuando las 51 celdas estén reconciliadas. Las 33 filas Applicable iniciales fueron certificadas por Product CI, Quality y Polyglot CI verdes en `54ebb7c4827a840ffea51c1dfa80efccdc82976f`. Haskell y Go se verificaron como canónicos independientes en `0eca59befe0d0c3dfbe418d1d3be4eca9781513b` mediante `Mediator Canonical CI`. En total hay 35 Applicable verificados y 2 N/A técnicamente justificados.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -161,6 +161,7 @@ La tabla final será autoritativa cuando las 51 celdas estén reconciliadas. Las
 | Java | Applicable | [`mediator.java`](../src/Enterprise/Java/patterns/mediator.java) | Polyglot CI compile/run ✅ | Registry tipado de receivers. |
 | Kotlin | Applicable | [`Mediator.kt`](../src/Enterprise/Kotlin/patterns/Mediator.kt) | Polyglot CI compile/run ✅ | Map de funciones receptoras. |
 | Visual Basic .NET | Applicable | [`Mediator.vb`](../src/Enterprise/VB.NET/patterns/Mediator.vb) | Product/Polyglot CI compile/run ✅ | `Dictionary(Of String, Action(...))`. |
+| Haskell | Applicable | [`mediator.hs`](../src/Functional/Haskell/patterns/mediator.hs) | GHC 9.14.1 `-Wall -Werror` + runtime ✅ | `Map` de funciones receptoras + `Either` para failure mode. |
 | Clojure | Applicable | [`mediator.clj`](../src/Functional/Clojure/patterns/mediator.clj) | Polyglot CI runtime assertions ✅ | Map funcional de colegas. |
 | Common Lisp | Applicable | [`mediator.lisp`](../src/Functional/CommonLisp/patterns/mediator.lisp) | Polyglot CI runtime assertions ✅ | Hash table + receiver functions. |
 | Elixir | Applicable | [`mediator.exs`](../src/Functional/Elixir/patterns/mediator.exs) | Polyglot CI runtime assertions ✅ | Functions/modules como colegas. |
@@ -182,6 +183,7 @@ La tabla final será autoritativa cuando las 51 celdas estén reconciliadas. Las
 | C++ | Applicable | [`mediator.cpp`](../src/Systems/C%2B%2B/patterns/mediator.cpp) | Polyglot CI C++20 compile/run ✅ | Registry de callbacks tipados. |
 | C | Applicable | [`mediator.c`](../src/Systems/C/patterns/mediator.c) | Polyglot CI compile/run ✅ | Tabla de function pointers. |
 | Fortran | Applicable | [`mediator.f90`](../src/Systems/Fortran/patterns/mediator.f90) | Polyglot CI Fortran compile/run ✅ | Procedure pointers como colegas. |
+| Go | Applicable | [`mediator.go`](../src/Systems/Go/patterns/mediator.go) | Go 1.26.5 `gofmt` + `go vet` + runtime ✅ | Map de receiver functions + error explícito. |
 | Pascal | Applicable | [`mediator_pattern.pas`](../src/Systems/Pascal/mediator_pattern.pas) | Polyglot CI Free Pascal compile/run ✅ | Procedure registry y routing. |
 | Rust | Applicable | [`mediator.rs`](../src/Systems/Rust/patterns/mediator.rs) | Polyglot CI `rustc` compile/run ✅ | `HashMap` + `Result` failure mode. |
 | Swift | Applicable | [`Mediator.swift`](../src/Systems/Swift/patterns/Mediator.swift) | Polyglot CI `swiftc` compile/run ✅ | Dictionary de receiver closures + error enum. |
@@ -190,7 +192,7 @@ La tabla final será autoritativa cuando las 51 celdas estén reconciliadas. Las
 | HTML | N/A | — | — | El markup puro no tiene un modelo de ejecución programable capaz de poseer coordinación entre pares; DOM events y routing pertenecen a JavaScript u otro runtime ejecutable. |
 | CSS | N/A | — | — | Selectores y cascade pueden afectar múltiples elementos, pero CSS puro no puede poseer routing o coordinación ejecutable entre colegas. |
 
-Quedan 16 targets todavía sin reconciliar en esta tabla. Se mantienen sin clasificar aquí hasta inspeccionar su mecanismo real; no se convierten en `N/A` por ausencia de OOP ni se inventan enlaces.
+Quedan 14 targets todavía sin reconciliar en esta tabla: SQL declarativo, Perl, Julia, Objective-C, Zig, Nim, Dart, Crystal, VBA, GDScript, Assembly, Delphi, MicroPython y Rockstar. Se mantienen sin clasificar aquí hasta inspeccionar su mecanismo real; no se convierten en `N/A` por ausencia de OOP ni se inventan enlaces.
 
 ## Comprueba que lo entendiste
 
@@ -211,5 +213,6 @@ Quedan 16 targets todavía sin reconciliar en esta tabla. Se mantienen sin clasi
 - [Catálogo y mapa de relaciones](README.md)
 - [Patterns as Living Examples](../docs/philosophy/001-patterns-as-living-examples.md)
 - [KB-006 — Canonical Design Pattern Authoring Standard](../docs/kb/catalog/pattern-authoring-standard.md)
+- [High-overhead cohort sweep](../docs/pattern-sweeps/high-overhead-cohort.md)
 - [HTML pattern sweep](../docs/pattern-sweeps/html.md)
 - [CSS pattern sweep](../docs/pattern-sweeps/css.md)
