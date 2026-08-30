@@ -1,5 +1,69 @@
 #!/usr/bin/env python3
-from engine import _guard, main_family
+from __future__ import annotations
+
+import json
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+from engine import _guard, load_registry, main_family, repo_root
+
+
+def option_value(args: list[str], name: str) -> str | None:
+    try:
+        index = args.index(name)
+    except ValueError:
+        return None
+    if index + 1 >= len(args):
+        return None
+    return args[index + 1]
+
+
+def write_telemetry(payload: dict[str, object], destination: str | None) -> None:
+    line = json.dumps(payload, sort_keys=True)
+    print(f"CI_TELEMETRY {line}", flush=True)
+    if destination:
+        path = Path(destination)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("a", encoding="utf-8") as handle:
+            handle.write(line + "\n")
+
+
+def main() -> int:
+    args = sys.argv[1:]
+    code = main_family(args)
+    if code != 0:
+        return code
+
+    family_name = args[0] if args else ""
+    family = load_registry()["families"].get(family_name, {})
+    if not isinstance(family, dict) or "patterns" not in family or "--learn" in args:
+        return 0
+
+    root = repo_root(option_value(args, "--repo-root"))
+    command = [sys.executable, "eng/ci/adapters/early_patterns_runner.py", family_name]
+    if "--dry-run" in args:
+        print("$ " + " ".join(command), flush=True)
+        return 0
+
+    started = time.perf_counter()
+    completed = subprocess.run(command, cwd=root, check=False)
+    elapsed = time.perf_counter() - started
+    status = "passed" if completed.returncode == 0 else "failed"
+    write_telemetry(
+        {
+            "target": f"early-patterns-{family_name}",
+            "status": status,
+            "exit_code": completed.returncode,
+            "setup_seconds": 0.0,
+            "validation_seconds": round(elapsed, 3),
+            "total_seconds": round(elapsed, 3),
+        },
+        option_value(args, "--telemetry-file"),
+    )
+    return completed.returncode
+
 
 if __name__ == "__main__":
-    _guard(main_family)
+    _guard(main)
