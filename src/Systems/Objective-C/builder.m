@@ -7,12 +7,20 @@
 - (NSString *)build;
 @end
 
-@interface TextReportBuilder : NSObject <ReportBuilder>
+@interface TextReportBuilder : NSObject <ReportBuilder> {
+    NSMutableArray<NSString *> *_parts;
+}
 @property(nonatomic, strong) NSMutableArray<NSString *> *parts;
 @end
 
 @implementation TextReportBuilder
-- (instancetype)init { self = [super init]; if (self) _parts = [NSMutableArray array]; return self; }
+@synthesize parts = _parts;
+
+- (instancetype)init {
+    self = [super init];
+    if (self) { self.parts = [NSMutableArray array]; }
+    return self;
+}
 - (void)reset { [self.parts removeAllObjects]; }
 - (void)addTitle:(NSString *)title { [self.parts addObject:[NSString stringWithFormat:@"# %@", title]]; }
 - (void)addSection:(NSString *)heading body:(NSString *)body {
@@ -22,12 +30,20 @@
 - (NSString *)build { return [self.parts componentsJoinedByString:@"\n"]; }
 @end
 
-@interface HtmlReportBuilder : NSObject <ReportBuilder>
+@interface HtmlReportBuilder : NSObject <ReportBuilder> {
+    NSMutableArray<NSString *> *_parts;
+}
 @property(nonatomic, strong) NSMutableArray<NSString *> *parts;
 @end
 
 @implementation HtmlReportBuilder
-- (instancetype)init { self = [super init]; if (self) _parts = [NSMutableArray array]; return self; }
+@synthesize parts = _parts;
+
+- (instancetype)init {
+    self = [super init];
+    if (self) { self.parts = [NSMutableArray array]; }
+    return self;
+}
 - (void)reset { [self.parts removeAllObjects]; }
 - (void)addTitle:(NSString *)title { [self.parts addObject:[NSString stringWithFormat:@"<h1>%@</h1>", title]]; }
 - (void)addSection:(NSString *)heading body:(NSString *)body {

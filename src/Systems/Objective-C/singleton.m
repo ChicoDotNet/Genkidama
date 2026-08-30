@@ -1,17 +1,22 @@
 #import <Foundation/Foundation.h>
 
-@interface Registry : NSObject
+@interface Registry : NSObject {
+    NSInteger _count;
+}
 @property(nonatomic) NSInteger count;
 + (instancetype)sharedRegistry;
 @end
 
 @implementation Registry
+@synthesize count = _count;
+
 + (instancetype)sharedRegistry {
     static Registry *shared = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        shared = [[Registry alloc] init];
-    });
+    @synchronized(self) {
+        if (shared == nil) {
+            shared = [[Registry alloc] init];
+        }
+    }
     return shared;
 }
 @end
