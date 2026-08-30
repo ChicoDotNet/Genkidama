@@ -132,8 +132,10 @@ class I10LegacyEntrypointTests(unittest.TestCase):
         for filename in ("facade.zig", "flyweight.zig", "proxy.zig"):
             with self.subTest(filename=filename):
                 text = (ROOT / "src/Systems/Zig" / filename).read_text(encoding="utf-8")
-                self.assertIn("std.posix.write", text)
-                self.assertIn("std.posix.STDOUT_FILENO", text)
+                self.assertIn("std.os.linux.syscall3(.write", text)
+                self.assertIn("@intFromPtr(bytes.ptr)", text)
+                self.assertIn("if (written != bytes.len)", text)
+                self.assertNotIn("std.posix.write", text)
                 self.assertNotIn("std.fs.File.stdout()", text)
                 self.assertNotIn("std.process.Init", text)
 
