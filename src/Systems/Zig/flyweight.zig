@@ -1,5 +1,13 @@
 const std = @import("std");
 
+fn writeAllStdout(bytes: []const u8) !void {
+    var remaining = bytes;
+    while (remaining.len > 0) {
+        const written = try std.posix.write(std.posix.STDOUT_FILENO, remaining);
+        remaining = remaining[written..];
+    }
+}
+
 const Style = struct {
     font: []const u8,
     size: u8,
@@ -23,7 +31,7 @@ const Factory = struct {
     }
 };
 
-pub fn main(init: std.process.Init) !void {
+pub fn main() !void {
     var factory = Factory{};
     const red1 = factory.get("Inter", 12, "red");
     const red2 = factory.get("Inter", 12, "red");
@@ -35,5 +43,5 @@ pub fn main(init: std.process.Init) !void {
         factory.used,
         if (red1 == red2) "true" else "false",
     });
-    try std.Io.File.stdout().writeStreamingAll(init.io, output);
+    try writeAllStdout(output);
 }
