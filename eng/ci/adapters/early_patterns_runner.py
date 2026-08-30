@@ -39,14 +39,60 @@ def assert_legacy_output(label: str, key: str, output: str) -> None:
         ep.dc.require("original=orders: metrics,tracing" not in normalized, f"{label} Prototype shares mutable feature state")
 
 
+def assert_abstract_factory_source_contract(runtime: str, source: Path) -> None:
+    text = source.read_text(encoding="utf-8", errors="replace").lower()
+    # Historical implementations often compose labels at runtime (for example
+    # Fortran prints theme + product), so literal output strings are not a
+    # portable source-level contract. Require the semantic vocabulary instead.
+    for marker in ep.STATIC_MARKERS["abstract_factory"]:
+        ep.dc.require(
+            marker.lower() in text,
+            f"{runtime} Abstract Factory source contract missing {marker!r} in {source.name}",
+        )
+
+
 def record_with_source_contract(census: dict[str, int], runtime: str, files: list[tuple[str, Path]]) -> None:
     ORIGINAL_RECORD(census, runtime, files)
     for key, source in files:
-        if key != "abstract_factory":
-            continue
-        text = source.read_text(encoding="utf-8", errors="replace")
-        for marker in ("Dark Button", "Dark Checkbox", "Light Button", "Light Checkbox"):
-            ep.dc.require(marker in text, f"{runtime} Abstract Factory source contract missing {marker!r} in {source.name}")
+        if key == "abstract_factory":
+            assert_abstract_factory_source_contract(runtime, source)
+
+
+def java_main_class(text: str, source_name: str) -> str:
+    main = re.search(r"public\s+static\s+void\s+main\s*\(", text)
+    ep.dc.require(main is not None, f"Java {source_name}: public static void main not found")
+
+    # Prefer the class corresponding to the compilation unit. This avoids
+    # mistaking a nested helper declared immediately before main for the entry
+    # class (ChainOfResponsibilityExample exposed exactly that failure mode).
+    stem = Path(source_name).stem
+    stem_class = re.search(
+        rf"\b(?:public\s+)?(?:final\s+)?class\s+{re.escape(stem)}\b",
+        text[: main.start()],
+    )
+    if stem_class is not None:
+        return stem
+
+    public_classes = re.findall(
+        r"\bpublic\s+(?:final\s+)?class\s+([A-Za-z_][A-Za-z0-9_]*)",
+        text[: main.start()],
+    )
+    ep.dc.require(bool(public_classes), f"Java {source_name}: main class not found")
+    return public_classes[-1]
+
+
+def prolog_entry_goal(text: str, source_name: str) -> str:
+    # The old cells are not uniform: most expose run/0 while some expose
+    # main/0. Preserve the source's declared public goal instead of imposing a
+    # synthetic universal entrypoint.
+    for goal in ("run", "main"):
+        if re.search(rf"(?m)^\s*{goal}\s*:-", text):
+            return goal
+    raise ep.dc.ContractError(f"Prolog {source_name}: expected run/0 or main/0 entrypoint")
+
+
+def vba_has_public_entrypoint(text: str) -> bool:
+    return re.search(r"(?im)^\s*Public\s+(?:Sub|Function)\s+[A-Za-z_][A-Za-z0-9_]*\b", text) is not None
 
 
 def run_csharp_without_losing_restore(files: list[tuple[str, Path]]) -> None:
@@ -86,11 +132,7 @@ def run_java_main_class(files: list[tuple[str, Path]]) -> None:
                 elif path.is_dir():
                     shutil.rmtree(path)
             text = source.read_text(encoding="utf-8")
-            main = re.search(r"public\s+static\s+void\s+main\s*\(", text)
-            ep.dc.require(main is not None, f"Java {source.name}: public static void main not found")
-            classes = re.findall(r"\b(?:public\s+)?(?:final\s+)?class\s+([A-Za-z_][A-Za-z0-9_]*)", text[: main.start()])
-            ep.dc.require(bool(classes), f"Java {source.name}: main class not found")
-            class_name = classes[-1]
+            class_name = java_main_class(text, source.name)
             ep.dc.run(["javac", "-Xlint:all", "-Werror", "-d", str(work), str(source)])
             assert_legacy_output("Java", key, ep.dc.run(["java", "-cp", str(work), class_name], capture=True))
 
@@ -152,7 +194,9 @@ def validate_functional_legacy(census: dict[str, int]) -> None:
         for key, source in lisp:
             assert_legacy_output("Common Lisp", key, ep.dc.run(["sbcl", "--script", str(source)], capture=True))
         for key, source in prolog:
-            output = ep.dc.run(["swipl", "-q", "-s", str(source), "-g", "run", "-t", "halt"], capture=True)
+            text = source.read_text(encoding="utf-8", errors="replace")
+            goal = prolog_entry_goal(text, source.name)
+            output = ep.dc.run(["swipl", "-q", "-s", str(source), "-g", goal, "-t", "halt"], capture=True)
             assert_legacy_output("Prolog", key, output)
 
 
@@ -195,7 +239,7 @@ def validate_static_platform_for_discovery(census: dict[str, int]) -> None:
     for _, source in vba:
         text = source.read_text(encoding="utf-8")
         ep.dc.require(re.search(r"(?im)^Option Explicit$", text) is not None, f"VBA {source.name}: Option Explicit missing")
-        ep.dc.require("Usage" in text, f"VBA {source.name}: Usage entrypoint missing")
+        ep.dc.require(vba_has_public_entrypoint(text), f"VBA {source.name}: public entrypoint missing")
     for _, source in delphi:
         text = source.read_text(encoding="utf-8")
         ep.dc.require("program " in text.lower(), f"Delphi {source.name}: program entrypoint missing")
