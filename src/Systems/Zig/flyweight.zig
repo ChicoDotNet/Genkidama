@@ -1,5 +1,10 @@
 const std = @import("std");
 
+fn writeStdout(bytes: []const u8) !void {
+    const written = std.os.linux.syscall3(.write, 1, @intFromPtr(bytes.ptr), bytes.len);
+    if (written != bytes.len) return error.StdoutWriteFailed;
+}
+
 const Style = struct {
     font: []const u8,
     size: u8,
@@ -35,5 +40,5 @@ pub fn main() !void {
         factory.used,
         if (red1 == red2) "true" else "false",
     });
-    try std.fs.File.stdout().writeAll(output);
+    try writeStdout(output);
 }

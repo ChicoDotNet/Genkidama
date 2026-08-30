@@ -18,7 +18,7 @@ Cada una responde una pregunta distinta. El formatter mantiene una representaci�
 Para CI usamos una construcción web como prueba portable de packaging. Eso **no significa** que el curso afirme publicación Android/iOS certificada: esas plataformas tienen toolchains, firmas y tiendas adicionales.
 
 ## Código real
-Ver workflow: [`../../../../.github/workflows/learn-dart.yml`](../../../../.github/workflows/learn-dart.yml).
+Ver gate consolidado: [`../../../../.github/workflows/polyglot.yml`](../../../../.github/workflows/polyglot.yml).
 
 [EJECUTAR]
 

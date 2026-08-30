@@ -19,29 +19,37 @@
 - (NSString *)mute { return @"Radio:muted"; }
 @end
 
-@interface BasicRemote : NSObject
+@interface BasicRemote : NSObject {
+    id<BridgeDevice> _device;
+}
 @property(nonatomic, strong) id<BridgeDevice> device;
 - (instancetype)initWithDevice:(id<BridgeDevice>)device;
 - (NSString *)activate;
 @end
 @implementation BasicRemote
+@synthesize device = _device;
+
 - (instancetype)initWithDevice:(id<BridgeDevice>)device {
     self = [super init];
-    if (self) { _device = device; }
+    if (self) { self.device = device; }
     return self;
 }
 - (NSString *)activate { return [self.device powerOn]; }
 @end
 
-@interface MuteRemote : NSObject
+@interface MuteRemote : NSObject {
+    id<BridgeDevice> _device;
+}
 @property(nonatomic, strong) id<BridgeDevice> device;
 - (instancetype)initWithDevice:(id<BridgeDevice>)device;
 - (NSString *)activate;
 @end
 @implementation MuteRemote
+@synthesize device = _device;
+
 - (instancetype)initWithDevice:(id<BridgeDevice>)device {
     self = [super init];
-    if (self) { _device = device; }
+    if (self) { self.device = device; }
     return self;
 }
 - (NSString *)activate { return [self.device mute]; }

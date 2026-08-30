@@ -10,13 +10,18 @@
 - (NSString *)render { return @"alert"; }
 @end
 
-@interface ComponentDecorator : NSObject <Component>
+@interface ComponentDecorator : NSObject <Component> {
+    id<Component> _inner;
+}
 @property(nonatomic, strong) id<Component> inner;
 - (instancetype)initWithInner:(id<Component>)inner;
 @end
 @implementation ComponentDecorator
+@synthesize inner = _inner;
+
 - (instancetype)initWithInner:(id<Component>)inner {
-    if ((self = [super init])) { _inner = inner; }
+    self = [super init];
+    if (self) { self.inner = inner; }
     return self;
 }
 - (NSString *)render { return [self.inner render]; }

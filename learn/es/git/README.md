@@ -113,7 +113,7 @@ git worktree list
 git reflog --all
 ```
 
-El workflow [`learn-git.yml`](../../../.github/workflows/learn-git.yml) ejecuta tres capas reproducibles:
+El workflow consolidado [`polyglot.yml`](../../../.github/workflows/polyglot.yml) ejecuta tres capas reproducibles:
 
 1. el arco acumulado 1–12: init, staging, recuperación, branches, remotos, conflictos, rebase, tags, políticas de archivos, rechazo non-fast-forward, stash y worktree;
 2. el incidente avanzado 13–16 mediante [`tools/verify-advanced.sh`](tools/verify-advanced.sh): `log`/`blame`/`bisect`, recuperación por reflog, hook local con rechazo verificable y persistencia histórica de un secreto **falso**;
