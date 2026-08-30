@@ -8,8 +8,9 @@ CI_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(CI_DIR))
 sys.path.insert(0, str(CI_DIR / "adapters"))
 
-import engine  # noqa: E402
 import debt_contracts  # noqa: E402
+import early_patterns  # noqa: E402
+import engine  # noqa: E402
 
 
 class I10RegistryCoverageTests(unittest.TestCase):
@@ -24,6 +25,44 @@ class I10RegistryCoverageTests(unittest.TestCase):
                 with self.subTest(family=family, surface=surface):
                     self.assertIn((family, surface), debt_contracts.CONTRACTS)
 
+    def test_every_pattern_family_has_pre_cor_runner(self) -> None:
+        pattern_families = {
+            family
+            for family, surfaces in self.registry["families"].items()
+            if "patterns" in surfaces
+        }
+        self.assertEqual(pattern_families, set(early_patterns.VALIDATORS))
+
+    def test_pre_cor_contract_set_is_the_historical_thirteen(self) -> None:
+        expected = {
+            "abstract_factory",
+            "adapter",
+            "bridge",
+            "builder",
+            "chain_of_responsibility",
+            "composite",
+            "decorator",
+            "facade",
+            "factory_method",
+            "flyweight",
+            "prototype",
+            "proxy",
+            "singleton",
+        }
+        self.assertEqual(set(early_patterns.PATTERN_MARKERS), expected)
+
+    def test_pre_cor_filename_normalization_is_explicit(self) -> None:
+        cases = {
+            "Example1.pas": "abstract_factory",
+            "AdapterExample.cs": "adapter",
+            "chain_of_responsibility.erl": "chain_of_responsibility",
+            "FactoryMethodExample.vb": "factory_method",
+            "PrototypeExample.kt": "prototype",
+        }
+        for filename, expected in cases.items():
+            with self.subTest(filename=filename):
+                self.assertEqual(early_patterns.pattern_key(Path(filename)), expected)
+
     def test_remaining_legacy_paths_route_to_clean_families(self) -> None:
         cases = {
             "learn/es/git/lessons/01.md": "git",
@@ -35,6 +74,8 @@ class I10RegistryCoverageTests(unittest.TestCase):
             "src/Functional/Haskell/PatternSweep.hs": "longtail",
             "src/DataScience/MATLAB/validate_pattern_sweep.m": "platform",
             "src/Functional/Scala/PatternSweep.scala": "jvm",
+            "src/Enterprise/C#/AdapterExample.cs": "dotnet",
+            "src/Other/Rockstar/proxy.rock": "platform",
         }
         for path, family in cases.items():
             with self.subTest(path=path):
