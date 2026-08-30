@@ -4,28 +4,40 @@
 - (NSString *)documentWithId:(NSInteger)documentId;
 @end
 
-@interface RemoteDocumentStore : NSObject <DocumentStore>
+@interface RemoteDocumentStore : NSObject <DocumentStore> {
+    NSInteger _fetches;
+}
 @property(nonatomic) NSInteger fetches;
 @end
 
 @implementation RemoteDocumentStore
+@synthesize fetches = _fetches;
+
 - (NSString *)documentWithId:(NSInteger)documentId {
     self.fetches += 1;
     return [NSString stringWithFormat:@"doc(%ld)", (long)documentId];
 }
 @end
 
-@interface DocumentStoreProxy : NSObject <DocumentStore>
+@interface DocumentStoreProxy : NSObject <DocumentStore> {
+    RemoteDocumentStore *_backend;
+    NSMutableDictionary<NSNumber *, NSString *> *_cache;
+    NSInteger _backendCreations;
+}
 @property(nonatomic, strong) RemoteDocumentStore *backend;
 @property(nonatomic, strong) NSMutableDictionary<NSNumber *, NSString *> *cache;
 @property(nonatomic) NSInteger backendCreations;
 @end
 
 @implementation DocumentStoreProxy
+@synthesize backend = _backend;
+@synthesize cache = _cache;
+@synthesize backendCreations = _backendCreations;
+
 - (instancetype)init {
     self = [super init];
     if (self) {
-        _cache = [NSMutableDictionary dictionary];
+        self.cache = [NSMutableDictionary dictionary];
     }
     return self;
 }
