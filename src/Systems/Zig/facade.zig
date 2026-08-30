@@ -1,11 +1,8 @@
 const std = @import("std");
 
-fn writeAllStdout(bytes: []const u8) !void {
-    var remaining = bytes;
-    while (remaining.len > 0) {
-        const written = try std.posix.write(std.posix.STDOUT_FILENO, remaining);
-        remaining = remaining[written..];
-    }
+fn writeStdout(bytes: []const u8) !void {
+    const written = std.os.linux.syscall3(.write, 1, @intFromPtr(bytes.ptr), bytes.len);
+    if (written != bytes.len) return error.StdoutWriteFailed;
 }
 
 fn authenticate(buffer: []u8, user: []const u8) ![]const u8 {
@@ -35,6 +32,6 @@ fn checkout(buffer: []u8, user: []const u8, sku: []const u8, cents: u32) ![]cons
 pub fn main() !void {
     var output_buffer: [192]u8 = undefined;
     const output = try checkout(&output_buffer, "alice", "SKU-42", 499);
-    try writeAllStdout(output);
-    try writeAllStdout("\n");
+    try writeStdout(output);
+    try writeStdout("\n");
 }
