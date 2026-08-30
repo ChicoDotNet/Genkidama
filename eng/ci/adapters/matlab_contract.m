@@ -1,0 +1,10 @@
+repo = pwd;
+addpath(fullfile(repo, 'src', 'DataScience', 'MATLAB'));
+output = evalc('example1');
+disp(output);
+assert(contains(output, "Dark Button"));
+assert(contains(output, "Dark Checkbox"));
+assert(contains(output, "Light Button"));
+assert(contains(output, "Light Checkbox"));
+validate_pattern_sweep;
+disp('MATLAB clean-slate contracts: OK');
