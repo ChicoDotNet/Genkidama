@@ -29,8 +29,8 @@ function Mediator_Pattern return Boolean is
    end Payment_Receive;
 
    Colleagues : constant Colleague_Array :=
-     (1 => (To_Unbounded_String ("inventory"), Inventory_Receive'Access),
-      2 => (To_Unbounded_String ("payment"), Payment_Receive'Access));
+     [1 => (To_Unbounded_String ("inventory"), Inventory_Receive'Access),
+      2 => (To_Unbounded_String ("payment"), Payment_Receive'Access)];
 
    procedure Send (Sender, Recipient, Message : String) is
    begin
