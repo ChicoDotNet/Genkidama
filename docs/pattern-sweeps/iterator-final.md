@@ -2,7 +2,7 @@
 
 > **Pattern:** Iterator  
 > **Status:** in-progress  
-> **Base audited:** `dev@bea35ba38e1578c4b4f5eb7bbd4288b8a99434a6`  
+> **Base audited:** `dev@378de71f119beca2e69c2d1a22024cb0680eceee`  
 > **Canonical page:** [`wiki/Iterator.md`](../../wiki/Iterator.md)
 
 ## Purpose
@@ -20,10 +20,13 @@ All **49 Applicable** targets have an individually addressable canonical Iterato
 - `wiki/Iterator.md` is fully authored to the KB-006 content structure with the complete 51-target table, but remains `in-progress` until runner deduplication and final-head certification finish.
 - Python originally had Iterator only inside `src/Scripting/PythonPY/pattern_sweep.py`; this branch added `src/Scripting/PythonPY/patterns/iterator.py` and made the aggregate runner delegate to it. The Python gate is green.
 - Portable-functional contributes 13 verified canonical Iterator cells; medium-high contributes 14 verified canonical cells.
-- Haskell, Dart, Crystal, Zig, Julia, Go and Objective-C have individually addressable canonical files and a green dedicated high-overhead gate on earlier certified heads.
+- Haskell, Dart, Crystal, Zig, Julia, Go and Objective-C have individually addressable canonical files and dedicated high-overhead validation.
 - **Haskell runner debt is paid:** `src/Functional/Haskell/PatternSweep.hs` no longer contains a duplicate Iterator implementation; it delegates execution to `src/Functional/Haskell/Iterator.hs`. Head `4dca5b4fcde8aa59eea0814c1ef88290ab4db8c7` passed all nine then-applicable PR workflows, including the high-overhead cohort and dedicated Iterator gate.
 - **Julia runner debt is paid:** `src/DataScience/Julia/pattern_sweep.jl` includes the canonical `src/DataScience/Julia/iterator.jl` rather than defining a second Iterator. The canonical file remains directly executable while staying silent when included. `Pattern High-Overhead Cohort Sweep #27` passed on head `7d1dedf4e156e2145647f5e32666e93cd5420037` against `dev@bea35ba3…`.
-- The remaining runner-duplication debt is bounded to five historical sweeps: Dart, Crystal, Zig, Go and Objective-C.
+- **Dart runner debt is paid:** `src/Web/Dart/pattern_sweep.dart` imports the canonical `src/Web/Dart/iterator.dart`; its high-overhead sweep is certified with format, analyze and 39/39 execution.
+- **Crystal runner debt is paid:** `src/Niche/Crystal/pattern_sweep.cr` requires the canonical `src/Niche/Crystal/iterator.cr` and delegates to `run_iterator_example`. The repaired dedicated canonical harness passed on head `9749bead8a037271d188fe0898fcdd426c8d266a`, and the aggregate Crystal 39/39 job is green on that head.
+- **Zig runner debt is paid:** `src/Systems/Zig/pattern_sweep.zig` imports `src/Systems/Zig/iterator.zig` and delegates to its exported `runIteratorExample`; both the dedicated Zig Iterator job and the high-overhead aggregate Zig 39/39 job passed on head `9749bead8a037271d188fe0898fcdd426c8d266a`.
+- The remaining runner-duplication debt is bounded to **Go and Objective-C**.
 - Existing language-major canonical sources cover PHP, JavaScript, Ruby, Lua, Bash and MATLAB.
 - The eight tail sources added here are validated by `.github/workflows/pattern-iterator-tail.yml`: SQL/Perl/Assembly by native execution, GDScript by Godot, MicroPython by its Unix runtime, Rockstar by the official runtime, and VBA/Delphi by source contracts where hosted Linux cannot reasonably execute the proprietary toolchains.
 - The Delphi source is self-contained (`SysUtils` imported for `Exception`) rather than merely matching the source contract.
@@ -37,13 +40,16 @@ All **49 Applicable** targets have an individually addressable canonical Iterato
 | Python | 1 Applicable | 1/1 | Python target gate green |
 | High-overhead: Haskell | 1 Applicable | 1/1 | canonical source verified; historical runner delegates to canonical source |
 | High-overhead: Julia | 1 Applicable | 1/1 | canonical source verified; historical runner delegation certified by high-overhead cohort #27 on `7d1dedf4…` |
-| High-overhead: Dart, Crystal, Zig, Go, Objective-C | 5 Applicable | 5/5 | canonical sources verified; historical runner deduplication still pending |
+| High-overhead: Dart | 1 Applicable | 1/1 | canonical source verified; historical runner delegation certified |
+| High-overhead: Crystal | 1 Applicable | 1/1 | canonical + aggregate delegation certified on `9749bead…` |
+| High-overhead: Zig | 1 Applicable | 1/1 | canonical + aggregate delegation certified on `9749bead…` |
+| High-overhead: Go, Objective-C | 2 Applicable | 2/2 | canonical sources verified; historical runner deduplication still pending |
 | Existing language-major: PHP, JavaScript, Ruby, Lua, Bash, MATLAB | 6 Applicable | 6/6 | canonical sources already integrated/validated by their language-major lanes |
 | Tail: SQL, Perl, VBA, GDScript, Assembly, Delphi, MicroPython, Rockstar | 8 Applicable | 8/8 | dedicated tail gate green on prior certified head; current-head recertification in progress |
 | HTML | N/A | — | pure markup has no author-programmable traversal cursor/protocol |
 | CSS | N/A | — | selector matching is not author-controlled iteration state/current/next |
 
-Current materialization: **49/49 Applicable canonical sources**. The full denominator is reconciled. Promotion remains blocked only by the five bounded high-overhead runner duplications and final-head certification after they are removed.
+Current materialization: **49/49 Applicable canonical sources**. The full denominator is reconciled. Promotion remains blocked only by the two bounded historical runner duplications and final-head certification after they are removed.
 
 ## Tail canonical paths
 
@@ -58,6 +64,6 @@ Current materialization: **49/49 Applicable canonical sources**. The full denomi
 
 ## Exit boundary
 
-Iterator remains `in-progress` until the five remaining high-overhead runners no longer hide duplicate Iterator implementations, `wiki/Iterator.md` is switched to `validated` only after that debt is paid, the resulting final head passes all applicable gates, and the PR remains mergeable against the then-current `dev` after the 20% Learn compatibility check.
+Iterator remains `in-progress` until the Go and Objective-C historical runners no longer hide duplicate Iterator implementations, `wiki/Iterator.md` is switched to `validated` only after that debt is paid, the resulting final head passes all applicable gates, and the PR remains mergeable against the then-current `dev` after the 20% Learn compatibility check.
 
 No aggregate code/test coverage percentage is claimed for this heterogeneous polyglot matrix. The repository 44% floor remains controlling where coverage is meaningfully measurable; otherwise the strongest lightweight ecosystem validation is used without inventing numbers.
