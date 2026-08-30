@@ -44,7 +44,7 @@
 
 - (NSString *)documentWithId:(NSInteger)documentId {
     NSNumber *key = @(documentId);
-    NSString *cached = self.cache[key];
+    NSString *cached = [self.cache objectForKey:key];
     if (cached != nil) {
         return cached;
     }
@@ -53,7 +53,7 @@
         self.backendCreations += 1;
     }
     NSString *value = [self.backend documentWithId:documentId];
-    self.cache[key] = value;
+    [self.cache setObject:value forKey:key];
     return value;
 }
 @end
