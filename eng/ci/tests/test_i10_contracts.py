@@ -113,6 +113,12 @@ class I10LegacyEntrypointTests(unittest.TestCase):
         self.assertNotIn("Dark Button", text)
         early_patterns_runner.assert_abstract_factory_source_contract("fortran", source)
 
+    def test_legacy_output_normalization_is_case_and_spacing_tolerant(self) -> None:
+        self.assertEqual(
+            early_patterns_runner.normalize_contract_text("same=TRUE\ncount= 1\n"),
+            "same=true\ncount=1",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
