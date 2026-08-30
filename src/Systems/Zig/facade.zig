@@ -24,9 +24,10 @@ fn checkout(buffer: []u8, user: []const u8, sku: []const u8, cents: u32) ![]cons
     return try std.fmt.bufPrint(buffer, "checkout={s}>{s}>{s}", .{ auth, inventory, billing });
 }
 
-pub fn main() !void {
+pub fn main(init: std.process.Init) !void {
     var output_buffer: [192]u8 = undefined;
     const output = try checkout(&output_buffer, "alice", "SKU-42", 499);
-    try std.fs.File.stdout().writeAll(output);
-    try std.fs.File.stdout().writeAll("\n");
+    const stdout = std.Io.File.stdout();
+    try stdout.writeStreamingAll(init.io, output);
+    try stdout.writeStreamingAll(init.io, "\n");
 }
