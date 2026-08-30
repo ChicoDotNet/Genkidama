@@ -1,11 +1,8 @@
 const std = @import("std");
 
-fn writeAllStdout(bytes: []const u8) !void {
-    var remaining = bytes;
-    while (remaining.len > 0) {
-        const written = try std.posix.write(std.posix.STDOUT_FILENO, remaining);
-        remaining = remaining[written..];
-    }
+fn writeStdout(bytes: []const u8) !void {
+    const written = std.os.linux.syscall3(.write, 1, @intFromPtr(bytes.ptr), bytes.len);
+    if (written != bytes.len) return error.StdoutWriteFailed;
 }
 
 const RealDocumentStore = struct {
@@ -58,5 +55,5 @@ pub fn main() !void {
         first_copy[0..first_len],
         second,
     });
-    try writeAllStdout(rendered);
+    try writeStdout(rendered);
 }
