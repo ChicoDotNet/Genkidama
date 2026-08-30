@@ -1,11 +1,8 @@
 const std = @import("std");
 
-fn writeAllStdout(bytes: []const u8) !void {
-    var remaining = bytes;
-    while (remaining.len > 0) {
-        const written = try std.posix.write(std.posix.STDOUT_FILENO, remaining);
-        remaining = remaining[written..];
-    }
+fn writeStdout(bytes: []const u8) !void {
+    const written = std.os.linux.syscall3(.write, 1, @intFromPtr(bytes.ptr), bytes.len);
+    if (written != bytes.len) return error.StdoutWriteFailed;
 }
 
 const Style = struct {
@@ -43,5 +40,5 @@ pub fn main() !void {
         factory.used,
         if (red1 == red2) "true" else "false",
     });
-    try writeAllStdout(output);
+    try writeStdout(output);
 }
