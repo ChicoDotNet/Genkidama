@@ -150,14 +150,47 @@ Centralizar coordinación no significa mover toda la lógica de negocio al media
 
 ## Implementaciones por lenguaje
 
-La tabla final será autoritativa cuando las 51 celdas estén reconciliadas. En este incremento se registran sólo decisiones de aplicabilidad ya sustentadas por ledgers aprobados y no se inventan rutas para las celdas Applicable todavía pendientes de reconciliación documental.
+La tabla final será autoritativa cuando las 51 celdas estén reconciliadas. Las 33 filas Applicable siguientes corresponden a canónicos individualmente direccionables presentes en el diff de PR #128 y certificados por Product CI, Quality y Polyglot CI verdes en `54ebb7c4827a840ffea51c1dfa80efccdc82976f`. El commit posterior de esta página sólo modifica documentación.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
+| MATLAB | Applicable | [`mediator.m`](../src/DataScience/MATLAB/mediator.m) | MATLAB validator / Polyglot CI ✅ | Nested functions + tabla de receivers. |
+| GNU Octave | Applicable | [`mediator.m`](../src/DataScience/Octave/patterns/mediator.m) | Polyglot CI compile/run ✅ | Function handles + nested functions. |
+| R | Applicable | [`mediator.R`](../src/DataScience/R/patterns/mediator.R) | Polyglot CI runtime assertions ✅ | Environment como registry de colegas. |
+| C# | Applicable | [`Mediator.cs`](../src/Enterprise/C%23/patterns/Mediator.cs) | Product/Polyglot CI compile/run ✅ | `Dictionary` de receivers. |
+| Java | Applicable | [`mediator.java`](../src/Enterprise/Java/patterns/mediator.java) | Polyglot CI compile/run ✅ | Registry tipado de receivers. |
+| Kotlin | Applicable | [`Mediator.kt`](../src/Enterprise/Kotlin/patterns/Mediator.kt) | Polyglot CI compile/run ✅ | Map de funciones receptoras. |
+| Visual Basic .NET | Applicable | [`Mediator.vb`](../src/Enterprise/VB.NET/patterns/Mediator.vb) | Product/Polyglot CI compile/run ✅ | `Dictionary(Of String, Action(...))`. |
+| Clojure | Applicable | [`mediator.clj`](../src/Functional/Clojure/patterns/mediator.clj) | Polyglot CI runtime assertions ✅ | Map funcional de colegas. |
+| Common Lisp | Applicable | [`mediator.lisp`](../src/Functional/CommonLisp/patterns/mediator.lisp) | Polyglot CI runtime assertions ✅ | Hash table + receiver functions. |
+| Elixir | Applicable | [`mediator.exs`](../src/Functional/Elixir/patterns/mediator.exs) | Polyglot CI runtime assertions ✅ | Functions/modules como colegas. |
+| Erlang | Applicable | [`mediator.erl`](../src/Functional/Erlang/patterns/mediator.erl) | Polyglot CI compile/run ✅ | Map de receiver functions. |
+| F# | Applicable | [`Mediator.fsx`](../src/Functional/F%23/patterns/Mediator.fsx) | Polyglot CI `dotnet fsi` ✅ | `Map` + discriminated messages/`Result`. |
+| Groovy | Applicable | [`mediator.groovy`](../src/Functional/Groovy/patterns/mediator.groovy) | Polyglot CI compile/run ✅ | Map de closures. |
+| OCaml | Applicable | [`mediator.ml`](../src/Functional/OCaml/patterns/mediator.ml) | Polyglot CI compile/run ✅ | `Hashtbl` + funciones receptoras. |
+| Prolog | Applicable | [`mediator.pl`](../src/Functional/Prolog/patterns/mediator.pl) | Polyglot CI runtime assertions ✅ | Predicados como registry/routing. |
+| Scala | Applicable | [`Mediator.scala`](../src/Functional/Scala/patterns/Mediator.scala) | Polyglot CI compile/run ✅ | Map de funciones receptoras. |
+| COBOL | Applicable | [`mediator_pattern.cpy`](../src/Historical/Cobol/patterns/mediator_pattern.cpy) | Polyglot CI GnuCOBOL compile/run ✅ | Copybook con routing y receiver paragraphs. |
+| Solidity | Applicable | [`Mediator.sol`](../src/Niche/Solidity/patterns/Mediator.sol) | Polyglot CI compile/contract assertions ✅ | Routing puro con resultado explícito. |
+| Bash | Applicable | [`mediator.sh`](../src/Scripting/Bash/patterns/mediator.sh) | Polyglot CI shell runtime assertions ✅ | Associative routing/functions. |
+| Lua | Applicable | [`mediator.lua`](../src/Scripting/Lua/patterns/mediator.lua) | Polyglot CI runtime assertions ✅ | Table de receiver closures. |
+| PHP | Applicable | [`mediator.php`](../src/Scripting/PHP/patterns/mediator.php) | Polyglot CI lint/run ✅ | Callable registry. |
+| PowerShell | Applicable | [`mediator.ps1`](../src/Scripting/PowerShell/patterns/mediator.ps1) | Polyglot CI runtime assertions ✅ | Hashtable de scriptblocks. |
+| Python | Applicable | [`mediator.py`](../src/Scripting/PythonPY/mediator.py) | Python 3.13 compile + sweep runtime ✅ | Dict de callables; canónico extraído del sweep. |
+| Ruby | Applicable | [`mediator.rb`](../src/Scripting/Ruby/patterns/mediator.rb) | Polyglot CI runtime assertions ✅ | Hash de callables. |
+| Ada | Applicable | [`mediator_pattern.adb`](../src/Systems/Ada/mediator_pattern.adb) | GNAT Ada 2022 compile/run ✅ | Access-to-subprogram routing. |
+| C++ | Applicable | [`mediator.cpp`](../src/Systems/C%2B%2B/patterns/mediator.cpp) | Polyglot CI C++20 compile/run ✅ | Registry de callbacks tipados. |
+| C | Applicable | [`mediator.c`](../src/Systems/C/patterns/mediator.c) | Polyglot CI compile/run ✅ | Tabla de function pointers. |
+| Fortran | Applicable | [`mediator.f90`](../src/Systems/Fortran/patterns/mediator.f90) | Polyglot CI Fortran compile/run ✅ | Procedure pointers como colegas. |
+| Pascal | Applicable | [`mediator_pattern.pas`](../src/Systems/Pascal/mediator_pattern.pas) | Polyglot CI Free Pascal compile/run ✅ | Procedure registry y routing. |
+| Rust | Applicable | [`mediator.rs`](../src/Systems/Rust/patterns/mediator.rs) | Polyglot CI `rustc` compile/run ✅ | `HashMap` + `Result` failure mode. |
+| Swift | Applicable | [`Mediator.swift`](../src/Systems/Swift/patterns/Mediator.swift) | Polyglot CI `swiftc` compile/run ✅ | Dictionary de receiver closures + error enum. |
+| JavaScript | Applicable | [`mediator.js`](../src/Web/JavaScriptJS/patterns/mediator.js) | Product/Polyglot CI Node assertions ✅ | Object registry + explicit failure. |
+| TypeScript | Applicable | [`mediator.ts`](../src/Web/TypeScriptTS/patterns/mediator.ts) | Product/Polyglot CI strict compile/run ✅ | Typed receiver registry. |
 | HTML | N/A | — | — | El markup puro no tiene un modelo de ejecución programable capaz de poseer coordinación entre pares; DOM events y routing pertenecen a JavaScript u otro runtime ejecutable. |
 | CSS | N/A | — | — | Selectores y cascade pueden afectar múltiples elementos, pero CSS puro no puede poseer routing o coordinación ejecutable entre colegas. |
 
-Las 33 celdas Applicable ya auditadas/materializadas en PR #128 permanecen `in-progress` en esta página hasta que sus rutas y evidencia se reconcilien una por una. Un nombre de archivo o un sweep verde no sustituyen esa reconciliación.
+Quedan 16 targets todavía sin reconciliar en esta tabla. Se mantienen sin clasificar aquí hasta inspeccionar su mecanismo real; no se convierten en `N/A` por ausencia de OOP ni se inventan enlaces.
 
 ## Comprueba que lo entendiste
 
