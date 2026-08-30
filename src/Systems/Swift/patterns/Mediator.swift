@@ -39,7 +39,7 @@ enum MediatorExample {
         var rejectedUnknown = false
         do {
             try send("payment", to: "shipping", message: "paid")
-        } catch MediatorError.unknownColleague("shipping") {
+        } catch MediatorError.unknownColleague(let recipient) where recipient == "shipping" {
             rejectedUnknown = true
         } catch {
             return false
