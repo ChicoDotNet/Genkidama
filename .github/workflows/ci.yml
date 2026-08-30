@@ -13,6 +13,7 @@ on:
 
 permissions:
   contents: read
+  actions: write
 
 concurrency:
   group: product-ci-${{ github.event.pull_request.number || github.ref }}
@@ -43,3 +44,85 @@ jobs:
           path: artifacts/ci/product.jsonl
           if-no-files-found: warn
           retention-days: 14
+
+  orphan-workflow-cleanup:
+    name: Disable orphan workflow registrations
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/dev' &&
+      contains(github.event.head_commit.message, '[orphan-cleanup]')
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Inventory and disable orphan workflow registrations
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          allowed='[".github/workflows/ci.yml",".github/workflows/quality.yml",".github/workflows/polyglot.yml"]'
+
+          fetch_workflows() {
+            local page=1
+            local all='[]'
+            while true; do
+              local payload
+              payload="$(curl --fail-with-body -sS \
+                -H "Accept: application/vnd.github+json" \
+                -H "Authorization: Bearer ${GH_TOKEN}" \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
+                "https://api.github.com/repos/${REPO}/actions/workflows?per_page=100&page=${page}")"
+              local batch
+              batch="$(jq -c '.workflows' <<<"${payload}")"
+              local count
+              count="$(jq 'length' <<<"${batch}")"
+              if [[ "${count}" -eq 0 ]]; then
+                break
+              fi
+              all="$(jq -cn --argjson left "${all}" --argjson right "${batch}" '$left + $right')"
+              page=$((page + 1))
+            done
+            printf '%s' "${all}"
+          }
+
+          before="$(fetch_workflows)"
+          total="$(jq 'length' <<<"${before}")"
+          orphan_total="$(jq --argjson allowed "${allowed}" '[.[] | select(.path as $p | ($allowed | index($p)) == null)] | length' <<<"${before}")"
+          active_orphans="$(jq --argjson allowed "${allowed}" '[.[] | select(.state == "active") | select(.path as $p | ($allowed | index($p)) == null)] | length' <<<"${before}")"
+
+          echo "Registered workflows before cleanup: ${total}"
+          echo "Orphan registrations before cleanup: ${orphan_total}"
+          echo "Active orphan registrations before cleanup: ${active_orphans}"
+          jq -r --argjson allowed "${allowed}" '.[] | select(.path as $p | ($allowed | index($p)) == null) | [.id, .state, .path, .name] | @tsv' <<<"${before}" | sort
+
+          while IFS=$'\t' read -r id state path name; do
+            [[ -z "${id}" ]] && continue
+            if [[ "${state}" == "active" ]]; then
+              echo "Disabling workflow id=${id} path=${path} name=${name}"
+              curl --fail-with-body -sS -o /dev/null -X PUT \
+                -H "Accept: application/vnd.github+json" \
+                -H "Authorization: Bearer ${GH_TOKEN}" \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
+                "https://api.github.com/repos/${REPO}/actions/workflows/${id}/disable"
+            fi
+          done < <(jq -r --argjson allowed "${allowed}" '.[] | select(.path as $p | ($allowed | index($p)) == null) | [.id, .state, .path, .name] | @tsv' <<<"${before}")
+
+          after="$(fetch_workflows)"
+          remaining_active="$(jq --argjson allowed "${allowed}" '[.[] | select(.state == "active") | select(.path as $p | ($allowed | index($p)) == null)] | length' <<<"${after}")"
+
+          {
+            echo "## Orphan workflow control-plane cleanup"
+            echo
+            echo "- Registered workflows before: ${total}"
+            echo "- Orphan registrations observed: ${orphan_total}"
+            echo "- Active orphans before: ${active_orphans}"
+            echo "- Active orphans after: ${remaining_active}"
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+          if [[ "${remaining_active}" -ne 0 ]]; then
+            echo "ERROR: ${remaining_active} active orphan workflow registrations remain" >&2
+            jq -r --argjson allowed "${allowed}" '.[] | select(.state == "active") | select(.path as $p | ($allowed | index($p)) == null) | [.id, .state, .path, .name] | @tsv' <<<"${after}" >&2
+            exit 1
+          fi
