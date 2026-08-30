@@ -27,7 +27,11 @@
 }
 @end
 
-@interface CheckoutFacade : NSObject
+@interface CheckoutFacade : NSObject {
+    AuthService *_auth;
+    InventoryService *_inventory;
+    BillingService *_billing;
+}
 @property(nonatomic, strong) AuthService *auth;
 @property(nonatomic, strong) InventoryService *inventory;
 @property(nonatomic, strong) BillingService *billing;
@@ -35,11 +39,16 @@
 - (NSString *)checkoutUser:(NSString *)user sku:(NSString *)sku amount:(NSInteger)amount;
 @end
 @implementation CheckoutFacade
+@synthesize auth = _auth;
+@synthesize inventory = _inventory;
+@synthesize billing = _billing;
+
 - (instancetype)initWithAuth:(AuthService *)auth inventory:(InventoryService *)inventory billing:(BillingService *)billing {
-    if ((self = [super init])) {
-        _auth = auth;
-        _inventory = inventory;
-        _billing = billing;
+    self = [super init];
+    if (self) {
+        self.auth = auth;
+        self.inventory = inventory;
+        self.billing = billing;
     }
     return self;
 }
