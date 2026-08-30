@@ -67,8 +67,8 @@ jobs:
           file='src/Niche/Crystal/iterator.cr'
           work="$(mktemp -d)"
           crystal tool format --check "$file"
-          crystal build --error-on-warnings "$file" -o "$work/iterator"
-          test "$("$work/iterator")" = 'iterator=10,20,30'
+          crystal build --error-on-warnings "$file" -o "$work/iterator-module"
+          test "$(crystal eval --error-on-warnings 'require "./src/Niche/Crystal/iterator"; raise "iterator contract failed" unless run_iterator_example; puts "iterator=10,20,30"')" = 'iterator=10,20,30'
 
   zig:
     runs-on: ubuntu-latest
