@@ -62,6 +62,8 @@ STATE_RE = re.compile(r"\*\*Estado:\*\*\s*`([^`]+)`")
 COUNTER_RE = re.compile(r"\*\*Implementaciones de lenguaje:\*\*\s*`(\d+)\s*/\s*(\d+)`")
 FORBIDDEN_DEBT_RE = re.compile(r"\b(?:TODO|TBD|PLACEHOLDER)\b")
 EXTERNAL_SCHEME_RE = re.compile(r"^[a-zA-Z][a-zA-Z0-9+.-]*:")
+HEADING_RE = re.compile(r"^#{1,6}\s+(.+?)\s*#*\s*$", re.MULTILINE)
+EXPLICIT_ANCHOR_RE = re.compile(r"<a\s+(?:[^>]*?\s)?id=[\"']([^\"']+)[\"'][^>]*>", re.IGNORECASE)
 
 
 def _read(path: Path) -> str:
@@ -71,20 +73,45 @@ def _read(path: Path) -> str:
 def _link_destination(raw: str) -> str:
     value = raw.strip()
     if value.startswith("<") and ">" in value:
-        value = value[1:value.index(">")]
-    else:
-        value = value.split(maxsplit=1)[0] if value else value
-    return unquote(value)
+        return value[1:value.index(">")]
+    return value.split(maxsplit=1)[0] if value else value
+
+
+def _split_destination(destination: str) -> tuple[str, str | None]:
+    raw_path, separator, raw_fragment = destination.partition("#")
+    path_part = unquote(raw_path)
+    fragment = unquote(raw_fragment) if separator else None
+    return path_part, fragment
 
 
 def markdown_links(text: str) -> list[str]:
     return [_link_destination(match.group(1)) for match in MARKDOWN_LINK_RE.finditer(text)]
 
 
+def _github_heading_slug(heading: str) -> str:
+    value = re.sub(r"<[^>]+>", "", heading)
+    value = re.sub(r"[`*_~]", "", value).strip().lower()
+    value = re.sub(r"[^\w\- ]", "", value, flags=re.UNICODE)
+    return re.sub(r"\s+", "-", value)
+
+
+def markdown_anchors(text: str) -> set[str]:
+    anchors = {match.group(1) for match in EXPLICIT_ANCHOR_RE.finditer(text)}
+    seen: Counter[str] = Counter()
+    for match in HEADING_RE.finditer(text):
+        base = _github_heading_slug(match.group(1))
+        if not base:
+            continue
+        suffix = seen[base]
+        anchors.add(base if suffix == 0 else f"{base}-{suffix}")
+        seen[base] += 1
+    return anchors
+
+
 def catalog_targets(readme_text: str) -> list[str]:
     targets: list[str] = []
     for destination in markdown_links(readme_text):
-        path_part = destination.split("#", 1)[0]
+        path_part, _ = _split_destination(destination)
         if not path_part or EXTERNAL_SCHEME_RE.match(path_part):
             continue
         candidate = Path(path_part)
@@ -97,16 +124,21 @@ def _broken_links(source: Path, text: str, root: Path) -> list[str]:
     broken: list[str] = []
     seen: set[str] = set()
     for destination in markdown_links(text):
-        if not destination or destination.startswith("#") or EXTERNAL_SCHEME_RE.match(destination):
+        if not destination or EXTERNAL_SCHEME_RE.match(destination):
             continue
-        path_part = destination.split("#", 1)[0]
-        if not path_part:
-            continue
+        path_part, fragment = _split_destination(destination)
         if path_part.startswith("/"):
             resolved = root / path_part.lstrip("/")
-        else:
+        elif path_part:
             resolved = source.parent / path_part
-        if not resolved.exists() and destination not in seen:
+        else:
+            resolved = source
+
+        is_broken = not resolved.exists()
+        if not is_broken and fragment and resolved.suffix.lower() == ".md":
+            is_broken = fragment not in markdown_anchors(_read(resolved))
+
+        if is_broken and destination not in seen:
             seen.add(destination)
             broken.append(destination)
     return broken
