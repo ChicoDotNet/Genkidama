@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 
+import 'iterator.dart' as iterator_example;
+
 void check(bool condition) {
   if (!condition) throw StateError('pattern assertion failed');
 }
@@ -78,17 +80,9 @@ void interpreterPattern() => check(
   AddExpr(Literal(7), MultiplyExpr(Literal(3), Literal(4))).eval() == 19,
 );
 
-// Iterator
-class CursorIterator<T> {
-  CursorIterator(this.values);
-  final List<T> values;
-  int _index = 0;
-  bool get hasNext => _index < values.length;
-  T next() => values[_index++];
-}
-
+// Iterator: delegate to the individually addressable canonical example.
 void iteratorPattern() {
-  final it = CursorIterator<int>([10, 20, 30]);
+  final it = iterator_example.CursorIterator<int>([10, 20, 30]);
   final visited = <int>[];
   while (it.hasNext) {
     visited.add(it.next());

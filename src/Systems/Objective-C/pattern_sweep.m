@@ -1,6 +1,8 @@
 #import <Foundation/Foundation.h>
 #import <stdlib.h>
 #import <math.h>
+#define GENKIDAMA_ITERATOR_EMBEDDED 1
+#import "iterator.m"
 
 static void must(BOOL value) { if (!value) abort(); }
 
@@ -49,9 +51,7 @@ static BOOL interpreterPattern(void) {
 
 // Iterator
 static BOOL iteratorPattern(void) {
-    NSEnumerator *iterator = [@[@10, @20, @30] objectEnumerator]; NSMutableArray *visited = [NSMutableArray array]; id value;
-    while ((value = [iterator nextObject]) != nil) [visited addObject:value];
-    return [visited isEqualToArray:@[@10, @20, @30]] && [iterator nextObject] == nil;
+    return iteratorExamplePasses();
 }
 
 // Mediator

@@ -1,3 +1,5 @@
+require "./iterator"
+
 def must(value : Bool)
   raise "pattern assertion failed" unless value
 end
@@ -58,26 +60,8 @@ def interpreter_pattern
 end
 
 # Iterator
-class CursorIterator
-  def initialize(@values : Array(Int32))
-    @index = 0
-  end
-
-  def next_value : Int32?
-    return nil if @index >= @values.size
-    value = @values[@index]
-    @index += 1
-    value
-  end
-end
-
 def iterator_pattern
-  it = CursorIterator.new([10, 20, 30])
-  visited = [] of Int32
-  while value = it.next_value
-    visited << value
-  end
-  must(visited == [10, 20, 30] && it.next_value.nil?)
+  must(run_iterator_example)
 end
 
 # Mediator

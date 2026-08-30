@@ -1,0 +1,108 @@
+name: Pattern Command Final
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - '.github/workflows/pattern-command-final.yml'
+      - 'src/Data/SQL/command.sql'
+      - 'src/Scripting/Perl/command.pl'
+      - 'src/Niche/GDScript/command.gd'
+      - 'src/LowLevel/Assembly/command.asm'
+      - 'src/Enterprise/Delphi/CommandExample.pas'
+      - 'src/Other/MicroPython/command.py'
+      - 'src/Other/Rockstar/command.rock'
+      - 'src/Shell/VBA/CommandExample.bas'
+      - 'wiki/Command.md'
+
+jobs:
+  portable:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install SQLite, Perl and NASM
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y sqlite3 perl nasm
+      - name: Validate SQL Command
+        shell: bash
+        run: test "$(sqlite3 :memory: < src/Data/SQL/command.sql)" = 'balance=130;commands=2'
+      - name: Validate Perl Command
+        shell: bash
+        run: |
+          perl -c src/Scripting/Perl/command.pl
+          test "$(perl src/Scripting/Perl/command.pl)" = 'balance=130;commands=2'
+      - name: Validate Assembly Command
+        shell: bash
+        run: |
+          nasm -f elf64 -Wall src/LowLevel/Assembly/command.asm -o /tmp/command.o
+          ld /tmp/command.o -o /tmp/command
+          test "$(/tmp/command)" = 'balance=130;commands=2'
+
+  gdscript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Setup Godot 4.6.3
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 'https://github.com/godotengine/godot-builds/releases/download/4.6.3-stable/Godot_v4.6.3-stable_linux.x86_64.zip' -o /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          sudo install -m 0755 /tmp/godot/Godot_v4.6.3-stable_linux.x86_64 /usr/local/bin/godot
+      - name: Validate GDScript Command
+        shell: bash
+        run: |
+          output="$(godot --headless --script src/Niche/GDScript/command.gd 2>&1)"
+          grep -Fxq 'balance=130;commands=2' <<<"$output"
+
+  micropython:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build MicroPython 1.28.0 Unix port
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libffi-dev pkg-config
+          git clone --depth 1 --branch v1.28.0 --recurse-submodules https://github.com/micropython/micropython.git /tmp/micropython
+          make -C /tmp/micropython/mpy-cross -j2
+          make -C /tmp/micropython/ports/unix -j2
+      - name: Validate MicroPython Command
+        shell: bash
+        run: test "$(/tmp/micropython/ports/unix/build-standard/micropython src/Other/MicroPython/command.py)" = 'balance=130;commands=2'
+
+  rockstar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Setup Rockstar v2.0.31
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 'https://github.com/RockstarLang/rockstar/releases/download/v2.0.31/rockstar-v2.0.31-linux-x64.tar.gz' -o /tmp/rockstar.tar.gz
+          echo '3d265c80d9d039ad92524f42951eb546d8b42c680965dfa551210457e399653f  /tmp/rockstar.tar.gz' | sha256sum -c -
+          mkdir -p /tmp/rockstar
+          tar -xzf /tmp/rockstar.tar.gz -C /tmp/rockstar
+          echo "ROCKSTAR=$(find /tmp/rockstar -type f -name rockstar -perm -111 | head -n 1)" >> "$GITHUB_ENV"
+      - name: Validate Rockstar Command
+        shell: bash
+        run: test "$("$ROCKSTAR" src/Other/Rockstar/command.rock)" = 'balance=130;commands=2'
+
+  proprietary-source-contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate VBA and Delphi Command source contracts
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          def req(text, pattern, label):
+              if re.search(pattern, text, re.I | re.M | re.S) is None:
+                  raise SystemExit('Missing source contract: ' + label)
+          vba = Path('src/Shell/VBA/CommandExample.bas').read_text()
+          req(vba, r'ExecuteCommand', 'VBA dispatcher')
+          req(vba, r'Case\s+"deposit"', 'VBA deposit command')
+          req(vba, r'Case\s+"withdraw"', 'VBA withdraw command')
+          delphi = Path('src/Enterprise/Delphi/CommandExample.pas').read_text()
+          req(delphi, r'ICommand\s*=\s*interface', 'Delphi command contract')
+          req(delphi, r'TDepositCommand', 'Delphi deposit command')
+          req(delphi, r'TWithdrawCommand', 'Delphi withdraw command')
+          req(delphi, r'for\s+Command\s+in\s+Queue\s+do', 'Delphi invoker queue')

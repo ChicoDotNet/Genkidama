@@ -1,0 +1,164 @@
+name: Pattern Iterator High-Overhead Canonical
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/Functional/Haskell/Iterator.hs'
+      - 'src/Web/Dart/iterator.dart'
+      - 'src/Niche/Crystal/iterator.cr'
+      - 'src/Systems/Zig/iterator.zig'
+      - 'src/DataScience/Julia/iterator.jl'
+      - 'src/Systems/Go/iterator.go'
+      - 'src/Systems/Objective-C/iterator.m'
+      - 'docs/pattern-sweeps/iterator-final.md'
+      - '.github/workflows/pattern-iterator-high-overhead.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  haskell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: haskell-actions/setup@v2
+        with:
+          ghc-version: latest
+          cabal-update: false
+      - name: Validate Haskell Iterator
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "GHC $(ghc --numeric-version)"
+          work="$(mktemp -d)"
+          ghc -Wall -Werror -O0 -odir "$work" -hidir "$work" src/Functional/Haskell/Iterator.hs -o "$work/iterator"
+          test "$("$work/iterator")" = 'iterator=10,20,30'
+
+  dart:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+      - name: Validate Dart Iterator
+        shell: bash
+        run: |
+          set -euo pipefail
+          dart --version
+          file='src/Web/Dart/iterator.dart'
+          dart format --output=none --set-exit-if-changed "$file"
+          dart analyze --fatal-infos --fatal-warnings "$file"
+          test "$(dart run "$file")" = 'iterator=10,20,30'
+
+  crystal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: crystal-lang/install-crystal@v1
+        with:
+          crystal: latest
+      - name: Validate Crystal Iterator
+        shell: bash
+        run: |
+          set -euo pipefail
+          crystal --version | head -n1
+          file='src/Niche/Crystal/iterator.cr'
+          work="$(mktemp -d)"
+          crystal tool format --check "$file"
+          crystal build --error-on-warnings "$file" -o "$work/iterator-module"
+          test "$(crystal eval --error-on-warnings 'require "./src/Niche/Crystal/iterator"; raise "iterator contract failed" unless run_iterator_example; puts "iterator=10,20,30"')" = 'iterator=10,20,30'
+
+  zig:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install latest stable Zig
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, re, tarfile, urllib.request
+          index = json.load(urllib.request.urlopen('https://ziglang.org/download/index.json'))
+          stable = max((v for v in index if re.fullmatch(r'\d+\.\d+\.\d+', v)), key=lambda v: tuple(map(int, v.split('.'))))
+          package = index[stable]['x86_64-linux']
+          archive = pathlib.Path(os.environ['RUNNER_TEMP']) / 'zig.tar.xz'
+          urllib.request.urlretrieve(package['tarball'], archive)
+          digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+          if digest != package['shasum']:
+              raise SystemExit('Zig SHA-256 mismatch')
+          target = pathlib.Path(os.environ['RUNNER_TEMP']) / 'zig-stable'
+          target.mkdir(exist_ok=True)
+          with tarfile.open(archive, 'r:xz') as tar:
+              tar.extractall(target, filter='data')
+          root = next(target.iterdir())
+          with open(os.environ['GITHUB_PATH'], 'a') as path:
+              path.write(str(root) + '\n')
+          PY
+      - name: Validate Zig Iterator
+        shell: bash
+        run: |
+          set -euo pipefail
+          zig version
+          file='src/Systems/Zig/iterator.zig'
+          zig fmt --check "$file"
+          test "$(zig run "$file" 2>&1)" = 'iterator=10,20,30'
+
+  julia:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: julia-actions/setup-julia@v3
+        with:
+          version: '1'
+      - name: Validate Julia Iterator
+        shell: bash
+        run: |
+          set -euo pipefail
+          julia --version
+          test "$(julia --startup-file=no --check-bounds=yes src/DataScience/Julia/iterator.jl)" = 'iterator=10,20,30'
+
+  go:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: stable
+          check-latest: true
+          cache: false
+      - name: Validate Go Iterator
+        shell: bash
+        run: |
+          set -euo pipefail
+          go version
+          file='src/Systems/Go/iterator.go'
+          test -z "$(gofmt -d "$file")"
+          go vet "$file"
+          test "$(go run "$file")" = 'iterator=10,20,30'
+
+  objective-c:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install Objective-C toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y clang gobjc libgnustep-base-dev
+      - name: Validate Objective-C Iterator
+        shell: bash
+        run: |
+          set -euo pipefail
+          clang --version | head -n1
+          file='src/Systems/Objective-C/iterator.m'
+          work="$(mktemp -d)"
+          objc_headers="$(gcc -print-file-name=include)"
+          objc_library="$(gcc -print-file-name=libobjc.so)"
+          test -f "$objc_library"
+          objc_libdir="$(dirname "$objc_library")"
+          clang $(gnustep-config --objc-flags) -Wall -Wextra -Werror -I"$objc_headers" \
+            "$file" -o "$work/iterator" -L"$objc_libdir" $(gnustep-config --base-libs)
+          test "$("$work/iterator")" = 'iterator=10,20,30'

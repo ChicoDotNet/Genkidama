@@ -1,4 +1,5 @@
 # Language-major Design Pattern sweep: 39 remaining patterns.
+include("iterator.jl")
 must(value::Bool) = value || error("pattern assertion failed")
 
 # Command
@@ -25,28 +26,7 @@ evaluate(x::AddExpr) = evaluate(x.left) + evaluate(x.right)
 evaluate(x::MulExpr) = evaluate(x.left) * evaluate(x.right)
 interpreter_pattern() = must(evaluate(AddExpr(Literal(7), MulExpr(Literal(3), Literal(4)))) == 19)
 
-# Iterator
-mutable struct CursorIterator
-    values::Vector{Int}
-    index::Int
-end
-CursorIterator(values::Vector{Int}) = CursorIterator(values, 1)
-function next_value(iterator::CursorIterator)
-    iterator.index > length(iterator.values) && return nothing
-    value = iterator.values[iterator.index]
-    iterator.index += 1
-    value
-end
-function iterator_pattern()
-    iterator = CursorIterator([10, 20, 30])
-    visited = Int[]
-    while true
-        value = next_value(iterator)
-        value === nothing && break
-        push!(visited, value)
-    end
-    must(visited == [10, 20, 30] && next_value(iterator) === nothing)
-end
+# Iterator is executed from the canonical source by the include above.
 
 # Mediator
 mutable struct UiMediator; events::Vector{String}; end
@@ -403,7 +383,7 @@ const PATTERNS = [
 must(length(PATTERNS) == 39)
 
 for pattern in (
-    command_pattern, interpreter_pattern, iterator_pattern, mediator_pattern, memento_pattern, observer_pattern, state_pattern, strategy_pattern, template_method_pattern, visitor_pattern,
+    command_pattern, interpreter_pattern, mediator_pattern, memento_pattern, observer_pattern, state_pattern, strategy_pattern, template_method_pattern, visitor_pattern,
     mvc_pattern, mvvm_pattern, microkernel_pattern, microservices_pattern, enterprise_adapter_pattern, enterprise_bridge_pattern, enterprise_facade_pattern, broker_pattern, message_bus_pattern, service_locator_pattern,
     active_object_pattern, monitor_object_pattern, half_sync_half_async_pattern, leader_followers_pattern, client_server_pattern, peer_to_peer_pattern, publish_subscribe_pattern, distributed_proxy_pattern,
     presentation_abstraction_control_pattern, model_view_presenter_pattern, document_view_pattern, active_record_pattern, data_mapper_pattern, unit_of_work_pattern, repository_pattern,

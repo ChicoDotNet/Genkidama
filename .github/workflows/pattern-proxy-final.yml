@@ -13,6 +13,16 @@ on:
       - 'src/Other/Rockstar/proxy.rock'
       - 'src/DataScience/MATLAB/proxy.m'
       - 'wiki/Proxy.md'
+      - 'src/Data/SQL/command.sql'
+      - 'src/Scripting/Perl/command.pl'
+      - 'src/Niche/GDScript/command.gd'
+      - 'src/LowLevel/Assembly/command.asm'
+      - 'src/Enterprise/Delphi/CommandExample.pas'
+      - 'src/Other/MicroPython/command.py'
+      - 'src/Other/Rockstar/command.rock'
+      - 'src/Shell/VBA/CommandExample.bas'
+      - 'docs/pattern-sweeps/command-final.md'
+      - 'wiki/Command.md'
 
 jobs:
   final:
@@ -115,3 +125,76 @@ jobs:
               require(delphi, pattern, label)
 
           print('VBA/Delphi Proxy source contracts: OK')
+
+  command-final:
+    if: github.head_ref == 'patterns/command-kb006-final'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install Command final native tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y sqlite3 perl nasm build-essential libffi-dev pkg-config unzip
+
+      - name: Validate SQL, Perl and Assembly Command
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='balance=130;commands=2'
+          test "$(sqlite3 :memory: < src/Data/SQL/command.sql)" = "$expected"
+          perl -c src/Scripting/Perl/command.pl
+          test "$(perl src/Scripting/Perl/command.pl)" = "$expected"
+          nasm -f elf64 -Wall src/LowLevel/Assembly/command.asm -o /tmp/command.o
+          ld /tmp/command.o -o /tmp/command
+          test "$(/tmp/command)" = "$expected"
+
+      - name: Validate VBA and Delphi Command source contracts
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          def require(text, pattern, label):
+              if re.search(pattern, text, flags=re.IGNORECASE | re.MULTILINE | re.DOTALL) is None:
+                  raise SystemExit(f"Missing source contract: {label}")
+          vba = Path('src/Shell/VBA/CommandExample.bas').read_text(encoding='utf-8')
+          require(vba, r'ExecuteCommand', 'VBA dispatcher')
+          require(vba, r'Case\s+"deposit"', 'VBA deposit command')
+          require(vba, r'Case\s+"withdraw"', 'VBA withdraw command')
+          delphi = Path('src/Enterprise/Delphi/CommandExample.pas').read_text(encoding='utf-8')
+          require(delphi, r'ICommand\s*=\s*interface', 'Delphi command contract')
+          require(delphi, r'TDepositCommand', 'Delphi deposit command')
+          require(delphi, r'TWithdrawCommand', 'Delphi withdraw command')
+          require(delphi, r'for\s+Command\s+in\s+Queue\s+do', 'Delphi invoker queue')
+          print('VBA/Delphi Command source contracts: OK')
+
+      - name: Setup and validate Godot 4.6.3 Command
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 'https://github.com/godotengine/godot-builds/releases/download/4.6.3-stable/Godot_v4.6.3-stable_linux.x86_64.zip' --output /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          sudo install -m 0755 /tmp/godot/Godot_v4.6.3-stable_linux.x86_64 /usr/local/bin/godot
+          output="$(godot --headless --script src/Niche/GDScript/command.gd 2>&1)"
+          grep -Fxq 'balance=130;commands=2' <<<"$output"
+
+      - name: Build and validate MicroPython 1.28.0 Command
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth 1 --branch v1.28.0 --recurse-submodules https://github.com/micropython/micropython.git /tmp/micropython
+          make -C /tmp/micropython/mpy-cross -j2
+          make -C /tmp/micropython/ports/unix -j2
+          test "$(/tmp/micropython/ports/unix/build-standard/micropython src/Other/MicroPython/command.py)" = 'balance=130;commands=2'
+
+      - name: Setup and validate Rockstar v2.0.31 Command
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 'https://github.com/RockstarLang/rockstar/releases/download/v2.0.31/rockstar-v2.0.31-linux-x64.tar.gz' --output /tmp/rockstar-command.tar.gz
+          echo '3d265c80d9d039ad92524f42951eb546d8b42c680965dfa551210457e399653f  /tmp/rockstar-command.tar.gz' | sha256sum -c -
+          mkdir -p /tmp/rockstar-command
+          tar -xzf /tmp/rockstar-command.tar.gz -C /tmp/rockstar-command
+          runtime="$(find /tmp/rockstar-command -type f -name rockstar -perm -111 | head -n 1)"
+          test "$("$runtime" src/Other/Rockstar/command.rock)" = 'balance=130;commands=2'

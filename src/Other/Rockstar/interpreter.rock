@@ -1,0 +1,9 @@
+Sum takes X and Y giving X with Y
+
+Put Sum taking 2, 3 into Five
+Put Sum taking Five, 4 into Result
+
+If Result is 9
+Print "interpreter=9"
+Else
+Print "interpreter-failed"

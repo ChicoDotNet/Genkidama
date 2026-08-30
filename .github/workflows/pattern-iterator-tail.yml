@@ -1,0 +1,117 @@
+name: Pattern Iterator Tail Canonical
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'src/Data/SQL/iterator.sql'
+      - 'src/Scripting/Perl/iterator.pl'
+      - 'src/Shell/VBA/IteratorExample.bas'
+      - 'src/Niche/GDScript/iterator.gd'
+      - 'src/LowLevel/Assembly/iterator.asm'
+      - 'src/Enterprise/Delphi/IteratorExample.pas'
+      - 'src/Other/MicroPython/iterator.py'
+      - 'src/Other/Rockstar/iterator.rock'
+      - 'docs/pattern-sweeps/iterator-final.md'
+      - 'wiki/Iterator.md'
+      - '.github/workflows/pattern-iterator-tail.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  lightweight:
+    name: SQL + Perl + Assembly
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install lightweight runtimes
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y sqlite3 perl nasm
+      - name: Validate SQL, Perl and Assembly Iterator artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(sqlite3 :memory: < src/Data/SQL/iterator.sql | tail -n 1)" = 'iterator=10,20,30'
+          perl -c src/Scripting/Perl/iterator.pl
+          test "$(perl src/Scripting/Perl/iterator.pl)" = 'iterator=10,20,30'
+          work="$(mktemp -d)"
+          nasm -f elf64 -Wall src/LowLevel/Assembly/iterator.asm -o "$work/iterator.o"
+          ld "$work/iterator.o" -o "$work/iterator"
+          test "$("$work/iterator")" = 'iterator=10,20,30'
+
+  gdscript:
+    name: GDScript
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Setup Godot 4.6.3
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 'https://github.com/godotengine/godot-builds/releases/download/4.6.3-stable/Godot_v4.6.3-stable_linux.x86_64.zip' -o /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          sudo install -m 0755 /tmp/godot/Godot_v4.6.3-stable_linux.x86_64 /usr/local/bin/godot
+      - name: Validate GDScript Iterator
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(godot --headless --script src/Niche/GDScript/iterator.gd 2>&1)"
+          grep -Fxq 'iterator=10,20,30' <<<"$output"
+
+  micropython:
+    name: MicroPython
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build MicroPython 1.28.0 Unix port
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libffi-dev pkg-config
+          git clone --depth 1 --branch v1.28.0 --recurse-submodules https://github.com/micropython/micropython.git /tmp/micropython
+          make -C /tmp/micropython/mpy-cross -j2
+          make -C /tmp/micropython/ports/unix -j2
+      - name: Validate MicroPython Iterator
+        shell: bash
+        run: test "$(/tmp/micropython/ports/unix/build-standard/micropython src/Other/MicroPython/iterator.py)" = 'iterator=10,20,30'
+
+  rockstar:
+    name: Rockstar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Setup Rockstar v2.0.31
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 'https://github.com/RockstarLang/rockstar/releases/download/v2.0.31/rockstar-v2.0.31-linux-x64.tar.gz' -o /tmp/rockstar.tar.gz
+          echo '3d265c80d9d039ad92524f42951eb546d8b42c680965dfa551210457e399653f  /tmp/rockstar.tar.gz' | sha256sum -c -
+          mkdir -p /tmp/rockstar
+          tar -xzf /tmp/rockstar.tar.gz -C /tmp/rockstar
+          echo "ROCKSTAR=$(find /tmp/rockstar -type f -name rockstar -perm -111 | head -n 1)" >> "$GITHUB_ENV"
+      - name: Validate Rockstar Iterator
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$("$ROCKSTAR" src/Other/Rockstar/iterator.rock)" = 'iterator=10,20,30'
+
+  proprietary-source-contracts:
+    name: VBA + Delphi source contracts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate VBA and Delphi Iterator contracts
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          def req(text, pattern, label):
+              if re.search(pattern, text, re.I | re.M | re.S) is None:
+                  raise SystemExit('Missing source contract: ' + label)
+          vba = Path('src/Shell/VBA/IteratorExample.bas').read_text()
+          req(vba, r'Collection', 'VBA collection')
+          req(vba, r'For Each', 'VBA enumeration')
+          req(vba, r'10,20,30', 'VBA observable contract')
+          delphi = Path('src/Enterprise/Delphi/IteratorExample.pas').read_text()
+          req(delphi, r'TNumberIterator\s*=\s*class', 'Delphi iterator type')
+          req(delphi, r'function\s+HasNext', 'Delphi HasNext')
+          req(delphi, r'function\s+Next', 'Delphi Next')
+          req(delphi, r'Iterator exhausted', 'Delphi exhaustion behavior')

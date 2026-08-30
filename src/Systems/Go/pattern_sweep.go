@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"math"
+	"os/exec"
+	"strings"
 	"sync"
 )
 
@@ -51,32 +53,11 @@ type mul struct{ a, b expr }
 func (x mul) eval() int   { return x.a.eval() * x.b.eval() }
 func interpreterPattern() { must(add{lit(7), mul{lit(3), lit(4)}}.eval() == 19) }
 
-// Iterator: explicit cursor hides traversal mechanics.
-type intIterator struct {
-	values []int
-	index  int
-}
-
-func (it *intIterator) next() (int, bool) {
-	if it.index >= len(it.values) {
-		return 0, false
-	}
-	v := it.values[it.index]
-	it.index++
-	return v, true
-}
+// Iterator: the sweep executes the individually addressable canonical source.
 func iteratorPattern() {
-	it := &intIterator{values: []int{10, 20, 30}}
-	got := []int{}
-	for {
-		v, ok := it.next()
-		if !ok {
-			break
-		}
-		got = append(got, v)
-	}
-	_, ok := it.next()
-	must(!ok && fmt.Sprint(got) == "[10 20 30]")
+	cmd := exec.Command("go", "run", "src/Systems/Go/iterator.go")
+	output, err := cmd.Output()
+	must(err == nil && strings.TrimSpace(string(output)) == "iterator=10,20,30")
 }
 
 // Mediator: colleagues communicate only through the mediator.
