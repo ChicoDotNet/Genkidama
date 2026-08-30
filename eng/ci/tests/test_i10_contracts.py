@@ -139,9 +139,36 @@ class I10LegacyEntrypointTests(unittest.TestCase):
                 self.assertNotIn("std.fs.File.stdout()", text)
                 self.assertNotIn("std.process.Init", text)
 
-    def test_objective_c_gnustep_properties_are_explicit(self) -> None:
+    def test_objective_c_gnustep_state_is_explicit(self) -> None:
         cases = {
             "adapter.m": ("LegacyFahrenheitSensor *_adaptee;", "@synthesize adaptee = _adaptee;"),
+            "bridge.m": ("id<BridgeDevice> _device;", "@synthesize device = _device;"),
+            "builder.m": ("NSMutableArray<NSString *> *_parts;", "@synthesize parts = _parts;"),
+            "decorator.m": ("id<Component> _inner;", "@synthesize inner = _inner;"),
+            "facade.m": (
+                "AuthService *_auth;",
+                "InventoryService *_inventory;",
+                "BillingService *_billing;",
+                "@synthesize auth = _auth;",
+                "@synthesize inventory = _inventory;",
+                "@synthesize billing = _billing;",
+            ),
+            "flyweight.m": (
+                "NSString *_font;",
+                "NSInteger _size;",
+                "NSString *_color;",
+                "NSMutableDictionary<NSString *, TextStyle *> *_pool;",
+                "@synthesize font = _font;",
+                "@synthesize size = _size;",
+                "@synthesize color = _color;",
+                "@synthesize pool = _pool;",
+            ),
+            "prototype.m": (
+                "NSString *_name;",
+                "NSMutableArray<NSString *> *_features;",
+                "@synthesize name = _name;",
+                "@synthesize features = _features;",
+            ),
             "proxy.m": (
                 "NSInteger _fetches;",
                 "@synthesize fetches = _fetches;",
@@ -152,12 +179,22 @@ class I10LegacyEntrypointTests(unittest.TestCase):
                 "@synthesize cache = _cache;",
                 "@synthesize backendCreations = _backendCreations;",
             ),
+            "singleton.m": ("NSInteger _count;", "@synthesize count = _count;"),
         }
         for filename, markers in cases.items():
             with self.subTest(filename=filename):
                 text = (ROOT / "src/Systems/Objective-C" / filename).read_text(encoding="utf-8")
                 for marker in markers:
                     self.assertIn(marker, text)
+
+    def test_objective_c_gnustep_avoids_nonportable_storage_shortcuts(self) -> None:
+        composite = (ROOT / "src/Systems/Objective-C/composite.m").read_text(encoding="utf-8")
+        singleton = (ROOT / "src/Systems/Objective-C/singleton.m").read_text(encoding="utf-8")
+        flyweight = (ROOT / "src/Systems/Objective-C/flyweight.m").read_text(encoding="utf-8")
+        self.assertNotIn("@implementation GKFileLeaf {", composite)
+        self.assertNotIn("@implementation GKFolderComposite {", composite)
+        self.assertNotIn("dispatch_once", singleton)
+        self.assertNotIn("self.pool[key]", flyweight)
 
     def test_longtail_toolchain_script_pins_zig_and_nim(self) -> None:
         text = (CI_DIR / "toolchains/setup_longtail.sh").read_text(encoding="utf-8")
