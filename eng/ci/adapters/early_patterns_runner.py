@@ -21,7 +21,7 @@ def normalize_contract_text(text: str) -> str:
     for raw in text.replace("\r\n", "\n").splitlines():
         line = raw.strip()
         line = re.sub(r"\s*=\s*", "=", line)
-        lines.append(line)
+        lines.append(line.lower())
     return "\n".join(lines)
 
 
