@@ -5,11 +5,13 @@ import unittest
 from pathlib import Path
 
 CI_DIR = Path(__file__).resolve().parents[1]
+ROOT = CI_DIR.parents[1]
 sys.path.insert(0, str(CI_DIR))
 sys.path.insert(0, str(CI_DIR / "adapters"))
 
 import debt_contracts  # noqa: E402
 import early_patterns  # noqa: E402
+import early_patterns_runner  # noqa: E402
 import engine  # noqa: E402
 
 
@@ -82,6 +84,34 @@ class I10RegistryCoverageTests(unittest.TestCase):
                 result = engine.classify_paths([path], self.registry)
                 self.assertEqual(result["polyglot"], [family])
                 self.assertFalse(result["full"])
+
+
+class I10LegacyEntrypointTests(unittest.TestCase):
+    def test_java_main_class_uses_compilation_unit_not_nested_helper(self) -> None:
+        source = ROOT / "src/Enterprise/Java/ChainOfResponsibilityExample.java"
+        self.assertEqual(
+            early_patterns_runner.java_main_class(source.read_text(encoding="utf-8"), source.name),
+            "ChainOfResponsibilityExample",
+        )
+
+    def test_prolog_entry_goal_preserves_declared_main(self) -> None:
+        source = ROOT / "src/Niche/Prolog/facade.pl"
+        self.assertEqual(
+            early_patterns_runner.prolog_entry_goal(source.read_text(encoding="utf-8"), source.name),
+            "main",
+        )
+
+    def test_vba_entrypoint_is_semantic_not_named_usage(self) -> None:
+        source = ROOT / "src/Shell/VBA/DecoratorExample.bas"
+        text = source.read_text(encoding="utf-8")
+        self.assertNotIn("Usage", text)
+        self.assertTrue(early_patterns_runner.vba_has_public_entrypoint(text))
+
+    def test_fortran_abstract_factory_source_contract_allows_composed_output(self) -> None:
+        source = ROOT / "src/Historical/Fortran/example1.f90"
+        text = source.read_text(encoding="utf-8")
+        self.assertNotIn("Dark Button", text)
+        early_patterns_runner.assert_abstract_factory_source_contract("fortran", source)
 
 
 if __name__ == "__main__":
