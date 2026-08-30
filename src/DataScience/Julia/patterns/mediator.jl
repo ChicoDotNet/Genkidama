@@ -34,5 +34,7 @@ function verify_mediator()
     true
 end
 
-verify_mediator()
-println("Julia Mediator: passed")
+if abspath(PROGRAM_FILE) == @__FILE__
+    verify_mediator()
+    println("Julia Mediator: passed")
+end
