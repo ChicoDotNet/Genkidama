@@ -148,6 +148,14 @@ class I10LegacyEntrypointTests(unittest.TestCase):
         self.assertNotIn("choosenim stable", text)
         self.assertNotIn("download/index.json", text)
 
+    def test_polyglot_longtail_workflow_pins_runtime_versions(self) -> None:
+        text = (ROOT / ".github/workflows/polyglot.yml").read_text(encoding="utf-8")
+        self.assertIn("ghc-version: '9.14.1'", text)
+        self.assertIn("cabal-version: '3.16.1.0'", text)
+        self.assertIn("crystal: '1.21.0'", text)
+        self.assertIn("version: '1.12.7'", text)
+        self.assertIn("run: bash eng/ci/toolchains/setup_longtail.sh", text)
+
 
 if __name__ == "__main__":
     unittest.main()
