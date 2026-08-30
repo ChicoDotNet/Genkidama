@@ -12,7 +12,7 @@ const Iterator = struct {
     }
 };
 
-pub fn main() !void {
+pub fn runIteratorExample() bool {
     const values = [_]i32{ 10, 20, 30 };
     var iterator = Iterator{ .values = &values };
     var visited = [_]i32{ 0, 0, 0 };
@@ -23,9 +23,10 @@ pub fn main() !void {
         index += 1;
     }
 
-    if (index != 3 or visited[0] != 10 or visited[1] != 20 or visited[2] != 30 or iterator.next() != null) {
-        return error.IteratorContractFailed;
-    }
+    return index == 3 and visited[0] == 10 and visited[1] == 20 and visited[2] == 30 and iterator.next() == null;
+}
 
+pub fn main() !void {
+    if (!runIteratorExample()) return error.IteratorContractFailed;
     std.debug.print("iterator=10,20,30\n", .{});
 }
