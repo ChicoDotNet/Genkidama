@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW_DIR = ROOT / ".github" / "workflows"
+# Permanent fail-closed guardrail for the post-I10 workflow topology.
 ALLOWED_WORKFLOWS = frozenset({"ci.yml", "quality.yml", "polyglot.yml"})
 
 
