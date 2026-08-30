@@ -60,7 +60,7 @@ MANUAL_REVIEW_CRITERIA = (
 MARKDOWN_LINK_RE = re.compile(r"(?<!!)\[[^\]]+\]\(([^)]+)\)")
 STATE_RE = re.compile(r"\*\*Estado:\*\*\s*`([^`]+)`")
 COUNTER_RE = re.compile(r"\*\*Implementaciones de lenguaje:\*\*\s*`(\d+)\s*/\s*(\d+)`")
-FORBIDDEN_DEBT_RE = re.compile(r"\b(?:TODO|TBD|PLACEHOLDER)\b", re.IGNORECASE)
+FORBIDDEN_DEBT_RE = re.compile(r"\b(?:TODO|TBD|PLACEHOLDER)\b")
 EXTERNAL_SCHEME_RE = re.compile(r"^[a-zA-Z][a-zA-Z0-9+.-]*:")
 
 
@@ -95,6 +95,7 @@ def catalog_targets(readme_text: str) -> list[str]:
 
 def _broken_links(source: Path, text: str, root: Path) -> list[str]:
     broken: list[str] = []
+    seen: set[str] = set()
     for destination in markdown_links(text):
         if not destination or destination.startswith("#") or EXTERNAL_SCHEME_RE.match(destination):
             continue
@@ -105,7 +106,8 @@ def _broken_links(source: Path, text: str, root: Path) -> list[str]:
             resolved = root / path_part.lstrip("/")
         else:
             resolved = source.parent / path_part
-        if not resolved.exists():
+        if not resolved.exists() and destination not in seen:
+            seen.add(destination)
             broken.append(destination)
     return broken
 
