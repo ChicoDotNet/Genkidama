@@ -44,5 +44,5 @@ pub fn run() -> bool {
 
     reserve.as_deref() == Ok("inventory<-payment:reserve-order-42")
         && confirm.as_deref() == Ok("payment<-inventory:reserved-order-42")
-        && unknown.as_deref() == Err("unknown colleague: shipping")
+        && unknown.as_ref().err().map(String::as_str) == Some("unknown colleague: shipping")
 }
