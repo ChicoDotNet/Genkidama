@@ -89,13 +89,15 @@ jobs:
 
           before="$(fetch_workflows)"
           total="$(jq 'length' <<<"${before}")"
-          orphan_total="$(jq --argjson allowed "${allowed}" '[.[] | select(.path as $p | ($allowed | index($p)) == null)] | length' <<<"${before}")"
-          active_orphans="$(jq --argjson allowed "${allowed}" '[.[] | select(.state == "active") | select(.path as $p | ($allowed | index($p)) == null)] | length' <<<"${before}")"
+          dynamic_total="$(jq '[.[] | select(.path | startswith("dynamic/"))] | length' <<<"${before}")"
+          orphan_total="$(jq --argjson allowed "${allowed}" '[.[] | select(.path | startswith(".github/workflows/")) | select(.path as $p | ($allowed | index($p)) == null)] | length' <<<"${before}")"
+          active_orphans="$(jq --argjson allowed "${allowed}" '[.[] | select(.state == "active") | select(.path | startswith(".github/workflows/")) | select(.path as $p | ($allowed | index($p)) == null)] | length' <<<"${before}")"
 
           echo "Registered workflows before cleanup: ${total}"
-          echo "Orphan registrations before cleanup: ${orphan_total}"
-          echo "Active orphan registrations before cleanup: ${active_orphans}"
-          jq -r --argjson allowed "${allowed}" '.[] | select(.path as $p | ($allowed | index($p)) == null) | [.id, .state, .path, .name] | @tsv' <<<"${before}" | sort
+          echo "GitHub-owned dynamic registrations preserved: ${dynamic_total}"
+          echo "Repository orphan registrations before cleanup: ${orphan_total}"
+          echo "Active repository orphans before cleanup: ${active_orphans}"
+          jq -r --argjson allowed "${allowed}" '.[] | select(.path | startswith(".github/workflows/")) | select(.path as $p | ($allowed | index($p)) == null) | [.id, .state, .path, .name] | @tsv' <<<"${before}" | sort
 
           while IFS=$'\t' read -r id state path name; do
             [[ -z "${id}" ]] && continue
@@ -107,22 +109,23 @@ jobs:
                 -H "X-GitHub-Api-Version: 2022-11-28" \
                 "https://api.github.com/repos/${REPO}/actions/workflows/${id}/disable"
             fi
-          done < <(jq -r --argjson allowed "${allowed}" '.[] | select(.path as $p | ($allowed | index($p)) == null) | [.id, .state, .path, .name] | @tsv' <<<"${before}")
+          done < <(jq -r --argjson allowed "${allowed}" '.[] | select(.path | startswith(".github/workflows/")) | select(.path as $p | ($allowed | index($p)) == null) | [.id, .state, .path, .name] | @tsv' <<<"${before}")
 
           after="$(fetch_workflows)"
-          remaining_active="$(jq --argjson allowed "${allowed}" '[.[] | select(.state == "active") | select(.path as $p | ($allowed | index($p)) == null)] | length' <<<"${after}")"
+          remaining_active="$(jq --argjson allowed "${allowed}" '[.[] | select(.state == "active") | select(.path | startswith(".github/workflows/")) | select(.path as $p | ($allowed | index($p)) == null)] | length' <<<"${after}")"
 
           {
             echo "## Orphan workflow control-plane cleanup"
             echo
             echo "- Registered workflows before: ${total}"
-            echo "- Orphan registrations observed: ${orphan_total}"
-            echo "- Active orphans before: ${active_orphans}"
-            echo "- Active orphans after: ${remaining_active}"
+            echo "- GitHub-owned dynamic registrations preserved: ${dynamic_total}"
+            echo "- Repository orphan registrations observed: ${orphan_total}"
+            echo "- Active repository orphans before: ${active_orphans}"
+            echo "- Active repository orphans after: ${remaining_active}"
           } >> "${GITHUB_STEP_SUMMARY}"
 
           if [[ "${remaining_active}" -ne 0 ]]; then
-            echo "ERROR: ${remaining_active} active orphan workflow registrations remain" >&2
-            jq -r --argjson allowed "${allowed}" '.[] | select(.state == "active") | select(.path as $p | ($allowed | index($p)) == null) | [.id, .state, .path, .name] | @tsv' <<<"${after}" >&2
+            echo "ERROR: ${remaining_active} active repository orphan workflow registrations remain" >&2
+            jq -r --argjson allowed "${allowed}" '.[] | select(.state == "active") | select(.path | startswith(".github/workflows/")) | select(.path as $p | ($allowed | index($p)) == null) | [.id, .state, .path, .name] | @tsv' <<<"${after}" >&2
             exit 1
           fi
