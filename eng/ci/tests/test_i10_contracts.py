@@ -119,6 +119,12 @@ class I10LegacyEntrypointTests(unittest.TestCase):
             "same=true\ncount=1",
         )
 
+    def test_legacy_output_normalization_ignores_field_separator_spacing(self) -> None:
+        self.assertEqual(
+            early_patterns_runner.normalize_contract_text("styles=2;shared=true ;text=ABC\n"),
+            "styles=2;shared=true;text=abc",
+        )
+
     def test_rockstar_singleton_accepts_historical_raw_count_line(self) -> None:
         early_patterns_runner.assert_legacy_output("Rockstar", "singleton", "same=true\n1\n")
 
