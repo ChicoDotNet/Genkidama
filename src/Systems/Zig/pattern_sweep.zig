@@ -1,4 +1,5 @@
 const std = @import("std");
+const iterator_example = @import("iterator.zig");
 
 // Command
 const BalanceCommand = struct {
@@ -39,21 +40,9 @@ fn interpreterPattern() bool {
     return evalExpr(&sum) == 19;
 }
 
-// Iterator
-const IntIterator = struct {
-    values: []const i32,
-    index: usize = 0,
-    fn next(self: *IntIterator) ?i32 {
-        if (self.index >= self.values.len) return null;
-        const value = self.values[self.index];
-        self.index += 1;
-        return value;
-    }
-};
+// Iterator: delegate to the individually addressable canonical example.
 fn iteratorPattern() bool {
-    const values = [_]i32{ 10, 20, 30 };
-    var iterator = IntIterator{ .values = &values };
-    return iterator.next().? == 10 and iterator.next().? == 20 and iterator.next().? == 30 and iterator.next() == null;
+    return iterator_example.runIteratorExample();
 }
 
 // Mediator
