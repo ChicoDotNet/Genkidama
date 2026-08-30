@@ -1,4 +1,5 @@
-repo = pwd;
+adapter_dir = fileparts(mfilename('fullpath'));
+repo = fileparts(fileparts(fileparts(adapter_dir)));
 addpath(fullfile(repo, 'src', 'DataScience', 'MATLAB'));
 output = evalc('example1');
 disp(output);

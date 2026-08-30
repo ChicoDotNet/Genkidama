@@ -1,30 +1,151 @@
 {
   "schema_version": 1,
   "targets": {
-    "product": {"setup": [{"label": "Restore .NET solution", "argv": ["dotnet", "restore", "Genkidama.slnx"]}], "validation": [{"label": "Build .NET solution", "argv": ["dotnet", "build", "Genkidama.slnx", "--configuration", "Release", "--no-restore"]}, {"label": "Test .NET solution", "argv": ["dotnet", "test", "Genkidama.slnx", "--configuration", "Release", "--no-build", "--collect:XPlat Code Coverage", "--logger", "trx", "--results-directory", "TestResults"]}, {"label": "Pack Genkidama CLI", "argv": ["dotnet", "pack", "src/Genkidama.Cli/Genkidama.Cli.csproj", "--configuration", "Release", "--no-build", "--output", "artifacts/packages"]}]},
-    "quality": {"setup": [{"label": "Install Learn validator dependency", "argv": ["{python}", "-m", "pip", "install", "--disable-pip-version-check", "-r", "learn/_meta/requirements.txt"]}], "validation": [{"label": "Compile local CI Python", "argv": ["{python}", "-m", "compileall", "-q", "eng/ci"]}, {"label": "Test local CI engine", "argv": ["{python}", "-m", "unittest", "discover", "-s", "eng/ci/tests", "-p", "test_*.py"]}, {"label": "Validate Learn foundation", "argv": ["{python}", "learn/_meta/validate.py"]}]},
-    "learn-dotnet": {"setup": [{"label": "Inspect .NET toolchain", "argv": ["dotnet", "--version"]}], "validation": [{"label": "Validate .NET Learn contracts for current platform", "argv": ["{python}", "eng/ci/adapters/learn_dotnet.py"]}]},
-    "patterns-dotnet": {"setup": [{"label": "Inspect .NET toolchain", "argv": ["dotnet", "--version"]}], "validation": [{"label": "Validate .NET pattern family", "argv": ["{python}", "eng/ci/adapters/dotnet_patterns.py"]}, {"label": "Validate .NET Prototype family", "argv": ["{python}", "eng/ci/adapters/prototype.py", "dotnet"]}]},
-    "learn-jvm": {"setup": [{"label": "Inspect Java runtime", "argv": ["java", "--version"]}], "validation": [{"label": "Validate JVM Learn profile", "argv": ["{python}", "eng/ci/adapters/learn_jvm.py"]}]},
-    "patterns-jvm": {"setup": [{"label": "Inspect Java runtime", "argv": ["java", "--version"]}], "validation": [{"label": "Validate JVM pattern profile", "argv": ["{python}", "eng/ci/adapters/jvm_patterns.py"]}, {"label": "Validate JVM Prototype profile", "argv": ["{python}", "eng/ci/adapters/prototype.py", "jvm"]}]},
-    "learn-native": {"setup": [], "validation": [{"label": "Validate Native Learn profile", "argv": ["{python}", "eng/ci/adapters/learn_native.py"]}]},
-    "patterns-native": {"setup": [], "validation": [{"label": "Validate Native pattern profile", "argv": ["{python}", "eng/ci/adapters/native_patterns.py"]}, {"label": "Validate Native Prototype profile", "argv": ["{python}", "eng/ci/adapters/prototype.py", "native"]}]},
-    "patterns-beam": {"setup": [], "validation": [{"label": "Validate BEAM pattern family", "argv": ["{python}", "eng/ci/adapters/beam_patterns.py"]}]},
-    "patterns-functional": {"setup": [], "validation": [{"label": "Validate OCaml, Common Lisp, and Prolog pattern family", "argv": ["{python}", "eng/ci/adapters/functional_patterns.py"]}]},
-    "patterns-data-shell": {"setup": [], "validation": [{"label": "Validate R, GNU Octave, and PowerShell pattern family", "argv": ["{python}", "eng/ci/adapters/data_shell_patterns.py"]}]},
-    "learn-git": {"setup": [], "validation": [{"label": "Validate extracted git learn contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "git", "learn"]}]},
-    "learn-web": {"setup": [], "validation": [{"label": "Validate extracted web learn contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "web", "learn"]}]},
-    "patterns-web": {"setup": [], "validation": [{"label": "Validate extracted web patterns contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "web", "patterns"]}]},
-    "learn-scripting": {"setup": [], "validation": [{"label": "Validate scripting learn contracts", "argv": ["{python}", "eng/ci/adapters/scripting_learn.py"]}]},
-    "patterns-scripting": {"setup": [], "validation": [{"label": "Validate scripting pattern contracts", "argv": ["{python}", "eng/ci/adapters/scripting_patterns.py"]}]},
-    "learn-gnu": {"setup": [], "validation": [{"label": "Validate extracted gnu learn contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "gnu", "learn"]}]},
-    "patterns-gnu": {"setup": [], "validation": [{"label": "Validate extracted gnu patterns contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "gnu", "patterns"]}]},
-    "learn-dart": {"setup": [], "validation": [{"label": "Validate extracted dart learn contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "dart", "learn"]}]},
-    "patterns-dart": {"setup": [], "validation": [{"label": "Validate extracted dart patterns contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "dart", "patterns"]}]},
-    "learn-swift": {"setup": [], "validation": [{"label": "Validate extracted swift learn contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "swift", "learn"]}]},
-    "patterns-swift": {"setup": [], "validation": [{"label": "Validate extracted swift patterns contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "swift", "patterns"]}]},
-    "patterns-longtail": {"setup": [], "validation": [{"label": "Validate extracted longtail patterns contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "longtail", "patterns"]}]},
-    "patterns-platform": {"setup": [], "validation": [{"label": "Validate platform pattern contracts", "argv": ["{python}", "eng/ci/adapters/platform_patterns.py"]}]}
+    "product": {
+      "setup": [
+        {
+          "label": "Restore .NET solution",
+          "argv": ["dotnet", "restore", "Genkidama.slnx"]
+        }
+      ],
+      "validation": [
+        {
+          "label": "Build .NET solution",
+          "argv": ["dotnet", "build", "Genkidama.slnx", "--configuration", "Release", "--no-restore"]
+        },
+        {
+          "label": "Test .NET solution",
+          "argv": ["dotnet", "test", "Genkidama.slnx", "--configuration", "Release", "--no-build", "--collect:XPlat Code Coverage", "--logger", "trx", "--results-directory", "TestResults"]
+        },
+        {
+          "label": "Pack Genkidama CLI",
+          "argv": ["dotnet", "pack", "src/Genkidama.Cli/Genkidama.Cli.csproj", "--configuration", "Release", "--no-build", "--output", "artifacts/packages"]
+        }
+      ]
+    },
+    "quality": {
+      "setup": [
+        {
+          "label": "Install Learn validator dependency",
+          "argv": ["{python}", "-m", "pip", "install", "--disable-pip-version-check", "-r", "learn/_meta/requirements.txt"]
+        }
+      ],
+      "validation": [
+        {
+          "label": "Compile local CI Python",
+          "argv": ["{python}", "-m", "compileall", "-q", "eng/ci"]
+        },
+        {
+          "label": "Test local CI engine",
+          "argv": ["{python}", "-m", "unittest", "discover", "-s", "eng/ci/tests", "-p", "test_*.py"]
+        },
+        {
+          "label": "Validate Learn foundation",
+          "argv": ["{python}", "learn/_meta/validate.py"]
+        },
+        {
+          "label": "Validate workflow debt census",
+          "argv": ["{python}", "eng/ci/workflow_debt.py", "validate"]
+        }
+      ]
+    },
+    "learn-dotnet": {
+      "setup": [{"label": "Inspect .NET toolchain", "argv": ["dotnet", "--version"]}],
+      "validation": [{"label": "Validate .NET Learn contracts for current platform", "argv": ["{python}", "eng/ci/adapters/learn_dotnet.py"]}]
+    },
+    "patterns-dotnet": {
+      "setup": [{"label": "Inspect .NET toolchain", "argv": ["dotnet", "--version"]}],
+      "validation": [
+        {"label": "Validate .NET pattern family", "argv": ["{python}", "eng/ci/adapters/dotnet_patterns.py"]},
+        {"label": "Validate .NET Prototype family", "argv": ["{python}", "eng/ci/adapters/prototype.py", "dotnet"]}
+      ]
+    },
+    "learn-jvm": {
+      "setup": [{"label": "Inspect Java runtime", "argv": ["java", "--version"]}],
+      "validation": [{"label": "Validate JVM Learn profile", "argv": ["{python}", "eng/ci/adapters/learn_jvm.py"]}]
+    },
+    "patterns-jvm": {
+      "setup": [{"label": "Inspect Java runtime", "argv": ["java", "--version"]}],
+      "validation": [
+        {"label": "Validate JVM pattern profile", "argv": ["{python}", "eng/ci/adapters/jvm_patterns.py"]},
+        {"label": "Validate JVM Prototype profile", "argv": ["{python}", "eng/ci/adapters/prototype.py", "jvm"]}
+      ]
+    },
+    "learn-native": {
+      "setup": [],
+      "validation": [{"label": "Validate Native Learn profile", "argv": ["{python}", "eng/ci/adapters/learn_native.py"]}]
+    },
+    "patterns-native": {
+      "setup": [],
+      "validation": [
+        {"label": "Validate Native pattern profile", "argv": ["{python}", "eng/ci/adapters/native_patterns.py"]},
+        {"label": "Validate Native Prototype profile", "argv": ["{python}", "eng/ci/adapters/prototype.py", "native"]}
+      ]
+    },
+    "patterns-beam": {
+      "setup": [],
+      "validation": [{"label": "Validate BEAM pattern family", "argv": ["{python}", "eng/ci/adapters/beam_patterns.py"]}]
+    },
+    "patterns-functional": {
+      "setup": [],
+      "validation": [{"label": "Validate OCaml, Common Lisp, and Prolog pattern family", "argv": ["{python}", "eng/ci/adapters/functional_patterns.py"]}]
+    },
+    "patterns-data-shell": {
+      "setup": [],
+      "validation": [{"label": "Validate R, GNU Octave, and PowerShell pattern family", "argv": ["{python}", "eng/ci/adapters/data_shell_patterns.py"]}]
+    },
+    "learn-git": {
+      "setup": [],
+      "validation": [{"label": "Validate extracted git learn contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "git", "learn"]}]
+    },
+    "learn-web": {
+      "setup": [],
+      "validation": [{"label": "Validate extracted web learn contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "web", "learn"]}]
+    },
+    "patterns-web": {
+      "setup": [],
+      "validation": [{"label": "Validate extracted web patterns contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "web", "patterns"]}]
+    },
+    "learn-scripting": {
+      "setup": [],
+      "validation": [{"label": "Validate scripting learn contracts", "argv": ["{python}", "eng/ci/adapters/scripting_learn.py"]}]
+    },
+    "patterns-scripting": {
+      "setup": [],
+      "validation": [{"label": "Validate scripting pattern contracts", "argv": ["{python}", "eng/ci/adapters/scripting_patterns.py"]}]
+    },
+    "learn-gnu": {
+      "setup": [],
+      "validation": [{"label": "Validate extracted gnu learn contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "gnu", "learn"]}]
+    },
+    "patterns-gnu": {
+      "setup": [],
+      "validation": [{"label": "Validate extracted gnu patterns contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "gnu", "patterns"]}]
+    },
+    "learn-dart": {
+      "setup": [],
+      "validation": [{"label": "Validate Dart Learn contracts", "argv": ["{python}", "eng/ci/adapters/dart_contracts.py", "learn"]}]
+    },
+    "patterns-dart": {
+      "setup": [],
+      "validation": [{"label": "Validate Dart Pattern contracts", "argv": ["{python}", "eng/ci/adapters/dart_contracts.py", "patterns"]}]
+    },
+    "learn-swift": {
+      "setup": [],
+      "validation": [{"label": "Validate extracted swift learn contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "swift", "learn"]}]
+    },
+    "patterns-swift": {
+      "setup": [],
+      "validation": [{"label": "Validate extracted swift patterns contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "swift", "patterns"]}]
+    },
+    "patterns-longtail": {
+      "setup": [],
+      "validation": [{"label": "Validate extracted longtail patterns contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "longtail", "patterns"]}]
+    },
+    "patterns-platform": {
+      "setup": [],
+      "validation": [{"label": "Validate platform pattern contracts", "argv": ["{python}", "eng/ci/adapters/platform_patterns.py"]}]
+    }
   },
   "families": {
     "beam": {"patterns": "patterns-beam"},
