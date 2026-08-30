@@ -2,7 +2,7 @@
 
 > **Familia:** Behavioral  
 > **Intención:** proporcionar una forma de recorrer secuencialmente los elementos de un agregado sin exponer su representación interna.  
-> **Estado:** `in-progress`  
+> **Estado:** `validated`  
 > **Implementaciones de lenguaje:** `49/49`  
 > **Cobertura de pruebas:** N/A — ejemplos standalone políglotas; se usa compile/analyze/runtime por ecosistema en lugar de un porcentaje agregado sintético.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
