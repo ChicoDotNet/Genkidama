@@ -31,7 +31,7 @@ const DocumentStoreProxy = struct {
     }
 };
 
-pub fn main() !void {
+pub fn main(init: std.process.Init) !void {
     var proxy = DocumentStoreProxy{};
 
     const first = try proxy.get(42);
@@ -50,5 +50,5 @@ pub fn main() !void {
         first_copy[0..first_len],
         second,
     });
-    try std.fs.File.stdout().writeAll(rendered);
+    try std.Io.File.stdout().writeStreamingAll(init.io, rendered);
 }
