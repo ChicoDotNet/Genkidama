@@ -459,6 +459,7 @@ void leaderFollowersPattern() {
 // Client-Server
 class Request {
   Request(this.key);
+  final String key;
 }
 
 class Response {
