@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Centralizar la coordinación entre colegas para que colaboren sin conocerse ni llamarse directamente entre sí.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `35/?` — 35 targets Applicable ya tienen canónico auditado y verificado; la clasificación total de 51 targets aún no está cerrada.  
+> **Implementaciones de lenguaje:** `42/?` — 42 targets Applicable tienen canónico materializado; 41 están certificados por CI y Perl tiene validación directa local pendiente de certificación del head actual. La clasificación total de 51 targets aún no está cerrada.  
 > **Cobertura de pruebas:** `N/A` — los ejemplos son standalone y heterogéneos; se usa compile/analyze/runtime y failure modes cuando es la evidencia más fuerte razonable.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -150,7 +150,7 @@ Centralizar coordinación no significa mover toda la lógica de negocio al media
 
 ## Implementaciones por lenguaje
 
-La tabla final será autoritativa cuando las 51 celdas estén reconciliadas. Las 33 filas Applicable iniciales fueron certificadas por Product CI, Quality y Polyglot CI verdes en `54ebb7c4827a840ffea51c1dfa80efccdc82976f`. Haskell y Go se verificaron como canónicos independientes en `0eca59befe0d0c3dfbe418d1d3be4eca9781513b` mediante `Mediator Canonical CI`. En total hay 35 Applicable verificados y 2 N/A técnicamente justificados.
+La tabla final será autoritativa cuando las 51 celdas estén reconciliadas. Los 35 canónicos iniciales quedaron certificados en los heads documentados previamente; Julia, Objective-C, Zig, Nim, Dart y Crystal fueron materializados, auditados y certificados después mediante sus gates Polyglot correspondientes. Perl se materializó en el head actual y fue prevalidado directamente con `perl -c` y ejecución local; no se atribuye todavía certificación CI al nuevo head. En total hay 42 Applicable materializados, 41 con certificación CI y 2 N/A técnicamente justificados.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -172,9 +172,13 @@ La tabla final será autoritativa cuando las 51 celdas estén reconciliadas. Las
 | Prolog | Applicable | [`mediator.pl`](../src/Functional/Prolog/patterns/mediator.pl) | Polyglot CI runtime assertions ✅ | Predicados como registry/routing. |
 | Scala | Applicable | [`Mediator.scala`](../src/Functional/Scala/patterns/Mediator.scala) | Polyglot CI compile/run ✅ | Map de funciones receptoras. |
 | COBOL | Applicable | [`mediator_pattern.cpy`](../src/Historical/Cobol/patterns/mediator_pattern.cpy) | Polyglot CI GnuCOBOL compile/run ✅ | Copybook con routing y receiver paragraphs. |
+| Julia | Applicable | [`mediator.jl`](../src/DataScience/Julia/patterns/mediator.jl) | Polyglot CI Julia runtime ✅ | Dict de receiver functions; sweep delegado al canónico. |
 | Solidity | Applicable | [`Mediator.sol`](../src/Niche/Solidity/patterns/Mediator.sol) | Polyglot CI compile/contract assertions ✅ | Routing puro con resultado explícito. |
+| Crystal | Applicable | [`mediator.cr`](../src/Niche/Crystal/mediator.cr) | Crystal format + `--error-on-warnings` + Polyglot runtime ✅ | Hash de receiver procs; sweep delegado al canónico. |
+| Nim | Applicable | [`mediator_example.nim`](../src/Niche/Nim/patterns/mediator_example.nim) | Nim compile/run + Polyglot CI ✅ | `Table` de receivers + failure mode explícito. |
 | Bash | Applicable | [`mediator.sh`](../src/Scripting/Bash/patterns/mediator.sh) | Polyglot CI shell runtime assertions ✅ | Associative routing/functions. |
 | Lua | Applicable | [`mediator.lua`](../src/Scripting/Lua/patterns/mediator.lua) | Polyglot CI runtime assertions ✅ | Table de receiver closures. |
+| Perl | Applicable | [`mediator.pl`](../src/Scripting/Perl/mediator.pl) | Local `perl -c` + runtime ✅; current-head CI pending | Hash de coderefs, routing bidireccional y `UnknownColleague`. |
 | PHP | Applicable | [`mediator.php`](../src/Scripting/PHP/patterns/mediator.php) | Polyglot CI lint/run ✅ | Callable registry. |
 | PowerShell | Applicable | [`mediator.ps1`](../src/Scripting/PowerShell/patterns/mediator.ps1) | Polyglot CI runtime assertions ✅ | Hashtable de scriptblocks. |
 | Python | Applicable | [`mediator.py`](../src/Scripting/PythonPY/mediator.py) | Python 3.13 compile + sweep runtime ✅ | Dict de callables; canónico extraído del sweep. |
@@ -184,15 +188,18 @@ La tabla final será autoritativa cuando las 51 celdas estén reconciliadas. Las
 | C | Applicable | [`mediator.c`](../src/Systems/C/patterns/mediator.c) | Polyglot CI compile/run ✅ | Tabla de function pointers. |
 | Fortran | Applicable | [`mediator.f90`](../src/Systems/Fortran/patterns/mediator.f90) | Polyglot CI Fortran compile/run ✅ | Procedure pointers como colegas. |
 | Go | Applicable | [`mediator.go`](../src/Systems/Go/patterns/mediator.go) | Go 1.26.5 `gofmt` + `go vet` + runtime ✅ | Map de receiver functions + error explícito. |
+| Objective-C | Applicable | [`mediator.m`](../src/Systems/Objective-C/patterns/mediator.m) | clang + GNUstep `-Wall -Wextra -Werror` + Polyglot runtime ✅ | Protocolos/message dispatch; sweep delegado al canónico. |
 | Pascal | Applicable | [`mediator_pattern.pas`](../src/Systems/Pascal/mediator_pattern.pas) | Polyglot CI Free Pascal compile/run ✅ | Procedure registry y routing. |
 | Rust | Applicable | [`mediator.rs`](../src/Systems/Rust/patterns/mediator.rs) | Polyglot CI `rustc` compile/run ✅ | `HashMap` + `Result` failure mode. |
 | Swift | Applicable | [`Mediator.swift`](../src/Systems/Swift/patterns/Mediator.swift) | Polyglot CI `swiftc` compile/run ✅ | Dictionary de receiver closures + error enum. |
+| Zig | Applicable | [`mediator.zig`](../src/Systems/Zig/patterns/mediator.zig) | Zig fmt + run + Polyglot CI ✅ | Routing explícito + `UnknownColleague`; sweep delegado. |
+| Dart | Applicable | [`mediator.dart`](../src/Web/Dart/mediator.dart) | Dart format/analyze/runtime + Polyglot CI ✅ | `Map<String, Receiver>`; sweep delegado al canónico. |
 | JavaScript | Applicable | [`mediator.js`](../src/Web/JavaScriptJS/patterns/mediator.js) | Product/Polyglot CI Node assertions ✅ | Object registry + explicit failure. |
 | TypeScript | Applicable | [`mediator.ts`](../src/Web/TypeScriptTS/patterns/mediator.ts) | Product/Polyglot CI strict compile/run ✅ | Typed receiver registry. |
 | HTML | N/A | — | — | El markup puro no tiene un modelo de ejecución programable capaz de poseer coordinación entre pares; DOM events y routing pertenecen a JavaScript u otro runtime ejecutable. |
 | CSS | N/A | — | — | Selectores y cascade pueden afectar múltiples elementos, pero CSS puro no puede poseer routing o coordinación ejecutable entre colegas. |
 
-Quedan 14 targets todavía sin reconciliar en esta tabla: SQL declarativo, Perl, Julia, Objective-C, Zig, Nim, Dart, Crystal, VBA, GDScript, Assembly, Delphi, MicroPython y Rockstar. Se mantienen sin clasificar aquí hasta inspeccionar su mecanismo real; no se convierten en `N/A` por ausencia de OOP ni se inventan enlaces.
+Quedan 7 targets todavía sin reconciliar en esta tabla: SQL declarativo, VBA, GDScript, Assembly, Delphi, MicroPython y Rockstar. Se mantienen sin clasificar aquí hasta inspeccionar su mecanismo real; no se convierten en `N/A` por ausencia de OOP ni se inventan enlaces.
 
 ## Comprueba que lo entendiste
 
