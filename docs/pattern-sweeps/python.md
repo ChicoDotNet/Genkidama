@@ -14,22 +14,22 @@ All 39 remaining patterns are Applicable to Python. Their intents can be represe
 
 ## Source and validation boundary
 
-| Target | Source containing 39 isolated examples | Strongest sweep validation |
-|---|---|---|
-| Python | [`pattern_sweep.py`](../../src/Scripting/PythonPY/pattern_sweep.py) | Python 3.13 bytecode compilation + executable behavioral assertions |
+| Target | Sweep source | Extracted canonical source | Strongest sweep validation |
+|---|---|---|---|
+| Python | [`pattern_sweep.py`](../../src/Scripting/PythonPY/pattern_sweep.py) | Mediator: [`mediator.py`](../../src/Scripting/PythonPY/mediator.py) | Python 3.13 bytecode compilation + executable behavioral assertions |
 
-The source has one clearly named check per catalog cell and a final guard requiring exactly 39 checks before printing the success sentinel.
+The sweep has one clearly named check per catalog cell and a final guard requiring exactly 39 checks before printing the success sentinel. As canonical-cell extraction progresses, the sweep imports and executes the canonical artifact instead of retaining a duplicate implementation. Mediator is the first Python cell reconciled this way.
 
 ## Cells
 
-`M` means materialized in the target source. Verification requires the Python sweep job to be green on the reviewed PR head.
+`M` means materialized in the target source. A linked `M` points to an individually addressable canonical artifact already extracted from the sweep. Verification requires the Python sweep job to be green on the reviewed PR head.
 
 | Family | Pattern | Python |
 |---|---|---:|
 | Behavioral | Command | M |
 | Behavioral | Interpreter | M |
 | Behavioral | Iterator | M |
-| Behavioral | Mediator | M |
+| Behavioral | Mediator | [M](../../src/Scripting/PythonPY/mediator.py) |
 | Behavioral | Memento | M |
 | Behavioral | Observer | M |
 | Behavioral | State | M |
@@ -68,6 +68,6 @@ The source has one clearly named check per catalog cell and a final guard requir
 
 ## Coverage and validation semantics
 
-These are standalone pedagogical examples, not a Python package with a meaningful line-coverage denominator. This sweep therefore does not invent a code-coverage percentage. The gate compiles the source and executes behavioral assertions for every cell using Python 3.13.
+These are standalone pedagogical examples, not a Python package with a meaningful line-coverage denominator. This sweep therefore does not invent a code-coverage percentage. The gate compiles the sweep source and executes behavioral assertions for every cell using Python 3.13; imported canonical artifacts such as Mediator execute through that same reviewed runtime boundary.
 
 Reviewed-head run #1 certified `cells=39` with `setup_seconds=1`, `validation_seconds=0` and `total_seconds=1`. Timing is batching telemetry only and never weakens the correctness gate.

@@ -51,6 +51,12 @@ def main() -> int:
         dc.run([lua, str(source)])
     dc.run([lua, str(dc.ROOT / "src/Scripting/Lua/pattern_sweep.lua")])
 
+    perl_mediator = dc.ROOT / "src/Scripting/Perl/mediator.pl"
+    dc.require(perl_mediator.is_file(), "Perl Mediator canonical source missing")
+    dc.run(["perl", "-c", str(perl_mediator)])
+    perl_output = dc.run(["perl", str(perl_mediator)], capture=True)
+    dc.require(dc.last_line(perl_output) == "Perl Mediator: passed", "Perl Mediator canonical output mismatch")
+
     dc.run([sys.executable, "eng/ci/adapters/prototype.py", "scripting"])
     print("Scripting Patterns contract: PASS without duplicate PowerShell sweep", flush=True)
     return 0

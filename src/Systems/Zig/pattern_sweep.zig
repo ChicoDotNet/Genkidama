@@ -1,4 +1,5 @@
 const std = @import("std");
+const mediator = @import("patterns/mediator.zig");
 
 // Command
 const BalanceCommand = struct {
@@ -57,14 +58,8 @@ fn iteratorPattern() bool {
 }
 
 // Mediator
-const UiEvent = enum { none, panel_refresh, button_enable };
-fn mediate(sender: enum { button, panel }, event: enum { click, loaded }) UiEvent {
-    if (sender == .button and event == .click) return .panel_refresh;
-    if (sender == .panel and event == .loaded) return .button_enable;
-    return .none;
-}
 fn mediatorPattern() bool {
-    return mediate(.button, .click) == .panel_refresh and mediate(.panel, .loaded) == .button_enable;
+    return mediator.verifyMediator() catch false;
 }
 
 // Memento

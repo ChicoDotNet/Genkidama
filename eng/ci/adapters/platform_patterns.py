@@ -19,6 +19,7 @@ ASSEMBLY_CONTRACTS: dict[str, str] = {
     "facade.asm": "checkout=auth(alice)>reserve(SKU-42)>charge(499)",
     "factory_method.asm": "PostgreSQL connect\nPostgreSQL query\nMySQL connect\nMySQL query",
     "flyweight.asm": "styles=2;shared=true;text=ABC",
+    "mediator.asm": "Assembly Mediator: passed",
     "prototype.asm": "original=orders: metrics\nclone=orders-canary: metrics,tracing",
     "proxy.asm": "backend=1;fetches=1;first=doc(42);second=doc(42)",
     "singleton.asm": "same=true\ncount=1",
@@ -55,17 +56,23 @@ def validate_portable() -> None:
     output = dc.run([godot, "--headless", "--script", str(dc.ROOT / "src/Niche/GDScript/example1.gd")], capture=True)
     for marker in ["Dark Button", "Dark Checkbox", "Light Button", "Light Checkbox"]:
         dc.require(marker in output.splitlines(), f"GDScript contract missing {marker}")
+    mediator_output = dc.run([godot, "--headless", "--script", str(dc.ROOT / "src/Niche/GDScript/mediator.gd")], capture=True)
+    dc.require("GDScript Mediator: passed" in mediator_output.splitlines(), "GDScript Mediator canonical output mismatch")
 
     micropython = os.environ.get("GENKIDAMA_MICROPYTHON_BIN", "/tmp/micropython/ports/unix/build-standard/micropython")
     output = dc.run([micropython, str(dc.ROOT / "src/Other/MicroPython/example1.py")], capture=True)
     for marker in ["Dark Button", "Dark Checkbox", "Light Button", "Light Checkbox"]:
         dc.require(marker in output.splitlines(), f"MicroPython contract missing {marker}")
+    mediator_output = dc.run([micropython, str(dc.ROOT / "src/Other/MicroPython/mediator.py")], capture=True)
+    dc.require(dc.last_line(mediator_output) == "MicroPython Mediator: passed", "MicroPython Mediator canonical output mismatch")
 
     rockstar = os.environ.get("GENKIDAMA_ROCKSTAR_BIN")
     dc.require(bool(rockstar), "GENKIDAMA_ROCKSTAR_BIN is required")
     output = dc.run([rockstar, str(dc.ROOT / "src/Other/Rockstar/example1.rock")], capture=True)
     for marker in ["Dark Button", "Dark Checkbox", "Light Button", "Light Checkbox"]:
         dc.require(marker in output.splitlines(), f"Rockstar contract missing {marker}")
+    mediator_output = dc.run([rockstar, str(dc.ROOT / "src/Other/Rockstar/mediator.rock")], capture=True)
+    dc.require(dc.last_line(mediator_output) == "Rockstar Mediator: passed", "Rockstar Mediator canonical output mismatch")
 
 
 def main() -> int:
