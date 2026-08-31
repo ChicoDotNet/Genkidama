@@ -48,5 +48,3 @@ def verify_mediator : Nil
 
   puts "Crystal Mediator: passed"
 end
-
-verify_mediator
