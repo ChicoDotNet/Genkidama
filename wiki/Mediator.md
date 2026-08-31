@@ -2,8 +2,8 @@
 
 > **Familia:** Behavioral  
 > **Intención:** Centralizar la coordinación entre colegas para que colaboren sin conocerse ni llamarse directamente entre sí.  
-> **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `42/?` — 42 targets Applicable tienen canónico materializado; 41 están certificados por CI y Perl tiene validación directa local pendiente de certificación del head actual. La clasificación total de 51 targets aún no está cerrada.  
+> **Estado:** `validated`  
+> **Implementaciones de lenguaje:** `48/48` — los 51 targets están reconciliados: 48 Applicable con canónico verificado y 3 N/A técnicamente justificados (HTML, CSS y SQL declarativo).  
 > **Cobertura de pruebas:** `N/A` — los ejemplos son standalone y heterogéneos; se usa compile/analyze/runtime y failure modes cuando es la evidencia más fuerte razonable.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -150,7 +150,7 @@ Centralizar coordinación no significa mover toda la lógica de negocio al media
 
 ## Implementaciones por lenguaje
 
-La tabla final será autoritativa cuando las 51 celdas estén reconciliadas. Los 35 canónicos iniciales quedaron certificados en los heads documentados previamente; Julia, Objective-C, Zig, Nim, Dart y Crystal fueron materializados, auditados y certificados después mediante sus gates Polyglot correspondientes. Perl se materializó en el head actual y fue prevalidado directamente con `perl -c` y ejecución local; no se atribuye todavía certificación CI al nuevo head. En total hay 42 Applicable materializados, 41 con certificación CI y 2 N/A técnicamente justificados.
+La tabla es autoritativa para las 51 celdas actuales: 48 targets son Applicable y cuentan con canónico verificado; HTML, CSS y SQL declarativo son N/A con justificación técnica. El head certificado por Quality, Product CI y Polyglot CI incluye también Perl, GDScript, Assembly, MicroPython, Rockstar, VBA y Delphi.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -178,7 +178,7 @@ La tabla final será autoritativa cuando las 51 celdas estén reconciliadas. Los
 | Nim | Applicable | [`mediator_example.nim`](../src/Niche/Nim/patterns/mediator_example.nim) | Nim compile/run + Polyglot CI ✅ | `Table` de receivers + failure mode explícito. |
 | Bash | Applicable | [`mediator.sh`](../src/Scripting/Bash/patterns/mediator.sh) | Polyglot CI shell runtime assertions ✅ | Associative routing/functions. |
 | Lua | Applicable | [`mediator.lua`](../src/Scripting/Lua/patterns/mediator.lua) | Polyglot CI runtime assertions ✅ | Table de receiver closures. |
-| Perl | Applicable | [`mediator.pl`](../src/Scripting/Perl/mediator.pl) | Local `perl -c` + runtime ✅; current-head CI pending | Hash de coderefs, routing bidireccional y `UnknownColleague`. |
+| Perl | Applicable | [`mediator.pl`](../src/Scripting/Perl/mediator.pl) | `perl -c` + runtime / Polyglot CI ✅ | Hash de coderefs, routing bidireccional y `UnknownColleague`. |
 | PHP | Applicable | [`mediator.php`](../src/Scripting/PHP/patterns/mediator.php) | Polyglot CI lint/run ✅ | Callable registry. |
 | PowerShell | Applicable | [`mediator.ps1`](../src/Scripting/PowerShell/patterns/mediator.ps1) | Polyglot CI runtime assertions ✅ | Hashtable de scriptblocks. |
 | Python | Applicable | [`mediator.py`](../src/Scripting/PythonPY/mediator.py) | Python 3.13 compile + sweep runtime ✅ | Dict de callables; canónico extraído del sweep. |
@@ -198,8 +198,13 @@ La tabla final será autoritativa cuando las 51 celdas estén reconciliadas. Los
 | TypeScript | Applicable | [`mediator.ts`](../src/Web/TypeScriptTS/patterns/mediator.ts) | Product/Polyglot CI strict compile/run ✅ | Typed receiver registry. |
 | HTML | N/A | — | — | El markup puro no tiene un modelo de ejecución programable capaz de poseer coordinación entre pares; DOM events y routing pertenecen a JavaScript u otro runtime ejecutable. |
 | CSS | N/A | — | — | Selectores y cascade pueden afectar múltiples elementos, pero CSS puro no puede poseer routing o coordinación ejecutable entre colegas. |
-
-Quedan 7 targets todavía sin reconciliar en esta tabla: SQL declarativo, VBA, GDScript, Assembly, Delphi, MicroPython y Rockstar. Se mantienen sin clasificar aquí hasta inspeccionar su mecanismo real; no se convierten en `N/A` por ausencia de OOP ni se inventan enlaces.
+| SQL declarativo | N/A | — | — | SQL declarativo puro expresa relaciones, consultas, vistas y constraints, pero no puede poseer coordinación conductual entre colegas emisores; procedures/triggers pertenecen a extensiones procedurales distintas de este target. |
+| VBA | Applicable | [`MediatorExample.bas`](../src/Shell/VBA/MediatorExample.bas) | Platform source contracts / Polyglot CI ✅ | Módulo/clases VBA con routing propiedad del mediador y failure mode explícito. |
+| GDScript | Applicable | [`mediator.gd`](../src/Niche/GDScript/mediator.gd) | Godot runtime / Polyglot CI ✅ | Dictionary/callables como registry y routing central. |
+| Assembly | Applicable | [`mediator.asm`](../src/LowLevel/Assembly/mediator.asm) | Assembly build/runtime / Polyglot CI ✅ | Tabla/routing explícito entre handlers, con fallo observable. |
+| Delphi | Applicable | [`MediatorExample.pas`](../src/Enterprise/Delphi/MediatorExample.pas) | Platform source contracts / Polyglot CI ✅ | Object Pascal con mediador propietario del routing y `UnknownColleague`. |
+| MicroPython | Applicable | [`mediator.py`](../src/Other/MicroPython/mediator.py) | MicroPython runtime / Polyglot CI ✅ | Dict de callables y coordinación bidireccional. |
+| Rockstar | Applicable | [`mediator.rock`](../src/Other/Rockstar/mediator.rock) | Rockstar runtime / Polyglot CI ✅ | Coordinación central expresada con las primitivas ejecutables del lenguaje. |
 
 ## Comprueba que lo entendiste
 
