@@ -293,7 +293,7 @@ data ObjectPool = ObjectPool [Int] Int
 acquire :: ObjectPool -> (Int,ObjectPool)
 acquire (ObjectPool (x:xs) n)=(x,ObjectPool xs n)
 acquire (ObjectPool [] n)=let v=n+1 in (v,ObjectPool [] v)
-release :: Int -> ObjectPool -> ObjectPool -> ObjectPool
+release :: Int -> ObjectPool -> ObjectPool
 release v (ObjectPool xs n)=ObjectPool (v:xs) n
 objectPoolCase :: Bool
 objectPoolCase = let (a,p1)=acquire (ObjectPool [] 0); (b,p2)=acquire p1; p3=release a p2; (c,_)=acquire p3 in (a,b,c)==(1,2,1)
