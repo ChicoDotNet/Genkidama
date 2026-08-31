@@ -51,7 +51,7 @@
 }
 @end
 
-static BOOL verifyMediator(void) {
+BOOL verifyMediator(void) {
     CheckoutMediator *mediator = [CheckoutMediator new];
     [mediator registerColleague:[PaymentColleague new] named:@"payment"];
     [mediator registerColleague:[InventoryColleague new] named:@"inventory"];
@@ -73,6 +73,7 @@ static BOOL verifyMediator(void) {
         rejectedUnknown;
 }
 
+#ifndef GENKIDAMA_MEDIATOR_EMBEDDED
 int main(void) {
     @autoreleasepool {
         NSCAssert(verifyMediator(), @"Objective-C Mediator contract failed");
@@ -80,3 +81,4 @@ int main(void) {
     }
     return 0;
 }
+#endif
