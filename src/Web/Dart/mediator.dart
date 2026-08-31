@@ -37,19 +37,18 @@ void verifyMediator() {
   final payment = CheckoutColleague('payment', mediator);
   final inventory = CheckoutColleague('inventory', mediator);
 
-  mediator
-    ..register(payment.name, payment.receive)
-    ..register(inventory.name, inventory.receive);
+  mediator.register(payment.name, payment.receive);
+  mediator.register(inventory.name, inventory.receive);
 
   payment.send('inventory', 'reserve-order-42');
   inventory.send('payment', 'stock-reserved-order-42');
 
-  if (inventory.inbox.join('>') !=
-      'payment>inventory:reserve-order-42') {
+  const inventoryExpected = 'payment>inventory:reserve-order-42';
+  const paymentExpected = 'inventory>payment:stock-reserved-order-42';
+  if (inventory.inbox.join('>') != inventoryExpected) {
     throw StateError('payment-to-inventory routing failed');
   }
-  if (payment.inbox.join('>') !=
-      'inventory>payment:stock-reserved-order-42') {
+  if (payment.inbox.join('>') != paymentExpected) {
     throw StateError('inventory-to-payment routing failed');
   }
 
