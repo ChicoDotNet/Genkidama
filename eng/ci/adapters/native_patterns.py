@@ -99,20 +99,34 @@ def validate_rust() -> int:
 
 
 def validate_go() -> int:
-    source = ROOT / "src/Systems/Go/pattern_sweep.go"
-    if not source.is_file():
+    sweep = ROOT / "src/Systems/Go/pattern_sweep.go"
+    canonical = ROOT / "src/Systems/Go/memento.go"
+    if not sweep.is_file():
         raise ContractError("Go pattern_sweep.go is missing")
+    if not canonical.is_file():
+        raise ContractError("Go memento.go canonical is missing")
+
     run(["go", "version"])
-    unformatted = run(["gofmt", "-l", str(source)], capture=True).strip()
-    if unformatted:
-        raise ContractError(f"Go pattern sweep is not gofmt-clean: {unformatted}")
-    run(["go", "vet", str(source)])
-    output = run(["go", "run", str(source)], capture=True).strip()
+    for source, label in ((canonical, "Go Memento canonical"), (sweep, "Go pattern sweep")):
+        unformatted = run(["gofmt", "-l", str(source)], capture=True).strip()
+        if unformatted:
+            raise ContractError(f"{label} is not gofmt-clean: {unformatted}")
+        run(["go", "vet", str(source)])
+
+    canonical_output = run(["go", "run", str(canonical)], capture=True).strip()
+    canonical_expected = "Go Memento: passed"
+    if canonical_output != canonical_expected:
+        raise ContractError(
+            f"Go Memento canonical output mismatch: expected {canonical_expected!r}, got {canonical_output!r}"
+        )
+    print(canonical_output, flush=True)
+
+    output = run(["go", "run", str(sweep)], capture=True).strip()
     expected = "Go pattern sweep: 39/39 examples passed"
     if output != expected:
         raise ContractError(f"Go pattern sweep output mismatch: expected {expected!r}, got {output!r}")
     print(output, flush=True)
-    return EXPECTED
+    return EXPECTED + 1
 
 
 def main() -> int:
