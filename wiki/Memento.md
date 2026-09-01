@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Capturar el estado restorable de un originador sin exponer ni trasladar arbitrariamente su responsabilidad de mutación.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `5/49`  
+> **Implementaciones de lenguaje:** `11/49`  
 > **Cobertura de pruebas:** `N/A` como porcentaje agregado; los ejemplos standalone usan compile/analyze/runtime según el target.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -138,12 +138,12 @@ Serializar es sólo un mecanismo. Es Memento únicamente cuando representa estad
 
 ## Implementaciones por lenguaje
 
-La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un canónico individual que ya fue auditado y tiene evidencia repository-native ejecutada sobre el head revisado.
+La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un canónico individual auditado con evidencia repository-native ejecutada; los cambios posteriores en su gate deben volver a cerrar verdes antes de declarar estabilidad del head actual.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
 | C# | Applicable | — | pendiente | Auditar canónico heredado y gate. |
-| Python | Applicable | — | pendiente | Semántica vive aún en `pattern_sweep.py`; requiere extracción canónica. |
+| Python | Applicable | [`memento.py`](../src/Scripting/PythonPY/memento.py) | `py_compile` + runtime + failure mode; Scripting gate verde en `d1c8b4e3` | `DocumentMemento` inmutable; el sweep importa el canónico en vez de duplicarlo. |
 | JavaScript | Applicable | [`memento.js`](../src/Web/JavaScriptJS/patterns/memento.js) | syntax + standalone + aggregate, Web gate verde | Snapshot inmutable y restore observable. |
 | COBOL | Applicable | — | pendiente | Auditar canónico heredado. |
 | Solidity | Applicable | — | pendiente | Auditar canónico heredado. |
@@ -155,18 +155,18 @@ La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un
 | Kotlin | Applicable | — | pendiente | Auditar canónico heredado. |
 | Swift | Applicable | — | pendiente | Auditar canónico heredado. |
 | C++ | Applicable | — | pendiente | Auditar canónico heredado. |
-| PowerShell | Applicable | [`memento.ps1`](../src/Scripting/PowerShell/patterns/memento.ps1) | gate Data/Shell verde; auditoría directa pendiente | Canónico localizado; aún no contado. |
+| PowerShell | Applicable | [`memento.ps1`](../src/Scripting/PowerShell/patterns/memento.ps1) | parse + runtime individual, Data/Shell gate verde | Snapshot/restauración directamente auditados. |
 | Ruby | Applicable | [`memento.rb`](../src/Scripting/Ruby/patterns/memento.rb) | `ruby -c` + runtime + aggregate, Scripting gate verde | Hash duplicado/congelado como snapshot. |
 | Dart | Applicable | — | pendiente | Auditar canónico heredado. |
 | C | Applicable | [`memento.c`](../src/Systems/C/patterns/memento.c) | pendiente | Canónico localizado; auditar gate. |
 | Visual Basic .NET | Applicable | — | pendiente | Auditar canónico heredado. |
 | F# | Applicable | — | pendiente | Auditar canónico heredado. |
-| R | Applicable | [`memento.R`](../src/DataScience/R/patterns/memento.R) | gate Data/Shell verde; auditoría directa pendiente | Canónico localizado; aún no contado. |
+| R | Applicable | [`memento.R`](../src/DataScience/R/patterns/memento.R) | parse + runtime individual, Data/Shell gate verde | Snapshot/restauración directamente auditados. |
 | Julia | Applicable | — | pendiente | Auditar canónico heredado. |
 | HTML | N/A | — | — | Markup estático no posee ciclo ejecutable propio de captura/restauración; JavaScript sería otro target. |
 | Shell / Bash | Applicable | [`memento.sh`](../src/Scripting/Bash/patterns/memento.sh) | `bash -n` + runtime + aggregate, Scripting gate verde | Variables y funciones como originador/snapshot. |
-| Elixir | Applicable | [`memento.exs`](../src/Functional/Elixir/patterns/memento.exs) | pendiente | Canónico localizado; auditar gate. |
-| Erlang | Applicable | [`memento.erl`](../src/Functional/Erlang/patterns/memento.erl) | pendiente | Canónico localizado; auditar gate. |
+| Elixir | Applicable | [`memento.exs`](../src/Functional/Elixir/patterns/memento.exs) | compile/run individual, BEAM gate verde | Estado inmutable y restauración directamente auditados. |
+| Erlang | Applicable | [`memento.erl`](../src/Functional/Erlang/patterns/memento.erl) | compile/run individual, BEAM gate verde | Terms inmutables como snapshot directamente auditado. |
 | Scala | Applicable | — | pendiente | Auditar canónico heredado. |
 | Clojure | Applicable | [`memento.clj`](../src/Functional/Clojure/patterns/memento.clj) | pendiente | Canónico localizado; auditar gate. |
 | Haskell | Applicable | — | pendiente | Auditar canónico heredado. |
@@ -188,7 +188,7 @@ La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un
 | Prolog | Applicable | — | pendiente | Terms/hechos permiten representar snapshots. |
 | VBA | Applicable | — | pendiente | Auditar canónico heredado. |
 | Delphi | Applicable | — | pendiente | Records/objetos permiten snapshot/restauración. |
-| GNU Octave | Applicable | [`memento.m`](../src/DataScience/Octave/patterns/memento.m) | gate Data/Shell verde; auditoría directa pendiente | Canónico localizado; aún no contado. |
+| GNU Octave | Applicable | [`memento.m`](../src/DataScience/Octave/patterns/memento.m) | parse + runtime individual, Data/Shell gate verde | Snapshot/restauración directamente auditados. |
 | SQL declarativo | Applicable | — | pendiente | Filas/versiones inmutables pueden representar snapshot y restauración declarativa. |
 | CSS | N/A | — | — | Puede representar/selectar estados visuales, pero no captura, conserva y restaura estado arbitrario por sí misma. |
 | MicroPython | Applicable | — | pendiente | Dicts/tuples/copias permiten snapshot/restauración. |
