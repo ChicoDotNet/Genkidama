@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Capturar el estado restorable de un originador sin exponer ni trasladar arbitrariamente su responsabilidad de mutación.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `34/49`  
+> **Implementaciones de lenguaje:** `35/49`  
 > **Cobertura de pruebas:** `N/A` como porcentaje agregado; los ejemplos standalone usan compile/analyze/runtime según el target.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -149,7 +149,7 @@ La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un
 | Solidity | Applicable | [`Memento.sol`](../src/Niche/Solidity/patterns/Memento.sol) | PR #97 medium-high: Node/Solidity 78/78 ✅ | Enum/valores y restauración pura sin forzar clases. |
 | TypeScript | Applicable | [`memento.ts`](../src/Web/TypeScriptTS/patterns/memento.ts) | PR #97 medium-high: Node 24 LTS 78/78 ✅ | Valor snapshot y restore observable. |
 | Java | Applicable | [`memento.java`](../src/Enterprise/Java/patterns/memento.java) | JVM family + Polyglot CI verde en `15568ed5` ✅ | Snapshot de valor y restauración observable. |
-| Go | Applicable | — | pendiente | Auditar canónico heredado. |
+| Go | Applicable | [`memento.go`](../src/Systems/Go/memento.go) | `gofmt` + `go vet` + standalone runtime; Native / Go 1.26.5 ✅ en `8185dacb` | Snapshot profundo de `tags`, restore observable y comprobación anti-aliasing; queda deuda de retirar la implementación duplicada del sweep. |
 | Rust | Applicable | [`memento.rs`](../src/Systems/Rust/patterns/memento.rs) | Native family + Polyglot CI verde en `15568ed5` ✅ | Valor copiable como snapshot/restauración. |
 | PHP | Applicable | [`memento.php`](../src/Scripting/PHP/patterns/memento.php) | `php -l` + runtime + aggregate, Scripting gate verde | Objeto originador con `save/restore`. |
 | Kotlin | Applicable | [`Memento.kt`](../src/Enterprise/Kotlin/patterns/Memento.kt) | PR #97 medium-high: JVM 117/117 ✅ | Estado mutable + snapshot de valor; runner delega. |
