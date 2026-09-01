@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Capturar el estado restorable de un originador sin exponer ni trasladar arbitrariamente su responsabilidad de mutación.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `25/49`  
+> **Implementaciones de lenguaje:** `34/49`  
 > **Cobertura de pruebas:** `N/A` como porcentaje agregado; los ejemplos standalone usan compile/analyze/runtime según el target.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -138,7 +138,7 @@ Serializar es sólo un mecanismo. Es Memento únicamente cuando representa estad
 
 ## Implementaciones por lenguaje
 
-La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un canónico individual auditado con evidencia repository-native ejecutada; los cambios posteriores en su gate deben volver a cerrar verdes antes de declarar estabilidad del head actual. El cohort integrado por PR #97 aporta evidencia histórica explícita de **546/546** celdas verdes para sus 14 targets y el ledger `docs/pattern-sweeps/medium-high-cohort.md` sigue siendo autoritativo para esas celdas.
+La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un canónico individual auditado con evidencia repository-native ejecutada; los cambios posteriores en su gate deben volver a cerrar verdes antes de declarar estabilidad del head actual. El cohort integrado por PR #97 aporta evidencia histórica explícita de **546/546** celdas verdes para sus 14 targets y el ledger `docs/pattern-sweeps/medium-high-cohort.md` sigue siendo autoritativo para esas celdas. El ledger `docs/pattern-sweeps/portable-functional-cohort.md` aporta otros 13 targets con canónicos individualmente direccionables y ownership Polyglot actual; en este patrón se reconcilian sus ocho celdas todavía pendientes sólo después de auditar el canónico y observar el gate verde del head revisado. MATLAB se acredita del mismo modo desde su ledger target-major y el Polyglot actual.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -148,17 +148,17 @@ La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un
 | COBOL | Applicable | [`memento_pattern.cpy`](../src/Historical/Cobol/patterns/memento_pattern.cpy) | PR #97 medium-high: GNU 156/156 ✅ | Copybook direccionable con captura, cambio y restauración. |
 | Solidity | Applicable | [`Memento.sol`](../src/Niche/Solidity/patterns/Memento.sol) | PR #97 medium-high: Node/Solidity 78/78 ✅ | Enum/valores y restauración pura sin forzar clases. |
 | TypeScript | Applicable | [`memento.ts`](../src/Web/TypeScriptTS/patterns/memento.ts) | PR #97 medium-high: Node 24 LTS 78/78 ✅ | Valor snapshot y restore observable. |
-| Java | Applicable | — | pendiente | Auditar canónico heredado. |
+| Java | Applicable | [`memento.java`](../src/Enterprise/Java/patterns/memento.java) | JVM family + Polyglot CI verde en `15568ed5` ✅ | Snapshot de valor y restauración observable. |
 | Go | Applicable | — | pendiente | Auditar canónico heredado. |
-| Rust | Applicable | — | pendiente | Auditar canónico heredado. |
+| Rust | Applicable | [`memento.rs`](../src/Systems/Rust/patterns/memento.rs) | Native family + Polyglot CI verde en `15568ed5` ✅ | Valor copiable como snapshot/restauración. |
 | PHP | Applicable | [`memento.php`](../src/Scripting/PHP/patterns/memento.php) | `php -l` + runtime + aggregate, Scripting gate verde | Objeto originador con `save/restore`. |
 | Kotlin | Applicable | [`Memento.kt`](../src/Enterprise/Kotlin/patterns/Memento.kt) | PR #97 medium-high: JVM 117/117 ✅ | Estado mutable + snapshot de valor; runner delega. |
 | Swift | Applicable | [`Memento.swift`](../src/Systems/Swift/patterns/Memento.swift) | PR #97 medium-high: Swift 39/39 ✅ | Value semantics para snapshot/restauración. |
-| C++ | Applicable | — | pendiente | Auditar canónico heredado. |
+| C++ | Applicable | [`memento.cpp`](../src/Systems/C++/patterns/memento.cpp) | Native family + Polyglot CI verde en `15568ed5` ✅ | Snapshot de valor con restauración observable. |
 | PowerShell | Applicable | [`memento.ps1`](../src/Scripting/PowerShell/patterns/memento.ps1) | parse + runtime individual, Data/Shell gate verde | Snapshot/restauración directamente auditados. |
 | Ruby | Applicable | [`memento.rb`](../src/Scripting/Ruby/patterns/memento.rb) | `ruby -c` + runtime + aggregate, Scripting gate verde | Hash duplicado/congelado como snapshot. |
 | Dart | Applicable | — | pendiente | Auditar canónico heredado. |
-| C | Applicable | [`memento.c`](../src/Systems/C/patterns/memento.c) | pendiente | Canónico localizado; auditar gate. |
+| C | Applicable | [`memento.c`](../src/Systems/C/patterns/memento.c) | Native family + Polyglot CI verde en `15568ed5` ✅ | Snapshot de valor con restauración observable. |
 | Visual Basic .NET | Applicable | [`Memento.vb`](../src/Enterprise/VB.NET/patterns/Memento.vb) | PR #97 medium-high: .NET 10 LTS 117/117 ✅ | Valor snapshot/restauración; runner sólo orquesta. |
 | F# | Applicable | [`Memento.fsx`](../src/Functional/F%23/patterns/Memento.fsx) | PR #97 medium-high: .NET 10 LTS 117/117 ✅ | Mutable local + valor inmutable como snapshot. |
 | R | Applicable | [`memento.R`](../src/DataScience/R/patterns/memento.R) | parse + runtime individual, Data/Shell gate verde | Snapshot/restauración directamente auditados. |
@@ -170,10 +170,10 @@ La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un
 | Scala | Applicable | [`Memento.scala`](../src/Functional/Scala/patterns/Memento.scala) | PR #97 medium-high: JVM 117/117 ✅ | Valor snapshot y restauración; runner sólo orquesta. |
 | Clojure | Applicable | [`memento.clj`](../src/Functional/Clojure/patterns/memento.clj) | PR #97 medium-high: JVM 117/117 ✅ | `atom` como originador y valor desreferenciado como snapshot. |
 | Haskell | Applicable | — | pendiente | Auditar canónico heredado. |
-| OCaml | Applicable | — | pendiente | Auditar canónico heredado. |
+| OCaml | Applicable | [`memento.ml`](../src/Functional/OCaml/patterns/memento.ml) | Functional family + Polyglot CI verde en `15568ed5` ✅ | `ref` mutable con snapshot de valor y restore. |
 | Lua | Applicable | [`memento.lua`](../src/Scripting/Lua/patterns/memento.lua) | `luac -p` + runtime + aggregate, Scripting gate verde | Tabla snapshot independiente. |
 | Perl | Applicable | — | pendiente | Auditar canónico heredado. |
-| Groovy | Applicable | — | pendiente | Auditar canónico heredado. |
+| Groovy | Applicable | [`memento.groovy`](../src/Functional/Groovy/patterns/memento.groovy) | JVM family + Polyglot CI verde en `15568ed5` ✅ | `clone()` separa el snapshot antes de restaurar. |
 | Fortran | Applicable | [`memento.f90`](../src/Systems/Fortran/patterns/memento.f90) | PR #97 medium-high: GNU 156/156 ✅ | Valor fixed-length separado y restauración observable. |
 | Ada | Applicable | [`memento_pattern.adb`](../src/Systems/Ada/memento_pattern.adb) | PR #97 medium-high: GNU 156/156 ✅ | `Unbounded_String` snapshot separado; runner requiere el canónico. |
 | Pascal | Applicable | [`memento_pattern.pas`](../src/Systems/Pascal/memento_pattern.pas) | PR #97 medium-high: GNU 156/156 ✅ | Unidad direccionable con snapshot/restauración. |
@@ -181,11 +181,11 @@ La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un
 | Nim | Applicable | [`memento_example.nim`](../src/Niche/Nim/patterns/memento_example.nim) | PR #97 medium-high: Nim 39/39 ✅ | Valor snapshot separado; runner importa el módulo. |
 | Crystal | Applicable | — | pendiente | Auditar canónico heredado. |
 | Zig | Applicable | — | pendiente | Auditar canónico heredado. |
-| MATLAB | Applicable | [`memento.m`](../src/DataScience/MATLAB/memento.m) | pendiente | Canónico localizado; auditar gate. |
+| MATLAB | Applicable | [`memento.m`](../src/DataScience/MATLAB/memento.m) | MATLAB family + Polyglot CI verde en `15568ed5` ✅ | `struct` snapshot separado con `saveState/restoreState`. |
 | GDScript | Applicable | — | pendiente | Dictionaries/valores permiten snapshot y restore. |
 | Assembly | Applicable | — | pendiente | Memoria/buffers permiten copiar y restaurar estado. |
-| Common Lisp | Applicable | — | pendiente | Auditar canónico heredado. |
-| Prolog | Applicable | — | pendiente | Terms/hechos permiten representar snapshots. |
+| Common Lisp | Applicable | [`memento.lisp`](../src/Functional/CommonLisp/patterns/memento.lisp) | Functional family + Polyglot CI verde en `15568ed5` ✅ | Binding snapshot separado y restauración explícita. |
+| Prolog | Applicable | [`memento.pl`](../src/Functional/Prolog/patterns/memento.pl) | Functional family + Polyglot CI verde en `15568ed5` ✅ | Term snapshot restaurado sin exigir objetos mutables. |
 | VBA | Applicable | — | pendiente | Auditar canónico heredado. |
 | Delphi | Applicable | — | pendiente | Records/objetos permiten snapshot/restauración. |
 | GNU Octave | Applicable | [`memento.m`](../src/DataScience/Octave/patterns/memento.m) | parse + runtime individual, Data/Shell gate verde | Snapshot/restauración directamente auditados. |
@@ -214,3 +214,5 @@ La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un
 - [`docs/philosophy/001-patterns-as-living-examples.md`](../docs/philosophy/001-patterns-as-living-examples.md)
 - [`docs/kb/catalog/pattern-authoring-standard.md`](../docs/kb/catalog/pattern-authoring-standard.md)
 - [`docs/pattern-sweeps/medium-high-cohort.md`](../docs/pattern-sweeps/medium-high-cohort.md)
+- [`docs/pattern-sweeps/portable-functional-cohort.md`](../docs/pattern-sweeps/portable-functional-cohort.md)
+- [`docs/pattern-sweeps/matlab.md`](../docs/pattern-sweeps/matlab.md)
