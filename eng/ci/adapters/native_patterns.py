@@ -63,7 +63,7 @@ def validate_c_cpp() -> int:
 
         for source in cpp_files:
             cell_source = work / "cell.cpp"
-            cell_binary = work / ("cell.exe" if os.name == "nt" else "cell")
+            cell_binary = work / "cell-cpp"
             cell_source.write_text(
                 source.read_text(encoding="utf-8") + "\nint main(){return run()?0:1;}\n",
                 encoding="utf-8",
@@ -121,9 +121,7 @@ def validate_go() -> int:
             raise ContractError(f"{label} is not gofmt-clean: {unformatted}")
 
     run(["go", "vet", str(canonical), str(canonical_test)])
-    test_output = run(["go", "test", "-run", "^TestMementoCanonical$", "-count=1", str(canonical), str(canonical_test)], capture=True)
-    if "ok\tcommand-line-arguments" not in test_output and "ok  \tcommand-line-arguments" not in test_output:
-        raise ContractError("Go Memento canonical test did not report success")
+    run(["go", "test", "-run", "^TestMementoCanonical$", "-count=1", str(canonical), str(canonical_test)])
     print("Go Memento: passed", flush=True)
 
     run(["go", "vet", str(sweep), str(canonical)])
