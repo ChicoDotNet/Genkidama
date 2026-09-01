@@ -3,8 +3,7 @@
 /// The originator owns snapshot creation and restoration. The caretaker keeps
 /// an opaque immutable value and never mutates the originator's internals.
 final class DocumentMemento {
-  DocumentMemento(this.title, List<String> tags)
-      : tags = List.unmodifiable(tags);
+  DocumentMemento(this.title, List<String> tags) : tags = List.unmodifiable(tags);
 
   final String title;
   final List<String> tags;
