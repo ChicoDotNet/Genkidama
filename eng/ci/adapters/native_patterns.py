@@ -63,7 +63,7 @@ def validate_c_cpp() -> int:
 
         for source in cpp_files:
             cell_source = work / "cell.cpp"
-            cell_binary = work / "cell-cpp"
+            cell_binary = work / ("cell.exe" if os.name == "nt" else "cell")
             cell_source.write_text(
                 source.read_text(encoding="utf-8") + "\nint main(){return run()?0:1;}\n",
                 encoding="utf-8",
@@ -101,27 +101,33 @@ def validate_rust() -> int:
 def validate_go() -> int:
     sweep = ROOT / "src/Systems/Go/pattern_sweep.go"
     canonical = ROOT / "src/Systems/Go/memento.go"
-    if not sweep.is_file():
-        raise ContractError("Go pattern_sweep.go is missing")
-    if not canonical.is_file():
-        raise ContractError("Go memento.go canonical is missing")
+    canonical_test = ROOT / "src/Systems/Go/memento_test.go"
+    for source, label in (
+        (sweep, "Go pattern_sweep.go"),
+        (canonical, "Go memento.go canonical"),
+        (canonical_test, "Go memento_test.go canonical test"),
+    ):
+        if not source.is_file():
+            raise ContractError(f"{label} is missing")
 
     run(["go", "version"])
-    for source, label in ((canonical, "Go Memento canonical"), (sweep, "Go pattern sweep")):
+    for source, label in (
+        (canonical, "Go Memento canonical"),
+        (canonical_test, "Go Memento canonical test"),
+        (sweep, "Go pattern sweep"),
+    ):
         unformatted = run(["gofmt", "-l", str(source)], capture=True).strip()
         if unformatted:
             raise ContractError(f"{label} is not gofmt-clean: {unformatted}")
-        run(["go", "vet", str(source)])
 
-    canonical_output = run(["go", "run", str(canonical)], capture=True).strip()
-    canonical_expected = "Go Memento: passed"
-    if canonical_output != canonical_expected:
-        raise ContractError(
-            f"Go Memento canonical output mismatch: expected {canonical_expected!r}, got {canonical_output!r}"
-        )
-    print(canonical_output, flush=True)
+    run(["go", "vet", str(canonical), str(canonical_test)])
+    test_output = run(["go", "test", "-run", "^TestMementoCanonical$", "-count=1", str(canonical), str(canonical_test)], capture=True)
+    if "ok\tcommand-line-arguments" not in test_output and "ok  \tcommand-line-arguments" not in test_output:
+        raise ContractError("Go Memento canonical test did not report success")
+    print("Go Memento: passed", flush=True)
 
-    output = run(["go", "run", str(sweep)], capture=True).strip()
+    run(["go", "vet", str(sweep), str(canonical)])
+    output = run(["go", "run", str(sweep), str(canonical)], capture=True).strip()
     expected = "Go pattern sweep: 39/39 examples passed"
     if output != expected:
         raise ContractError(f"Go pattern sweep output mismatch: expected {expected!r}, got {output!r}")

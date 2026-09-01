@@ -46,8 +46,3 @@ func verifyMementoCanonical() {
 		panic("restore aliased the caretaker snapshot")
 	}
 }
-
-func main() {
-	verifyMementoCanonical()
-	fmt.Println("Go Memento: passed")
-}
