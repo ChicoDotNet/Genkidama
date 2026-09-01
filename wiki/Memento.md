@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Capturar el estado restorable de un originador sin exponer ni trasladar arbitrariamente su responsabilidad de mutación.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `35/49`  
+> **Implementaciones de lenguaje:** `36/49`  
 > **Cobertura de pruebas:** `N/A` como porcentaje agregado; los ejemplos standalone usan compile/analyze/runtime según el target.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -149,7 +149,7 @@ La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un
 | Solidity | Applicable | [`Memento.sol`](../src/Niche/Solidity/patterns/Memento.sol) | PR #97 medium-high: Node/Solidity 78/78 ✅ | Enum/valores y restauración pura sin forzar clases. |
 | TypeScript | Applicable | [`memento.ts`](../src/Web/TypeScriptTS/patterns/memento.ts) | PR #97 medium-high: Node 24 LTS 78/78 ✅ | Valor snapshot y restore observable. |
 | Java | Applicable | [`memento.java`](../src/Enterprise/Java/patterns/memento.java) | JVM family + Polyglot CI verde en `15568ed5` ✅ | Snapshot de valor y restauración observable. |
-| Go | Applicable | [`memento.go`](../src/Systems/Go/memento.go) | `gofmt` + `go vet` + standalone runtime; Native / Go 1.26.5 ✅ en `8185dacb` | Snapshot profundo de `tags`, restore observable y comprobación anti-aliasing; queda deuda de retirar la implementación duplicada del sweep. |
+| Go | Applicable | [`memento.go`](../src/Systems/Go/memento.go) | `gofmt` + `go vet` + test directo + aggregate; Native / Go 1.26.5 ✅ en `098632c3` | Snapshot profundo de `tags`, restore observable y anti-aliasing; el sweep delega al canónico. |
 | Rust | Applicable | [`memento.rs`](../src/Systems/Rust/patterns/memento.rs) | Native family + Polyglot CI verde en `15568ed5` ✅ | Valor copiable como snapshot/restauración. |
 | PHP | Applicable | [`memento.php`](../src/Scripting/PHP/patterns/memento.php) | `php -l` + runtime + aggregate, Scripting gate verde | Objeto originador con `save/restore`. |
 | Kotlin | Applicable | [`Memento.kt`](../src/Enterprise/Kotlin/patterns/Memento.kt) | PR #97 medium-high: JVM 117/117 ✅ | Estado mutable + snapshot de valor; runner delega. |
@@ -157,7 +157,7 @@ La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un
 | C++ | Applicable | [`memento.cpp`](../src/Systems/C++/patterns/memento.cpp) | Native family + Polyglot CI verde en `15568ed5` ✅ | Snapshot de valor con restauración observable. |
 | PowerShell | Applicable | [`memento.ps1`](../src/Scripting/PowerShell/patterns/memento.ps1) | parse + runtime individual, Data/Shell gate verde | Snapshot/restauración directamente auditados. |
 | Ruby | Applicable | [`memento.rb`](../src/Scripting/Ruby/patterns/memento.rb) | `ruby -c` + runtime + aggregate, Scripting gate verde | Hash duplicado/congelado como snapshot. |
-| Dart | Applicable | — | pendiente | Auditar canónico heredado. |
+| Dart | Applicable | [`memento.dart`](../src/Web/Dart/memento.dart) | `dart format --set-exit-if-changed` + `dart analyze --fatal-infos --fatal-warnings` + runtime directo + aggregate; Dart + Flutter / Linux ✅ en `347e3f81` | `MementoState` inmutable, restore y anti-aliasing verificados; queda deuda acotada de retirar la implementación Memento duplicada del sweep. |
 | C | Applicable | [`memento.c`](../src/Systems/C/patterns/memento.c) | Native family + Polyglot CI verde en `15568ed5` ✅ | Snapshot de valor con restauración observable. |
 | Visual Basic .NET | Applicable | [`Memento.vb`](../src/Enterprise/VB.NET/patterns/Memento.vb) | PR #97 medium-high: .NET 10 LTS 117/117 ✅ | Valor snapshot/restauración; runner sólo orquesta. |
 | F# | Applicable | [`Memento.fsx`](../src/Functional/F%23/patterns/Memento.fsx) | PR #97 medium-high: .NET 10 LTS 117/117 ✅ | Mutable local + valor inmutable como snapshot. |
