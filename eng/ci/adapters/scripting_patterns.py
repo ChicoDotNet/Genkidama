@@ -15,6 +15,14 @@ def main() -> int:
     if profile != "linux":
         raise dc.ContractError(f"unsupported scripting profile: {profile}")
 
+    python_memento = dc.ROOT / "src/Scripting/PythonPY/memento.py"
+    dc.run([sys.executable, "-m", "py_compile", str(python_memento)])
+    dc.require(
+        dc.last_line(dc.run([sys.executable, "-B", str(python_memento)], capture=True))
+        == "Python Memento: passed",
+        "Python Memento canonical output mismatch",
+    )
+
     py = dc.ROOT / "src/Scripting/PythonPY/pattern_sweep.py"
     dc.run([sys.executable, "-m", "py_compile", str(py)])
     dc.run([sys.executable, "-B", str(py)])
