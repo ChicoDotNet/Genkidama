@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Capturar el estado restorable de un originador sin exponer ni trasladar arbitrariamente su responsabilidad de mutación.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `11/49`  
+> **Implementaciones de lenguaje:** `25/49`  
 > **Cobertura de pruebas:** `N/A` como porcentaje agregado; los ejemplos standalone usan compile/analyze/runtime según el target.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -138,47 +138,47 @@ Serializar es sólo un mecanismo. Es Memento únicamente cuando representa estad
 
 ## Implementaciones por lenguaje
 
-La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un canónico individual auditado con evidencia repository-native ejecutada; los cambios posteriores en su gate deben volver a cerrar verdes antes de declarar estabilidad del head actual.
+La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un canónico individual auditado con evidencia repository-native ejecutada; los cambios posteriores en su gate deben volver a cerrar verdes antes de declarar estabilidad del head actual. El cohort integrado por PR #97 aporta evidencia histórica explícita de **546/546** celdas verdes para sus 14 targets y el ledger `docs/pattern-sweeps/medium-high-cohort.md` sigue siendo autoritativo para esas celdas.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
-| C# | Applicable | — | pendiente | Auditar canónico heredado y gate. |
-| Python | Applicable | [`memento.py`](../src/Scripting/PythonPY/memento.py) | `py_compile` + runtime + failure mode; Scripting gate verde en `d1c8b4e3` | `DocumentMemento` inmutable; el sweep importa el canónico en vez de duplicarlo. |
+| C# | Applicable | [`Memento.cs`](../src/Enterprise/C%23/patterns/Memento.cs) | PR #97 medium-high: .NET 10 LTS 117/117 ✅ | Valor snapshot/restauración; runner sólo orquesta. |
+| Python | Applicable | [`memento.py`](../src/Scripting/PythonPY/memento.py) | `py_compile` + runtime + failure mode; Scripting gate verde en `d56817ac` | `DocumentMemento` inmutable; el sweep importa el canónico en vez de duplicarlo. |
 | JavaScript | Applicable | [`memento.js`](../src/Web/JavaScriptJS/patterns/memento.js) | syntax + standalone + aggregate, Web gate verde | Snapshot inmutable y restore observable. |
-| COBOL | Applicable | — | pendiente | Auditar canónico heredado. |
-| Solidity | Applicable | — | pendiente | Auditar canónico heredado. |
-| TypeScript | Applicable | — | pendiente | Auditar canónico heredado. |
+| COBOL | Applicable | [`memento_pattern.cpy`](../src/Historical/Cobol/patterns/memento_pattern.cpy) | PR #97 medium-high: GNU 156/156 ✅ | Copybook direccionable con captura, cambio y restauración. |
+| Solidity | Applicable | [`Memento.sol`](../src/Niche/Solidity/patterns/Memento.sol) | PR #97 medium-high: Node/Solidity 78/78 ✅ | Enum/valores y restauración pura sin forzar clases. |
+| TypeScript | Applicable | [`memento.ts`](../src/Web/TypeScriptTS/patterns/memento.ts) | PR #97 medium-high: Node 24 LTS 78/78 ✅ | Valor snapshot y restore observable. |
 | Java | Applicable | — | pendiente | Auditar canónico heredado. |
 | Go | Applicable | — | pendiente | Auditar canónico heredado. |
 | Rust | Applicable | — | pendiente | Auditar canónico heredado. |
 | PHP | Applicable | [`memento.php`](../src/Scripting/PHP/patterns/memento.php) | `php -l` + runtime + aggregate, Scripting gate verde | Objeto originador con `save/restore`. |
-| Kotlin | Applicable | — | pendiente | Auditar canónico heredado. |
-| Swift | Applicable | — | pendiente | Auditar canónico heredado. |
+| Kotlin | Applicable | [`Memento.kt`](../src/Enterprise/Kotlin/patterns/Memento.kt) | PR #97 medium-high: JVM 117/117 ✅ | Estado mutable + snapshot de valor; runner delega. |
+| Swift | Applicable | [`Memento.swift`](../src/Systems/Swift/patterns/Memento.swift) | PR #97 medium-high: Swift 39/39 ✅ | Value semantics para snapshot/restauración. |
 | C++ | Applicable | — | pendiente | Auditar canónico heredado. |
 | PowerShell | Applicable | [`memento.ps1`](../src/Scripting/PowerShell/patterns/memento.ps1) | parse + runtime individual, Data/Shell gate verde | Snapshot/restauración directamente auditados. |
 | Ruby | Applicable | [`memento.rb`](../src/Scripting/Ruby/patterns/memento.rb) | `ruby -c` + runtime + aggregate, Scripting gate verde | Hash duplicado/congelado como snapshot. |
 | Dart | Applicable | — | pendiente | Auditar canónico heredado. |
 | C | Applicable | [`memento.c`](../src/Systems/C/patterns/memento.c) | pendiente | Canónico localizado; auditar gate. |
-| Visual Basic .NET | Applicable | — | pendiente | Auditar canónico heredado. |
-| F# | Applicable | — | pendiente | Auditar canónico heredado. |
+| Visual Basic .NET | Applicable | [`Memento.vb`](../src/Enterprise/VB.NET/patterns/Memento.vb) | PR #97 medium-high: .NET 10 LTS 117/117 ✅ | Valor snapshot/restauración; runner sólo orquesta. |
+| F# | Applicable | [`Memento.fsx`](../src/Functional/F%23/patterns/Memento.fsx) | PR #97 medium-high: .NET 10 LTS 117/117 ✅ | Mutable local + valor inmutable como snapshot. |
 | R | Applicable | [`memento.R`](../src/DataScience/R/patterns/memento.R) | parse + runtime individual, Data/Shell gate verde | Snapshot/restauración directamente auditados. |
 | Julia | Applicable | — | pendiente | Auditar canónico heredado. |
 | HTML | N/A | — | — | Markup estático no posee ciclo ejecutable propio de captura/restauración; JavaScript sería otro target. |
 | Shell / Bash | Applicable | [`memento.sh`](../src/Scripting/Bash/patterns/memento.sh) | `bash -n` + runtime + aggregate, Scripting gate verde | Variables y funciones como originador/snapshot. |
 | Elixir | Applicable | [`memento.exs`](../src/Functional/Elixir/patterns/memento.exs) | compile/run individual, BEAM gate verde | Estado inmutable y restauración directamente auditados. |
 | Erlang | Applicable | [`memento.erl`](../src/Functional/Erlang/patterns/memento.erl) | compile/run individual, BEAM gate verde | Terms inmutables como snapshot directamente auditado. |
-| Scala | Applicable | — | pendiente | Auditar canónico heredado. |
-| Clojure | Applicable | [`memento.clj`](../src/Functional/Clojure/patterns/memento.clj) | pendiente | Canónico localizado; auditar gate. |
+| Scala | Applicable | [`Memento.scala`](../src/Functional/Scala/patterns/Memento.scala) | PR #97 medium-high: JVM 117/117 ✅ | Valor snapshot y restauración; runner sólo orquesta. |
+| Clojure | Applicable | [`memento.clj`](../src/Functional/Clojure/patterns/memento.clj) | PR #97 medium-high: JVM 117/117 ✅ | `atom` como originador y valor desreferenciado como snapshot. |
 | Haskell | Applicable | — | pendiente | Auditar canónico heredado. |
 | OCaml | Applicable | — | pendiente | Auditar canónico heredado. |
 | Lua | Applicable | [`memento.lua`](../src/Scripting/Lua/patterns/memento.lua) | `luac -p` + runtime + aggregate, Scripting gate verde | Tabla snapshot independiente. |
 | Perl | Applicable | — | pendiente | Auditar canónico heredado. |
 | Groovy | Applicable | — | pendiente | Auditar canónico heredado. |
-| Fortran | Applicable | [`memento.f90`](../src/Systems/Fortran/patterns/memento.f90) | pendiente | Canónico localizado; auditar gate. |
-| Ada | Applicable | [`memento_pattern.adb`](../src/Systems/Ada/memento_pattern.adb) | pendiente | Canónico localizado; auditar gate. |
-| Pascal | Applicable | [`memento_pattern.pas`](../src/Systems/Pascal/memento_pattern.pas) | pendiente | Canónico localizado; auditar gate. |
+| Fortran | Applicable | [`memento.f90`](../src/Systems/Fortran/patterns/memento.f90) | PR #97 medium-high: GNU 156/156 ✅ | Valor fixed-length separado y restauración observable. |
+| Ada | Applicable | [`memento_pattern.adb`](../src/Systems/Ada/memento_pattern.adb) | PR #97 medium-high: GNU 156/156 ✅ | `Unbounded_String` snapshot separado; runner requiere el canónico. |
+| Pascal | Applicable | [`memento_pattern.pas`](../src/Systems/Pascal/memento_pattern.pas) | PR #97 medium-high: GNU 156/156 ✅ | Unidad direccionable con snapshot/restauración. |
 | Objective-C | Applicable | — | pendiente | Auditar canónico heredado. |
-| Nim | Applicable | — | pendiente | Auditar canónico heredado. |
+| Nim | Applicable | [`memento_example.nim`](../src/Niche/Nim/patterns/memento_example.nim) | PR #97 medium-high: Nim 39/39 ✅ | Valor snapshot separado; runner importa el módulo. |
 | Crystal | Applicable | — | pendiente | Auditar canónico heredado. |
 | Zig | Applicable | — | pendiente | Auditar canónico heredado. |
 | MATLAB | Applicable | [`memento.m`](../src/DataScience/MATLAB/memento.m) | pendiente | Canónico localizado; auditar gate. |
@@ -213,3 +213,4 @@ La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un
 - Gamma, Helm, Johnson, Vlissides, *Design Patterns: Elements of Reusable Object-Oriented Software*.
 - [`docs/philosophy/001-patterns-as-living-examples.md`](../docs/philosophy/001-patterns-as-living-examples.md)
 - [`docs/kb/catalog/pattern-authoring-standard.md`](../docs/kb/catalog/pattern-authoring-standard.md)
+- [`docs/pattern-sweeps/medium-high-cohort.md`](../docs/pattern-sweeps/medium-high-cohort.md)
