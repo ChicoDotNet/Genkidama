@@ -31,7 +31,5 @@ def verify_memento_canonical
   true
 end
 
-if PROGRAM_NAME == __FILE__
-  verify_memento_canonical
-  puts "Crystal Memento: passed"
-end
+verify_memento_canonical
+puts "Crystal Memento: passed"
