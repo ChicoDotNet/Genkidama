@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Capturar el estado restorable de un originador sin exponer ni trasladar arbitrariamente su responsabilidad de mutación.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `36/49`  
+> **Implementaciones de lenguaje:** `38/49`  
 > **Cobertura de pruebas:** `N/A` como porcentaje agregado; los ejemplos standalone usan compile/analyze/runtime según el target.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -162,14 +162,14 @@ La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un
 | Visual Basic .NET | Applicable | [`Memento.vb`](../src/Enterprise/VB.NET/patterns/Memento.vb) | PR #97 medium-high: .NET 10 LTS 117/117 ✅ | Valor snapshot/restauración; runner sólo orquesta. |
 | F# | Applicable | [`Memento.fsx`](../src/Functional/F%23/patterns/Memento.fsx) | PR #97 medium-high: .NET 10 LTS 117/117 ✅ | Mutable local + valor inmutable como snapshot. |
 | R | Applicable | [`memento.R`](../src/DataScience/R/patterns/memento.R) | parse + runtime individual, Data/Shell gate verde | Snapshot/restauración directamente auditados. |
-| Julia | Applicable | — | pendiente | Auditar canónico heredado. |
+| Julia | Applicable | [`memento.jl`](../src/DataScience/Julia/memento.jl) | `julia --startup-file=no --check-bounds=yes` via aggregate + Polyglot CI ✅ en `75a78599` | `MementoSnapshot` de valor, restore y anti-aliasing; el sweep incluye/delega al canónico. |
 | HTML | N/A | — | — | Markup estático no posee ciclo ejecutable propio de captura/restauración; JavaScript sería otro target. |
 | Shell / Bash | Applicable | [`memento.sh`](../src/Scripting/Bash/patterns/memento.sh) | `bash -n` + runtime + aggregate, Scripting gate verde | Variables y funciones como originador/snapshot. |
 | Elixir | Applicable | [`memento.exs`](../src/Functional/Elixir/patterns/memento.exs) | compile/run individual, BEAM gate verde | Estado inmutable y restauración directamente auditados. |
 | Erlang | Applicable | [`memento.erl`](../src/Functional/Erlang/patterns/memento.erl) | compile/run individual, BEAM gate verde | Terms inmutables como snapshot directamente auditado. |
 | Scala | Applicable | [`Memento.scala`](../src/Functional/Scala/patterns/Memento.scala) | PR #97 medium-high: JVM 117/117 ✅ | Valor snapshot y restauración; runner sólo orquesta. |
 | Clojure | Applicable | [`memento.clj`](../src/Functional/Clojure/patterns/memento.clj) | PR #97 medium-high: JVM 117/117 ✅ | `atom` como originador y valor desreferenciado como snapshot. |
-| Haskell | Applicable | — | pendiente | Auditar canónico heredado. |
+| Haskell | Applicable | [`Memento.hs`](../src/Functional/Haskell/Memento.hs) | `ghc -Wall -Werror -O0` compila el canónico vía import + aggregate 39/39 ejecuta `verifyMementoCanonical`; Polyglot CI ✅ en `2cb41c96` | Valores inmutables como snapshot; el sweep delega al canónico y el adapter raíz sólo resuelve el módulo. |
 | OCaml | Applicable | [`memento.ml`](../src/Functional/OCaml/patterns/memento.ml) | Functional family + Polyglot CI verde en `15568ed5` ✅ | `ref` mutable con snapshot de valor y restore. |
 | Lua | Applicable | [`memento.lua`](../src/Scripting/Lua/patterns/memento.lua) | `luac -p` + runtime + aggregate, Scripting gate verde | Tabla snapshot independiente. |
 | Perl | Applicable | — | pendiente | Auditar canónico heredado. |
