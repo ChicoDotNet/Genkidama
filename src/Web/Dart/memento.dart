@@ -3,7 +3,7 @@
 /// The originator owns snapshot creation and restoration. The caretaker keeps
 /// an opaque immutable value and never mutates the originator's internals.
 final class DocumentMemento {
-  const DocumentMemento(this.title, List<String> tags)
+  DocumentMemento(this.title, List<String> tags)
       : tags = List.unmodifiable(tags);
 
   final String title;
@@ -37,6 +37,13 @@ void verifyMementoCanonical() {
   if (document.title != 'published' ||
       document.tags.join(',') != 'pattern,edited') {
     throw StateError('live mutation was not observable');
+  }
+
+  try {
+    snapshot.tags.add('forbidden');
+    throw StateError('snapshot tags must be immutable');
+  } on UnsupportedError {
+    // Expected: the caretaker snapshot is immutable.
   }
 
   document.restore(snapshot);
