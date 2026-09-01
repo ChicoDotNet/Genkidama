@@ -3,51 +3,49 @@
 > **Familia:** Behavioral  
 > **Intención:** Capturar el estado restorable de un originador sin exponer ni trasladar arbitrariamente su responsabilidad de mutación.  
 > **Estado:** `in-progress`  
-> **Aplicabilidad:** `49/51` targets son Applicable; HTML y CSS son N/A con justificación técnica.  
-> **Inventario inicial:** la búsqueda factual en `dev` encuentra 33 archivos cuyo nombre contiene `memento` y 49 artefactos bajo `src/**` que mencionan Memento; ese conteo incluye sweeps/runners y por ello **no** se trata todavía como 49 canónicos KB-006.  
-> **Cobertura de pruebas:** `N/A` como porcentaje agregado; cada target debe usar compile/analyze/runtime o el contrato de fuente más fuerte razonable.  
+> **Implementaciones de lenguaje:** `5/49`  
+> **Cobertura de pruebas:** `N/A` como porcentaje agregado; los ejemplos standalone usan compile/analyze/runtime según el target.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
 ## En una frase
 
-Memento permite guardar una fotografía opaca o controlada del estado de un objeto, módulo, proceso o valor y restaurarla después sin entregar al caretaker permiso para editar los detalles internos del originador.
+Memento guarda una fotografía restorable del estado y permite devolverla al originador sin convertir al caretaker en dueño de sus internals.
 
 ## El problema
 
-Un editor, una configuración, una sesión o un agregado mutable puede necesitar `undo`, checkpoints o recuperación. Copiar campos desde fuera parece sencillo, pero convierte al consumidor en conocedor de la representación interna: cada cambio de estructura obliga a cambiar también el código de historial y la restauración puede violar invariantes.
+Undo, checkpoints y rollback local suelen tentar a copiar campos desde fuera del objeto o módulo. Eso rompe encapsulación: el historial conoce la representación, las restauraciones pueden violar invariantes y cada cambio interno obliga a cambiar también al caretaker.
 
-La presión real es conservar una versión anterior del estado **sin romper encapsulación ni transferir la propiedad de las reglas de restauración**.
+La presión es conservar un estado anterior suficiente para restaurar el comportamiento observable sin transferir la responsabilidad de captura/restauración fuera del originador.
 
 ## Fuerzas que compiten
 
-- El estado guardado debe ser suficiente para restaurar el comportamiento observable relevante.
-- El originador debe seguir siendo dueño de cómo captura y restaura su representación.
-- El caretaker necesita conservar, ordenar o descartar snapshots sin mutar sus internals arbitrariamente.
-- Copias profundas pueden ser costosas; copias superficiales pueden compartir referencias y dejar de ser snapshots reales.
-- En lenguajes inmutables, el patrón puede expresarse con valores persistentes en lugar de objetos mutables.
-- Persistencia durable, event sourcing y backup tienen requisitos adicionales que Memento por sí solo no resuelve.
+- El snapshot debe ser suficiente para restaurar el estado relevante.
+- El originador debe conservar las reglas de captura y restauración.
+- El caretaker necesita almacenar/seleccionar snapshots sin editar sus internals.
+- Una copia superficial puede compartir referencias y dejar de ser un snapshot real.
+- Una copia profunda puede ser costosa en memoria o IO.
+- Persistencia durable y event sourcing tienen requisitos distintos.
 
 ## La solución
 
-Separar tres responsabilidades conceptuales:
+Separar estado vivo, snapshot e historial. El originador crea y acepta el memento; el memento conserva la representación restorable; el caretaker sólo almacena o selecciona snapshots. La forma puede ser objeto, record, struct, tuple, map, valor persistente, fila versionada u otro mecanismo idiomático.
+
+## Participantes y responsabilidades
 
 | Participante | Responsabilidad |
 |---|---|
-| `Originator` | Poseer el estado vivo y las reglas para capturarlo/restaurarlo. |
-| `Memento` | Representar una fotografía restorable; puede ser objeto, record, struct, tuple, map, valor, bytes o mecanismo equivalente. |
-| `Caretaker` | Conservar snapshots e identificar cuál restaurar sin editar la representación interna del originador. |
-
-La esencia no exige una clase llamada `Memento`. Un valor inmutable, una closure, un record, una estructura, una fila versionada o una copia explícita pueden conservar la intención si existe una frontera clara entre estado vivo, snapshot e historial/restauración.
+| `Originator` | Poseer el estado vivo y definir `save/restore` o equivalente. |
+| `Memento` | Representar una fotografía restorable suficientemente aislada. |
+| `Caretaker` | Conservar y seleccionar snapshots sin conocer cómo mutar internals. |
 
 ## Cómo funciona
 
-1. El originador parte de un estado observable, por ejemplo `draft`.
-2. El originador produce un snapshot.
-3. El caretaker conserva ese snapshot sin alterar sus internals.
-4. El originador cambia a otro estado, por ejemplo `published`.
-5. El caretaker devuelve el snapshot elegido al originador.
-6. El originador restaura su estado y vuelve a producir el comportamiento observable previo.
-7. Si no existe snapshot válido, el ecosistema debe producir un failure mode explícito cuando sea razonable.
+1. El originador parte de un estado observable.
+2. Produce un snapshot.
+3. El caretaker lo conserva.
+4. El estado vivo cambia.
+5. El caretaker devuelve el snapshot seleccionado.
+6. El originador restaura y vuelve al comportamiento observable anterior.
 
 ## Diagrama
 
@@ -56,162 +54,162 @@ sequenceDiagram
     participant C as Caretaker
     participant O as Originator
     participant M as Memento
-
-    O->>O: state = "draft"
+    O->>O: state = draft
     C->>O: save()
-    O-->>C: Memento("draft")
-    C->>M: store(snapshot)
-    O->>O: state = "published"
-    C->>O: restore(snapshot)
-    O->>O: state = "draft"
+    O-->>C: Memento(draft)
+    O->>O: state = published
+    C->>O: restore(memento)
+    O->>O: state = draft
 ```
+
+El punto importante es que el caretaker transporta el snapshot; no reconstruye ni parchea por su cuenta la representación interna.
 
 ## Ejemplo mínimo
 
 ```text
 originator.state = "draft"
 snapshot = originator.save()
-history.push(snapshot)
-
 originator.state = "published"
-originator.restore(history.pop())
-
+originator.restore(snapshot)
 assert originator.state == "draft"
 ```
-
-El contrato importante no es el nombre de las funciones, sino que el snapshot represente un estado anterior real y la restauración vuelva al comportamiento observable anterior.
 
 ## Aplicación real
 
 ### Undo de un editor
 
-Un editor puede guardar snapshots antes de operaciones destructivas. El historial sólo conoce mementos; el editor conoce cómo reconstruir su estado. Esto evita que la pila de `undo` dependa de cada campo privado del documento.
-
-Memento encaja mejor cuando el costo de snapshot es aceptable y la restauración de un estado anterior es la necesidad central. Para historiales extensos o auditoría de dominio, Command reversible o event sourcing pueden ser más apropiados.
+Un editor puede guardar snapshots antes de operaciones destructivas. El historial conoce mementos, no cada campo privado del documento. Encaja cuando capturar/restaurar estado es razonablemente barato; para historiales extensos, auditoría o reconstrucción temporal puede convenir Command reversible o event sourcing.
 
 ## En Genkidama
 
-No se ha verificado un uso deliberado actual de Memento en la arquitectura productiva de Genkidama. Los ejemplos existentes bajo `src/**` son evidencia educativa y no justifican introducir el patrón en producción. Esta separación respeta la filosofía architecture-first del repositorio.
+No existe un uso deliberado verificado de Memento en la arquitectura productiva actual. Los artefactos bajo `src/**` son ejemplos educativos; no se fuerza el patrón en producción.
 
 ## Cuándo usarlo
 
-- Se necesita `undo`, checkpoint o rollback local de estado.
-- Exponer todos los campos al historial rompería encapsulación.
-- El originador puede definir de manera clara qué constituye un snapshot consistente.
-- El costo de capturar/restaurar es proporcional al problema.
+- Se necesita undo, checkpoint o rollback local de estado.
+- Exponer campos al historial rompería encapsulación.
+- El originador puede definir un snapshot consistente.
+- El costo de captura/restauración es proporcional al problema.
 
 ## Cuándo no usarlo
 
-- Una operación inversa pequeña y explícita es más barata y clara que copiar estado completo.
-- Se requiere auditoría durable, reconstrucción temporal o integración distribuida; event sourcing puede ser una intención distinta y más fuerte.
-- El snapshot copiaría recursos externos no restaurables (sockets, handles, transacciones abiertas) y daría una falsa garantía.
-- El caretaker necesita editar el contenido del snapshot: eso indica que la responsabilidad está mal ubicada.
+- Una operación inversa pequeña es más clara que copiar estado completo.
+- Se requiere auditoría durable o reconstrucción histórica de hechos.
+- El estado incluye recursos externos no restaurables como sockets o transacciones abiertas.
+- El caretaker necesita editar el contenido del snapshot.
 
 ## Consecuencias y trade-offs
 
 | A favor | Costo / riesgo |
 |---|---|
-| Conserva encapsulación de la representación. | Los snapshots pueden consumir memoria/IO significativo. |
-| Hace explícitos checkpoints y rollback. | Copias superficiales pueden conservar aliasing accidental. |
-| Permite historiales sin conocer internals. | Cambios de esquema pueden complicar snapshots persistidos. |
-| Funciona también con valores inmutables. | Puede confundirse con Prototype, Command o event sourcing. |
+| Conserva encapsulación. | Snapshots pueden consumir memoria/IO. |
+| Hace explícitos checkpoints y rollback. | Copias superficiales pueden conservar aliasing. |
+| Permite historiales independientes de internals. | Cambios de esquema complican snapshots persistidos. |
+| También funciona con valores inmutables. | Puede confundirse con Prototype, Command o event sourcing. |
 
-## Patrones relacionados y confusiones
+## Patrones relacionados
 
-| Patrón | Relación | Diferencia esencial |
+[Consulta también el mapa global de relaciones](README.md#relationship-map).
+
+| Patrón | Relación | Por qué importa |
 |---|---|---|
-| [Command](Command.md) | collaborates with | Command puede guardar un Memento antes de ejecutar y usarlo para undo; Command representa una petición, Memento representa estado. |
-| [Prototype](Prototype.md) | often confused with | Prototype crea un nuevo objeto a partir de otro; Memento conserva estado para restaurar un originador. |
-| [State](State.md) | often confused with | State cambia comportamiento mediante objetos/representaciones de estado; Memento captura una versión previa de ese estado. |
-| Event Sourcing | alternative at another scale | Event sourcing conserva eventos como fuente de verdad; Memento conserva snapshots de estado y no implica un log de hechos. |
+| [Command](Command.md) | collaborates with | Un Command puede guardar un Memento antes de ejecutar para soportar undo. |
+| [Prototype](Prototype.md) | often confused with | Prototype crea otro objeto; Memento conserva estado para restaurar un originador. |
+| [State](State.md) | often confused with | State modela comportamiento dependiente del estado; Memento captura una versión previa. |
 
-## Errores comunes
+## Errores comunes y confusiones
 
 ### Guardar una referencia mutable y llamarla snapshot
 
-Si el originador y el memento siguen apuntando al mismo objeto mutable, editar el estado vivo también cambia el supuesto snapshot. La verificación debe demostrar independencia suficiente para restaurar el valor anterior.
-
-### Convertir el caretaker en segundo originador
-
-El caretaker puede ordenar o seleccionar mementos, pero no debería conocer y parchear cada campo interno del estado.
+Si el estado vivo y el memento comparten el mismo objeto mutable, una mutación posterior altera también el supuesto snapshot. La evidencia debe demostrar independencia suficiente para restaurar el valor anterior.
 
 ### Confundir serialización con Memento
 
-Serializar datos es un mecanismo. Sólo demuestra Memento si el resultado representa un estado restorable y la responsabilidad de captura/restauración permanece correctamente ubicada.
+Serializar es sólo un mecanismo. Es Memento únicamente cuando representa estado restorable y mantiene correctamente las responsabilidades de captura/restauración.
 
 ## Cómo comprobar una implementación
 
 - Existe un estado inicial observable.
-- Se captura un snapshot antes de mutar el estado vivo.
+- El snapshot se captura antes de la mutación.
 - La mutación posterior no altera retroactivamente el snapshot.
-- Restaurar el snapshot devuelve el comportamiento/estado observable anterior.
-- El caretaker no necesita editar internals del originador.
-- Empty history, snapshot inválido o incompatibilidad de versión producen un resultado explícito cuando el target permite expresarlo razonablemente.
-- La prueba protege `save -> change -> restore`, no sólo la existencia de un tipo llamado `Memento`.
+- `save -> change -> restore` devuelve el estado observable anterior.
+- El caretaker no necesita parchear internals.
+- Snapshot inválido o historial vacío produce un failure mode explícito cuando sea razonable para el target.
 
 ## Implementaciones por lenguaje
 
-Esta tabla clasifica **todos los 51 targets actuales**. `Applicable` significa que el lenguaje puede expresar idiomáticamente captura + conservación + restauración; no implica todavía que el canónico individual haya sido auditado bajo KB-006. El siguiente trabajo del PR convierte el inventario heredado de sweeps en evidencia direccionable y verificada.
+La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un canónico individual que ya fue auditado y tiene evidencia repository-native ejecutada sobre el head revisado.
 
-| Lenguaje | Aplicabilidad | Evidencia / estado inicial |
-|---|---|---|
-| C# | Applicable | Auditar canónico heredado y gate. |
-| Python | Applicable | `pattern_sweep.py` contiene semántica Memento; requiere canónico individual KB-006. |
-| JavaScript | Applicable | [`memento.js`](../src/Web/JavaScriptJS/patterns/memento.js) descubierto en `dev`; auditar gate. |
-| COBOL | Applicable | Auditar canónico heredado y gate. |
-| Solidity | Applicable | Auditar canónico heredado y gate. |
-| TypeScript | Applicable | Auditar canónico heredado y gate. |
-| Java | Applicable | Auditar canónico heredado y gate. |
-| Go | Applicable | Auditar canónico heredado y gate. |
-| Rust | Applicable | Auditar canónico heredado y gate. |
-| PHP | Applicable | [`memento.php`](../src/Scripting/PHP/patterns/memento.php) descubierto en `dev`; auditar gate. |
-| Kotlin | Applicable | Auditar canónico heredado y gate. |
-| Swift | Applicable | Auditar canónico heredado y gate. |
-| C++ | Applicable | Auditar canónico heredado y gate. |
-| PowerShell | Applicable | [`memento.ps1`](../src/Scripting/PowerShell/patterns/memento.ps1) descubierto en `dev`; auditar gate. |
-| Ruby | Applicable | [`memento.rb`](../src/Scripting/Ruby/patterns/memento.rb) descubierto en `dev`; auditar gate. |
-| Dart | Applicable | Auditar canónico heredado y gate. |
-| C | Applicable | [`memento.c`](../src/Systems/C/patterns/memento.c) descubierto en `dev`; auditar gate. |
-| Visual Basic .NET | Applicable | Auditar canónico heredado y gate. |
-| F# | Applicable | Auditar canónico heredado y gate. |
-| R | Applicable | [`memento.R`](../src/DataScience/R/patterns/memento.R) descubierto en `dev`; auditar gate. |
-| Julia | Applicable | Auditar canónico heredado y gate. |
-| HTML | N/A | Markup declarativo estático: puede representar datos, pero no posee ciclo de estado ejecutable, captura y restauración. JavaScript asociado sería otro target. |
-| Shell / Bash | Applicable | [`memento.sh`](../src/Scripting/Bash/patterns/memento.sh) descubierto en `dev`; auditar gate. |
-| Elixir | Applicable | [`memento.exs`](../src/Functional/Elixir/patterns/memento.exs) descubierto en `dev`; auditar gate. |
-| Erlang | Applicable | [`memento.erl`](../src/Functional/Erlang/patterns/memento.erl) descubierto en `dev`; auditar gate. |
-| Scala | Applicable | Auditar canónico heredado y gate. |
-| Clojure | Applicable | [`memento.clj`](../src/Functional/Clojure/patterns/memento.clj) descubierto en `dev`; auditar gate. |
-| Haskell | Applicable | Auditar canónico heredado y gate. |
-| OCaml | Applicable | Auditar canónico heredado y gate. |
-| Lua | Applicable | Auditar canónico heredado y gate. |
-| Perl | Applicable | Auditar canónico heredado y gate. |
-| Groovy | Applicable | Auditar canónico heredado y gate. |
-| Fortran | Applicable | [`memento.f90`](../src/Systems/Fortran/patterns/memento.f90) descubierto en `dev`; auditar gate. |
-| Ada | Applicable | [`memento_pattern.adb`](../src/Systems/Ada/memento_pattern.adb) descubierto en `dev`; auditar gate. |
-| Pascal | Applicable | [`memento_pattern.pas`](../src/Systems/Pascal/memento_pattern.pas) descubierto en `dev`; auditar gate. |
-| Objective-C | Applicable | Auditar canónico heredado y gate. |
-| Nim | Applicable | Auditar canónico heredado y gate. |
-| Crystal | Applicable | Auditar canónico heredado y gate. |
-| Zig | Applicable | Auditar canónico heredado y gate. |
-| MATLAB | Applicable | [`memento.m`](../src/DataScience/MATLAB/memento.m) descubierto en `dev`; auditar gate. |
-| GDScript | Applicable | Valores/dictionaries y runtime permiten snapshots/restauración; canónico por materializar o localizar. |
-| Assembly | Applicable | Memoria/buffers permiten copiar y restaurar estado; canónico por materializar o localizar. |
-| Common Lisp | Applicable | Auditar canónico heredado y gate. |
-| Prolog | Applicable | Hechos/terms y predicados pueden conservar/restaurar una representación de estado; auditar canónico. |
-| VBA | Applicable | Auditar canónico heredado y gate. |
-| Delphi | Applicable | Objetos/records permiten snapshot/restauración; auditar canónico o materializar. |
-| GNU Octave | Applicable | [`memento.m`](../src/DataScience/Octave/patterns/memento.m) descubierto en `dev`; auditar gate. |
-| SQL declarativo | Applicable | Puede modelar snapshots como filas/versiones inmutables y restaurar estado mediante `INSERT/SELECT/UPDATE` declarativos; no requiere clases. Falta canónico individual y boundary de validación. |
-| CSS | N/A | Hoja declarativa de estilo: puede seleccionar/representar estados visuales, pero no captura, conserva y restaura estado arbitrario por sí misma. |
-| MicroPython | Applicable | Dicts/tuples/copias permiten snapshots/restauración; localizar o materializar canónico. |
-| Rockstar | Applicable | Variables y funciones permiten representar estado y snapshot; localizar o materializar canónico y validar con el runtime existente. |
+| Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
+|---|---|---|---|---|
+| C# | Applicable | — | pendiente | Auditar canónico heredado y gate. |
+| Python | Applicable | — | pendiente | Semántica vive aún en `pattern_sweep.py`; requiere extracción canónica. |
+| JavaScript | Applicable | [`memento.js`](../src/Web/JavaScriptJS/patterns/memento.js) | syntax + standalone + aggregate, Web gate verde | Snapshot inmutable y restore observable. |
+| COBOL | Applicable | — | pendiente | Auditar canónico heredado. |
+| Solidity | Applicable | — | pendiente | Auditar canónico heredado. |
+| TypeScript | Applicable | — | pendiente | Auditar canónico heredado. |
+| Java | Applicable | — | pendiente | Auditar canónico heredado. |
+| Go | Applicable | — | pendiente | Auditar canónico heredado. |
+| Rust | Applicable | — | pendiente | Auditar canónico heredado. |
+| PHP | Applicable | [`memento.php`](../src/Scripting/PHP/patterns/memento.php) | `php -l` + runtime + aggregate, Scripting gate verde | Objeto originador con `save/restore`. |
+| Kotlin | Applicable | — | pendiente | Auditar canónico heredado. |
+| Swift | Applicable | — | pendiente | Auditar canónico heredado. |
+| C++ | Applicable | — | pendiente | Auditar canónico heredado. |
+| PowerShell | Applicable | [`memento.ps1`](../src/Scripting/PowerShell/patterns/memento.ps1) | gate Data/Shell verde; auditoría directa pendiente | Canónico localizado; aún no contado. |
+| Ruby | Applicable | [`memento.rb`](../src/Scripting/Ruby/patterns/memento.rb) | `ruby -c` + runtime + aggregate, Scripting gate verde | Hash duplicado/congelado como snapshot. |
+| Dart | Applicable | — | pendiente | Auditar canónico heredado. |
+| C | Applicable | [`memento.c`](../src/Systems/C/patterns/memento.c) | pendiente | Canónico localizado; auditar gate. |
+| Visual Basic .NET | Applicable | — | pendiente | Auditar canónico heredado. |
+| F# | Applicable | — | pendiente | Auditar canónico heredado. |
+| R | Applicable | [`memento.R`](../src/DataScience/R/patterns/memento.R) | gate Data/Shell verde; auditoría directa pendiente | Canónico localizado; aún no contado. |
+| Julia | Applicable | — | pendiente | Auditar canónico heredado. |
+| HTML | N/A | — | — | Markup estático no posee ciclo ejecutable propio de captura/restauración; JavaScript sería otro target. |
+| Shell / Bash | Applicable | [`memento.sh`](../src/Scripting/Bash/patterns/memento.sh) | `bash -n` + runtime + aggregate, Scripting gate verde | Variables y funciones como originador/snapshot. |
+| Elixir | Applicable | [`memento.exs`](../src/Functional/Elixir/patterns/memento.exs) | pendiente | Canónico localizado; auditar gate. |
+| Erlang | Applicable | [`memento.erl`](../src/Functional/Erlang/patterns/memento.erl) | pendiente | Canónico localizado; auditar gate. |
+| Scala | Applicable | — | pendiente | Auditar canónico heredado. |
+| Clojure | Applicable | [`memento.clj`](../src/Functional/Clojure/patterns/memento.clj) | pendiente | Canónico localizado; auditar gate. |
+| Haskell | Applicable | — | pendiente | Auditar canónico heredado. |
+| OCaml | Applicable | — | pendiente | Auditar canónico heredado. |
+| Lua | Applicable | [`memento.lua`](../src/Scripting/Lua/patterns/memento.lua) | `luac -p` + runtime + aggregate, Scripting gate verde | Tabla snapshot independiente. |
+| Perl | Applicable | — | pendiente | Auditar canónico heredado. |
+| Groovy | Applicable | — | pendiente | Auditar canónico heredado. |
+| Fortran | Applicable | [`memento.f90`](../src/Systems/Fortran/patterns/memento.f90) | pendiente | Canónico localizado; auditar gate. |
+| Ada | Applicable | [`memento_pattern.adb`](../src/Systems/Ada/memento_pattern.adb) | pendiente | Canónico localizado; auditar gate. |
+| Pascal | Applicable | [`memento_pattern.pas`](../src/Systems/Pascal/memento_pattern.pas) | pendiente | Canónico localizado; auditar gate. |
+| Objective-C | Applicable | — | pendiente | Auditar canónico heredado. |
+| Nim | Applicable | — | pendiente | Auditar canónico heredado. |
+| Crystal | Applicable | — | pendiente | Auditar canónico heredado. |
+| Zig | Applicable | — | pendiente | Auditar canónico heredado. |
+| MATLAB | Applicable | [`memento.m`](../src/DataScience/MATLAB/memento.m) | pendiente | Canónico localizado; auditar gate. |
+| GDScript | Applicable | — | pendiente | Dictionaries/valores permiten snapshot y restore. |
+| Assembly | Applicable | — | pendiente | Memoria/buffers permiten copiar y restaurar estado. |
+| Common Lisp | Applicable | — | pendiente | Auditar canónico heredado. |
+| Prolog | Applicable | — | pendiente | Terms/hechos permiten representar snapshots. |
+| VBA | Applicable | — | pendiente | Auditar canónico heredado. |
+| Delphi | Applicable | — | pendiente | Records/objetos permiten snapshot/restauración. |
+| GNU Octave | Applicable | [`memento.m`](../src/DataScience/Octave/patterns/memento.m) | gate Data/Shell verde; auditoría directa pendiente | Canónico localizado; aún no contado. |
+| SQL declarativo | Applicable | — | pendiente | Filas/versiones inmutables pueden representar snapshot y restauración declarativa. |
+| CSS | N/A | — | — | Puede representar/selectar estados visuales, pero no captura, conserva y restaura estado arbitrario por sí misma. |
+| MicroPython | Applicable | — | pendiente | Dicts/tuples/copias permiten snapshot/restauración. |
+| Rockstar | Applicable | — | pendiente | Variables y funciones permiten preservar estado restorable. |
 
-## Inventario factual de arranque
+## Comprueba que lo entendiste
 
-La búsqueda remota en `dev@505f331b1d10644474beb55a8d8aeb1138fb791a` produce dos señales distintas que no deben confundirse:
+1. ¿Por qué una copia superficial que comparte referencias mutables puede fallar aunque `restore` exista?
+2. ¿Cuándo elegirías Command reversible en lugar de Memento para undo?
+3. ¿Por qué serializar un objeto no demuestra por sí solo que exista Memento?
 
-- `filename:memento` encuentra **33** archivos; son candidatos fuertes a canónico individual.
-- `memento path:src` encuentra **49** artefactos; incluye implementaciones embebidas en sweeps/runners, por lo que no satisface automáticamente KB-006.
+## Resumen
 
-El PR avanzará debt-first: primero se auditan los 33 canónicos ya direccionables y sus gates; después se extraen o materializan sólo los Applicable faltantes. No se duplicará una implementación válida ni se perseguirá coverage artificial.
+- Memento resuelve restauración de estado sin exponer internals al caretaker.
+- El originador sigue siendo dueño de captura y restore.
+- El costo principal es memoria/IO y manejo correcto de copias/versiones.
+- Command colabora frecuentemente; Prototype y State tienen intenciones distintas.
+- El patrón puede expresarse sin clases cuando el target ofrece valores, módulos, tablas, filas o mecanismos equivalentes.
+
+## Referencias
+
+- Gamma, Helm, Johnson, Vlissides, *Design Patterns: Elements of Reusable Object-Oriented Software*.
+- [`docs/philosophy/001-patterns-as-living-examples.md`](../docs/philosophy/001-patterns-as-living-examples.md)
+- [`docs/kb/catalog/pattern-authoring-standard.md`](../docs/kb/catalog/pattern-authoring-standard.md)
