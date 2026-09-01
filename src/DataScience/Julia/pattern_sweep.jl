@@ -70,7 +70,7 @@ subscribe!(subject::Subject, observer::Function) = push!(subject.observers, obse
 publish(subject::Subject, id::Int) = [observer(id) for observer in subject.observers]
 function observer_pattern()
     subject = Subject(); subscribe!(subject, id -> "audit:$id"); subscribe!(subject, id -> "dashboard:$id")
-    must(publish(subject, 42) == ["audit:42", "dashboard:$id"])
+    must(publish(subject, 42) == ["audit:42", "dashboard:42"])
 end
 
 # State
