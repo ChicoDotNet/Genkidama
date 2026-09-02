@@ -2,8 +2,8 @@
 
 > **Familia:** Behavioral  
 > **Intención:** Capturar el estado restorable de un originador sin exponer ni trasladar arbitrariamente su responsabilidad de mutación.  
-> **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `44/49`  
+> **Estado:** `validated`  
+> **Implementaciones de lenguaje:** `49/49`  
 > **Cobertura de pruebas:** `N/A` como porcentaje agregado; los ejemplos standalone usan compile/analyze/runtime según el target.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -138,7 +138,7 @@ Serializar es sólo un mecanismo. Es Memento únicamente cuando representa estad
 
 ## Implementaciones por lenguaje
 
-La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un canónico individual auditado con evidencia repository-native ejecutada; los cambios posteriores en su gate deben volver a cerrar verdes antes de declarar estabilidad del head actual. El cohort integrado por PR #97 aporta evidencia histórica explícita de **546/546** celdas verdes para sus 14 targets y el ledger `docs/pattern-sweeps/medium-high-cohort.md` sigue siendo autoritativo para esas celdas. El ledger `docs/pattern-sweeps/portable-functional-cohort.md` aporta otros 13 targets con canónicos individualmente direccionables y ownership Polyglot actual; en este patrón se reconcilian sus ocho celdas todavía pendientes sólo después de auditar el canónico y observar el gate verde del head revisado. MATLAB se acredita del mismo modo desde su ledger target-major y el Polyglot actual.
+La tabla clasifica los 51 targets actuales: **49 Applicable y 2 N/A**. Sólo se cuenta como implementado un canónico individual auditado con evidencia repository-native ejecutada. El cohort integrado por PR #97 aporta evidencia histórica explícita de **546/546** celdas verdes para sus 14 targets; los ledgers de sweeps siguen aportando trazabilidad histórica, y las celdas cerradas horizontalmente por este PR se acreditan sólo después de observar sus gates verdes. El head `a402f916` cerró Quality, Product CI y Polyglot CI en verde, incluido Platform para VBA, Delphi, SQL declarativo, MicroPython y Rockstar.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -186,13 +186,13 @@ La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un
 | Assembly | Applicable | [`memento.asm`](../src/LowLevel/Assembly/memento.asm) | NASM `-Wall` + `ld` + runtime exact-output; Polyglot CI ✅ en `9e8fc5b8` | Memoria explícita separa estado vivo y snapshot; exit 1 protege invariantes. |
 | Common Lisp | Applicable | [`memento.lisp`](../src/Functional/CommonLisp/patterns/memento.lisp) | Functional family + Polyglot CI verde en `15568ed5` ✅ | Binding snapshot separado y restauración explícita. |
 | Prolog | Applicable | [`memento.pl`](../src/Functional/Prolog/patterns/memento.pl) | Functional family + Polyglot CI verde en `15568ed5` ✅ | Term snapshot restaurado sin exigir objetos mutables. |
-| VBA | Applicable | — | pendiente | Auditar canónico heredado. |
-| Delphi | Applicable | — | pendiente | Records/objetos permiten snapshot/restauración. |
+| VBA | Applicable | [`memento.bas`](../src/Shell/VBA/memento.bas) | Source contract de responsabilidades + Platform ✅ en `a402f916` | `Type` por valor conserva snapshot independiente; Office/VBA runtime no está disponible razonablemente en hosted CI. |
+| Delphi | Applicable | [`Memento.pas`](../src/Enterprise/Delphi/Memento.pas) | Source contract de responsabilidades + Platform ✅ en `a402f916` | Record snapshot + originador `TDocument`; no hay compilador Delphi razonable en hosted CI. |
 | GNU Octave | Applicable | [`memento.m`](../src/DataScience/Octave/patterns/memento.m) | parse + runtime individual, Data/Shell gate verde | Snapshot/restauración directamente auditados. |
-| SQL declarativo | Applicable | — | pendiente | Filas/versiones inmutables pueden representar snapshot y restauración declarativa. |
+| SQL declarativo | Applicable | [`memento.sql`](../src/Data/SQL/memento.sql) | ejecución SQLite + exact-output `SQL Memento: passed`; Platform ✅ en `a402f916` | Relaciones/CTEs inmutables representan estado vivo, snapshot y restauración declarativa. |
 | CSS | N/A | — | — | Puede representar/selectar estados visuales, pero no captura, conserva y restaura estado arbitrario por sí misma. |
-| MicroPython | Applicable | — | pendiente | Dicts/tuples/copias permiten snapshot/restauración. |
-| Rockstar | Applicable | — | pendiente | Variables y funciones permiten preservar estado restorable. |
+| MicroPython | Applicable | [`memento.py`](../src/Other/MicroPython/memento.py) | MicroPython v1.28.0 runtime + invariantes; Platform ✅ en `a402f916` | Tuple snapshot + copia de tags; restore y anti-aliasing verificados. |
+| Rockstar | Applicable | [`memento.rock`](../src/Other/Rockstar/memento.rock) | Rockstar v2.0.31 runtime + exact-output; Platform ✅ en `a402f916` | Funciones/variables preservan snapshot y restauración sin forzar OOP. |
 
 ## Comprueba que lo entendiste
 
