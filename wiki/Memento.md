@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Capturar el estado restorable de un originador sin exponer ni trasladar arbitrariamente su responsabilidad de mutación.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `39/49`  
+> **Implementaciones de lenguaje:** `40/49`  
 > **Cobertura de pruebas:** `N/A` como porcentaje agregado; los ejemplos standalone usan compile/analyze/runtime según el target.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -177,7 +177,7 @@ La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un
 | Fortran | Applicable | [`memento.f90`](../src/Systems/Fortran/patterns/memento.f90) | PR #97 medium-high: GNU 156/156 ✅ | Valor fixed-length separado y restauración observable. |
 | Ada | Applicable | [`memento_pattern.adb`](../src/Systems/Ada/memento_pattern.adb) | PR #97 medium-high: GNU 156/156 ✅ | `Unbounded_String` snapshot separado; runner requiere el canónico. |
 | Pascal | Applicable | [`memento_pattern.pas`](../src/Systems/Pascal/memento_pattern.pas) | PR #97 medium-high: GNU 156/156 ✅ | Unidad direccionable con snapshot/restauración. |
-| Objective-C | Applicable | — | pendiente | Auditar canónico heredado. |
+| Objective-C | Applicable | [`memento.m`](../src/Systems/Objective-C/memento.m) | Clang/GNUstep `-Wall -Wextra -Werror` + aggregate 39/39; Polyglot CI ✅ en `629977a7` | `MementoSnapshot` + `MementoDocument`; el sweep ejecuta `verifyMementoCanonical` sin duplicación. |
 | Nim | Applicable | [`memento_example.nim`](../src/Niche/Nim/patterns/memento_example.nim) | PR #97 medium-high: Nim 39/39 ✅ | Valor snapshot separado; runner importa el módulo. |
 | Crystal | Applicable | [`memento.cr`](../src/Niche/Crystal/memento.cr) | `crystal tool format --check` + `crystal build --error-on-warnings` + aggregate 39/39 ejecuta `verify_memento_canonical`; Polyglot CI ✅ en `d4392afa` | Snapshot/restauración verificables; el sweep requiere y delega al canónico sin duplicación. |
 | Zig | Applicable | — | pendiente | Auditar canónico heredado. |
