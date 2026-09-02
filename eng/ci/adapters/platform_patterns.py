@@ -56,6 +56,9 @@ def validate_portable() -> None:
     for marker in ["Dark Button", "Dark Checkbox", "Light Button", "Light Checkbox"]:
         dc.require(marker in output.splitlines(), f"GDScript contract missing {marker}")
 
+    memento_output = dc.run([godot, "--headless", "--script", str(dc.ROOT / "src/Niche/GDScript/memento.gd")], capture=True)
+    dc.require("GDScript Memento: passed" in memento_output.splitlines(), "GDScript Memento contract failed")
+
     micropython = os.environ.get("GENKIDAMA_MICROPYTHON_BIN", "/tmp/micropython/ports/unix/build-standard/micropython")
     output = dc.run([micropython, str(dc.ROOT / "src/Other/MicroPython/example1.py")], capture=True)
     for marker in ["Dark Button", "Dark Checkbox", "Light Button", "Light Checkbox"]:
