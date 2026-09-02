@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Capturar el estado restorable de un originador sin exponer ni trasladar arbitrariamente su responsabilidad de mutación.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `40/49`  
+> **Implementaciones de lenguaje:** `42/49`  
 > **Cobertura de pruebas:** `N/A` como porcentaje agregado; los ejemplos standalone usan compile/analyze/runtime según el target.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -172,7 +172,7 @@ La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un
 | Haskell | Applicable | [`Memento.hs`](../src/Functional/Haskell/Memento.hs) | `ghc -Wall -Werror -O0` compila el canónico vía import + aggregate 39/39 ejecuta `verifyMementoCanonical`; Polyglot CI ✅ en `2cb41c96` | Valores inmutables como snapshot; el sweep delega al canónico y el adapter raíz sólo resuelve el módulo. |
 | OCaml | Applicable | [`memento.ml`](../src/Functional/OCaml/patterns/memento.ml) | Functional family + Polyglot CI verde en `15568ed5` ✅ | `ref` mutable con snapshot de valor y restore. |
 | Lua | Applicable | [`memento.lua`](../src/Scripting/Lua/patterns/memento.lua) | `luac -p` + runtime + aggregate, Scripting gate verde | Tabla snapshot independiente. |
-| Perl | Applicable | — | pendiente | Auditar canónico heredado. |
+| Perl | Applicable | [`memento.pl`](../src/Scripting/Perl/memento.pl) | `perl -c` + runtime directo; Scripting / Linux ✅ en `05119c0c` | Hash/arrayref snapshot profundo, restore y anti-aliasing verificados. |
 | Groovy | Applicable | [`memento.groovy`](../src/Functional/Groovy/patterns/memento.groovy) | JVM family + Polyglot CI verde en `15568ed5` ✅ | `clone()` separa el snapshot antes de restaurar. |
 | Fortran | Applicable | [`memento.f90`](../src/Systems/Fortran/patterns/memento.f90) | PR #97 medium-high: GNU 156/156 ✅ | Valor fixed-length separado y restauración observable. |
 | Ada | Applicable | [`memento_pattern.adb`](../src/Systems/Ada/memento_pattern.adb) | PR #97 medium-high: GNU 156/156 ✅ | `Unbounded_String` snapshot separado; runner requiere el canónico. |
@@ -180,7 +180,7 @@ La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un
 | Objective-C | Applicable | [`memento.m`](../src/Systems/Objective-C/memento.m) | Clang/GNUstep `-Wall -Wextra -Werror` + aggregate 39/39; Polyglot CI ✅ en `629977a7` | `MementoSnapshot` + `MementoDocument`; el sweep ejecuta `verifyMementoCanonical` sin duplicación. |
 | Nim | Applicable | [`memento_example.nim`](../src/Niche/Nim/patterns/memento_example.nim) | PR #97 medium-high: Nim 39/39 ✅ | Valor snapshot separado; runner importa el módulo. |
 | Crystal | Applicable | [`memento.cr`](../src/Niche/Crystal/memento.cr) | `crystal tool format --check` + `crystal build --error-on-warnings` + aggregate 39/39 ejecuta `verify_memento_canonical`; Polyglot CI ✅ en `d4392afa` | Snapshot/restauración verificables; el sweep requiere y delega al canónico sin duplicación. |
-| Zig | Applicable | — | pendiente | Auditar canónico heredado. |
+| Zig | Applicable | [`memento.zig`](../src/Systems/Zig/memento.zig) | direct canonical proof + `zig fmt --check` + aggregate 39/39; Long-tail ✅ en `05119c0c` | Struct snapshot; el sweep delega a `verifyMementoCanonical` sin duplicación. |
 | MATLAB | Applicable | [`memento.m`](../src/DataScience/MATLAB/memento.m) | MATLAB family + Polyglot CI verde en `15568ed5` ✅ | `struct` snapshot separado con `saveState/restoreState`. |
 | GDScript | Applicable | — | pendiente | Dictionaries/valores permiten snapshot y restore. |
 | Assembly | Applicable | — | pendiente | Memoria/buffers permiten copiar y restaurar estado. |
