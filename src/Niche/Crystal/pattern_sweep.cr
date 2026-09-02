@@ -1,3 +1,5 @@
+require "./memento"
+
 def must(value : Bool)
   raise "pattern assertion failed" unless value
 end
@@ -96,27 +98,7 @@ def mediator_pattern
   must(m.events.join(">") == "panel.refresh>button.enable")
 end
 
-# Memento
-record EditorMemento, state : String
-
-class Editor
-  property state : String
-
-  def initialize(@state : String); end
-
-  def save : EditorMemento
-    EditorMemento.new(@state)
-  end
-
-  def restore(m : EditorMemento)
-    @state = m.state
-  end
-end
-
-def memento_pattern
-  e = Editor.new("draft"); snapshot = e.save; e.state = "published"
-  must(e.state == "published"); e.restore(snapshot); must(e.state == "draft")
-end
+# Memento is delegated to the individually addressable canonical required above.
 
 # Observer
 class Subject
@@ -709,7 +691,7 @@ patterns = [
 ]
 must(patterns.size == 39)
 
-command_pattern; interpreter_pattern; iterator_pattern; mediator_pattern; memento_pattern; observer_pattern; state_pattern; strategy_pattern; template_method_pattern; visitor_pattern
+command_pattern; interpreter_pattern; iterator_pattern; mediator_pattern; verify_memento_canonical; observer_pattern; state_pattern; strategy_pattern; template_method_pattern; visitor_pattern
 mvc_pattern; mvvm_pattern; microkernel_pattern; microservices_pattern; enterprise_adapter_pattern; enterprise_bridge_pattern; enterprise_facade_pattern; broker_pattern; message_bus_pattern; service_locator_pattern
 active_object_pattern; monitor_object_pattern; half_sync_half_async_pattern; leader_followers_pattern; client_server_pattern; peer_to_peer_pattern; publish_subscribe_pattern; distributed_proxy_pattern
 presentation_abstraction_control_pattern; model_view_presenter_pattern; document_view_pattern; active_record_pattern; data_mapper_pattern; unit_of_work_pattern; repository_pattern

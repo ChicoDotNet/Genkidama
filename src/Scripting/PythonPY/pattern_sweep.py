@@ -9,6 +9,8 @@ from collections import deque
 from dataclasses import dataclass
 from typing import Callable
 
+from memento import verify_memento
+
 
 def command() -> None:
     balance = {"value": 100}
@@ -58,15 +60,6 @@ def mediator() -> None:
 
     Mediator().send("checkout", "paid")
     assert events == [("checkout", "paid")]
-
-
-def memento() -> None:
-    state = {"text": "draft"}
-    snapshot = state.copy()
-    state["text"] = "edited"
-    state.clear()
-    state.update(snapshot)
-    assert state["text"] == "draft"
 
 
 def observer() -> None:
@@ -418,7 +411,7 @@ CHECKS = [
     interpreter,
     iterator,
     mediator,
-    memento,
+    verify_memento,
     observer,
     state,
     strategy,

@@ -5,6 +5,7 @@ import Control.Concurrent.MVar
 import Control.Monad (forM_)
 import Data.List (intercalate)
 import Data.Maybe (fromMaybe)
+import qualified Memento as Memento
 
 must :: Bool -> IO ()
 must True = pure ()
@@ -45,13 +46,6 @@ mediate "panel" "loaded" = ["button.enable"]
 mediate _ _ = []
 mediatorCase :: Bool
 mediatorCase = mediate "button" "click" ++ mediate "panel" "loaded" == ["panel.refresh","button.enable"]
-
--- Memento
-newtype EditorMemento = EditorMemento String
-restoreEditor :: EditorMemento -> String
-restoreEditor (EditorMemento s) = s
-mementoCase :: Bool
-mementoCase = let original="draft"; snapshot=EditorMemento original; changed="published" in changed=="published" && restoreEditor snapshot=="draft"
 
 -- Observer
 type Observer = Int -> String
@@ -305,7 +299,7 @@ nullObjectCase :: Bool
 nullObjectCase = let real msg="logged:"++msg; nullLogger _="" in real "processed:item-1"=="logged:processed:item-1" && nullLogger "processed:item-1"==""
 
 pureCases :: [Bool]
-pureCases = [ commandCase, interpreterCase, iteratorCase, mediatorCase, mementoCase, observerCase, stateCase, strategyCase, templateMethodCase, visitorCase
+pureCases = [ commandCase, interpreterCase, iteratorCase, mediatorCase, Memento.verifyMementoCanonical, observerCase, stateCase, strategyCase, templateMethodCase, visitorCase
             , mvcCase, mvvmCase, microkernelCase, microservicesCase, enterpriseAdapterCase, enterpriseBridgeCase, enterpriseFacadeCase, brokerCase, messageBusCase, serviceLocatorCase
             , activeObjectCase, halfSyncHalfAsyncCase, leaderFollowersCase, clientServerCase, peerToPeerCase, publishSubscribeCase, distributedProxyCase, pacCase, mvpCase, documentViewCase
             , activeRecordCase, dataMapperCase, unitOfWorkCase, repositoryCase, dependencyInjectionCase, lazyInitializationCase, objectPoolCase, nullObjectCase ]

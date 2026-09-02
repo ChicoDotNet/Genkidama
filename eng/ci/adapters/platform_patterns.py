@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import sqlite3
 import sys
 import tempfile
 from pathlib import Path
@@ -19,6 +20,7 @@ ASSEMBLY_CONTRACTS: dict[str, str] = {
     "facade.asm": "checkout=auth(alice)>reserve(SKU-42)>charge(499)",
     "factory_method.asm": "PostgreSQL connect\nPostgreSQL query\nMySQL connect\nMySQL query",
     "flyweight.asm": "styles=2;shared=true;text=ABC",
+    "memento.asm": "Assembly Memento: passed",
     "prototype.asm": "original=orders: metrics\nclone=orders-canary: metrics,tracing",
     "proxy.asm": "backend=1;fetches=1;first=doc(42);second=doc(42)",
     "singleton.asm": "same=true\ncount=1",
@@ -47,25 +49,44 @@ def validate_assembly() -> None:
             print(f"PASS Assembly {filename}", flush=True)
 
 
+def validate_sql_memento() -> None:
+    source = (dc.ROOT / "src/Data/SQL/memento.sql").read_text(encoding="utf-8")
+    connection = sqlite3.connect(":memory:")
+    try:
+        row = connection.execute(source).fetchone()
+    finally:
+        connection.close()
+    dc.require(row == ("SQL Memento: passed",), f"SQL Memento contract failed: {row!r}")
+    print("PASS SQL memento.sql", flush=True)
+
+
 def validate_portable() -> None:
     dc.run([sys.executable, "eng/ci/adapters/platform_source_contracts.py"])
     validate_assembly()
+    validate_sql_memento()
 
     godot = os.environ.get("GENKIDAMA_GODOT_BIN", "godot")
     output = dc.run([godot, "--headless", "--script", str(dc.ROOT / "src/Niche/GDScript/example1.gd")], capture=True)
     for marker in ["Dark Button", "Dark Checkbox", "Light Button", "Light Checkbox"]:
         dc.require(marker in output.splitlines(), f"GDScript contract missing {marker}")
 
+    memento_output = dc.run([godot, "--headless", "--script", str(dc.ROOT / "src/Niche/GDScript/memento.gd")], capture=True)
+    dc.require("GDScript Memento: passed" in memento_output.splitlines(), "GDScript Memento contract failed")
+
     micropython = os.environ.get("GENKIDAMA_MICROPYTHON_BIN", "/tmp/micropython/ports/unix/build-standard/micropython")
     output = dc.run([micropython, str(dc.ROOT / "src/Other/MicroPython/example1.py")], capture=True)
     for marker in ["Dark Button", "Dark Checkbox", "Light Button", "Light Checkbox"]:
         dc.require(marker in output.splitlines(), f"MicroPython contract missing {marker}")
+    memento_output = dc.run([micropython, str(dc.ROOT / "src/Other/MicroPython/memento.py")], capture=True)
+    dc.require("MicroPython Memento: passed" in memento_output.splitlines(), "MicroPython Memento contract failed")
 
     rockstar = os.environ.get("GENKIDAMA_ROCKSTAR_BIN")
     dc.require(bool(rockstar), "GENKIDAMA_ROCKSTAR_BIN is required")
     output = dc.run([rockstar, str(dc.ROOT / "src/Other/Rockstar/example1.rock")], capture=True)
     for marker in ["Dark Button", "Dark Checkbox", "Light Button", "Light Checkbox"]:
         dc.require(marker in output.splitlines(), f"Rockstar contract missing {marker}")
+    memento_output = dc.run([rockstar, str(dc.ROOT / "src/Other/Rockstar/memento.rock")], capture=True)
+    dc.require("Rockstar Memento: passed" in memento_output.splitlines(), "Rockstar Memento contract failed")
 
 
 def main() -> int:
