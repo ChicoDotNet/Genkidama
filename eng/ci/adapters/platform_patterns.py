@@ -19,6 +19,7 @@ ASSEMBLY_CONTRACTS: dict[str, str] = {
     "facade.asm": "checkout=auth(alice)>reserve(SKU-42)>charge(499)",
     "factory_method.asm": "PostgreSQL connect\nPostgreSQL query\nMySQL connect\nMySQL query",
     "flyweight.asm": "styles=2;shared=true;text=ABC",
+    "memento.asm": "Assembly Memento: passed",
     "prototype.asm": "original=orders: metrics\nclone=orders-canary: metrics,tracing",
     "proxy.asm": "backend=1;fetches=1;first=doc(42);second=doc(42)",
     "singleton.asm": "same=true\ncount=1",
