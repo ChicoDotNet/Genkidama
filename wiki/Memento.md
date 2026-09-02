@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Capturar el estado restorable de un originador sin exponer ni trasladar arbitrariamente su responsabilidad de mutación.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `42/49`  
+> **Implementaciones de lenguaje:** `44/49`  
 > **Cobertura de pruebas:** `N/A` como porcentaje agregado; los ejemplos standalone usan compile/analyze/runtime según el target.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -182,8 +182,8 @@ La tabla clasifica los 51 targets actuales. Sólo se cuenta como implementado un
 | Crystal | Applicable | [`memento.cr`](../src/Niche/Crystal/memento.cr) | `crystal tool format --check` + `crystal build --error-on-warnings` + aggregate 39/39 ejecuta `verify_memento_canonical`; Polyglot CI ✅ en `d4392afa` | Snapshot/restauración verificables; el sweep requiere y delega al canónico sin duplicación. |
 | Zig | Applicable | [`memento.zig`](../src/Systems/Zig/memento.zig) | direct canonical proof + `zig fmt --check` + aggregate 39/39; Long-tail ✅ en `05119c0c` | Struct snapshot; el sweep delega a `verifyMementoCanonical` sin duplicación. |
 | MATLAB | Applicable | [`memento.m`](../src/DataScience/MATLAB/memento.m) | MATLAB family + Polyglot CI verde en `15568ed5` ✅ | `struct` snapshot separado con `saveState/restoreState`. |
-| GDScript | Applicable | — | pendiente | Dictionaries/valores permiten snapshot y restore. |
-| Assembly | Applicable | — | pendiente | Memoria/buffers permiten copiar y restaurar estado. |
+| GDScript | Applicable | [`memento.gd`](../src/Niche/GDScript/memento.gd) | Godot 4.6.3 headless + invariantes runtime; Platform ✅ en `31021247` | Dictionary snapshot profundo; restore y anti-aliasing verificados. |
+| Assembly | Applicable | [`memento.asm`](../src/LowLevel/Assembly/memento.asm) | NASM `-Wall` + `ld` + runtime exact-output; Polyglot CI ✅ en `9e8fc5b8` | Memoria explícita separa estado vivo y snapshot; exit 1 protege invariantes. |
 | Common Lisp | Applicable | [`memento.lisp`](../src/Functional/CommonLisp/patterns/memento.lisp) | Functional family + Polyglot CI verde en `15568ed5` ✅ | Binding snapshot separado y restauración explícita. |
 | Prolog | Applicable | [`memento.pl`](../src/Functional/Prolog/patterns/memento.pl) | Functional family + Polyglot CI verde en `15568ed5` ✅ | Term snapshot restaurado sin exigir objetos mutables. |
 | VBA | Applicable | — | pendiente | Auditar canónico heredado. |
