@@ -1,12 +1,16 @@
 #import "memento.h"
 #import <stdio.h>
 
-@interface MementoSnapshot : NSObject
+@interface MementoSnapshot : NSObject {
+    NSString *_state;
+}
 @property(nonatomic, copy, readonly) NSString *state;
 - (instancetype)initWithState:(NSString *)state;
 @end
 
 @implementation MementoSnapshot
+@synthesize state = _state;
+
 - (instancetype)initWithState:(NSString *)state {
     if ((self = [super init])) {
         _state = [state copy];
@@ -15,7 +19,9 @@
 }
 @end
 
-@interface MementoDocument : NSObject
+@interface MementoDocument : NSObject {
+    NSString *_state;
+}
 @property(nonatomic, copy) NSString *state;
 - (instancetype)initWithState:(NSString *)state;
 - (MementoSnapshot *)save;
@@ -23,6 +29,8 @@
 @end
 
 @implementation MementoDocument
+@synthesize state = _state;
+
 - (instancetype)initWithState:(NSString *)state {
     if ((self = [super init])) {
         _state = [state copy];
