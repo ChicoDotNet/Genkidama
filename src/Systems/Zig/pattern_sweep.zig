@@ -1,4 +1,5 @@
 const std = @import("std");
+const memento = @import("memento.zig");
 
 // Command
 const BalanceCommand = struct {
@@ -67,16 +68,7 @@ fn mediatorPattern() bool {
     return mediate(.button, .click) == .panel_refresh and mediate(.panel, .loaded) == .button_enable;
 }
 
-// Memento
-const Editor = struct { state: enum { draft, published } };
-fn mementoPattern() bool {
-    var editor = Editor{ .state = .draft };
-    const snapshot = editor;
-    editor.state = .published;
-    if (editor.state != .published) return false;
-    editor = snapshot;
-    return editor.state == .draft;
-}
+// Memento is delegated to the individually addressable canonical imported above.
 
 // Observer
 fn auditObserver(id: i32) i32 {
@@ -547,10 +539,10 @@ fn nullObjectPattern() bool {
 
 pub fn main() void {
     const cases = [_]*const fn () bool{
-        commandPattern,      interpreterPattern,   iteratorPattern,          mediatorPattern,        mementoPattern,           observerPattern,            statePattern,              strategyPattern,         templateMethodPattern,                 visitorPattern,
-        mvcPattern,          mvvmPattern,          microkernelPattern,       microservicesPattern,   enterpriseAdapterPattern, enterpriseBridgePattern,    enterpriseFacadePattern,   brokerPattern,           messageBusPattern,                     serviceLocatorPattern,
-        activeObjectPattern, monitorObjectPattern, halfSyncHalfAsyncPattern, leaderFollowersPattern, clientServerPattern,      peerToPeerPattern,          publishSubscribePattern,   distributedProxyPattern, presentationAbstractionControlPattern, modelViewPresenterPattern,
-        documentViewPattern, activeRecordPattern,  dataMapperPattern,        unitOfWorkPattern,      repositoryPattern,        dependencyInjectionPattern, lazyInitializationPattern, objectPoolPattern,       nullObjectPattern,
+        commandPattern,      interpreterPattern,   iteratorPattern,          mediatorPattern,        memento.verifyMementoCanonical, observerPattern,            statePattern,              strategyPattern,         templateMethodPattern,                 visitorPattern,
+        mvcPattern,          mvvmPattern,          microkernelPattern,       microservicesPattern,   enterpriseAdapterPattern,       enterpriseBridgePattern,    enterpriseFacadePattern,   brokerPattern,           messageBusPattern,                     serviceLocatorPattern,
+        activeObjectPattern, monitorObjectPattern, halfSyncHalfAsyncPattern, leaderFollowersPattern, clientServerPattern,            peerToPeerPattern,          publishSubscribePattern,   distributedProxyPattern, presentationAbstractionControlPattern, modelViewPresenterPattern,
+        documentViewPattern, activeRecordPattern,  dataMapperPattern,        unitOfWorkPattern,      repositoryPattern,              dependencyInjectionPattern, lazyInitializationPattern, objectPoolPattern,       nullObjectPattern,
     };
     std.debug.assert(cases.len == 39);
     for (cases) |case| std.debug.assert(case());
