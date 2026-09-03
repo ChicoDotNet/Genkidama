@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -isrc/Functional/Haskell #-}
 module Main where
 
 import Control.Concurrent (forkIO)
@@ -5,6 +6,7 @@ import Control.Concurrent.MVar
 import Control.Monad (forM_)
 import Data.List (intercalate)
 import Data.Maybe (fromMaybe)
+import qualified Observer
 
 must :: Bool -> IO ()
 must True = pure ()
@@ -54,11 +56,8 @@ mementoCase :: Bool
 mementoCase = let original="draft"; snapshot=EditorMemento original; changed="published" in changed=="published" && restoreEditor snapshot=="draft"
 
 -- Observer
-type Observer = Int -> String
-publish :: [Observer] -> Int -> [String]
-publish observers value = map ($ value) observers
 observerCase :: Bool
-observerCase = publish [("audit:"++) . show, ("dashboard:"++) . show] 42 == ["audit:42","dashboard:42"]
+observerCase = Observer.examplePasses
 
 -- State
 data GateState = Locked | Unlocked deriving (Eq, Show)
