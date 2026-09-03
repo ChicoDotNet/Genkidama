@@ -18,6 +18,12 @@ def main() -> int:
     py = dc.ROOT / "src/Scripting/PythonPY/pattern_sweep.py"
     dc.run([sys.executable, "-m", "py_compile", str(py)])
     dc.run([sys.executable, "-B", str(py)])
+    python_observer = dc.ROOT / "src/Scripting/PythonPY/observer.py"
+    dc.run([sys.executable, "-m", "py_compile", str(python_observer)])
+    dc.require(
+        dc.last_line(dc.run([sys.executable, "-B", str(python_observer)], capture=True)) == "Python Observer: passed",
+        "Python Observer canonical output mismatch",
+    )
 
     ruby_files = dc.exact_glob(dc.ROOT / "src/Scripting/Ruby/patterns", "*.rb", "Ruby")
     for source in ruby_files:
