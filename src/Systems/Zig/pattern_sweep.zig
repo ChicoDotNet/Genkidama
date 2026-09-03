@@ -1,4 +1,5 @@
 const std = @import("std");
+const observer = @import("observer.zig");
 
 // Command
 const BalanceCommand = struct {
@@ -79,15 +80,8 @@ fn mementoPattern() bool {
 }
 
 // Observer
-fn auditObserver(id: i32) i32 {
-    return id + 1;
-}
-fn dashboardObserver(id: i32) i32 {
-    return id + 2;
-}
 fn observerPattern() bool {
-    const observers = [_]*const fn (i32) i32{ auditObserver, dashboardObserver };
-    return observers[0](42) == 43 and observers[1](42) == 44;
+    return observer.examplePasses();
 }
 
 // State
