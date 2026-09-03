@@ -112,23 +112,8 @@ func mementoPattern() {
 	must(e.state == "draft")
 }
 
-// Observer: subject knows callbacks, not concrete observers.
-type subject struct{ observers []func(int) string }
-
-func (s *subject) subscribe(f func(int) string) { s.observers = append(s.observers, f) }
-func (s subject) publish(id int) []string {
-	out := []string{}
-	for _, f := range s.observers {
-		out = append(out, f(id))
-	}
-	return out
-}
-func observerPattern() {
-	s := subject{}
-	s.subscribe(func(id int) string { return fmt.Sprintf("audit:%d", id) })
-	s.subscribe(func(id int) string { return fmt.Sprintf("dashboard:%d", id) })
-	must(fmt.Sprint(s.publish(42)) == "[audit:42 dashboard:42]")
-}
+// Observer: the sweep delegates to the individually addressable canonical example.
+func observerPattern() { must(observerExamplePasses()) }
 
 // State: behavior/transition are delegated to the current state value.
 type gateState string
