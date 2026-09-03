@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Notificar a múltiples dependientes cuando cambia un subject sin acoplarlo a las implementaciones concretas de esos dependientes.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `37/49` materializadas; `36/49` verificadas  
+> **Implementaciones de lenguaje:** `38/49` materializadas; `37/49` verificadas  
 > **Cobertura de pruebas:** N/A — la matriz standalone usa compile/analyze/runtime/source contracts por ecosistema; no existe un porcentaje agregado significativo.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -174,13 +174,13 @@ La tabla es autoritativa para la completitud final. Un sweep o función embebida
 | F# | Applicable | [`Observer.fsx`](../src/Functional/F%23/patterns/Observer.fsx) | repository-native | Canónico existente. |
 | Crystal | Applicable | [`observer.cr`](../src/Niche/Crystal/observer.cr) | Crystal format/build/runtime en Long-tail | Verificado en `8f91de5a...`; sweep delega al canónico. |
 | Lua | Applicable | [`observer.lua`](../src/Scripting/Lua/patterns/observer.lua) | `luac -p` + runtime | Canónico existente. |
-| Haskell | Applicable | [`Observer.hs`](../src/Functional/Haskell/Observer.hs) | VERIFY pendiente: `ghc -Wall -Werror` + runtime en Long-tail | Canónico funcional materializado; sweep delega a `Observer.examplePasses`. |
+| Haskell | Applicable | [`Observer.hs`](../src/Functional/Haskell/Observer.hs) | `ghc -Wall -Werror` + runtime en Long-tail | Verificado en `a26b0054...`; sweep delega a `Observer.examplePasses`. |
 | COBOL | Applicable | [`observer_pattern.cpy`](../src/Historical/Cobol/patterns/observer_pattern.cpy) | repository-native | Canónico existente. |
 | Scala | Applicable | [`Observer.scala`](../src/Functional/Scala/patterns/Observer.scala) | repository-native | Canónico existente. |
 | Groovy | Applicable | [`observer.groovy`](../src/Functional/Groovy/patterns/observer.groovy) | runtime JVM cohort | Canónico existente. |
 | Ruby | Applicable | [`observer.rb`](../src/Scripting/Ruby/patterns/observer.rb) | repository-native | Canónico existente. |
 | C | Applicable | [`observer.c`](../src/Systems/C/patterns/observer.c) | `gcc-14 -std=c23 -Wall -Wextra -Werror` + runtime | Canónico existente. |
-| OCaml | Applicable | — | — | Falta canónico direccionable. |
+| OCaml | Applicable | [`observer.ml`](../src/Functional/OCaml/patterns/observer.ml) | VERIFY pendiente: `ocamlc -w +a-70 -warn-error +a-70` + runtime sobre OCaml 5.5.0 | Canónico funcional reforzado; 4.14.1 ya pasó, pero KB-006 exige certificar el toolchain estable actual. |
 | Julia | Applicable | — | — | El sweep no sustituye al canónico. |
 | VBA | Applicable | — | — | Callbacks, eventos o colecciones de handlers permiten Observer. |
 | GDScript | Applicable | — | — | Signals/callables son mecanismos idiomáticos. |
@@ -204,7 +204,7 @@ La tabla es autoritativa para la completitud final. Un sweep o función embebida
 | MicroPython | Applicable | — | — | Callbacks/listas de funciones permiten Observer. |
 | Rockstar | Applicable | — | — | Funciones y estado explícito pueden modelar publisher/subscribers. |
 
-**Conteo factual:** 36 canónicos están verificados y Haskell es el canónico materializado número 37. Haskell no eleva el contador verificado hasta que el gate Long-tail pase sobre el head que importa y ejecuta `Observer.examplePasses` desde el sweep.
+**Conteo factual:** 38 canónicos están materializados y 37 están verificados. Haskell quedó certificado en `a26b0054...`; OCaml es el canónico materializado número 38 y permanece bajo VERIFY hasta que el gate Functional pase con OCaml 5.5.0 estable actual.
 
 ## Comprueba que lo entendiste
 
