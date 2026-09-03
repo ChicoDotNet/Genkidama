@@ -82,7 +82,7 @@ classDiagram
 | Objective-C | Applicable | [`observer.m`](../src/Systems/Objective-C/observer.m) | Clang/GNUstep `-Wall -Wextra -Werror` + runtime por delegación desde Long-tail. |
 | Java | Applicable | [`observer.java`](../src/Enterprise/Java/patterns/observer.java) | `javac -Xlint:all -Werror` + runtime en JVM Patterns. |
 | Rust | Applicable | [`observer.rs`](../src/Systems/Rust/patterns/observer.rs) | `rustc --edition=2024 -D warnings` + runtime en Native Patterns. |
-| Zig | Applicable | — | El sweep no sustituye al canónico. |
+| Zig | Applicable | [`observer.zig`](../src/Systems/Zig/observer.zig) | Materializado; el sweep delega al canónico. VERIFY pendiente en Long-tail (`zig fmt --check` + `zig run`). |
 | Go | Applicable | — | El sweep no sustituye al canónico. |
 | PHP | Applicable | [`observer.php`](../src/Scripting/PHP/patterns/observer.php) | Canónico existente. |
 | Nim | Applicable | [`observer_example.nim`](../src/Niche/Nim/patterns/observer_example.nim) | Canónico existente. |
@@ -122,7 +122,7 @@ classDiagram
 | MicroPython | Applicable | — | Callbacks/listas de funciones permiten Observer; falta canónico. |
 | Rockstar | Applicable | — | Funciones y estado explícito pueden modelar publisher/subscribers; falta canónico. |
 
-**Conteo factual actual:** 32 canónicos direccionables y verificados / 49 targets Applicable. El inventario inicial subcontaba C, C++, Rust, Java, Groovy y Lua, que ya existían y estaban cubiertos por adapters repository-native; Python y Objective-C se añadieron/certificaron en este lane. Las funciones embebidas en sweeps sólo sirven como evidencia histórica y no elevan este contador.
+**Conteo factual actual:** 32 canónicos direccionables y verificados / 49 targets Applicable; Zig está materializado y enlazado pero no eleva el contador hasta que el gate Long-tail certifique el SHA que delega al canónico. El inventario inicial subcontaba C, C++, Rust, Java, Groovy y Lua, que ya existían y estaban cubiertos por adapters repository-native; Python y Objective-C se añadieron/certificaron en este lane. Las funciones embebidas en sweeps sólo sirven como evidencia histórica y no elevan este contador.
 
 ## En Genkidama
 
