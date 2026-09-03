@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 EXPECTED = 39
-EXPECTED_OCAML = "4.14.1"
+EXPECTED_OCAML = "5.5.0"
 EXPECTED_SBCL_PREFIX = "SBCL 2.2.9"
 EXPECTED_SWIPL_PREFIX = "SWI-Prolog version 9.0.4"
 
