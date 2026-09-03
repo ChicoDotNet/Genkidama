@@ -4,7 +4,7 @@
 > **Estándar:** [KB-006 — Pattern Authoring Standard](../docs/kb/catalog/pattern-authoring-standard.md)  
 > **Universo canónico:** 51 targets  
 > **Aplicabilidad:** 49 `Applicable` / 2 `N/A`  
-> **Implementaciones canónicas verificables ya existentes al iniciar este lane:** 24/49
+> **Implementaciones canónicas verificadas:** 30/49
 
 ## Problema
 
@@ -76,12 +76,12 @@ classDiagram
 | Solidity | Applicable | [`Observer.sol`](../src/Niche/Solidity/patterns/Observer.sol) | Canónico existente. |
 | Fortran | Applicable | [`observer.f90`](../src/Systems/Fortran/patterns/observer.f90) | Canónico existente. |
 | Pascal | Applicable | [`observer_pattern.pas`](../src/Systems/Pascal/observer_pattern.pas) | Canónico existente. |
-| Python | Applicable | — | El sweep contiene una demostración, pero falta canónico direccionable. |
+| Python | Applicable | [`observer.py`](../src/Scripting/PythonPY/observer.py) | `py_compile` + runtime + sentinel en Scripting / Linux. |
 | VB.NET | Applicable | [`Observer.vb`](../src/Enterprise/VB.NET/patterns/Observer.vb) | Canónico existente. |
-| C++ | Applicable | — | Falta canónico direccionable. |
+| C++ | Applicable | [`observer.cpp`](../src/Systems/C%2B%2B/patterns/observer.cpp) | `g++-14 -std=c++23 -Wall -Wextra -Werror` + runtime en Native Patterns. |
 | Objective-C | Applicable | — | El sweep no sustituye al canónico. |
-| Java | Applicable | — | Falta canónico direccionable. |
-| Rust | Applicable | — | Falta canónico direccionable. |
+| Java | Applicable | [`observer.java`](../src/Enterprise/Java/patterns/observer.java) | `javac -Xlint:all -Werror` + runtime en JVM Patterns. |
+| Rust | Applicable | [`observer.rs`](../src/Systems/Rust/patterns/observer.rs) | `rustc --edition=2024 -D warnings` + runtime en Native Patterns. |
 | Zig | Applicable | — | El sweep no sustituye al canónico. |
 | Go | Applicable | — | El sweep no sustituye al canónico. |
 | PHP | Applicable | [`observer.php`](../src/Scripting/PHP/patterns/observer.php) | Canónico existente. |
@@ -95,9 +95,9 @@ classDiagram
 | Haskell | Applicable | — | El sweep no sustituye al canónico. |
 | COBOL | Applicable | [`observer_pattern.cpy`](../src/Historical/Cobol/patterns/observer_pattern.cpy) | Canónico existente. |
 | Scala | Applicable | [`Observer.scala`](../src/Functional/Scala/patterns/Observer.scala) | Canónico existente. |
-| Groovy | Applicable | — | Falta canónico direccionable. |
+| Groovy | Applicable | [`observer.groovy`](../src/Functional/Groovy/patterns/observer.groovy) | Runtime dentro del cohort de 39 celdas de JVM Patterns. |
 | Ruby | Applicable | [`observer.rb`](../src/Scripting/Ruby/patterns/observer.rb) | Canónico existente. |
-| C | Applicable | — | Falta canónico direccionable. |
+| C | Applicable | [`observer.c`](../src/Systems/C/patterns/observer.c) | `gcc-14 -std=c23 -Wall -Wextra -Werror` + runtime en Native Patterns. |
 | OCaml | Applicable | — | Falta canónico direccionable. |
 | Julia | Applicable | — | El sweep no sustituye al canónico. |
 | VBA | Applicable | — | Callbacks, eventos o colecciones de handlers pueden expresar Observer; falta canónico. |
@@ -122,7 +122,7 @@ classDiagram
 | MicroPython | Applicable | — | Callbacks/listas de funciones permiten Observer; falta canónico. |
 | Rockstar | Applicable | — | Funciones y estado explícito pueden modelar publisher/subscribers; falta canónico. |
 
-**Conteo inicial factual:** 24 canónicos direccionables encontrados / 49 targets Applicable. Las funciones embebidas en sweeps sólo sirven como evidencia histórica y no elevan este contador.
+**Conteo factual actual:** 30 canónicos direccionables y verificados / 49 targets Applicable. El inventario inicial subcontaba C, C++, Rust, Java y Groovy, que ya existían y estaban cubiertos por sus adapters de 39 celdas; Python se añadió y certificó en este lane. Las funciones embebidas en sweeps sólo sirven como evidencia histórica y no elevan este contador.
 
 ## En Genkidama
 
