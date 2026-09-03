@@ -113,6 +113,8 @@ jobs:
           cache: maven
       - name: Install Scala CLI and Clojure CLI
         shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           curl -fsSL https://github.com/VirtusLab/scala-cli/releases/latest/download/scala-cli-x86_64-pc-linux.gz -o /tmp/scala-cli.gz
@@ -275,17 +277,21 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
+      - uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: '5.5.0'
+          opam-pin: false
       - uses: actions/setup-python@v7
         with:
           python-version: '3.14.7'
-      - name: Install functional runtimes
+      - name: Install Common Lisp and Prolog runtimes
         shell: bash
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y ocaml sbcl swi-prolog-nox
+          sudo apt-get install --no-install-recommends -y sbcl swi-prolog-nox
       - name: Run Functional Pattern contracts
-        run: python eng/ci/run-family functional --patterns --telemetry-file artifacts/ci/functional.jsonl
+        run: opam exec -- python eng/ci/run-family functional --patterns --telemetry-file artifacts/ci/functional.jsonl
 
   data-shell:
     name: Data/Shell / R + Octave + PowerShell
