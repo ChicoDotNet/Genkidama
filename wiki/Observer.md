@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Notificar a múltiples dependientes cuando cambia un subject sin acoplarlo a las implementaciones concretas de esos dependientes.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `35/49` materializadas; `34/49` verificadas  
+> **Implementaciones de lenguaje:** `36/49` materializadas; `35/49` verificadas  
 > **Cobertura de pruebas:** N/A — la matriz standalone usa compile/analyze/runtime/source contracts por ecosistema; no existe un porcentaje agregado significativo.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -168,11 +168,11 @@ La tabla es autoritativa para la completitud final. Un sweep o función embebida
 | Go | Applicable | [`observer.go`](../src/Systems/Go/observer.go) | `gofmt` + `go vet` + runtime directo y sweep | Verificado en `52157a3f...`. |
 | PHP | Applicable | [`observer.php`](../src/Scripting/PHP/patterns/observer.php) | repository-native | Canónico existente. |
 | Nim | Applicable | [`observer_example.nim`](../src/Niche/Nim/patterns/observer_example.nim) | repository-native | Canónico existente. |
-| Dart | Applicable | [`observer.dart`](../src/Web/Dart/observer.dart) | VERIFY pendiente: `dart format` + `dart analyze --fatal-*` + runtime | Canónico materializado; el sweep aún conserva su implementación embebida hasta cerrar VERIFY. |
+| Dart | Applicable | [`observer.dart`](../src/Web/Dart/observer.dart) | `dart format` + `dart analyze --fatal-*` + runtime directo y sweep | Verificado en `7b5f8f99...`; sweep delega al canónico. |
 | Kotlin | Applicable | [`Observer.kt`](../src/Enterprise/Kotlin/patterns/Observer.kt) | repository-native | Canónico existente. |
 | Swift | Applicable | [`Observer.swift`](../src/Systems/Swift/patterns/Observer.swift) | repository-native | Canónico existente. |
 | F# | Applicable | [`Observer.fsx`](../src/Functional/F%23/patterns/Observer.fsx) | repository-native | Canónico existente. |
-| Crystal | Applicable | — | — | El sweep no sustituye al canónico. |
+| Crystal | Applicable | [`observer.cr`](../src/Niche/Crystal/observer.cr) | VERIFY pendiente: Crystal format/build/runtime boundary | Canónico materializado; falta delegar sweep y certificar el head. |
 | Lua | Applicable | [`observer.lua`](../src/Scripting/Lua/patterns/observer.lua) | `luac -p` + runtime | Canónico existente. |
 | Haskell | Applicable | — | — | El sweep no sustituye al canónico. |
 | COBOL | Applicable | [`observer_pattern.cpy`](../src/Historical/Cobol/patterns/observer_pattern.cpy) | repository-native | Canónico existente. |
@@ -204,7 +204,7 @@ La tabla es autoritativa para la completitud final. Un sweep o función embebida
 | MicroPython | Applicable | — | — | Callbacks/listas de funciones permiten Observer. |
 | Rockstar | Applicable | — | — | Funciones y estado explícito pueden modelar publisher/subscribers. |
 
-**Conteo factual:** 34 canónicos están verificados y Dart es el canónico materializado número 35. Dart no eleva el contador verificado hasta que el gate Dart pase sobre este SHA. Las implementaciones embebidas en sweeps no elevan el contador.
+**Conteo factual:** 35 canónicos están verificados y Crystal es el canónico materializado número 36. Crystal no eleva el contador verificado hasta que el gate Crystal pase sobre el head que además retire la implementación duplicada del sweep.
 
 ## Comprueba que lo entendiste
 
