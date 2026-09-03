@@ -109,9 +109,9 @@ def validate_go() -> int:
     unformatted = run(["gofmt", "-l", str(source), str(observer)], capture=True).strip()
     if unformatted:
         raise ContractError(f"Go sources are not gofmt-clean: {unformatted}")
-    run(["go", "vet", str(source)])
+    run(["go", "vet", str(source), str(observer)])
 
-    output = run(["go", "run", str(source)], capture=True).strip()
+    output = run(["go", "run", str(source), str(observer)], capture=True).strip()
     expected = "Go pattern sweep: 39/39 examples passed"
     if output != expected:
         raise ContractError(f"Go pattern sweep output mismatch: expected {expected!r}, got {output!r}")
