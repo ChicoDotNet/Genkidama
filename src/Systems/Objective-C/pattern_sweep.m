@@ -79,18 +79,11 @@ static BOOL mediatorPattern(void) { UiMediator *m = [UiMediator new]; [m notifyS
 @end
 static BOOL mementoPattern(void) { Editor *e = [[Editor alloc] initWithState:@"draft"]; NSString *snapshot = [e save]; [e setState:@"published"]; BOOL changed = [[e state] isEqualToString:@"published"]; [e restore:snapshot]; return changed && [[e state] isEqualToString:@"draft"]; }
 
-// Observer
-@protocol IntObserver <NSObject>
-- (NSString *)observe:(NSInteger)value;
-@end
-@interface NamedObserver : NSObject <IntObserver> { NSString *_name; }
-- (instancetype)initWithName:(NSString *)name;
-@end
-@implementation NamedObserver
-- (instancetype)initWithName:(NSString *)name { if ((self = [super init])) _name = [name copy]; return self; }
-- (NSString *)observe:(NSInteger)value { return [NSString stringWithFormat:@"%@:%ld", _name, (long)value]; }
-@end
-static BOOL observerPattern(void) { NSArray *observers = @[[[NamedObserver alloc] initWithName:@"audit"], [[NamedObserver alloc] initWithName:@"dashboard"]]; NSMutableArray *out = [NSMutableArray array]; for (id<IntObserver> observer in observers) [out addObject:[observer observe:42]]; return [out isEqualToArray:@[@"audit:42", @"dashboard:42"]]; }
+// Observer delegates to the individually addressable canonical source.
+#define GENKIDAMA_OBSERVER_NO_MAIN
+#import "observer.m"
+#undef GENKIDAMA_OBSERVER_NO_MAIN
+static BOOL observerPattern(void) { return observerExamplePasses(); }
 
 // State
 typedef NS_ENUM(NSInteger, GateState) { GateLocked, GateUnlocked };
@@ -214,7 +207,7 @@ static BOOL enterpriseFacadePattern(void) { NSString *result = [NSString stringW
 static BOOL brokerPattern(void) { NSDictionary *services = @{@"inventory": @7, @"customer": @1}; return [[services objectForKey:@"inventory"] integerValue] == 7 && [[services objectForKey:@"customer"] integerValue] == 1; }
 
 // Message Bus
-static BOOL messageBusPattern(void) { NSArray *handlers = @[[[NamedObserver alloc] initWithName:@"audit"], [[NamedObserver alloc] initWithName:@"billing"]]; NSMutableArray *out = [NSMutableArray array]; for (id<IntObserver> handler in handlers) [out addObject:[handler observe:42]]; return [out isEqualToArray:@[@"audit:42", @"billing:42"]]; }
+static BOOL messageBusPattern(void) { NSArray *handlers = @[[[GKRecordingObserver alloc] initWithName:@"audit"], [[GKRecordingObserver alloc] initWithName:@"billing"]]; NSMutableArray *out = [NSMutableArray array]; for (GKRecordingObserver *handler in handlers) { [handler updateWithState:@"42"]; [out addObject:[[handler events] objectAtIndex:0]]; } return [out isEqualToArray:@[@"audit:42", @"billing:42"]]; }
 
 // Service Locator
 static BOOL serviceLocatorPattern(void) { NSDictionary *services = @{@"email": @11, @"audit": @21}; return [[services objectForKey:@"email"] integerValue] == 11 && [[services objectForKey:@"audit"] integerValue] == 21; }
@@ -250,7 +243,7 @@ static BOOL clientServerPattern(void) { NSDictionary *response = serverHandle(@"
 static BOOL peerToPeerPattern(void) { Peer *a = [[Peer alloc] initName:@"peer-a"]; Peer *b = [[Peer alloc] initName:@"peer-b"]; Peer *c = [[Peer alloc] initName:@"peer-c"]; [a send:b data:@"block-42"]; [a send:c data:@"block-42"]; return [[b inbox] isEqualToArray:@[@"peer-a>peer-b:block-42"]] && [[c inbox] isEqualToArray:@[@"peer-a>peer-c:block-42"]]; }
 
 // Publish-Subscribe
-static BOOL publishSubscribePattern(void) { NSArray *subscribers = @[[[NamedObserver alloc] initWithName:@"warehouse"], [[NamedObserver alloc] initWithName:@"analytics"]]; NSMutableArray *out = [NSMutableArray array]; for (id<IntObserver> subscriber in subscribers) [out addObject:[subscriber observe:51]]; return [out isEqualToArray:@[@"warehouse:51", @"analytics:51"]]; }
+static BOOL publishSubscribePattern(void) { NSArray *subscribers = @[[[GKRecordingObserver alloc] initWithName:@"warehouse"], [[GKRecordingObserver alloc] initWithName:@"analytics"]]; NSMutableArray *out = [NSMutableArray array]; for (GKRecordingObserver *subscriber in subscribers) { [subscriber updateWithState:@"51"]; [out addObject:[[subscriber events] objectAtIndex:0]]; } return [out isEqualToArray:@[@"warehouse:51", @"analytics:51"]]; }
 
 // Distributed Proxy
 @protocol StockService <NSObject> - (NSInteger)stock:(NSString *)sku; @end
