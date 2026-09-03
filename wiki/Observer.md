@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Notificar a múltiples dependientes cuando cambia un subject sin acoplarlo a las implementaciones concretas de esos dependientes.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `38/49` materializadas; `37/49` verificadas  
+> **Implementaciones de lenguaje:** `39/49` materializadas; `38/49` verificadas  
 > **Cobertura de pruebas:** N/A — la matriz standalone usa compile/analyze/runtime/source contracts por ecosistema; no existe un porcentaje agregado significativo.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -180,8 +180,8 @@ La tabla es autoritativa para la completitud final. Un sweep o función embebida
 | Groovy | Applicable | [`observer.groovy`](../src/Functional/Groovy/patterns/observer.groovy) | runtime JVM cohort | Canónico existente. |
 | Ruby | Applicable | [`observer.rb`](../src/Scripting/Ruby/patterns/observer.rb) | repository-native | Canónico existente. |
 | C | Applicable | [`observer.c`](../src/Systems/C/patterns/observer.c) | `gcc-14 -std=c23 -Wall -Wextra -Werror` + runtime | Canónico existente. |
-| OCaml | Applicable | [`observer.ml`](../src/Functional/OCaml/patterns/observer.ml) | VERIFY pendiente: `ocamlc -w +a-70 -warn-error +a-70` + runtime sobre OCaml 5.5.0 | Canónico funcional reforzado; 4.14.1 ya pasó, pero KB-006 exige certificar el toolchain estable actual. |
-| Julia | Applicable | — | — | El sweep no sustituye al canónico. |
+| OCaml | Applicable | [`observer.ml`](../src/Functional/OCaml/patterns/observer.ml) | `ocamlc -w +a-70 -warn-error +a-70` + runtime sobre OCaml 5.5.0 | Verificado en `dc238904...` con Quality, Product CI y Polyglot CI verdes. |
+| Julia | Applicable | [`observer.jl`](../src/DataScience/Julia/observer.jl) | VERIFY pendiente en Julia 1.12.7 | Canónico materializado; el sweep todavía conserva temporalmente su implementación embebida. |
 | VBA | Applicable | — | — | Callbacks, eventos o colecciones de handlers permiten Observer. |
 | GDScript | Applicable | — | — | Signals/callables son mecanismos idiomáticos. |
 | JavaScript | Applicable | [`observer.js`](../src/Web/JavaScriptJS/patterns/observer.js) | repository-native | Canónico existente. |
@@ -204,7 +204,7 @@ La tabla es autoritativa para la completitud final. Un sweep o función embebida
 | MicroPython | Applicable | — | — | Callbacks/listas de funciones permiten Observer. |
 | Rockstar | Applicable | — | — | Funciones y estado explícito pueden modelar publisher/subscribers. |
 
-**Conteo factual:** 38 canónicos están materializados y 37 están verificados. Haskell quedó certificado en `a26b0054...`; OCaml es el canónico materializado número 38 y permanece bajo VERIFY hasta que el gate Functional pase con OCaml 5.5.0 estable actual.
+**Conteo factual:** 39 canónicos están materializados y 38 están verificados. OCaml quedó certificado sobre 5.5.0 estable en `dc238904...`; Julia es el canónico materializado número 39 y permanece bajo VERIFY hasta que el sweep delegue a él y el gate Julia lo ejecute.
 
 ## Comprueba que lo entendiste
 
