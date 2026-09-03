@@ -75,11 +75,29 @@ def learn() -> None:
 
 def patterns() -> None:
     source = ROOT / "src/Web/Dart/pattern_sweep.dart"
-    run(["dart", "format", "--output=none", "--set-exit-if-changed", str(source)])
-    run(["dart", "analyze", "--fatal-infos", "--fatal-warnings", str(source)])
+    observer = ROOT / "src/Web/Dart/observer.dart"
+    observer_verify = ROOT / "src/Web/Dart/observer_verify.dart"
+
+    run(
+        [
+            "dart",
+            "format",
+            "--output=none",
+            "--set-exit-if-changed",
+            str(source),
+            str(observer),
+            str(observer_verify),
+        ]
+    )
+    for candidate in (source, observer, observer_verify):
+        run(["dart", "analyze", "--fatal-infos", "--fatal-warnings", str(candidate)])
     require(
         last_line(run(["dart", "run", str(source)], capture=True)) == "Dart pattern sweep: 39/39 examples passed",
         "Dart aggregate output mismatch",
+    )
+    require(
+        last_line(run(["dart", "run", str(observer_verify)], capture=True)) == "Dart Observer: passed",
+        "Dart Observer output mismatch",
     )
 
 

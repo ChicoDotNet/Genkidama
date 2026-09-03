@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Notificar a múltiples dependientes cuando cambia un subject sin acoplarlo a las implementaciones concretas de esos dependientes.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `34/49` materializadas; `33/49` verificadas  
+> **Implementaciones de lenguaje:** `35/49` materializadas; `34/49` verificadas  
 > **Cobertura de pruebas:** N/A — la matriz standalone usa compile/analyze/runtime/source contracts por ecosistema; no existe un porcentaje agregado significativo.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -75,7 +75,7 @@ Lo importante no es la herencia del diagrama, sino que el subject conoce un cont
 
 ## Ejemplo mínimo
 
-Un documento publica su nuevo estado a dos callbacks, `audit` y `dashboard`. Ambos se registran sin modificar al documento. Después se elimina `dashboard`; la siguiente publicación llega sólo a `audit`. El ejemplo canónico Go de este PR añade además rechazo de suscripción duplicada para hacer observable una política de ciclo de vida.
+Un documento publica su nuevo estado a dos callbacks, `audit` y `dashboard`. Ambos se registran sin modificar al documento. Después se elimina `dashboard`; la siguiente publicación llega sólo a `audit`. Los canónicos recientes añaden además rechazo de suscripción duplicada para hacer observable una política de ciclo de vida.
 
 ## Aplicación real
 
@@ -165,10 +165,10 @@ La tabla es autoritativa para la completitud final. Un sweep o función embebida
 | Java | Applicable | [`observer.java`](../src/Enterprise/Java/patterns/observer.java) | `javac -Xlint:all -Werror` + runtime | Canónico existente. |
 | Rust | Applicable | [`observer.rs`](../src/Systems/Rust/patterns/observer.rs) | `rustc --edition=2024 -D warnings` + runtime | Canónico existente. |
 | Zig | Applicable | [`observer.zig`](../src/Systems/Zig/observer.zig) | `zig fmt --check` + compile/run en Long-tail | Verificado en `966de4c0...`. |
-| Go | Applicable | [`observer.go`](../src/Systems/Go/observer.go) | VERIFY pendiente: `gofmt` + `go vet` + runtime canónico | Materializado; aún no acreditado como verificado. |
+| Go | Applicable | [`observer.go`](../src/Systems/Go/observer.go) | `gofmt` + `go vet` + runtime directo y sweep | Verificado en `52157a3f...`. |
 | PHP | Applicable | [`observer.php`](../src/Scripting/PHP/patterns/observer.php) | repository-native | Canónico existente. |
 | Nim | Applicable | [`observer_example.nim`](../src/Niche/Nim/patterns/observer_example.nim) | repository-native | Canónico existente. |
-| Dart | Applicable | — | — | El sweep no sustituye al canónico. |
+| Dart | Applicable | [`observer.dart`](../src/Web/Dart/observer.dart) | VERIFY pendiente: `dart format` + `dart analyze --fatal-*` + runtime | Canónico materializado; el sweep aún conserva su implementación embebida hasta cerrar VERIFY. |
 | Kotlin | Applicable | [`Observer.kt`](../src/Enterprise/Kotlin/patterns/Observer.kt) | repository-native | Canónico existente. |
 | Swift | Applicable | [`Observer.swift`](../src/Systems/Swift/patterns/Observer.swift) | repository-native | Canónico existente. |
 | F# | Applicable | [`Observer.fsx`](../src/Functional/F%23/patterns/Observer.fsx) | repository-native | Canónico existente. |
@@ -204,7 +204,7 @@ La tabla es autoritativa para la completitud final. Un sweep o función embebida
 | MicroPython | Applicable | — | — | Callbacks/listas de funciones permiten Observer. |
 | Rockstar | Applicable | — | — | Funciones y estado explícito pueden modelar publisher/subscribers. |
 
-**Conteo factual:** 33 canónicos están verificados y Go es el canónico materializado número 34. Los canónicos Zig y Objective-C ya están certificados; Go no eleva el contador verificado hasta que el gate Native Patterns pase sobre el SHA que lo valida. Las implementaciones embebidas en sweeps no elevan este contador.
+**Conteo factual:** 34 canónicos están verificados y Dart es el canónico materializado número 35. Dart no eleva el contador verificado hasta que el gate Dart pase sobre este SHA. Las implementaciones embebidas en sweeps no elevan el contador.
 
 ## Comprueba que lo entendiste
 
