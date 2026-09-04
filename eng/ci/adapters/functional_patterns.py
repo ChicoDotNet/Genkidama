@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[3]
 EXPECTED = 39
 EXPECTED_OCAML = "5.5.0"
 EXPECTED_SBCL = "SBCL 2.6.8"
-EXPECTED_SWIPL = "SWI-Prolog version 10.0.2"
+EXPECTED_SWIPL_PREFIX = "SWI-Prolog version 10.0.2"
 SBCL_VERSION = "2.6.8"
 SBCL_URL = (
     "https://downloads.sourceforge.net/project/sbcl/sbcl/"
@@ -59,6 +59,12 @@ def require_exact(label: str, actual: str, expected: str) -> None:
         raise ContractError(f"{label} version is {value!r}; expected {expected!r}")
 
 
+def require_prefix(label: str, actual: str, expected_prefix: str) -> None:
+    value = actual.strip()
+    if not value.startswith(expected_prefix):
+        raise ContractError(f"{label} version is {value!r}; expected prefix {expected_prefix!r}")
+
+
 def ensure_stable_sbcl() -> list[str]:
     configured = os.environ.get("GENKIDAMA_SBCL_BIN")
     if configured:
@@ -88,7 +94,7 @@ def ensure_stable_swipl() -> list[str]:
     configured = os.environ.get("GENKIDAMA_SWIPL_BIN")
     if configured:
         command = [configured]
-        require_exact("SWI-Prolog", run([*command, "--version"], capture=True), EXPECTED_SWIPL)
+        require_prefix("SWI-Prolog", run([*command, "--version"], capture=True), EXPECTED_SWIPL_PREFIX)
         return command
 
     if shutil.which("docker") is None:
@@ -96,7 +102,7 @@ def ensure_stable_swipl() -> list[str]:
 
     run(["docker", "pull", SWIPL_IMAGE])
     version = run(["docker", "run", "--rm", SWIPL_IMAGE, "swipl", "--version"], capture=True)
-    require_exact("SWI-Prolog", version, EXPECTED_SWIPL)
+    require_prefix("SWI-Prolog", version, EXPECTED_SWIPL_PREFIX)
     return [
         "docker",
         "run",
