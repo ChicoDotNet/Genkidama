@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Notificar a múltiples dependientes cuando cambia un subject sin acoplarlo a las implementaciones concretas de esos dependientes.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `39/49` materializadas; `38/49` verificadas  
+> **Implementaciones de lenguaje:** `40/49` materializadas; `39/49` verificadas  
 > **Cobertura de pruebas:** N/A — la matriz standalone usa compile/analyze/runtime/source contracts por ecosistema; no existe un porcentaje agregado significativo.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -181,8 +181,8 @@ La tabla es autoritativa para la completitud final. Un sweep o función embebida
 | Ruby | Applicable | [`observer.rb`](../src/Scripting/Ruby/patterns/observer.rb) | repository-native | Canónico existente. |
 | C | Applicable | [`observer.c`](../src/Systems/C/patterns/observer.c) | `gcc-14 -std=c23 -Wall -Wextra -Werror` + runtime | Canónico existente. |
 | OCaml | Applicable | [`observer.ml`](../src/Functional/OCaml/patterns/observer.ml) | `ocamlc -w +a-70 -warn-error +a-70` + runtime sobre OCaml 5.5.0 | Verificado en `dc238904...` con Quality, Product CI y Polyglot CI verdes. |
-| Julia | Applicable | [`observer.jl`](../src/DataScience/Julia/observer.jl) | VERIFY pendiente en Julia 1.12.7 | Canónico materializado; el sweep todavía conserva temporalmente su implementación embebida. |
-| VBA | Applicable | — | — | Callbacks, eventos o colecciones de handlers permiten Observer. |
+| Julia | Applicable | [`observer.jl`](../src/DataScience/Julia/observer.jl) | Julia 1.12.7 + runtime agregado | Verificado en `305c686b...`; el sweep delega al canónico. |
+| VBA | Applicable | [`ObserverExample.bas`](../src/Shell/VBA/ObserverExample.bas) | Quality source contract | Canónico materializado; VERIFY pendiente. |
 | GDScript | Applicable | — | — | Signals/callables son mecanismos idiomáticos. |
 | JavaScript | Applicable | [`observer.js`](../src/Web/JavaScriptJS/patterns/observer.js) | repository-native | Canónico existente. |
 | MATLAB | Applicable | [`observer.m`](../src/DataScience/MATLAB/observer.m) | repository-native | Canónico existente. |
@@ -204,7 +204,7 @@ La tabla es autoritativa para la completitud final. Un sweep o función embebida
 | MicroPython | Applicable | — | — | Callbacks/listas de funciones permiten Observer. |
 | Rockstar | Applicable | — | — | Funciones y estado explícito pueden modelar publisher/subscribers. |
 
-**Conteo factual:** 39 canónicos están materializados y 38 están verificados. OCaml quedó certificado sobre 5.5.0 estable en `dc238904...`; Julia es el canónico materializado número 39 y permanece bajo VERIFY hasta que el sweep delegue a él y el gate Julia lo ejecute.
+**Conteo factual:** 40 canónicos están materializados y 39 están verificados. Julia quedó certificada en `305c686b...`; VBA es el canónico materializado número 40 y permanece bajo VERIFY mediante su contrato semántico de fuente, ya que el CI del repositorio no ejecuta Microsoft Office/VBA.
 
 ## Comprueba que lo entendiste
 
