@@ -119,6 +119,10 @@ def validate_portable() -> None:
     for marker in ["Dark Button", "Dark Checkbox", "Light Button", "Light Checkbox"]:
         dc.require(marker in output.splitlines(), f"MicroPython contract missing {marker}")
 
+    observer_output = dc.run([micropython, str(dc.ROOT / "src/Other/MicroPython/observer.py")], capture=True)
+    observer_marker = "observer=audit:draft,published;dashboard:draft;duplicate=rejected;second-unsubscribe=rejected"
+    dc.require(observer_marker in observer_output.splitlines(), "MicroPython Observer behavioral contract failed")
+
     rockstar = os.environ.get("GENKIDAMA_ROCKSTAR_BIN")
     dc.require(bool(rockstar), "GENKIDAMA_ROCKSTAR_BIN is required")
     output = dc.run([rockstar, str(dc.ROOT / "src/Other/Rockstar/example1.rock")], capture=True)
