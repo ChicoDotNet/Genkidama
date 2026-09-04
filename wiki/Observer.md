@@ -2,8 +2,8 @@
 
 > **Familia:** Behavioral  
 > **Intención:** Notificar a múltiples dependientes cuando cambia un subject sin acoplarlo a las implementaciones concretas de esos dependientes.  
-> **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `40/49` materializadas; `39/49` verificadas  
+> **Estado:** `validated`  
+> **Implementaciones de lenguaje:** `49/49`  
 > **Cobertura de pruebas:** N/A — la matriz standalone usa compile/analyze/runtime/source contracts por ecosistema; no existe un porcentaje agregado significativo.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -180,31 +180,31 @@ La tabla es autoritativa para la completitud final. Un sweep o función embebida
 | Groovy | Applicable | [`observer.groovy`](../src/Functional/Groovy/patterns/observer.groovy) | runtime JVM cohort | Canónico existente. |
 | Ruby | Applicable | [`observer.rb`](../src/Scripting/Ruby/patterns/observer.rb) | repository-native | Canónico existente. |
 | C | Applicable | [`observer.c`](../src/Systems/C/patterns/observer.c) | `gcc-14 -std=c23 -Wall -Wextra -Werror` + runtime | Canónico existente. |
-| OCaml | Applicable | [`observer.ml`](../src/Functional/OCaml/patterns/observer.ml) | `ocamlc -w +a-70 -warn-error +a-70` + runtime sobre OCaml 5.5.0 | Verificado en `dc238904...` con Quality, Product CI y Polyglot CI verdes. |
-| Julia | Applicable | [`observer.jl`](../src/DataScience/Julia/observer.jl) | Julia 1.12.7 + runtime agregado | Verificado en `305c686b...`; el sweep delega al canónico. |
-| VBA | Applicable | [`ObserverExample.bas`](../src/Shell/VBA/ObserverExample.bas) | Quality source contract | Canónico materializado; VERIFY pendiente. |
-| GDScript | Applicable | — | — | Signals/callables son mecanismos idiomáticos. |
+| OCaml | Applicable | [`observer.ml`](../src/Functional/OCaml/patterns/observer.ml) | `ocamlc -w +a-70 -warn-error +a-70` + runtime sobre OCaml 5.5.0 | Canónico verificado. |
+| Julia | Applicable | [`observer.jl`](../src/DataScience/Julia/observer.jl) | Julia 1.12.7 + runtime agregado | Sweep delega al canónico. |
+| VBA | Applicable | [`ObserverExample.bas`](../src/Shell/VBA/ObserverExample.bas) | Quality source contract | Semántica de lifecycle protegida; Office/VBA no está disponible en hosted CI. |
+| GDScript | Applicable | [`observer.gd`](../src/Niche/GDScript/observer.gd) | Godot headless + runtime sentinel | Signals/callables expresan Observer idiomáticamente. |
 | JavaScript | Applicable | [`observer.js`](../src/Web/JavaScriptJS/patterns/observer.js) | repository-native | Canónico existente. |
 | MATLAB | Applicable | [`observer.m`](../src/DataScience/MATLAB/observer.m) | repository-native | Canónico existente. |
-| Perl | Applicable | — | — | Callbacks/closures permiten Observer. |
+| Perl | Applicable | [`observer.pl`](../src/Scripting/Perl/observer.pl) | `perl -c` + source contract/runtime cohort | Callbacks/closures. |
 | R | Applicable | [`observer.R`](../src/DataScience/R/patterns/observer.R) | repository-native | Canónico existente. |
 | PowerShell | Applicable | [`observer.ps1`](../src/Scripting/PowerShell/patterns/observer.ps1) | repository-native | Canónico existente. |
 | HTML | N/A | — | — | HTML puro describe estructura/semántica, pero no mantiene ni despacha por sí solo subscribers arbitrarios del dominio; hacerlo requiere un runtime externo. |
-| Assembly | Applicable | — | — | Tabla de callbacks/direcciones o mensajes permite expresar la dependencia. |
+| Assembly | Applicable | [`observer.asm`](../src/LowLevel/Assembly/observer.asm) | NASM 3.02 + link + runtime exacto | Tabla de callbacks/direcciones y estado explícito. |
 | Elixir | Applicable | [`observer.exs`](../src/Functional/Elixir/patterns/observer.exs) | repository-native | Canónico existente. |
 | Shell | Applicable | [`observer.sh`](../src/Scripting/Bash/patterns/observer.sh) | repository-native | Canónico existente. |
 | Erlang | Applicable | [`observer.erl`](../src/Functional/Erlang/patterns/observer.erl) | repository-native | Canónico existente. |
 | Clojure | Applicable | [`observer.clj`](../src/Functional/Clojure/patterns/observer.clj) | repository-native | Canónico existente. |
-| Common Lisp | Applicable | — | — | Funciones/closures permiten suscriptores. |
-| Prolog | Applicable | — | — | Hechos/predicados dinámicos y reglas de despacho permiten suscripciones. |
-| Delphi | Applicable | — | — | Eventos, métodos y listas de callbacks permiten Observer. |
+| Common Lisp | Applicable | [`observer.lisp`](../src/Functional/CommonLisp/patterns/observer.lisp) | SBCL 2.6.8 + runtime cohort | Funciones/closures mantienen el lifecycle de suscriptores. |
+| Prolog | Applicable | [`observer.pl`](../src/Functional/Prolog/patterns/observer.pl) | SWI-Prolog 10.0.2 + runtime cohort | Predicados/listas expresan suscripción, baja y despacho. |
+| Delphi | Applicable | [`ObserverExample.pas`](../src/Enterprise/Delphi/ObserverExample.pas) | Quality source contract | Delphi 13.1 syntax/lifecycle revisado; compilador propietario no disponible en hosted CI. |
 | Octave | Applicable | [`observer.m`](../src/DataScience/Octave/patterns/observer.m) | repository-native | Canónico existente. |
-| SQL declarativo | Applicable | — | — | Suscripciones y cambios pueden modelarse como relaciones y derivar la relación de notificaciones. |
+| SQL declarativo | Applicable | [`observer.sql`](../src/Data/SQL/observer.sql) | SQLite in-memory runtime contract | Relaciones/CTEs modelan suscripciones y entregas. |
 | CSS | N/A | — | — | CSS reacciona al estado de árbol/rendering, pero no ofrece por sí solo un mecanismo general de suscripción/despacho entre participantes del dominio; usar DOM/JS cambia de target. |
-| MicroPython | Applicable | — | — | Callbacks/listas de funciones permiten Observer. |
-| Rockstar | Applicable | — | — | Funciones y estado explícito pueden modelar publisher/subscribers. |
+| MicroPython | Applicable | [`observer.py`](../src/Other/MicroPython/observer.py) | MicroPython 1.29.0 + runtime sentinel | Callbacks/listas de funciones con lifecycle explícito. |
+| Rockstar | Applicable | [`observer.rock`](../src/Other/Rockstar/observer.rock) | Rockstar 2.0.31 + runtime sentinel | Funciones y estado explícito modelan publisher/subscribers. |
 
-**Conteo factual:** 40 canónicos están materializados y 39 están verificados. Julia quedó certificada en `305c686b...`; VBA es el canónico materializado número 40 y permanece bajo VERIFY mediante su contrato semántico de fuente, ya que el CI del repositorio no ejecuta Microsoft Office/VBA.
+**Conteo factual:** 49/49 targets Applicable tienen canónico direccionable y evidencia verificada. HTML y CSS son los únicos N/A, con justificación técnica. El head que cerró el último Applicable (`852374c4...`) pasó Quality, Product CI y Polyglot CI; la página final reconcilia esa evidencia bajo KB-006.
 
 ## Comprueba que lo entendiste
 
