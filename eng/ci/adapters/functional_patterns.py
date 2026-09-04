@@ -1,17 +1,25 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import os
 import shutil
 import subprocess
 import sys
+import tarfile
+import urllib.request
 import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 EXPECTED = 39
 EXPECTED_OCAML = "5.5.0"
-EXPECTED_SBCL_PREFIX = "SBCL 2.2.9"
+EXPECTED_SBCL = "SBCL 2.6.8"
 EXPECTED_SWIPL_PREFIX = "SWI-Prolog version 9.0.4"
+SBCL_VERSION = "2.6.8"
+SBCL_URL = (
+    "https://downloads.sourceforge.net/project/sbcl/sbcl/"
+    f"{SBCL_VERSION}/sbcl-{SBCL_VERSION}-x86-64-linux-binary.tar.bz2"
+)
 
 
 class ContractError(RuntimeError):
@@ -56,6 +64,31 @@ def require_prefix(label: str, actual: str, expected_prefix: str) -> None:
         raise ContractError(f"{label} version is {value!r}; expected prefix {expected_prefix!r}")
 
 
+def ensure_stable_sbcl() -> list[str]:
+    configured = os.environ.get("GENKIDAMA_SBCL_BIN")
+    if configured:
+        command = [configured]
+    else:
+        runner_temp = Path(os.environ.get("RUNNER_TEMP", "/tmp"))
+        archive = runner_temp / f"sbcl-{SBCL_VERSION}-x86-64-linux-binary.tar.bz2"
+        extracted = runner_temp / f"sbcl-{SBCL_VERSION}-x86-64-linux"
+        launcher = extracted / "run-sbcl.sh"
+        if not launcher.is_file():
+            archive.unlink(missing_ok=True)
+            if extracted.exists():
+                shutil.rmtree(extracted)
+            print(f"Downloading stable SBCL {SBCL_VERSION} from SourceForge", flush=True)
+            urllib.request.urlretrieve(SBCL_URL, archive)
+            with tarfile.open(archive, "r:bz2") as tar:
+                tar.extractall(runner_temp, filter="data")
+        if not launcher.is_file():
+            raise ContractError(f"SBCL {SBCL_VERSION} launcher missing after extraction: {launcher}")
+        command = [str(launcher)]
+
+    require_exact("SBCL", run([*command, "--version"], capture=True), EXPECTED_SBCL)
+    return command
+
+
 def main() -> int:
     ocaml_files = exact_files(ROOT / "src/Functional/OCaml/patterns", ".ml", "OCaml")
     lisp_files = exact_files(ROOT / "src/Functional/CommonLisp/patterns", ".lisp", "Common Lisp")
@@ -76,7 +109,7 @@ def main() -> int:
             )
 
     require_exact("OCaml", run(["ocamlc", "-version"], capture=True), EXPECTED_OCAML)
-    require_prefix("SBCL", run(["sbcl", "--version"], capture=True), EXPECTED_SBCL_PREFIX)
+    sbcl = ensure_stable_sbcl()
     require_prefix("SWI-Prolog", run(["swipl", "--version"], capture=True), EXPECTED_SWIPL_PREFIX)
 
     with tempfile.TemporaryDirectory(prefix="genkidama-functional-patterns-") as temp:
@@ -107,7 +140,7 @@ def main() -> int:
             print(f"PASS OCaml {source.name}", flush=True)
 
         for source in lisp_files:
-            run(["sbcl", "--script", str(source)])
+            run([*sbcl, "--script", str(source)])
             print(f"PASS Common Lisp {source.name}", flush=True)
 
         for source in prolog_files:
