@@ -14,12 +14,13 @@ ROOT = Path(__file__).resolve().parents[3]
 EXPECTED = 39
 EXPECTED_OCAML = "5.5.0"
 EXPECTED_SBCL = "SBCL 2.6.8"
-EXPECTED_SWIPL_PREFIX = "SWI-Prolog version 9.0.4"
+EXPECTED_SWIPL = "SWI-Prolog version 10.0.2"
 SBCL_VERSION = "2.6.8"
 SBCL_URL = (
     "https://downloads.sourceforge.net/project/sbcl/sbcl/"
     f"{SBCL_VERSION}/sbcl-{SBCL_VERSION}-x86-64-linux-binary.tar.bz2"
 )
+SWIPL_IMAGE = "swipl:10.0.2"
 
 
 class ContractError(RuntimeError):
@@ -58,12 +59,6 @@ def require_exact(label: str, actual: str, expected: str) -> None:
         raise ContractError(f"{label} version is {value!r}; expected {expected!r}")
 
 
-def require_prefix(label: str, actual: str, expected_prefix: str) -> None:
-    value = actual.strip()
-    if not value.startswith(expected_prefix):
-        raise ContractError(f"{label} version is {value!r}; expected prefix {expected_prefix!r}")
-
-
 def ensure_stable_sbcl() -> list[str]:
     configured = os.environ.get("GENKIDAMA_SBCL_BIN")
     if configured:
@@ -89,6 +84,31 @@ def ensure_stable_sbcl() -> list[str]:
     return command
 
 
+def ensure_stable_swipl() -> list[str]:
+    configured = os.environ.get("GENKIDAMA_SWIPL_BIN")
+    if configured:
+        command = [configured]
+        require_exact("SWI-Prolog", run([*command, "--version"], capture=True), EXPECTED_SWIPL)
+        return command
+
+    if shutil.which("docker") is None:
+        raise ContractError("Docker is required to run the official stable SWI-Prolog image")
+
+    run(["docker", "pull", SWIPL_IMAGE])
+    version = run(["docker", "run", "--rm", SWIPL_IMAGE, "--version"], capture=True)
+    require_exact("SWI-Prolog", version, EXPECTED_SWIPL)
+    return [
+        "docker",
+        "run",
+        "--rm",
+        "-v",
+        f"{ROOT}:/repo:ro",
+        "-w",
+        "/repo",
+        SWIPL_IMAGE,
+    ]
+
+
 def main() -> int:
     ocaml_files = exact_files(ROOT / "src/Functional/OCaml/patterns", ".ml", "OCaml")
     lisp_files = exact_files(ROOT / "src/Functional/CommonLisp/patterns", ".lisp", "Common Lisp")
@@ -110,7 +130,7 @@ def main() -> int:
 
     require_exact("OCaml", run(["ocamlc", "-version"], capture=True), EXPECTED_OCAML)
     sbcl = ensure_stable_sbcl()
-    require_prefix("SWI-Prolog", run(["swipl", "--version"], capture=True), EXPECTED_SWIPL_PREFIX)
+    swipl = ensure_stable_swipl()
 
     with tempfile.TemporaryDirectory(prefix="genkidama-functional-patterns-") as temp:
         work = Path(temp)
@@ -144,7 +164,8 @@ def main() -> int:
             print(f"PASS Common Lisp {source.name}", flush=True)
 
         for source in prolog_files:
-            run(["swipl", "-q", "-f", str(source)])
+            source_in_repo = source.relative_to(ROOT).as_posix()
+            run([*swipl, "-q", "-f", source_in_repo])
             print(f"PASS Prolog {source.name}", flush=True)
 
     print(f"OCaml pattern cells: {EXPECTED}/{EXPECTED} passed", flush=True)
