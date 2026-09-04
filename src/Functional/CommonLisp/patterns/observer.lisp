@@ -15,7 +15,7 @@
                    t)
                  nil))
            (publish (event)
-             (dolist (subscription (reverse subscribers))
+             (dolist (subscription subscribers)
                (funcall (cdr subscription) event))))
     (assert (subscribe "audit"
                        (lambda (event)
