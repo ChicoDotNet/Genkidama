@@ -1,0 +1,65 @@
+Rock Subscribers
+Rock Deliveries
+Rock Histories
+
+Subscribe takes Name
+Put Subscribers at Name into Active
+If Active is 1
+Give back "rejected"
+Else
+Subscribers at Name is 1
+Put Deliveries at Name into Count
+If Count is mysterious
+Deliveries at Name is 0
+Histories at Name is ""
+Yeah
+Give back "accepted"
+Yeah
+Yeah
+
+Unsubscribe takes Name
+Put Subscribers at Name into Active
+If Active is 1
+Subscribers at Name is 0
+Give back "accepted"
+Else
+Give back "rejected"
+Yeah
+Yeah
+
+Publish takes Event
+For Active and Name of Subscribers
+If Active is 1
+Put Deliveries at Name into Count
+Put Count plus 1 into NextCount
+Put NextCount into Deliveries at Name
+Put Histories at Name into History
+If Count is 0
+Put Event into Histories at Name
+Else
+Put History plus "," into Prefix
+Put Prefix plus Event into Histories at Name
+Yeah
+Yeah
+Yeah
+Give back "published"
+Yeah
+
+Call Subscribe with "audit" into AuditSubscribe
+Call Subscribe with "dashboard" into DashboardSubscribe
+Call Subscribe with "audit" into Duplicate
+Call Publish with "draft" into FirstPublish
+Call Unsubscribe with "dashboard" into FirstUnsubscribe
+Call Unsubscribe with "dashboard" into SecondUnsubscribe
+Call Publish with "published" into SecondPublish
+
+Put Histories at "audit" into AuditHistory
+Put Histories at "dashboard" into DashboardHistory
+Put "observer=audit:" plus AuditHistory into Summary
+Put Summary plus ";dashboard:" into Summary
+Put Summary plus DashboardHistory into Summary
+Put Summary plus ";duplicate=" into Summary
+Put Summary plus Duplicate into Summary
+Put Summary plus ";second-unsubscribe=" into Summary
+Put Summary plus SecondUnsubscribe into Summary
+Print Summary
