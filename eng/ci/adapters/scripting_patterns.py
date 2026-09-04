@@ -1,10 +1,52 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import hashlib
 import os
+import shutil
 import sys
+import tarfile
+import urllib.request
+from pathlib import Path
 
 import debt_contracts as dc
+
+
+PERL_VERSION = "5.44.0"
+PERL_SHA256 = "3b855066b92491cb40e86affb1ca57d1a388aa43e51b91c7806a32c2f65f96c3"
+PERL_URL = f"https://www.cpan.org/src/5.0/perl-{PERL_VERSION}.tar.gz"
+
+
+def ensure_stable_perl() -> Path:
+    configured = os.environ.get("GENKIDAMA_PERL_BIN")
+    if configured:
+        perl = Path(configured)
+        dc.require(perl.is_file(), f"configured Perl binary does not exist: {perl}")
+    else:
+        runner_temp = Path(os.environ.get("RUNNER_TEMP", "/tmp"))
+        prefix = runner_temp / f"perl-{PERL_VERSION}-install"
+        perl = prefix / "bin" / "perl"
+        if not perl.is_file():
+            archive = runner_temp / f"perl-{PERL_VERSION}.tar.gz"
+            source = runner_temp / f"perl-{PERL_VERSION}"
+            if archive.exists():
+                archive.unlink()
+            if source.exists():
+                shutil.rmtree(source)
+            print(f"Downloading Perl {PERL_VERSION} from CPAN", flush=True)
+            urllib.request.urlretrieve(PERL_URL, archive)
+            digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+            dc.require(digest == PERL_SHA256, f"Perl {PERL_VERSION} SHA-256 mismatch: {digest}")
+            with tarfile.open(archive, "r:gz") as tar:
+                tar.extractall(runner_temp, filter="data")
+            dc.run(["./Configure", "-des", f"-Dprefix={prefix}"], cwd=source)
+            dc.run(["make", "-j2"], cwd=source)
+            dc.run(["make", "install"], cwd=source)
+
+    version = dc.run([str(perl), "-e", "print $^V"], capture=True).strip()
+    dc.require(version == f"v{PERL_VERSION}", f"expected Perl v{PERL_VERSION}, got {version}")
+    print(f"Perl toolchain: {version}", flush=True)
+    return perl
 
 
 def main() -> int:
@@ -18,6 +60,20 @@ def main() -> int:
     py = dc.ROOT / "src/Scripting/PythonPY/pattern_sweep.py"
     dc.run([sys.executable, "-m", "py_compile", str(py)])
     dc.run([sys.executable, "-B", str(py)])
+    python_observer = dc.ROOT / "src/Scripting/PythonPY/observer.py"
+    dc.run([sys.executable, "-m", "py_compile", str(python_observer)])
+    dc.require(
+        dc.last_line(dc.run([sys.executable, "-B", str(python_observer)], capture=True)) == "Python Observer: passed",
+        "Python Observer canonical output mismatch",
+    )
+
+    perl = ensure_stable_perl()
+    perl_observer = dc.ROOT / "src/Scripting/Perl/observer.pl"
+    dc.run([str(perl), "-c", str(perl_observer)])
+    dc.require(
+        "OBSERVER_PERL_OK" in dc.run([str(perl), str(perl_observer)], capture=True).splitlines(),
+        "Perl Observer behavioral contract failed",
+    )
 
     ruby_files = dc.exact_glob(dc.ROOT / "src/Scripting/Ruby/patterns", "*.rb", "Ruby")
     for source in ruby_files:

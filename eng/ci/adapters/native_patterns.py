@@ -100,19 +100,41 @@ def validate_rust() -> int:
 
 def validate_go() -> int:
     source = ROOT / "src/Systems/Go/pattern_sweep.go"
+    observer = ROOT / "src/Systems/Go/observer.go"
     if not source.is_file():
         raise ContractError("Go pattern_sweep.go is missing")
+    if not observer.is_file():
+        raise ContractError("Go Observer canonical is missing")
     run(["go", "version"])
-    unformatted = run(["gofmt", "-l", str(source)], capture=True).strip()
+    unformatted = run(["gofmt", "-l", str(source), str(observer)], capture=True).strip()
     if unformatted:
-        raise ContractError(f"Go pattern sweep is not gofmt-clean: {unformatted}")
-    run(["go", "vet", str(source)])
-    output = run(["go", "run", str(source)], capture=True).strip()
+        raise ContractError(f"Go sources are not gofmt-clean: {unformatted}")
+    run(["go", "vet", str(source), str(observer)])
+
+    output = run(["go", "run", str(source), str(observer)], capture=True).strip()
     expected = "Go pattern sweep: 39/39 examples passed"
     if output != expected:
         raise ContractError(f"Go pattern sweep output mismatch: expected {expected!r}, got {output!r}")
     print(output, flush=True)
-    return EXPECTED
+
+    verifier = observer.parent / "observer_verify_tmp.go"
+    verifier.write_text(
+        'package main\n\nimport "fmt"\n\nfunc main() {\n\tif !observerExamplePasses() { panic("Observer canonical failed") }\n\tfmt.Println("Go Observer: passed")\n}\n',
+        encoding="utf-8",
+    )
+    try:
+        unformatted_verifier = run(["gofmt", "-l", str(verifier)], capture=True).strip()
+        if unformatted_verifier:
+            run(["gofmt", "-w", str(verifier)])
+        run(["go", "vet", str(observer), str(verifier)])
+        observer_output = run(["go", "run", str(observer), str(verifier)], capture=True).strip()
+        if observer_output != "Go Observer: passed":
+            raise ContractError(f"Go Observer canonical output mismatch: {observer_output!r}")
+        print(observer_output, flush=True)
+    finally:
+        verifier.unlink(missing_ok=True)
+
+    return EXPECTED + 1
 
 
 def main() -> int:
