@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import os
 import shutil
+import sqlite3
 import sys
 import tarfile
 import tempfile
@@ -88,9 +89,21 @@ def validate_assembly() -> None:
             print(f"PASS Assembly {filename}", flush=True)
 
 
+def validate_sql_observer() -> None:
+    source = (dc.ROOT / "src/Data/SQL/observer.sql").read_text(encoding="utf-8")
+    connection = sqlite3.connect(":memory:")
+    try:
+        row = connection.execute(source).fetchone()
+    finally:
+        connection.close()
+    dc.require(row == ("SQL Observer: passed",), f"SQL Observer contract failed: {row!r}")
+    print("PASS SQL observer.sql", flush=True)
+
+
 def validate_portable() -> None:
     dc.run([sys.executable, "eng/ci/adapters/platform_source_contracts.py"])
     validate_assembly()
+    validate_sql_observer()
 
     godot = os.environ.get("GENKIDAMA_GODOT_BIN", "godot")
     output = dc.run([godot, "--headless", "--script", str(dc.ROOT / "src/Niche/GDScript/example1.gd")], capture=True)
