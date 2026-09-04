@@ -95,7 +95,7 @@ def ensure_stable_swipl() -> list[str]:
         raise ContractError("Docker is required to run the official stable SWI-Prolog image")
 
     run(["docker", "pull", SWIPL_IMAGE])
-    version = run(["docker", "run", "--rm", SWIPL_IMAGE, "--version"], capture=True)
+    version = run(["docker", "run", "--rm", SWIPL_IMAGE, "swipl", "--version"], capture=True)
     require_exact("SWI-Prolog", version, EXPECTED_SWIPL)
     return [
         "docker",
@@ -106,6 +106,7 @@ def ensure_stable_swipl() -> list[str]:
         "-w",
         "/repo",
         SWIPL_IMAGE,
+        "swipl",
     ]
 
 
