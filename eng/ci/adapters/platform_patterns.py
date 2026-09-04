@@ -129,6 +129,10 @@ def validate_portable() -> None:
     for marker in ["Dark Button", "Dark Checkbox", "Light Button", "Light Checkbox"]:
         dc.require(marker in output.splitlines(), f"Rockstar contract missing {marker}")
 
+    observer_output = dc.run([rockstar, str(dc.ROOT / "src/Other/Rockstar/observer.rock")], capture=True)
+    observer_marker = "observer=audit:draft,published;dashboard:draft;duplicate=rejected;second-unsubscribe=rejected"
+    dc.require(observer_marker in observer_output.splitlines(), "Rockstar Observer behavioral contract failed")
+
 
 def main() -> int:
     profile = os.environ.get("GENKIDAMA_PLATFORM_PROFILE", "portable").strip().lower()
