@@ -5,6 +5,7 @@ import tempfile
 from pathlib import Path
 
 from debt_contracts import ContractError, ROOT, last_line, require, run
+from zig_state import main as validate_zig_state
 
 
 def main() -> int:
@@ -38,6 +39,7 @@ def main() -> int:
         require(output == "objective-c-state: passed", f"Objective-C State output mismatch: {output!r}")
 
     print("Objective-C State canonical: PASS", flush=True)
+    validate_zig_state()
     return 0
 
 
@@ -45,5 +47,5 @@ if __name__ == "__main__":
     try:
         raise SystemExit(main())
     except ContractError as exc:
-        print(f"Objective-C State canonical failed: {exc}", flush=True)
+        print(f"State canonical validation failed: {exc}", flush=True)
         raise SystemExit(1)
