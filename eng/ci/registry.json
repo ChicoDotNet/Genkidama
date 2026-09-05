@@ -140,7 +140,10 @@
     },
     "patterns-longtail": {
       "setup": [],
-      "validation": [{"label": "Validate extracted longtail patterns contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "longtail", "patterns"]}]
+      "validation": [
+        {"label": "Validate extracted longtail patterns contracts", "argv": ["{python}", "eng/ci/adapters/debt_contracts.py", "longtail", "patterns"]},
+        {"label": "Validate Objective-C State canonical", "argv": ["{python}", "eng/ci/adapters/objective_c_state.py"]}
+      ]
     },
     "patterns-platform": {
       "setup": [],
