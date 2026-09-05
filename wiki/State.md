@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Permitir que un objeto cambie su comportamiento cuando cambia su estado interno, haciendo explícitas las transiciones y evitando condicionales dispersos dependientes del estado.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `30/49` confirmadas como canónicos direccionables en esta reconciliación inicial; 19 Applicable requieren reconciliación/canónico individual.  
+> **Implementaciones de lenguaje:** `34/49` canónicos direccionables materializados; `33/49` verificados en el head previo acreditado. Java está materializado y reforzado en el head actual, pendiente de VERIFY.  
 > **Cobertura de pruebas:** `N/A` agregada — la matriz polyglot usa la validación más fuerte razonablemente disponible por ecosistema; no se inventa un porcentaje transversal.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -148,13 +148,13 @@ Una implementación que sólo demuestra el happy path enseña menos que el domin
 
 ## Validación automatizada
 
-La reconciliación horizontal empieza desde evidencia ya producida por los barridos language-major. Un artefacto dentro de `pattern_sweep.*` **no se acredita como canónico individual** por sí solo: KB-006 requiere una fuente direccionable por patrón/lenguaje y la evidencia correspondiente.
+La reconciliación horizontal parte de evidencia producida por los barridos language-major, pero un `pattern_sweep.*` no sustituye una fuente individual. Python, Go y Objective-C ya tienen canónicos individuales añadidos y verificados en este PR. Objective-C quedó acreditado cuando el head `448cead78c6b8a8f304bb8dbf0251f9738192cac` completó Quality, Product CI y Polyglot CI en verde.
 
-En esta primera pasada se acreditan sólo los 30 canónicos cuya ruta individual fue confirmada directamente en `dev`; los 19 Applicable restantes continúan como deuda explícita aunque algunos ya tengan una celda ejecutada dentro de un sweep. La siguiente fase separará/reconciliará esas celdas sin inventar evidencia.
+Java ya tenía el canónico individual [`src/Enterprise/Java/patterns/state.java`](../src/Enterprise/Java/patterns/state.java), y `eng/ci/adapters/jvm_patterns.py` compila con `javac -Xlint:all -Werror` y ejecuta individualmente los 39 canónicos Java. El head actual refuerza State para comprobar estado inicial, dos transiciones válidas y dos operaciones inválidas/no-op; esa mejora permanece materializada pero no se acredita como verificada hasta que su nuevo CI termine verde.
 
 ## Implementaciones por lenguaje
 
-La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 45 lenguajes v1 y 6 adicionales planeados. La clasificación inicial es **49 Applicable + 2 N/A**.
+La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 45 lenguajes v1 y 6 adicionales planeados. La clasificación es **49 Applicable + 2 N/A**.
 
 | Lenguaje | Aplicabilidad | Canónico / estado | Nota |
 |---|---|---|---|
@@ -164,14 +164,14 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Solidity | Applicable | [`State.sol`](../src/Niche/Solidity/patterns/State.sol) | Canónico direccionable confirmado. |
 | Fortran | Applicable | [`state.f90`](../src/Systems/Fortran/patterns/state.f90) | Canónico direccionable confirmado. |
 | Pascal | Applicable | [`state_pattern.pas`](../src/Systems/Pascal/state_pattern.pas) | Canónico direccionable confirmado. |
-| Python | Applicable | pendiente de canónico individual | Existe lógica State en `pattern_sweep.py`; no se acredita como canónico. |
+| Python | Applicable | [`state.py`](../src/Scripting/PythonPY/patterns/state.py) | `py_compile` + ejecución; verificado. |
 | Visual Basic .NET | Applicable | [`State.vb`](../src/Enterprise/VB.NET/patterns/State.vb) | Canónico direccionable confirmado. |
 | C++ | Applicable | [`state.cpp`](../src/Systems/C%2B%2B/patterns/state.cpp) | Canónico direccionable confirmado. |
-| Objective-C | Applicable | pendiente de reconciliación | Debe conservar intención State y validación Clang/GNUstep/macOS según gate vigente. |
-| Java | Applicable | pendiente de reconciliación | Debe existir fuente individual y ejecución JVM. |
+| Objective-C | Applicable | [`state.m`](../src/Systems/Objective-C/state.m) | Clang/GNUstep con `-Wall -Wextra -Werror` + runtime; verificado. |
+| Java | Applicable | [`state.java`](../src/Enterprise/Java/patterns/state.java) | Canónico individual; `javac -Xlint:all -Werror` + runtime. Contrato reforzado pendiente de VERIFY del head actual. |
 | Rust | Applicable | [`state.rs`](../src/Systems/Rust/patterns/state.rs) | Canónico direccionable confirmado. |
 | Zig | Applicable | pendiente de reconciliación | State es expresable con tagged unions/enums y transición explícita. |
-| Go | Applicable | pendiente de canónico individual | Existe lógica State en `pattern_sweep.go`; no se acredita como canónico. |
+| Go | Applicable | [`state.go`](../src/Systems/Go/state.go) | `gofmt` + `go vet` + ejecución; verificado. |
 | PHP | Applicable | [`state.php`](../src/Scripting/PHP/patterns/state.php) | Canónico direccionable confirmado. |
 | Nim | Applicable | [`state_example.nim`](../src/Niche/Nim/patterns/state_example.nim) | Canónico direccionable confirmado. |
 | Dart | Applicable | pendiente de reconciliación | State es expresable idiomáticamente; validar format/analyze/run. |
@@ -212,9 +212,9 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 
 ## Deuda de cierre conocida
 
-- Confirmar/reconciliar los 19 Applicable todavía sin canónico individual acreditado en esta página.
+- Confirmar/reconciliar los 15 Applicable todavía sin canónico individual acreditado en esta página.
 - Reutilizar las celdas de `pattern_sweep.*` donde sean correctas, extrayéndolas a fuentes direccionables en lugar de mantener implementaciones paralelas ocultas.
-- Acreditar validación ejecutada por lenguaje antes de elevar `verified/applicable`.
+- Acreditar el contrato Java reforzado sólo después del VERIFY del head actual.
 - Revisar si alguna ruta histórica confirmada requiere adaptación para enseñar también failure mode/transición inválida, sin perseguir tests de poco valor.
 - Cambiar el estado a `validated` sólo cuando `implemented == applicable` y toda la evidencia KB-006 esté reconciliada.
 
