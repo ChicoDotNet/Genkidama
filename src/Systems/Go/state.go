@@ -26,7 +26,7 @@ func (lockedState) coin(t *turnstile) string {
 }
 func (lockedState) push(*turnstile) string { return "blocked" }
 
-func (unlockedState) name() string { return "unlocked" }
+func (unlockedState) name() string           { return "unlocked" }
 func (unlockedState) coin(*turnstile) string { return "coin-returned" }
 func (unlockedState) push(t *turnstile) string {
 	t.state = lockedState{}
