@@ -18,6 +18,12 @@ def main() -> int:
     py = dc.ROOT / "src/Scripting/PythonPY/pattern_sweep.py"
     dc.run([sys.executable, "-m", "py_compile", str(py)])
     dc.run([sys.executable, "-B", str(py)])
+    python_state = dc.ROOT / "src/Scripting/PythonPY/patterns/state.py"
+    dc.run([sys.executable, "-m", "py_compile", str(python_state)])
+    dc.require(
+        dc.last_line(dc.run([sys.executable, "-B", str(python_state)], capture=True)) == "python-state: passed",
+        "Python State output mismatch",
+    )
 
     ruby_files = dc.exact_glob(dc.ROOT / "src/Scripting/Ruby/patterns", "*.rb", "Ruby")
     for source in ruby_files:
