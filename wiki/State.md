@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Permitir que un objeto cambie su comportamiento cuando cambia su estado interno, haciendo explícitas las transiciones y evitando condicionales dispersos dependientes del estado.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `34/49` canónicos direccionables materializados; `33/49` verificados en el head previo acreditado. Java está materializado y reforzado en el head actual, pendiente de VERIFY.  
+> **Implementaciones de lenguaje:** `36/49` canónicos direccionables materializados; `35/49` verificados en el head previo acreditado. Dart está materializado y cableado al gate en el head actual, pendiente de VERIFY.  
 > **Cobertura de pruebas:** `N/A` agregada — la matriz polyglot usa la validación más fuerte razonablemente disponible por ecosistema; no se inventa un porcentaje transversal.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -150,7 +150,11 @@ Una implementación que sólo demuestra el happy path enseña menos que el domin
 
 La reconciliación horizontal parte de evidencia producida por los barridos language-major, pero un `pattern_sweep.*` no sustituye una fuente individual. Python, Go y Objective-C ya tienen canónicos individuales añadidos y verificados en este PR. Objective-C quedó acreditado cuando el head `448cead78c6b8a8f304bb8dbf0251f9738192cac` completó Quality, Product CI y Polyglot CI en verde.
 
-Java ya tenía el canónico individual [`src/Enterprise/Java/patterns/state.java`](../src/Enterprise/Java/patterns/state.java), y `eng/ci/adapters/jvm_patterns.py` compila con `javac -Xlint:all -Werror` y ejecuta individualmente los 39 canónicos Java. El head actual refuerza State para comprobar estado inicial, dos transiciones válidas y dos operaciones inválidas/no-op; esa mejora permanece materializada pero no se acredita como verificada hasta que su nuevo CI termine verde.
+Java ya tenía el canónico individual [`src/Enterprise/Java/patterns/state.java`](../src/Enterprise/Java/patterns/state.java), y `eng/ci/adapters/jvm_patterns.py` compila con `javac -Xlint:all -Werror` y ejecuta individualmente los 39 canónicos Java. El contrato reforzado quedó acreditado cuando `cda32b09d22265ab87d867167f8020f1592f5332` completó Quality, Product CI y Polyglot CI en verde.
+
+Zig tiene el canónico individual [`src/Systems/Zig/state.zig`](../src/Systems/Zig/state.zig); `eng/ci/adapters/zig_state.py` aplica `zig fmt --check`, lo ejecuta con `zig run` y exige `zig-state: passed`. El head `c3495cacbaf2cb5551826b769f913abfe736dd97` completó Quality, Product CI y Polyglot CI en verde, por lo que Zig queda acreditado como verificado.
+
+Dart tiene ahora el canónico individual [`src/Web/Dart/state.dart`](../src/Web/Dart/state.dart). `eng/ci/adapters/dart_contracts.py` aplica format, analyze con fatal infos/warnings, ejecuta el sweep histórico y además ejecuta el canónico exigiendo `dart-state: passed`. Esta celda permanece materializada pero no verificada hasta que el head actual cierre CI verde.
 
 ## Implementaciones por lenguaje
 
@@ -168,13 +172,13 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Visual Basic .NET | Applicable | [`State.vb`](../src/Enterprise/VB.NET/patterns/State.vb) | Canónico direccionable confirmado. |
 | C++ | Applicable | [`state.cpp`](../src/Systems/C%2B%2B/patterns/state.cpp) | Canónico direccionable confirmado. |
 | Objective-C | Applicable | [`state.m`](../src/Systems/Objective-C/state.m) | Clang/GNUstep con `-Wall -Wextra -Werror` + runtime; verificado. |
-| Java | Applicable | [`state.java`](../src/Enterprise/Java/patterns/state.java) | Canónico individual; `javac -Xlint:all -Werror` + runtime. Contrato reforzado pendiente de VERIFY del head actual. |
+| Java | Applicable | [`state.java`](../src/Enterprise/Java/patterns/state.java) | `javac -Xlint:all -Werror` + runtime; contrato reforzado y verificado. |
 | Rust | Applicable | [`state.rs`](../src/Systems/Rust/patterns/state.rs) | Canónico direccionable confirmado. |
-| Zig | Applicable | pendiente de reconciliación | State es expresable con tagged unions/enums y transición explícita. |
+| Zig | Applicable | [`state.zig`](../src/Systems/Zig/state.zig) | `zig fmt --check` + `zig run`; verificado. |
 | Go | Applicable | [`state.go`](../src/Systems/Go/state.go) | `gofmt` + `go vet` + ejecución; verificado. |
 | PHP | Applicable | [`state.php`](../src/Scripting/PHP/patterns/state.php) | Canónico direccionable confirmado. |
 | Nim | Applicable | [`state_example.nim`](../src/Niche/Nim/patterns/state_example.nim) | Canónico direccionable confirmado. |
-| Dart | Applicable | pendiente de reconciliación | State es expresable idiomáticamente; validar format/analyze/run. |
+| Dart | Applicable | [`state.dart`](../src/Web/Dart/state.dart) | `dart format` + `dart analyze --fatal-*` + runtime; pendiente de VERIFY del head actual. |
 | Kotlin | Applicable | [`State.kt`](../src/Enterprise/Kotlin/patterns/State.kt) | Canónico direccionable confirmado. |
 | Swift | Applicable | [`State.swift`](../src/Systems/Swift/patterns/State.swift) | Canónico direccionable confirmado. |
 | F# | Applicable | [`State.fsx`](../src/Functional/F%23/patterns/State.fsx) | Canónico direccionable confirmado. |
@@ -212,9 +216,9 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 
 ## Deuda de cierre conocida
 
-- Confirmar/reconciliar los 15 Applicable todavía sin canónico individual acreditado en esta página.
+- Confirmar/reconciliar los 13 Applicable todavía sin canónico individual acreditado en esta página.
 - Reutilizar las celdas de `pattern_sweep.*` donde sean correctas, extrayéndolas a fuentes direccionables en lugar de mantener implementaciones paralelas ocultas.
-- Acreditar el contrato Java reforzado sólo después del VERIFY del head actual.
+- Acreditar Dart sólo después del VERIFY del head actual; Zig y Java ya están acreditados por sus respectivos heads verdes.
 - Revisar si alguna ruta histórica confirmada requiere adaptación para enseñar también failure mode/transición inválida, sin perseguir tests de poco valor.
 - Cambiar el estado a `validated` sólo cuando `implemented == applicable` y toda la evidencia KB-006 esté reconciliada.
 
