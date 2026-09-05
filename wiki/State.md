@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Permitir que un objeto cambie su comportamiento cuando cambia su estado interno, haciendo explícitas las transiciones y evitando condicionales dispersos dependientes del estado.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `36/49` canónicos direccionables materializados; `35/49` verificados en el head previo acreditado. Dart está materializado y cableado al gate en el head actual, pendiente de VERIFY.  
+> **Implementaciones de lenguaje:** `37/49` canónicos direccionables materializados; `36/49` verificados en el último head acreditado. Crystal está materializado y cableado al gate en el head actual, pendiente de VERIFY.  
 > **Cobertura de pruebas:** `N/A` agregada — la matriz polyglot usa la validación más fuerte razonablemente disponible por ecosistema; no se inventa un porcentaje transversal.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -79,6 +79,14 @@ public static GateState Transition(GateState state, string action) =>
 
 El repositorio contiene un canónico C# direccionable en [`src/Enterprise/C#/patterns/State.cs`](../src/Enterprise/C%23/patterns/State.cs).
 
+## Aplicación real
+
+### Torniquete de acceso
+
+Un torniquete puede estar bloqueado o desbloqueado. Insertar una moneda en estado bloqueado desbloquea; empujar en estado desbloqueado permite el paso y vuelve a bloquear. Repetir el mismo evento en el estado equivocado es un no-op o error de dominio. State encaja porque el mismo evento tiene significado distinto según el estado actual y las transiciones deben ser explícitas.
+
+Si sólo existiera un booleano con una única condición local, un `if` sencillo sería preferible.
+
 ## En Genkidama
 
 No se ha verificado todavía un uso productivo deliberado de State que deba acreditarse como arquitectura de Genkidama. Existen estados de aplicación y workflows, pero esta ficha no los etiqueta como el patrón sólo por compartir vocabulario.
@@ -114,7 +122,7 @@ No se modifica arquitectura productiva para aumentar artificialmente el número 
 
 | Patrón | Relación | Por qué importa |
 |---|---|---|
-| [Strategy](Strategy.md) | similar structure, different intent | Strategy intercambia algoritmos elegidos por composición; State cambia comportamiento como consecuencia del estado/ciclo de vida. |
+| [Strategy](Strategy.md) | often confused with | Strategy intercambia algoritmos elegidos por composición; State cambia comportamiento como consecuencia del estado/ciclo de vida. |
 | [Memento](Memento.md) | collaborates with | Memento puede capturar/restaurar el estado de un contexto sin asumir la responsabilidad de decidir transiciones. |
 | [Observer](Observer.md) | collaborates with | Un contexto puede notificar a observers después de una transición, sin convertir notificación en lógica de estado. |
 | [Command](Command.md) | collaborates with | Un evento/acción puede representarse como Command mientras State decide si es válido y cómo cambia el contexto. |
@@ -148,13 +156,11 @@ Una implementación que sólo demuestra el happy path enseña menos que el domin
 
 ## Validación automatizada
 
-La reconciliación horizontal parte de evidencia producida por los barridos language-major, pero un `pattern_sweep.*` no sustituye una fuente individual. Python, Go y Objective-C ya tienen canónicos individuales añadidos y verificados en este PR. Objective-C quedó acreditado cuando el head `448cead78c6b8a8f304bb8dbf0251f9738192cac` completó Quality, Product CI y Polyglot CI en verde.
+La reconciliación horizontal parte de evidencia producida por los barridos language-major, pero un `pattern_sweep.*` no sustituye una fuente individual. Python, Go, Objective-C, Java y Zig ya tienen canónicos individuales verificados en este PR.
 
-Java ya tenía el canónico individual [`src/Enterprise/Java/patterns/state.java`](../src/Enterprise/Java/patterns/state.java), y `eng/ci/adapters/jvm_patterns.py` compila con `javac -Xlint:all -Werror` y ejecuta individualmente los 39 canónicos Java. El contrato reforzado quedó acreditado cuando `cda32b09d22265ab87d867167f8020f1592f5332` completó Quality, Product CI y Polyglot CI en verde.
+Dart tiene el canónico individual [`src/Web/Dart/state.dart`](../src/Web/Dart/state.dart). `eng/ci/adapters/dart_contracts.py` aplica format, analyze con fatal infos/warnings, ejecuta el sweep histórico y el canónico individual. El head `41c940fc045aaea40366345652145be25e3cd38a` completó Quality, Product CI y Polyglot CI en verde, por lo que Dart queda acreditado como verificado.
 
-Zig tiene el canónico individual [`src/Systems/Zig/state.zig`](../src/Systems/Zig/state.zig); `eng/ci/adapters/zig_state.py` aplica `zig fmt --check`, lo ejecuta con `zig run` y exige `zig-state: passed`. El head `c3495cacbaf2cb5551826b769f913abfe736dd97` completó Quality, Product CI y Polyglot CI en verde, por lo que Zig queda acreditado como verificado.
-
-Dart tiene ahora el canónico individual [`src/Web/Dart/state.dart`](../src/Web/Dart/state.dart). `eng/ci/adapters/dart_contracts.py` aplica format, analyze con fatal infos/warnings, ejecuta el sweep histórico y además ejecuta el canónico exigiendo `dart-state: passed`. Esta celda permanece materializada pero no verificada hasta que el head actual cierre CI verde.
+Crystal tiene ahora el canónico individual [`src/Niche/Crystal/state.cr`](../src/Niche/Crystal/state.cr), extraído de la semántica ya presente en `pattern_sweep.cr`. `eng/ci/adapters/crystal_state.py` aplica `crystal tool format --check`, compila con `crystal build --error-on-warnings`, ejecuta el binario y exige `crystal-state: passed`. Esta celda permanece materializada pero no verificada hasta que el head actual cierre CI verde.
 
 ## Implementaciones por lenguaje
 
@@ -178,11 +184,11 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Go | Applicable | [`state.go`](../src/Systems/Go/state.go) | `gofmt` + `go vet` + ejecución; verificado. |
 | PHP | Applicable | [`state.php`](../src/Scripting/PHP/patterns/state.php) | Canónico direccionable confirmado. |
 | Nim | Applicable | [`state_example.nim`](../src/Niche/Nim/patterns/state_example.nim) | Canónico direccionable confirmado. |
-| Dart | Applicable | [`state.dart`](../src/Web/Dart/state.dart) | `dart format` + `dart analyze --fatal-*` + runtime; pendiente de VERIFY del head actual. |
+| Dart | Applicable | [`state.dart`](../src/Web/Dart/state.dart) | `dart format` + `dart analyze --fatal-*` + runtime; verificado. |
 | Kotlin | Applicable | [`State.kt`](../src/Enterprise/Kotlin/patterns/State.kt) | Canónico direccionable confirmado. |
 | Swift | Applicable | [`State.swift`](../src/Systems/Swift/patterns/State.swift) | Canónico direccionable confirmado. |
 | F# | Applicable | [`State.fsx`](../src/Functional/F%23/patterns/State.fsx) | Canónico direccionable confirmado. |
-| Crystal | Applicable | pendiente de reconciliación | State es expresable con enums/unions/objetos y transición explícita. |
+| Crystal | Applicable | [`state.cr`](../src/Niche/Crystal/state.cr) | format + build `--error-on-warnings` + runtime; pendiente de VERIFY del head actual. |
 | Lua | Applicable | [`state.lua`](../src/Scripting/Lua/patterns/state.lua) | Canónico direccionable confirmado. |
 | Haskell | Applicable | pendiente de reconciliación | ADT + función de transición es una expresión idiomática del patrón. |
 | COBOL | Applicable | [`state_pattern.cpy`](../src/Historical/Cobol/patterns/state_pattern.cpy) | Canónico direccionable confirmado. |
@@ -216,19 +222,25 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 
 ## Deuda de cierre conocida
 
-- Confirmar/reconciliar los 13 Applicable todavía sin canónico individual acreditado en esta página.
+- Confirmar/reconciliar los 12 Applicable todavía sin canónico individual acreditado en esta página.
 - Reutilizar las celdas de `pattern_sweep.*` donde sean correctas, extrayéndolas a fuentes direccionables en lugar de mantener implementaciones paralelas ocultas.
-- Acreditar Dart sólo después del VERIFY del head actual; Zig y Java ya están acreditados por sus respectivos heads verdes.
+- Acreditar Crystal sólo después del VERIFY del head actual; Dart, Zig y Java ya están acreditados por sus respectivos heads verdes.
 - Revisar si alguna ruta histórica confirmada requiere adaptación para enseñar también failure mode/transición inválida, sin perseguir tests de poco valor.
 - Cambiar el estado a `validated` sólo cuando `implemented == applicable` y toda la evidencia KB-006 esté reconciliada.
 
-## Preguntas de comprensión
+## Comprueba que lo entendiste
 
-1. ¿Qué diferencia a State de un simple enum o bandera?
+1. ¿Qué diferencia a State de un simple enum o bandera cuando ambos almacenan un valor de estado?
 2. ¿Por qué State y Strategy pueden parecer estructuralmente similares pero tener distinta intención?
-3. ¿Cómo expresarías State en un lenguaje funcional sin crear clases artificiales?
-4. ¿Qué debería ocurrir cuando llega un evento inválido para el estado actual?
-5. ¿Por qué una función escondida dentro de un sweep multi-patrón no basta como canónico KB-006?
+3. ¿Cuándo una tabla o ADT con función de transición es más idiomática que una jerarquía de clases State?
+
+## Resumen
+
+- State aparece cuando comportamiento y transiciones dependen del estado actual.
+- La decisión central es hacer explícita esa política y evitar condicionales dispersos.
+- El costo es abstracción adicional y riesgo de sobre-modelar dominios triviales.
+- Strategy puede parecerse estructuralmente, pero responde a selección de algoritmo y no al ciclo de vida.
+- El patrón es portable a OO, ADTs, funciones, tablas, predicados y mecanismos de bajo nivel; la sintaxis de clases no define su aplicabilidad.
 
 ## Referencias
 
