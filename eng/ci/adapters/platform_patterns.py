@@ -22,6 +22,7 @@ ASSEMBLY_CONTRACTS: dict[str, str] = {
     "prototype.asm": "original=orders: metrics\nclone=orders-canary: metrics,tracing",
     "proxy.asm": "backend=1;fetches=1;first=doc(42);second=doc(42)",
     "singleton.asm": "same=true\ncount=1",
+    "state.asm": "locked\nlocked\nunlocked\nunlocked\nlocked\ninvalid\nassembly-state: passed",
 }
 
 
