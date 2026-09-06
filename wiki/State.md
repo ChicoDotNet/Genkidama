@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Permitir que un objeto cambie su comportamiento cuando cambia su estado interno, haciendo explícitas las transiciones y evitando condicionales dispersos dependientes del estado.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `39/49` canónicos direccionables materializados; `38/49` verificados en el último head acreditado. Julia está materializado y cableado al gate en el head actual, pendiente de VERIFY.  
+> **Implementaciones de lenguaje:** `41/49` canónicos direccionables materializados; `40/49` verificados en el último head acreditado. VBA está acreditado; GDScript está materializado y cableado al gate en el head actual, pendiente de VERIFY.  
 > **Cobertura de pruebas:** `N/A` agregada — la matriz polyglot usa la validación más fuerte razonablemente disponible por ecosistema; no se inventa un porcentaje transversal.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -158,9 +158,9 @@ Una implementación que sólo demuestra el happy path enseña menos que el domin
 
 La reconciliación horizontal parte de evidencia producida por los barridos language-major, pero un `pattern_sweep.*` no sustituye una fuente individual.
 
-Python, Go, Objective-C, Java, Zig, Dart, Crystal, Haskell y Groovy tienen canónicos individuales acreditados por heads con Quality, Product CI y Polyglot CI verdes. Groovy se ejecuta individualmente dentro del cohort JVM y el head `a8e8c44eeee7b070ef747146e118cd6700cdf1fe` cerró los tres workflows en verde.
+Python, Go, Objective-C, Java, Zig, Dart, Crystal, Haskell, Groovy, Julia y VBA tienen canónicos individuales acreditados por heads con Quality, Product CI y Polyglot CI verdes. VBA usa un source contract estricto porque el CI Linux actual no dispone de host Office/VBA; el head `9eb7bbe6724bfeca3d5a9b495beb0eed7097ab7e` cerró los tres workflows en verde sin inventar ejecución VBA.
 
-Julia tiene ahora el canónico individual [`src/DataScience/Julia/state.jl`](../src/DataScience/Julia/state.jl), extraído de la semántica del sweep y reforzado para estado inicial, dos transiciones válidas y dos operaciones inválidas/no-op. `eng/ci/adapters/julia_state.py` lo ejecuta con `julia --startup-file=no --check-bounds=yes` y exige `julia-state: passed`. La celda está materializada y cableada al gate Longtail, pero permanece pendiente de VERIFY del head actual.
+GDScript tiene ahora el canónico individual [`src/Niche/GDScript/state.gd`](../src/Niche/GDScript/state.gd). Usa enums, `match`, transición explícita, estado inicial, dos transiciones válidas y dos operaciones inválidas/no-op. `eng/ci/adapters/platform_patterns.py` lo ejecuta con Godot headless y exige `gdscript-state: passed`. La celda está materializada y cableada al gate Platform, pero permanece pendiente de VERIFY del head actual.
 
 ## Implementaciones por lenguaje
 
@@ -197,9 +197,9 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Ruby | Applicable | [`state.rb`](../src/Scripting/Ruby/patterns/state.rb) | Canónico direccionable confirmado. |
 | C | Applicable | [`state.c`](../src/Systems/C/patterns/state.c) | Canónico direccionable confirmado. |
 | OCaml | Applicable | [`state.ml`](../src/Functional/OCaml/patterns/state.ml) | Canónico direccionable confirmado. |
-| Julia | Applicable | [`state.jl`](../src/DataScience/Julia/state.jl) | Runtime con bounds checks; pendiente de VERIFY del head actual. |
-| VBA | Applicable | pendiente de reconciliación | Source contract proporcional si no hay host Office disponible. |
-| GDScript | Applicable | pendiente de reconciliación | State es natural en gameplay; requiere canónico y Godot headless. |
+| Julia | Applicable | [`state.jl`](../src/DataScience/Julia/state.jl) | Runtime con bounds checks; verificado. |
+| VBA | Applicable | [`state.bas`](../src/Shell/VBA/state.bas) | Source contract estricto; verificado en CI sin host Office. |
+| GDScript | Applicable | [`state.gd`](../src/Niche/GDScript/state.gd) | Godot headless + runtime; pendiente de VERIFY del head actual. |
 | JavaScript | Applicable | [`state.js`](../src/Web/JavaScriptJS/patterns/state.js) | Canónico direccionable confirmado. |
 | MATLAB | Applicable | [`state.m`](../src/DataScience/MATLAB/state.m) | Canónico direccionable confirmado. |
 | Perl | Applicable | pendiente de reconciliación | State es expresable con hashes/closures/subrutinas. |
@@ -222,9 +222,9 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 
 ## Deuda de cierre conocida
 
-- Confirmar/reconciliar los 10 Applicable todavía sin canónico individual acreditado en esta página.
+- Confirmar/reconciliar los 8 Applicable todavía sin canónico individual acreditado en esta página.
 - Reutilizar las celdas de `pattern_sweep.*` donde sean correctas, extrayéndolas a fuentes direccionables en lugar de mantener implementaciones paralelas ocultas.
-- Acreditar Julia sólo después del VERIFY del head actual; Crystal, Haskell y Groovy ya están acreditados por sus respectivos heads verdes.
+- Acreditar GDScript sólo después del VERIFY del head actual; Julia y VBA ya están acreditados por sus respectivos heads verdes.
 - Revisar si alguna ruta histórica confirmada requiere adaptación para enseñar también failure mode/transición inválida, sin perseguir tests de poco valor.
 - Cambiar el estado a `validated` sólo cuando `implemented == applicable` y toda la evidencia KB-006 esté reconciliada.
 
