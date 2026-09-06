@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'mediator.dart' as mediator;
 import 'iterator.dart' as iterator_example;
 
 void check(bool condition) {
@@ -91,20 +92,7 @@ void iteratorPattern() {
 }
 
 // Mediator
-class UiMediator {
-  final events = <String>[];
-  void notify(String sender, String event) {
-    if (sender == 'button' && event == 'click') events.add('panel.refresh');
-    if (sender == 'panel' && event == 'loaded') events.add('button.enable');
-  }
-}
-
-void mediatorPattern() {
-  final m = UiMediator()
-    ..notify('button', 'click')
-    ..notify('panel', 'loaded');
-  check(m.events.join('>') == 'panel.refresh>button.enable');
-}
+void mediatorPattern() => mediator.verifyMediator();
 
 // Memento
 class EditorMemento {

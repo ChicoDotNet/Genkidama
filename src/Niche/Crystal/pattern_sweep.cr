@@ -1,3 +1,4 @@
+require "./mediator"
 require "./iterator"
 
 def must(value : Bool)
@@ -65,19 +66,8 @@ def iterator_pattern
 end
 
 # Mediator
-class UiMediator
-  getter events = [] of String
-
-  def notify(sender : String, event : String)
-    @events << "panel.refresh" if sender == "button" && event == "click"
-    @events << "button.enable" if sender == "panel" && event == "loaded"
-  end
-end
-
 def mediator_pattern
-  m = UiMediator.new
-  m.notify("button", "click"); m.notify("panel", "loaded")
-  must(m.events.join(">") == "panel.refresh>button.enable")
+  verify_mediator
 end
 
 # Memento

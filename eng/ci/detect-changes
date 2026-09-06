@@ -1,0 +1,5 @@
+#!/usr/bin/env python3
+from engine import _guard, main_detect_changes
+
+if __name__ == "__main__":
+    _guard(main_detect_changes)

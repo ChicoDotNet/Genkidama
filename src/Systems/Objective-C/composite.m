@@ -4,14 +4,13 @@
 - (NSInteger)size;
 @end
 
-@interface GKFileLeaf : NSObject <GKComponent>
+@interface GKFileLeaf : NSObject <GKComponent> {
+    NSInteger _bytes;
+}
 - (instancetype)initWithBytes:(NSInteger)bytes;
 @end
 
-@implementation GKFileLeaf {
-    NSInteger _bytes;
-}
-
+@implementation GKFileLeaf
 - (instancetype)initWithBytes:(NSInteger)bytes {
     self = [super init];
     if (self) {
@@ -25,14 +24,13 @@
 }
 @end
 
-@interface GKFolderComposite : NSObject <GKComponent>
+@interface GKFolderComposite : NSObject <GKComponent> {
+    NSArray<id<GKComponent>> *_children;
+}
 - (instancetype)initWithChildren:(NSArray<id<GKComponent>> *)children;
 @end
 
-@implementation GKFolderComposite {
-    NSArray<id<GKComponent>> *_children;
-}
-
+@implementation GKFolderComposite
 - (instancetype)initWithChildren:(NSArray<id<GKComponent>> *)children {
     self = [super init];
     if (self) {

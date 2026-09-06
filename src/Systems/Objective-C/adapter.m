@@ -14,15 +14,15 @@
 }
 @end
 
-@interface FahrenheitSensorAdapter : NSObject <TemperatureReader>
+@interface FahrenheitSensorAdapter : NSObject <TemperatureReader> {
+    LegacyFahrenheitSensor *_adaptee;
+}
+@property(nonatomic, strong) LegacyFahrenheitSensor *adaptee;
 - (instancetype)initWithSensor:(LegacyFahrenheitSensor *)sensor;
 @end
 
-@interface FahrenheitSensorAdapter ()
-@property(nonatomic, strong) LegacyFahrenheitSensor *adaptee;
-@end
-
 @implementation FahrenheitSensorAdapter
+@synthesize adaptee = _adaptee;
 
 - (instancetype)initWithSensor:(LegacyFahrenheitSensor *)sensor {
     self = [super init];

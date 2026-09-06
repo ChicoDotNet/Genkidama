@@ -1,0 +1,674 @@
+name: Polyglot CI
+
+on:
+  pull_request:
+    branches:
+      - dev
+      - main
+  push:
+    branches:
+      - dev
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: polyglot-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  detect:
+    name: Detect changes
+    runs-on: ubuntu-24.04
+    outputs:
+      beam: ${{ steps.classify.outputs.beam }}
+      data_shell: ${{ steps.classify.outputs.data_shell }}
+      dart: ${{ steps.classify.outputs.dart }}
+      dotnet: ${{ steps.classify.outputs.dotnet }}
+      functional: ${{ steps.classify.outputs.functional }}
+      git: ${{ steps.classify.outputs.git }}
+      gnu: ${{ steps.classify.outputs.gnu }}
+      jvm: ${{ steps.classify.outputs.jvm }}
+      longtail: ${{ steps.classify.outputs.longtail }}
+      native: ${{ steps.classify.outputs.native }}
+      platform: ${{ steps.classify.outputs.platform }}
+      scripting: ${{ steps.classify.outputs.scripting }}
+      swift: ${{ steps.classify.outputs.swift }}
+      web: ${{ steps.classify.outputs.web }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Classify affected runtime families
+        id: classify
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == "workflow_dispatch" || -z "$BASE_SHA" || "$BASE_SHA" =~ ^0+$ ]]; then
+            result="$(eng/ci/detect-changes --full)"
+          else
+            result="$(eng/ci/detect-changes "$BASE_SHA" "$HEAD_SHA")"
+          fi
+          echo "$result"
+          for family in beam data-shell dart dotnet functional git gnu jvm longtail native platform scripting swift web; do
+            value="$(python -c 'import json,sys; d=json.loads(sys.argv[1]); print("true" if sys.argv[2] in d["polyglot"] else "false")' "$result" "$family")"
+            key="${family//-/_}"
+            echo "$key=$value" >> "$GITHUB_OUTPUT"
+          done
+
+  dotnet-linux:
+    name: .NET / Linux
+    needs: detect
+    if: needs.detect.outputs.dotnet == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.111'
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - name: Run .NET Learn and Patterns contracts
+        run: python eng/ci/run-family dotnet --all --telemetry-file artifacts/ci/dotnet-linux.jsonl
+
+  dotnet-windows:
+    name: .NET / Windows
+    needs: detect
+    if: needs.detect.outputs.dotnet == 'true'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.111'
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - name: Run .NET Windows Learn contracts
+        run: python eng/ci/run-family dotnet --learn --telemetry-file artifacts/ci/dotnet-windows.jsonl
+
+  jvm-java25:
+    name: JVM / Java 25 + Scala + Clojure
+    needs: detect
+    if: needs.detect.outputs.jvm == 'true'
+    runs-on: ubuntu-24.04
+    env:
+      GENKIDAMA_JVM_PROFILE: java25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+      - name: Install Scala CLI and Clojure CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL https://github.com/VirtusLab/scala-cli/releases/latest/download/scala-cli-x86_64-pc-linux.gz -o /tmp/scala-cli.gz
+          gzip -d /tmp/scala-cli.gz
+          sudo install -m 0755 /tmp/scala-cli /usr/local/bin/scala-cli
+          curl -fsSL https://github.com/clojure/brew-install/releases/latest/download/linux-install.sh -o /tmp/clojure-install.sh
+          chmod +x /tmp/clojure-install.sh
+          sudo /tmp/clojure-install.sh
+          scala-cli version
+          clojure --version
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - name: Run Java 25 Learn and Patterns contracts
+        run: python eng/ci/run-family jvm --all --telemetry-file artifacts/ci/jvm-java25.jsonl
+
+  jvm17:
+    name: JVM / Kotlin + Groovy / Java 17
+    needs: detect
+    if: needs.detect.outputs.jvm == 'true'
+    runs-on: ubuntu-24.04
+    env:
+      GENKIDAMA_JVM_PROFILE: jvm17
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: '9.6.1'
+          cache-disabled: true
+      - name: Install Groovy and Kotlin command line
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y groovy
+          kotlin_url="$(curl -fsSL -H "Authorization: Bearer $GITHUB_TOKEN" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/JetBrains/kotlin/releases/latest | jq -r '.assets[] | select(.name | test("^kotlin-compiler-[0-9.]+\\.zip$")) | .browser_download_url' | head -n 1)"
+          test -n "$kotlin_url"
+          curl -fsSL "$kotlin_url" -o /tmp/kotlin.zip
+          sudo rm -rf /opt/kotlinc
+          sudo unzip -q /tmp/kotlin.zip -d /opt
+          echo "/opt/kotlinc/bin" >> "$GITHUB_PATH"
+          groovy --version
+          /opt/kotlinc/bin/kotlinc -version
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - name: Run JVM 17 Learn and Patterns contracts
+        run: python eng/ci/run-family jvm --all --telemetry-file artifacts/ci/jvm17.jsonl
+
+  native-gnu:
+    name: Native / GCC
+    needs: detect
+    if: needs.detect.outputs.native == 'true'
+    runs-on: ubuntu-24.04
+    env:
+      GENKIDAMA_NATIVE_PROFILE: gnu
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - name: Run GCC Learn and C/C++ Patterns contracts
+        run: python eng/ci/run-family native --all --telemetry-file artifacts/ci/native-gnu.jsonl
+
+  native-clang:
+    name: Native / Clang
+    needs: detect
+    if: needs.detect.outputs.native == 'true'
+    runs-on: ubuntu-24.04
+    env:
+      GENKIDAMA_NATIVE_PROFILE: clang
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - name: Run Clang C/C++ Learn contracts
+        run: python eng/ci/run-family native --learn --telemetry-file artifacts/ci/native-clang.jsonl
+
+  native-rust:
+    name: Native / Rust 1.97.1
+    needs: detect
+    if: needs.detect.outputs.native == 'true'
+    runs-on: ubuntu-24.04
+    env:
+      GENKIDAMA_NATIVE_PROFILE: rust
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.97.1
+          components: rustfmt, clippy
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - name: Run Rust Learn and Patterns contracts
+        run: python eng/ci/run-family native --all --telemetry-file artifacts/ci/native-rust.jsonl
+
+  native-go:
+    name: Native / Go 1.26.5
+    needs: detect
+    if: needs.detect.outputs.native == 'true'
+    runs-on: ubuntu-24.04
+    env:
+      GENKIDAMA_NATIVE_PROFILE: go
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: '1.26.5'
+          cache-dependency-path: learn/es/go/app/go.mod
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - name: Run Go Learn and Pattern sweep contracts
+        run: python eng/ci/run-family native --all --telemetry-file artifacts/ci/native-go.jsonl
+
+  native-msvc:
+    name: Native / MSVC
+    needs: detect
+    if: needs.detect.outputs.native == 'true'
+    runs-on: windows-latest
+    env:
+      GENKIDAMA_NATIVE_PROFILE: msvc
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - name: Run MSVC C++ Learn contract
+        run: python eng/ci/run-family native --learn --telemetry-file artifacts/ci/native-msvc.jsonl
+
+  beam:
+    name: BEAM / OTP 28 + Elixir 1.19
+    needs: detect
+    if: needs.detect.outputs.beam == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: '28.5.0.4'
+          elixir-version: '1.19.1'
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - name: Run BEAM Pattern contracts
+        run: python eng/ci/run-family beam --patterns --telemetry-file artifacts/ci/beam.jsonl
+
+  functional:
+    name: Functional / OCaml + Common Lisp + Prolog
+    needs: detect
+    if: needs.detect.outputs.functional == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - name: Install functional runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y ocaml sbcl swi-prolog-nox
+      - name: Run Functional Pattern contracts
+        run: python eng/ci/run-family functional --patterns --telemetry-file artifacts/ci/functional.jsonl
+
+  data-shell:
+    name: Data/Shell / R + Octave + PowerShell
+    needs: detect
+    if: needs.detect.outputs.data_shell == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - name: Install R and GNU Octave runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y r-base octave
+      - name: Run Data/Shell Pattern contracts
+        run: python eng/ci/run-family data-shell --patterns --telemetry-file artifacts/ci/data-shell.jsonl
+
+  git:
+    name: Git / Learn
+    needs: detect
+    if: needs.detect.outputs.git == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - name: Report Git
+        run: git --version
+      - name: Run Git Learn contracts
+        run: python eng/ci/run-family git --learn --telemetry-file artifacts/ci/git.jsonl
+
+  web:
+    name: Web / JavaScript + TypeScript + Solidity
+    needs: detect
+    if: needs.detect.outputs.web == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24.18.1'
+      - uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - name: Run Web Learn and Patterns contracts
+        run: python eng/ci/run-family web --all --telemetry-file artifacts/ci/web.jsonl
+
+  scripting-linux:
+    name: Scripting / Linux
+    needs: detect
+    if: needs.detect.outputs.scripting == 'true'
+    runs-on: ubuntu-24.04
+    env:
+      GENKIDAMA_SCRIPTING_PROFILE: linux
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '4.0.6'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          tools: composer:v2
+          coverage: none
+      - name: Install Pester
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module Pester -MinimumVersion 5.7.1 -Scope CurrentUser -Force -SkipPublisherCheck
+      - name: Build Bash 5.3 and Lua 5.5.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash_archive="$RUNNER_TEMP/bash-5.3.tar.gz"
+          curl -fsSL https://ftp.gnu.org/gnu/bash/bash-5.3.tar.gz -o "$bash_archive"
+          echo "0d5cd86965f869a26cf64f4b71be7b96f90a3ba8b3d74e27e8e9d9d5550f31ba  $bash_archive" | sha256sum -c -
+          tar -xzf "$bash_archive" -C "$RUNNER_TEMP"
+          bash_prefix="$RUNNER_TEMP/bash-5.3-install"
+          pushd "$RUNNER_TEMP/bash-5.3"
+          ./configure --prefix="$bash_prefix" >/dev/null
+          make -j2 >/dev/null
+          make install >/dev/null
+          popd
+          lua_archive="$RUNNER_TEMP/lua-5.5.1.tar.gz"
+          curl -fsSL https://www.lua.org/ftp/lua-5.5.1.tar.gz -o "$lua_archive"
+          echo "1c4b4068d67061f2a2231ad2b5422e77acea1487ea9890f6320af614f4373dce  $lua_archive" | sha256sum -c -
+          tar -xzf "$lua_archive" -C "$RUNNER_TEMP"
+          make -C "$RUNNER_TEMP/lua-5.5.1" all test
+          echo "GENKIDAMA_BASH_BIN=$bash_prefix/bin/bash" >> "$GITHUB_ENV"
+          echo "GENKIDAMA_LUA_BIN=$RUNNER_TEMP/lua-5.5.1/src/lua" >> "$GITHUB_ENV"
+          echo "GENKIDAMA_LUAC_BIN=$RUNNER_TEMP/lua-5.5.1/src/luac" >> "$GITHUB_ENV"
+      - name: Run Scripting Learn and Patterns contracts
+        run: python eng/ci/run-family scripting --all --telemetry-file artifacts/ci/scripting-linux.jsonl
+
+  scripting-windows:
+    name: Scripting / Windows
+    needs: detect
+    if: needs.detect.outputs.scripting == 'true'
+    runs-on: windows-latest
+    env:
+      GENKIDAMA_SCRIPTING_PROFILE: windows
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '4.0.6'
+      - name: Install Pester
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module Pester -MinimumVersion 5.7.1 -Scope CurrentUser -Force -SkipPublisherCheck
+      - name: Run Windows scripting Learn contracts
+        run: python eng/ci/run-family scripting --learn --telemetry-file artifacts/ci/scripting-windows.jsonl
+
+  gnu:
+    name: GNU compiled / Ada + Pascal + COBOL + Fortran
+    needs: detect
+    if: needs.detect.outputs.gnu == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - name: Install GNU-family compilers
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y gnat fp-compiler gnucobol3 gfortran
+      - name: Run GNU Learn and Patterns contracts
+        run: python eng/ci/run-family gnu --all --telemetry-file artifacts/ci/gnu.jsonl
+
+  dart-linux:
+    name: Dart + Flutter / Linux
+    needs: detect
+    if: needs.detect.outputs.dart == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2.23.0
+        with:
+          channel: stable
+          flutter-version: '3.47.0'
+          cache: true
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - name: Run Dart Learn and Patterns contracts
+        run: python eng/ci/run-family dart --all --telemetry-file artifacts/ci/dart-linux.jsonl
+
+  dart-windows:
+    name: Dart + Flutter / Windows
+    needs: detect
+    if: needs.detect.outputs.dart == 'true'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2.23.0
+        with:
+          channel: stable
+          flutter-version: '3.47.0'
+          cache: true
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - name: Run Dart Windows Learn contract
+        run: python eng/ci/run-family dart --learn --telemetry-file artifacts/ci/dart-windows.jsonl
+
+  swift:
+    name: Swift / 6.3
+    needs: detect
+    if: needs.detect.outputs.swift == 'true'
+    runs-on: ubuntu-latest
+    container: swift:6.3-noble
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install Python for local CI engine
+        run: apt-get update && apt-get install -y --no-install-recommends python3
+      - name: Run Swift Learn and Patterns contracts
+        run: python3 eng/ci/run-family swift --all --telemetry-file artifacts/ci/swift.jsonl
+
+  longtail:
+    name: Long-tail / Haskell + Crystal + Zig + Julia + Objective-C + Nim
+    needs: detect
+    if: needs.detect.outputs.longtail == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - uses: haskell-actions/setup@v2
+        with:
+          ghc-version: '9.14.1'
+          cabal-version: '3.16.1.0'
+          cabal-update: false
+      - uses: crystal-lang/install-crystal@v1
+        with:
+          crystal: '1.21.0'
+      - uses: julia-actions/setup-julia@v3
+        with:
+          version: '1.12.7'
+      - name: Install pinned Zig, Nim and Objective-C toolchains
+        shell: bash
+        run: bash eng/ci/toolchains/setup_longtail.sh
+      - name: Run long-tail Pattern contracts
+        run: python eng/ci/run-family longtail --patterns --telemetry-file artifacts/ci/longtail.jsonl
+
+  platform-portable:
+    name: Platform / portable + source contracts
+    needs: detect
+    if: needs.detect.outputs.platform == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - name: Install Assembly, Godot, MicroPython and Rockstar runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y nasm build-essential libffi-dev pkg-config
+          curl -fsSL https://github.com/godotengine/godot-builds/releases/download/4.6.3-stable/Godot_v4.6.3-stable_linux.x86_64.zip -o /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          sudo install -m 0755 /tmp/godot/Godot_v4.6.3-stable_linux.x86_64 /usr/local/bin/godot
+          git clone --depth 1 --branch v1.28.0 --recurse-submodules https://github.com/micropython/micropython.git /tmp/micropython
+          make -C /tmp/micropython/mpy-cross -j2
+          make -C /tmp/micropython/ports/unix -j2
+          curl -fsSL https://github.com/RockstarLang/rockstar/releases/download/v2.0.31/rockstar-v2.0.31-linux-x64.tar.gz -o /tmp/rockstar.tar.gz
+          echo '3d265c80d9d039ad92524f42951eb546d8b42c680965dfa551210457e399653f  /tmp/rockstar.tar.gz' | sha256sum -c -
+          mkdir -p /tmp/rockstar
+          tar -xzf /tmp/rockstar.tar.gz -C /tmp/rockstar
+          rockstar="$(find /tmp/rockstar -type f -name rockstar -perm -111 | head -n 1)"
+          test -n "$rockstar"
+          echo "GENKIDAMA_ROCKSTAR_BIN=$rockstar" >> "$GITHUB_ENV"
+      - name: Run portable Platform Pattern contracts
+        env:
+          GENKIDAMA_PLATFORM_PROFILE: portable
+        run: python eng/ci/run-family platform --patterns --telemetry-file artifacts/ci/platform-portable.jsonl
+
+  platform-matlab:
+    name: Platform / MATLAB
+    needs: detect
+    if: needs.detect.outputs.platform == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: matlab-actions/setup-matlab@v3
+        with:
+          release: latest
+      - name: Run repository MATLAB Pattern contract
+        uses: matlab-actions/run-command@v3
+        with:
+          command: run('eng/ci/adapters/matlab_contract.m')
+
+  gate:
+    name: Polyglot CI
+    if: always()
+    needs:
+      - detect
+      - dotnet-linux
+      - dotnet-windows
+      - jvm-java25
+      - jvm17
+      - native-gnu
+      - native-clang
+      - native-rust
+      - native-go
+      - native-msvc
+      - beam
+      - functional
+      - data-shell
+      - git
+      - web
+      - scripting-linux
+      - scripting-windows
+      - gnu
+      - dart-linux
+      - dart-windows
+      - swift
+      - longtail
+      - platform-portable
+      - platform-matlab
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Enforce aggregate Polyglot result
+        shell: bash
+        env:
+          DETECT_RESULT: ${{ needs.detect.result }}
+          BEAM_SELECTED: ${{ needs.detect.outputs.beam }}
+          BEAM_RESULTS: ${{ needs.beam.result }}
+          DATA_SHELL_SELECTED: ${{ needs.detect.outputs.data_shell }}
+          DATA_SHELL_RESULTS: ${{ needs.data-shell.result }}
+          DART_SELECTED: ${{ needs.detect.outputs.dart }}
+          DART_RESULTS: ${{ needs.dart-linux.result }},${{ needs.dart-windows.result }}
+          DOTNET_SELECTED: ${{ needs.detect.outputs.dotnet }}
+          DOTNET_RESULTS: ${{ needs.dotnet-linux.result }},${{ needs.dotnet-windows.result }}
+          FUNCTIONAL_SELECTED: ${{ needs.detect.outputs.functional }}
+          FUNCTIONAL_RESULTS: ${{ needs.functional.result }}
+          GIT_SELECTED: ${{ needs.detect.outputs.git }}
+          GIT_RESULTS: ${{ needs.git.result }}
+          GNU_SELECTED: ${{ needs.detect.outputs.gnu }}
+          GNU_RESULTS: ${{ needs.gnu.result }}
+          JVM_SELECTED: ${{ needs.detect.outputs.jvm }}
+          JVM_RESULTS: ${{ needs.jvm-java25.result }},${{ needs.jvm17.result }}
+          LONGTAIL_SELECTED: ${{ needs.detect.outputs.longtail }}
+          LONGTAIL_RESULTS: ${{ needs.longtail.result }}
+          NATIVE_SELECTED: ${{ needs.detect.outputs.native }}
+          NATIVE_RESULTS: ${{ needs.native-gnu.result }},${{ needs.native-clang.result }},${{ needs.native-rust.result }},${{ needs.native-go.result }},${{ needs.native-msvc.result }}
+          PLATFORM_SELECTED: ${{ needs.detect.outputs.platform }}
+          PLATFORM_RESULTS: ${{ needs.platform-portable.result }},${{ needs.platform-matlab.result }}
+          SCRIPTING_SELECTED: ${{ needs.detect.outputs.scripting }}
+          SCRIPTING_RESULTS: ${{ needs.scripting-linux.result }},${{ needs.scripting-windows.result }}
+          SWIFT_SELECTED: ${{ needs.detect.outputs.swift }}
+          SWIFT_RESULTS: ${{ needs.swift.result }}
+          WEB_SELECTED: ${{ needs.detect.outputs.web }}
+          WEB_RESULTS: ${{ needs.web.result }}
+        run: |
+          set -euo pipefail
+          if [[ "$DETECT_RESULT" != "success" ]]; then
+            echo "detect-changes failed: $DETECT_RESULT" >&2
+            exit 1
+          fi
+          check_family() {
+            local label="$1" selected="$2" results="$3"
+            if [[ "$selected" != "true" ]]; then
+              return 0
+            fi
+            IFS=',' read -ra states <<< "$results"
+            for state in "${states[@]}"; do
+              if [[ "$state" != "success" ]]; then
+                echo "$label family failed: $results" >&2
+                exit 1
+              fi
+            done
+          }
+          check_family BEAM "$BEAM_SELECTED" "$BEAM_RESULTS"
+          check_family Data/Shell "$DATA_SHELL_SELECTED" "$DATA_SHELL_RESULTS"
+          check_family Dart "$DART_SELECTED" "$DART_RESULTS"
+          check_family .NET "$DOTNET_SELECTED" "$DOTNET_RESULTS"
+          check_family Functional "$FUNCTIONAL_SELECTED" "$FUNCTIONAL_RESULTS"
+          check_family Git "$GIT_SELECTED" "$GIT_RESULTS"
+          check_family GNU "$GNU_SELECTED" "$GNU_RESULTS"
+          check_family JVM "$JVM_SELECTED" "$JVM_RESULTS"
+          check_family Long-tail "$LONGTAIL_SELECTED" "$LONGTAIL_RESULTS"
+          check_family Native "$NATIVE_SELECTED" "$NATIVE_RESULTS"
+          check_family Platform "$PLATFORM_SELECTED" "$PLATFORM_RESULTS"
+          check_family Scripting "$SCRIPTING_SELECTED" "$SCRIPTING_RESULTS"
+          check_family Swift "$SWIFT_SELECTED" "$SWIFT_RESULTS"
+          check_family Web "$WEB_SELECTED" "$WEB_RESULTS"
+          echo "Polyglot CI gate passed for every selected family."
+
+  cache-hygiene:
+    name: Cache hygiene / Polyglot
+    needs: gate
+    if: always() && github.event_name != 'pull_request' && needs.gate.result == 'success'
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: write
+      contents: read
+      pull-requests: read
+    concurrency:
+      group: genkidama-cache-hygiene
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+      - name: Apply Polyglot cache hygiene
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 eng/ci/cache_hygiene.py --scope jvm --scope go --apply

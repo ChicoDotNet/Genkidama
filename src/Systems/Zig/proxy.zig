@@ -1,5 +1,10 @@
 const std = @import("std");
 
+fn writeStdout(bytes: []const u8) !void {
+    const written = std.os.linux.syscall3(.write, 1, @intFromPtr(bytes.ptr), bytes.len);
+    if (written != bytes.len) return error.StdoutWriteFailed;
+}
+
 const RealDocumentStore = struct {
     fetches: usize = 0,
 
@@ -50,5 +55,5 @@ pub fn main() !void {
         first_copy[0..first_len],
         second,
     });
-    try std.fs.File.stdout().writeAll(rendered);
+    try writeStdout(rendered);
 }

@@ -1,5 +1,10 @@
 const std = @import("std");
 
+fn writeStdout(bytes: []const u8) !void {
+    const written = std.os.linux.syscall3(.write, 1, @intFromPtr(bytes.ptr), bytes.len);
+    if (written != bytes.len) return error.StdoutWriteFailed;
+}
+
 fn authenticate(buffer: []u8, user: []const u8) ![]const u8 {
     return try std.fmt.bufPrint(buffer, "auth({s})", .{user});
 }
@@ -27,6 +32,6 @@ fn checkout(buffer: []u8, user: []const u8, sku: []const u8, cents: u32) ![]cons
 pub fn main() !void {
     var output_buffer: [192]u8 = undefined;
     const output = try checkout(&output_buffer, "alice", "SKU-42", 499);
-    try std.fs.File.stdout().writeAll(output);
-    try std.fs.File.stdout().writeAll("\n");
+    try writeStdout(output);
+    try writeStdout("\n");
 }

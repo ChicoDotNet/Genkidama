@@ -1,0 +1,205 @@
+#!/usr/bin/env bash
+set -euo pipefail
+repo_root="$(git rev-parse --show-toplevel)"
+workspace="$(mktemp -d)"
+trap 'rm -rf "$workspace"' EXIT
+alpha="$workspace/alpha"
+beta="$workspace/beta"
+remote="$workspace/origin.git"
+audit_worktree="$workspace/release-audit"
+mkdir -p "$alpha"
+cp -R "$repo_root/learn/es/git/app/." "$alpha/"
+cd "$alpha"
+git init -b main
+git config user.name "Genkidama Alpha"
+git config user.email "alpha@example.invalid"
+git add README.md CHANGELOG.md .gitignore docs/plan.md
+git commit -m "chore: iniciar ReleaseDesk"
+test -z "$(git status --porcelain)"
+printf '\nCambio accidental\n' >> README.md
+test -n "$(git diff -- README.md)"
+git restore README.md
+printf '\n- registrar cada cambio como una unidad revisable;\n' >> docs/plan.md
+git add docs/plan.md
+git restore --staged docs/plan.md
+git add docs/plan.md
+git commit -m "docs: aclarar alcance de ReleaseDesk"
+git switch -c feature/release-notes
+cat >> CHANGELOG.md <<'EOF'
+
+## 0.2 — Preparación
+
+- Se agregó una línea de trabajo independiente para las notas de entrega.
+EOF
+git add CHANGELOG.md
+git commit -m "docs: preparar notas de entrega 0.2"
+git switch main
+git merge feature/release-notes
+git branch -d feature/release-notes
+git init --bare "$remote"
+git remote add origin "$remote"
+git push -u origin main
+git --git-dir="$remote" symbolic-ref HEAD refs/heads/main
+git clone "$remote" "$beta"
+git -C "$beta" config user.name "Genkidama Beta"
+git -C "$beta" config user.email "beta@example.invalid"
+printf '\n- revisar el diff antes de integrar;\n' >> "$beta/docs/plan.md"
+git -C "$beta" add docs/plan.md
+git -C "$beta" commit -m "docs: agregar criterio de revisión"
+git -C "$beta" push origin main
+git fetch origin
+test "$(git rev-parse main)" != "$(git rev-parse origin/main)"
+git merge --ff-only origin/main
+cat > CHANGELOG.md <<'EOF'
+# Changelog
+
+## 0.3 — Reconciliación
+
+- Alpha exige checklist previa a publicar.
+EOF
+git add CHANGELOG.md
+git commit -m "docs: definir criterio alpha"
+cat > "$beta/CHANGELOG.md" <<'EOF'
+# Changelog
+
+## 0.3 — Reconciliación
+
+- Beta exige responsable explícito de la entrega.
+EOF
+git -C "$beta" add CHANGELOG.md
+git -C "$beta" commit -m "docs: definir criterio beta"
+git -C "$beta" push origin main
+git fetch origin
+if git merge origin/main; then
+  echo "Expected a merge conflict but merge succeeded" >&2
+  exit 1
+fi
+grep -q '<<<<<<<' CHANGELOG.md
+cat > CHANGELOG.md <<'EOF'
+# Changelog
+
+## 0.3 — Reconciliación
+
+- La entrega exige checklist previa a publicar.
+- La entrega identifica responsable explícito.
+EOF
+git add CHANGELOG.md
+git diff --staged --check
+git commit -m "merge: reconciliar criterios de entrega"
+git push origin main
+git switch -c feature/release-summary
+cat > docs/release-checklist.md <<'EOF'
+# Checklist de entrega
+
+- Revisar diff.
+- Confirmar responsable.
+- Confirmar alcance.
+EOF
+git add docs/release-checklist.md
+git commit -m "docs: agregar checklist de entrega"
+git push -u origin feature/release-summary
+test -n "$(git log --oneline origin/main..HEAD)"
+git diff --check origin/main...HEAD
+git switch main
+git switch -c feature/rebase-demo
+cat > docs/rebase-demo.md <<'EOF'
+# Rebase demo
+
+Esta feature permanece privada hasta actualizar su base.
+EOF
+git add docs/rebase-demo.md
+git commit -m "docs: preparar demo de rebase"
+old_feature_sha="$(git rev-parse HEAD)"
+git -C "$beta" pull --ff-only
+printf '\nLa bitácora se revisa antes de publicar.\n' >> "$beta/README.md"
+git -C "$beta" add README.md
+git -C "$beta" commit -m "docs: aclarar revisión previa"
+git -C "$beta" push origin main
+git fetch origin
+git rebase origin/main
+new_feature_sha="$(git rev-parse HEAD)"
+test "$old_feature_sha" != "$new_feature_sha"
+git merge-base --is-ancestor origin/main HEAD
+git push -u origin feature/rebase-demo
+git switch main
+git fetch origin
+git merge --ff-only origin/main
+git tag -a v0.4.0-ci -m "ReleaseDesk 0.4.0 CI"
+test "$(git cat-file -t v0.4.0-ci)" = "tag"
+test "$(git rev-list -n 1 v0.4.0-ci)" = "$(git rev-parse main)"
+git push origin v0.4.0-ci
+git ls-remote --exit-code --tags origin 'refs/tags/v0.4.0-ci' >/dev/null
+printf '\nartifacts/\n' >> .gitignore
+cat > .gitattributes <<'EOF'
+* text=auto
+*.md text eol=lf
+*.ps1 text eol=crlf
+EOF
+mkdir -p artifacts scripts
+printf 'temporal\n' > artifacts/demo.txt
+printf 'Write-Host "ReleaseDesk"\r\n' > scripts/release.ps1
+git check-ignore -q artifacts/demo.txt
+git check-attr text eol -- README.md | grep -q 'text: set'
+git check-attr text eol -- README.md | grep -q 'eol: lf'
+git check-attr text eol -- scripts/release.ps1 | grep -q 'eol: crlf'
+git add .gitignore .gitattributes scripts/release.ps1
+git diff --staged --check
+git commit -m "chore: definir política de archivos"
+git push origin main
+git -C "$beta" pull --ff-only
+cat > docs/alpha-sync.md <<'EOF'
+# Alpha sync
+
+Cambio local aún no publicado.
+EOF
+git add docs/alpha-sync.md
+git commit -m "docs: registrar cambio alpha"
+cat > "$beta/docs/beta-sync.md" <<'EOF'
+# Beta sync
+
+Cambio remoto publicado primero.
+EOF
+git -C "$beta" add docs/beta-sync.md
+git -C "$beta" commit -m "docs: registrar cambio beta"
+git -C "$beta" push origin main
+if git push origin main; then
+  echo "Expected non-fast-forward rejection but push succeeded" >&2
+  exit 1
+fi
+git fetch origin
+test -n "$(git log --oneline main..origin/main)"
+test -n "$(git log --oneline origin/main..main)"
+git rebase origin/main
+git push origin main
+git fetch origin
+git merge-base --is-ancestor origin/main HEAD
+printf '\nWIP: revisar notas antes de publicar.\n' >> README.md
+git stash push -m "wip: revisar notas"
+test -z "$(git status --porcelain)"
+git stash list | grep -q 'wip: revisar notas'
+git stash show -p 'stash@{0}' | grep -q 'WIP: revisar notas'
+git stash pop
+grep -q 'WIP: revisar notas' README.md
+git restore README.md
+test -z "$(git status --porcelain)"
+git worktree add -b feature/release-audit "$audit_worktree" main
+cat > "$audit_worktree/docs/release-audit.md" <<'EOF'
+# Auditoría de release
+
+- Revisar diff.
+- Verificar responsable.
+- Verificar tag candidato.
+EOF
+git -C "$audit_worktree" add docs/release-audit.md
+git -C "$audit_worktree" commit -m "docs: agregar auditoría de release"
+test "$(git branch --show-current)" = "main"
+test "$(git -C "$audit_worktree" branch --show-current)" = "feature/release-audit"
+test -z "$(git -C "$audit_worktree" status --porcelain)"
+git worktree list --porcelain | grep -q 'branch refs/heads/feature/release-audit'
+git merge feature/release-audit
+git worktree remove "$audit_worktree"
+git branch -d feature/release-audit
+git push origin main
+test -z "$(git status --porcelain)"
+test -z "$(git stash list)"
+git log --oneline --decorate --graph --all

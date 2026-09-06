@@ -34,7 +34,7 @@ Después envía un POST con `Content-Type: application/json`. El smoke espera **
 
 [`public/index.php`](../app/public/index.php) normaliza `CONTENT_TYPE` y valida el contrato antes de llamar a `AppointmentService`. El dominio no sabe nada de media types.
 
-El workflow [`learn-php.yml`](../../../../.github/workflows/learn-php.yml) instala PHP/Composer y ejecuta los mismos gates en un runner limpio.
+El workflow consolidado [`polyglot.yml`](../../../../.github/workflows/polyglot.yml) instala PHP/Composer y ejecuta los mismos gates en un runner limpio.
 
 ## Qué acaba de pasar
 

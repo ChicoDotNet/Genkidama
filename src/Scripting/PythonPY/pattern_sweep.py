@@ -10,6 +10,8 @@ from dataclasses import dataclass
 from runpy import run_path
 from typing import Callable
 
+from mediator import verify_mediator
+
 
 def command() -> None:
     balance = {"value": 100}
@@ -31,17 +33,6 @@ def interpreter() -> None:
 def iterator() -> None:
     module = run_path("src/Scripting/PythonPY/patterns/iterator.py")
     assert module["run"]()
-
-
-def mediator() -> None:
-    events = []
-
-    class Mediator:
-        def send(self, sender, message):
-            events.append((sender, message))
-
-    Mediator().send("checkout", "paid")
-    assert events == [("checkout", "paid")]
 
 
 def memento() -> None:
@@ -401,7 +392,7 @@ CHECKS = [
     command,
     interpreter,
     iterator,
-    mediator,
+    verify_mediator,
     memento,
     observer,
     state,
