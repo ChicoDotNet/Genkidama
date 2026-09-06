@@ -7,6 +7,7 @@ from pathlib import Path
 from crystal_state import main as validate_crystal_state
 from debt_contracts import ContractError, ROOT, last_line, require, run
 from haskell_state import main as validate_haskell_state
+from julia_state import main as validate_julia_state
 from zig_state import main as validate_zig_state
 
 
@@ -44,6 +45,7 @@ def main() -> int:
     validate_zig_state()
     validate_crystal_state()
     validate_haskell_state()
+    validate_julia_state()
     return 0
 
 
