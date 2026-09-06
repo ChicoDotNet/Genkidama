@@ -2,8 +2,8 @@
 
 > **Familia:** Behavioral  
 > **Intención:** Permitir que un objeto cambie su comportamiento cuando cambia su estado interno, haciendo explícitas las transiciones y evitando condicionales dispersos dependientes del estado.  
-> **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `41/49` canónicos direccionables materializados; `40/49` verificados en el último head acreditado. VBA está acreditado; GDScript está materializado y cableado al gate en el head actual, pendiente de VERIFY.  
+> **Estado:** `validated`  
+> **Implementaciones de lenguaje:** `49/49` Applicable con canónico individual direccionable y verificado.  
 > **Cobertura de pruebas:** `N/A` agregada — la matriz polyglot usa la validación más fuerte razonablemente disponible por ecosistema; no se inventa un porcentaje transversal.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -30,7 +30,7 @@ La presión real no es simplemente «tener un enum». Es que **el comportamiento
 
 Representar el estado actual como un valor o componente responsable de decidir qué comportamiento y transición corresponden a una acción. El contexto delega esa decisión al estado —o a una función/tabla de transición equivalente— y sustituye el estado cuando ocurre una transición válida.
 
-State no exige clases. Una suma discriminada con pattern matching, una tabla `estado × evento -> estado`, un conjunto de predicados Prolog, un `CASE` SQL, una tabla de saltos en Assembly o closures intercambiables pueden expresar el mismo patrón cuando preservan la intención.
+State no exige clases. Una suma discriminada con pattern matching, una tabla `estado × evento -> estado`, un conjunto de predicados Prolog, una relación SQL, una tabla de saltos en Assembly o closures intercambiables pueden expresar el mismo patrón cuando preservan la intención.
 
 ## Participantes y responsabilidades
 
@@ -55,13 +55,13 @@ State no exige clases. Una suma discriminada con pattern matching, una tabla `es
 ```mermaid
 stateDiagram-v2
     [*] --> Locked
-    Locked --> Unlocked: unlock
-    Unlocked --> Locked: lock
-    Locked --> Locked: lock / reject-or-noop
-    Unlocked --> Unlocked: unlock / reject-or-noop
+    Locked --> Unlocked: coin
+    Unlocked --> Locked: push
+    Locked --> Locked: push / reject-or-noop
+    Unlocked --> Unlocked: coin / reject-or-noop
 ```
 
-La esencia del patrón es que **el comportamiento y la transición dependen del estado actual**; la forma concreta puede ser OO, funcional, declarativa o de bajo nivel.
+La esencia es que **el comportamiento y la transición dependen del estado actual**; la forma concreta puede ser OO, funcional, declarativa o de bajo nivel.
 
 ## Ejemplo mínimo
 
@@ -71,8 +71,8 @@ public enum GateState { Locked, Unlocked }
 public static GateState Transition(GateState state, string action) =>
     (state, action) switch
     {
-        (GateState.Locked, "unlock") => GateState.Unlocked,
-        (GateState.Unlocked, "lock") => GateState.Locked,
+        (GateState.Locked, "coin") => GateState.Unlocked,
+        (GateState.Unlocked, "push") => GateState.Locked,
         _ => state
     };
 ```
@@ -89,7 +89,7 @@ Si sólo existiera un booleano con una única condición local, un `if` sencillo
 
 ## En Genkidama
 
-No se ha verificado todavía un uso productivo deliberado de State que deba acreditarse como arquitectura de Genkidama. Existen estados de aplicación y workflows, pero esta ficha no los etiqueta como el patrón sólo por compartir vocabulario.
+No se ha verificado un uso productivo deliberado de State que deba acreditarse como arquitectura de Genkidama. Existen estados de aplicación y workflows, pero esta ficha no los etiqueta como el patrón sólo por compartir vocabulario.
 
 No se modifica arquitectura productiva para aumentar artificialmente el número de patrones «usados».
 
@@ -143,7 +143,7 @@ En un lenguaje con ADTs, pattern matching, tablas, closures, mensajes, predicado
 
 ### Ocultar transiciones inválidas
 
-Una implementación que sólo demuestra el happy path enseña menos que el dominio real. La reconciliación final debe proteger al menos una transición válida en ambos sentidos y una operación inválida/no-op cuando el ecosistema lo permita razonablemente.
+Una implementación que sólo demuestra el happy path enseña menos que el dominio real. Los canónicos de cierre protegen transiciones válidas y failure modes/no-op cuando el ecosistema lo permite razonablemente.
 
 ## Cómo comprobar una implementación
 
@@ -156,83 +156,73 @@ Una implementación que sólo demuestra el happy path enseña menos que el domin
 
 ## Validación automatizada
 
-La reconciliación horizontal parte de evidencia producida por los barridos language-major, pero un `pattern_sweep.*` no sustituye una fuente individual.
+La reconciliación horizontal reutiliza evidencia de los barridos language-major, pero ningún `pattern_sweep.*` sustituye una fuente individual. Cada uno de los 49 targets Applicable tiene ahora un canónico direccionable. El head `ac5cd42fb0191602d7da5e35c2017a03cbdea6d8` cerró Quality, Product CI y Polyglot CI en verde, acreditando las dos últimas celdas, Delphi y SQL, además de preservar las 47 previamente verificadas.
 
-Python, Go, Objective-C, Java, Zig, Dart, Crystal, Haskell, Groovy, Julia y VBA tienen canónicos individuales acreditados por heads con Quality, Product CI y Polyglot CI verdes. VBA usa un source contract estricto porque el CI Linux actual no dispone de host Office/VBA; el head `9eb7bbe6724bfeca3d5a9b495beb0eed7097ab7e` cerró los tres workflows en verde sin inventar ejecución VBA.
-
-GDScript tiene ahora el canónico individual [`src/Niche/GDScript/state.gd`](../src/Niche/GDScript/state.gd). Usa enums, `match`, transición explícita, estado inicial, dos transiciones válidas y dos operaciones inválidas/no-op. `eng/ci/adapters/platform_patterns.py` lo ejecuta con Godot headless y exige `gdscript-state: passed`. La celda está materializada y cableada al gate Platform, pero permanece pendiente de VERIFY del head actual.
+La evidencia es proporcional al ecosistema: compilación/análisis/runtime cuando el runner dispone del toolchain; source contracts estrictos para VBA y Delphi donde el CI Linux actual no dispone de host Office ni DCC. SQL se ejecuta realmente con SQLite; Assembly se compila con NASM, enlaza con LD y ejecuta; GDScript usa Godot headless; MicroPython y Rockstar usan sus runtimes certificados. No se inventan porcentajes de coverage para una matriz heterogénea.
 
 ## Implementaciones por lenguaje
 
-La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 45 lenguajes v1 y 6 adicionales planeados. La clasificación es **49 Applicable + 2 N/A**.
+La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 45 lenguajes v1 y 6 adicionales planeados. La clasificación final es **49 Applicable + 2 N/A**.
 
-| Lenguaje | Aplicabilidad | Canónico / estado | Nota |
-|---|---|---|---|
-| C# | Applicable | [`State.cs`](../src/Enterprise/C%23/patterns/State.cs) | Canónico direccionable confirmado. |
-| TypeScript | Applicable | [`state.ts`](../src/Web/TypeScriptTS/patterns/state.ts) | Canónico direccionable confirmado. |
-| Ada | Applicable | [`state_pattern.adb`](../src/Systems/Ada/state_pattern.adb) | Canónico direccionable confirmado. |
-| Solidity | Applicable | [`State.sol`](../src/Niche/Solidity/patterns/State.sol) | Canónico direccionable confirmado. |
-| Fortran | Applicable | [`state.f90`](../src/Systems/Fortran/patterns/state.f90) | Canónico direccionable confirmado. |
-| Pascal | Applicable | [`state_pattern.pas`](../src/Systems/Pascal/state_pattern.pas) | Canónico direccionable confirmado. |
-| Python | Applicable | [`state.py`](../src/Scripting/PythonPY/patterns/state.py) | `py_compile` + runtime; verificado. |
-| Visual Basic .NET | Applicable | [`State.vb`](../src/Enterprise/VB.NET/patterns/State.vb) | Canónico direccionable confirmado. |
-| C++ | Applicable | [`state.cpp`](../src/Systems/C%2B%2B/patterns/state.cpp) | Canónico direccionable confirmado. |
-| Objective-C | Applicable | [`state.m`](../src/Systems/Objective-C/state.m) | Clang/GNUstep `-Wall -Wextra -Werror` + runtime; verificado. |
-| Java | Applicable | [`state.java`](../src/Enterprise/Java/patterns/state.java) | `javac -Xlint:all -Werror` + runtime; verificado. |
-| Rust | Applicable | [`state.rs`](../src/Systems/Rust/patterns/state.rs) | Canónico direccionable confirmado. |
-| Zig | Applicable | [`state.zig`](../src/Systems/Zig/state.zig) | `zig fmt --check` + runtime; verificado. |
-| Go | Applicable | [`state.go`](../src/Systems/Go/state.go) | `gofmt` + `go vet` + runtime; verificado. |
-| PHP | Applicable | [`state.php`](../src/Scripting/PHP/patterns/state.php) | Canónico direccionable confirmado. |
-| Nim | Applicable | [`state_example.nim`](../src/Niche/Nim/patterns/state_example.nim) | Canónico direccionable confirmado. |
-| Dart | Applicable | [`state.dart`](../src/Web/Dart/state.dart) | format + `dart analyze --fatal-*` + runtime; verificado. |
-| Kotlin | Applicable | [`State.kt`](../src/Enterprise/Kotlin/patterns/State.kt) | Canónico direccionable confirmado. |
-| Swift | Applicable | [`State.swift`](../src/Systems/Swift/patterns/State.swift) | Canónico direccionable confirmado. |
-| F# | Applicable | [`State.fsx`](../src/Functional/F%23/patterns/State.fsx) | Canónico direccionable confirmado. |
-| Crystal | Applicable | [`state.cr`](../src/Niche/Crystal/state.cr) | format + build warnings-as-errors + runtime; verificado. |
-| Lua | Applicable | [`state.lua`](../src/Scripting/Lua/patterns/state.lua) | Canónico direccionable confirmado. |
-| Haskell | Applicable | [`State.hs`](../src/Functional/Haskell/State.hs) | `ghc -Wall -Werror -O0` + runtime; verificado. |
-| COBOL | Applicable | [`state_pattern.cpy`](../src/Historical/Cobol/patterns/state_pattern.cpy) | Canónico direccionable confirmado. |
-| Scala | Applicable | [`State.scala`](../src/Functional/Scala/patterns/State.scala) | Canónico direccionable confirmado. |
-| Groovy | Applicable | [`state.groovy`](../src/Functional/Groovy/patterns/state.groovy) | JVM cohort + runtime individual; contrato reforzado y verificado. |
-| Ruby | Applicable | [`state.rb`](../src/Scripting/Ruby/patterns/state.rb) | Canónico direccionable confirmado. |
-| C | Applicable | [`state.c`](../src/Systems/C/patterns/state.c) | Canónico direccionable confirmado. |
-| OCaml | Applicable | [`state.ml`](../src/Functional/OCaml/patterns/state.ml) | Canónico direccionable confirmado. |
-| Julia | Applicable | [`state.jl`](../src/DataScience/Julia/state.jl) | Runtime con bounds checks; verificado. |
-| VBA | Applicable | [`state.bas`](../src/Shell/VBA/state.bas) | Source contract estricto; verificado en CI sin host Office. |
-| GDScript | Applicable | [`state.gd`](../src/Niche/GDScript/state.gd) | Godot headless + runtime; pendiente de VERIFY del head actual. |
-| JavaScript | Applicable | [`state.js`](../src/Web/JavaScriptJS/patterns/state.js) | Canónico direccionable confirmado. |
-| MATLAB | Applicable | [`state.m`](../src/DataScience/MATLAB/state.m) | Canónico direccionable confirmado. |
-| Perl | Applicable | pendiente de reconciliación | State es expresable con hashes/closures/subrutinas. |
-| R | Applicable | [`state.R`](../src/DataScience/R/patterns/state.R) | Canónico direccionable confirmado. |
-| PowerShell | Applicable | [`state.ps1`](../src/Scripting/PowerShell/patterns/state.ps1) | Canónico direccionable confirmado. |
-| HTML | N/A | — | HTML estático describe estructura; por sí solo no posee ejecución/transiciones de comportamiento. JavaScript es target separado. |
-| Assembly | Applicable | pendiente de reconciliación | Variable de estado + dispatch/jump table expresa el patrón. |
-| Elixir | Applicable | [`state.exs`](../src/Functional/Elixir/patterns/state.exs) | Canónico direccionable confirmado. |
-| Shell | Applicable | pendiente de reconciliación | `case` + variable de estado puede modelar transiciones ejecutables. |
-| Erlang | Applicable | [`state.erl`](../src/Functional/Erlang/patterns/state.erl) | Canónico direccionable confirmado. |
-| Clojure | Applicable | [`state.clj`](../src/Functional/Clojure/patterns/state.clj) | Canónico direccionable confirmado. |
-| Common Lisp | Applicable | [`state.lisp`](../src/Functional/CommonLisp/patterns/state.lisp) | Canónico direccionable confirmado. |
-| Prolog | Applicable | pendiente de reconciliación | Relaciones/predicados pueden expresar `transition(State, Event, Next)`. |
-| Delphi | Applicable | pendiente de reconciliación | Interfaces/classes/enums permiten State; usar source contract si DCC no está disponible. |
-| GNU Octave | Applicable | [`state.m`](../src/DataScience/Octave/patterns/state.m) | Canónico direccionable confirmado. |
-| SQL | Applicable | pendiente de reconciliación | Relaciones/CTEs/`CASE` pueden representar una función de transición y validar estados válidos. |
-| CSS | N/A | — | CSS selecciona estilos en función de estado externo/pseudoestado, pero no posee por sí solo un ciclo ejecutable que decida y conserve transiciones arbitrarias. |
-| MicroPython | Applicable | pendiente de reconciliación | Funciones/objetos/tablas de transición son suficientes; ejecutar con runtime MicroPython certificado. |
-| Rockstar | Applicable | pendiente de reconciliación | Variables, condicionales y funciones permiten expresar transición y comportamiento dependiente del estado. |
-
-## Deuda de cierre conocida
-
-- Confirmar/reconciliar los 8 Applicable todavía sin canónico individual acreditado en esta página.
-- Reutilizar las celdas de `pattern_sweep.*` donde sean correctas, extrayéndolas a fuentes direccionables en lugar de mantener implementaciones paralelas ocultas.
-- Acreditar GDScript sólo después del VERIFY del head actual; Julia y VBA ya están acreditados por sus respectivos heads verdes.
-- Revisar si alguna ruta histórica confirmada requiere adaptación para enseñar también failure mode/transición inválida, sin perseguir tests de poco valor.
-- Cambiar el estado a `validated` sólo cuando `implemented == applicable` y toda la evidencia KB-006 esté reconciliada.
+| Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
+|---|---|---|---|---|
+| C# | Applicable | [`State.cs`](../src/Enterprise/C%23/patterns/State.cs) | build/test del cohort | Tipo/estado explícito. |
+| TypeScript | Applicable | [`state.ts`](../src/Web/TypeScriptTS/patterns/state.ts) | typecheck/runtime del cohort | Unión/estado explícito. |
+| Ada | Applicable | [`state_pattern.adb`](../src/Systems/Ada/state_pattern.adb) | compile/runtime del cohort | Enum + transición. |
+| Solidity | Applicable | [`State.sol`](../src/Niche/Solidity/patterns/State.sol) | compile/validator del cohort | Estado de contrato. |
+| Fortran | Applicable | [`state.f90`](../src/Systems/Fortran/patterns/state.f90) | compile/runtime del cohort | Enum-equivalent + transición. |
+| Pascal | Applicable | [`state_pattern.pas`](../src/Systems/Pascal/state_pattern.pas) | compile/runtime del cohort | Enum + procedimiento. |
+| Python | Applicable | [`state.py`](../src/Scripting/PythonPY/patterns/state.py) | `py_compile` + runtime | Función de transición. |
+| Visual Basic .NET | Applicable | [`State.vb`](../src/Enterprise/VB.NET/patterns/State.vb) | build/runtime del cohort | Enum + función. |
+| C++ | Applicable | [`state.cpp`](../src/Systems/C%2B%2B/patterns/state.cpp) | compile/runtime del cohort | Estado tipado. |
+| Objective-C | Applicable | [`state.m`](../src/Systems/Objective-C/state.m) | Clang/GNUstep `-Wall -Wextra -Werror` + runtime | Mensajes/estado explícito. |
+| Java | Applicable | [`state.java`](../src/Enterprise/Java/patterns/state.java) | `javac -Xlint:all -Werror` + runtime | Enum/objeto de estado. |
+| Rust | Applicable | [`state.rs`](../src/Systems/Rust/patterns/state.rs) | compile/runtime del cohort | Enum + `match`. |
+| Zig | Applicable | [`state.zig`](../src/Systems/Zig/state.zig) | `zig fmt --check` + runtime | Enum + `switch`. |
+| Go | Applicable | [`state.go`](../src/Systems/Go/state.go) | `gofmt` + `go vet` + runtime | Tipo + función. |
+| PHP | Applicable | [`state.php`](../src/Scripting/PHP/patterns/state.php) | parse/runtime del cohort | Estado + función. |
+| Nim | Applicable | [`state_example.nim`](../src/Niche/Nim/patterns/state_example.nim) | compile/runtime del cohort | Enum + `case`. |
+| Dart | Applicable | [`state.dart`](../src/Web/Dart/state.dart) | format + `dart analyze --fatal-*` + runtime | Enum/clase. |
+| Kotlin | Applicable | [`State.kt`](../src/Enterprise/Kotlin/patterns/State.kt) | compile/runtime JVM | Sealed/enum state. |
+| Swift | Applicable | [`State.swift`](../src/Systems/Swift/patterns/State.swift) | compile/runtime del cohort | Enum + switch. |
+| F# | Applicable | [`State.fsx`](../src/Functional/F%23/patterns/State.fsx) | FSI/runtime | DU + pattern matching. |
+| Crystal | Applicable | [`state.cr`](../src/Niche/Crystal/state.cr) | format + warnings-as-errors build + runtime | Enum + case. |
+| Lua | Applicable | [`state.lua`](../src/Scripting/Lua/patterns/state.lua) | parse/runtime del cohort | Tabla/función. |
+| Haskell | Applicable | [`State.hs`](../src/Functional/Haskell/State.hs) | `ghc -Wall -Werror -O0` + runtime | ADT + función pura. |
+| COBOL | Applicable | [`state_pattern.cpy`](../src/Historical/Cobol/patterns/state_pattern.cpy) | compile/runtime del cohort | Estado + dispatch procedural. |
+| Scala | Applicable | [`State.scala`](../src/Functional/Scala/patterns/State.scala) | compile/runtime JVM | ADT/enum + match. |
+| Groovy | Applicable | [`state.groovy`](../src/Functional/Groovy/patterns/state.groovy) | runtime individual JVM | Estado + transición. |
+| Ruby | Applicable | [`state.rb`](../src/Scripting/Ruby/patterns/state.rb) | syntax/runtime del cohort | Símbolos + función. |
+| C | Applicable | [`state.c`](../src/Systems/C/patterns/state.c) | compile/runtime del cohort | Enum + switch. |
+| OCaml | Applicable | [`state.ml`](../src/Functional/OCaml/patterns/state.ml) | compile/runtime del cohort | Variant + match. |
+| Julia | Applicable | [`state.jl`](../src/DataScience/Julia/state.jl) | runtime con bounds checks | `@enum` + función. |
+| VBA | Applicable | [`state.bas`](../src/Shell/VBA/state.bas) | source contract estricto | CI sin host Office; `Enum` + función. |
+| GDScript | Applicable | [`state.gd`](../src/Niche/GDScript/state.gd) | Godot headless + runtime | `enum` + `match`. |
+| JavaScript | Applicable | [`state.js`](../src/Web/JavaScriptJS/patterns/state.js) | syntax/runtime del cohort | Valor + función. |
+| MATLAB | Applicable | [`state.m`](../src/DataScience/MATLAB/state.m) | MATLAB sweep/runtime | Estado + función. |
+| Perl | Applicable | [`state.pl`](../src/Scripting/Perl/state.pl) | `perl -c` + runtime | Escalar + subrutina. |
+| R | Applicable | [`state.R`](../src/DataScience/R/patterns/state.R) | parse/runtime del cohort | Valor + función. |
+| PowerShell | Applicable | [`state.ps1`](../src/Scripting/PowerShell/patterns/state.ps1) | parse/runtime del cohort | Estado + función. |
+| HTML | N/A | — | — | HTML estático describe estructura; por sí solo no posee ejecución/transiciones de comportamiento. JavaScript es target separado. |
+| Assembly | Applicable | [`state.asm`](../src/LowLevel/Assembly/state.asm) | NASM + LD + runtime | Registro/memoria de estado + dispatch. |
+| Elixir | Applicable | [`state.exs`](../src/Functional/Elixir/patterns/state.exs) | compile/runtime del cohort | Átomos + pattern matching. |
+| Shell | Applicable | [`state.sh`](../src/Scripting/Bash/patterns/state.sh) | `bash -n` + runtime | Variable + `case`. |
+| Erlang | Applicable | [`state.erl`](../src/Functional/Erlang/patterns/state.erl) | compile/runtime del cohort | Átomos + pattern matching. |
+| Clojure | Applicable | [`state.clj`](../src/Functional/Clojure/patterns/state.clj) | runtime JVM | Datos + función. |
+| Common Lisp | Applicable | [`state.lisp`](../src/Functional/CommonLisp/patterns/state.lisp) | compile/runtime del cohort | Símbolos + función. |
+| Prolog | Applicable | [`state.pl`](../src/Functional/Prolog/patterns/state.pl) | SWI-Prolog runtime individual | Predicado `transition/3`. |
+| Delphi | Applicable | [`State.pas`](../src/Enterprise/Delphi/State.pas) | source contract estricto | CI Linux sin DCC; `TGateState` + `Transition`. |
+| GNU Octave | Applicable | [`state.m`](../src/DataScience/Octave/patterns/state.m) | Octave runtime | Estado + función. |
+| SQL | Applicable | [`state.sql`](../src/Data/SQL/state.sql) | SQLite runtime | Relación de transición + CTE recursivo. |
+| CSS | N/A | — | — | CSS selecciona estilos desde estado externo/pseudoestado, pero no posee por sí solo un ciclo ejecutable que decida y conserve transiciones arbitrarias. |
+| MicroPython | Applicable | [`state.py`](../src/Other/MicroPython/state.py) | MicroPython runtime | Constantes + función. |
+| Rockstar | Applicable | [`state.rock`](../src/Other/Rockstar/state.rock) | Rockstar runtime | Variables + función. |
 
 ## Comprueba que lo entendiste
 
 1. ¿Qué diferencia a State de un simple enum o bandera cuando ambos almacenan un valor de estado?
 2. ¿Por qué State y Strategy pueden parecer estructuralmente similares pero tener distinta intención?
-3. ¿Cuándo una tabla o ADT con función de transición es más idiomática que una jerarquía de clases State?
+3. ¿Cuándo una tabla, relación o ADT con función de transición es más idiomática que una jerarquía de clases State?
 
 ## Resumen
 
@@ -240,7 +230,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 - La decisión central es hacer explícita esa política y evitar condicionales dispersos.
 - El costo es abstracción adicional y riesgo de sobre-modelar dominios triviales.
 - Strategy puede parecerse estructuralmente, pero responde a selección de algoritmo y no al ciclo de vida.
-- El patrón es portable a OO, ADTs, funciones, tablas, predicados y mecanismos de bajo nivel; la sintaxis de clases no define su aplicabilidad.
+- El patrón es portable a OO, ADTs, funciones, tablas, predicados, relaciones y mecanismos de bajo nivel; la sintaxis de clases no define su aplicabilidad.
 
 ## Referencias
 
