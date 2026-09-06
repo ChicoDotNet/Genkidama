@@ -38,8 +38,33 @@ def main() -> int:
     ]:
         require(delphi, pattern, label)
 
+    vba_mediator = (ROOT / "src/Shell/VBA/MediatorExample.bas").read_text(encoding="utf-8")
+    for pattern, label in [
+        (r"^Option Explicit$", "VBA Mediator Option Explicit"),
+        (r"Function\s+RouteMessage\s*\(.*senderName.*targetName.*messageText.*Select\s+Case\s+targetName", "VBA Mediator owns routing"),
+        (r"PaymentSend.*RouteMessage\(\"payment\",\s*\"inventory\"", "VBA payment routes through mediator"),
+        (r"InventorySend.*RouteMessage\(\"inventory\",\s*\"payment\"", "VBA inventory routes through mediator"),
+        (r"UnknownColleague:.*targetName", "VBA Mediator unknown colleague failure"),
+        (r"VBA Mediator: passed", "VBA Mediator verification sentinel"),
+    ]:
+        require(vba_mediator, pattern, label)
+
+    delphi_mediator = (ROOT / "src/Enterprise/Delphi/MediatorExample.pas").read_text(encoding="utf-8")
+    for pattern, label in [
+        (r"TCheckoutMediator\s*=\s*class.*function\s+Route", "Delphi Mediator owns routing"),
+        (r"TPaymentColleague.*FMediator:\s*TCheckoutMediator.*function\s+Send", "Delphi payment colleague depends on mediator"),
+        (r"TInventoryColleague.*FMediator:\s*TCheckoutMediator.*function\s+Send", "Delphi inventory colleague depends on mediator"),
+        (r"Route\('payment',\s*'inventory'", "Delphi payment routes through mediator"),
+        (r"Route\('inventory',\s*'payment'", "Delphi inventory routes through mediator"),
+        (r"UnknownColleague:.*TargetName", "Delphi Mediator unknown colleague failure"),
+        (r"Delphi Mediator: passed", "Delphi Mediator verification sentinel"),
+    ]:
+        require(delphi_mediator, pattern, label)
+
     print("VBA Abstract Factory source contract: OK")
     print("Delphi Abstract Factory source contract: OK")
+    print("VBA Mediator source contract: OK")
+    print("Delphi Mediator source contract: OK")
     return 0
 
 

@@ -1,0 +1,24 @@
+Inventory takes Sender and Message
+Give back "inventory<-payment:paid"
+
+Payment takes Sender and Message
+Give back "payment<-inventory:reserved"
+
+Mediate takes Sender and Recipient and Message
+If Recipient is "inventory"
+Give back Inventory taking Sender, Message
+
+If Recipient is "payment"
+Give back Payment taking Sender, Message
+
+Give back "UnknownColleague"
+
+Put Mediate taking "payment", "inventory", "paid" into First Route
+Put Mediate taking "inventory", "payment", "reserved" into Second Route
+Put Mediate taking "payment", "shipping", "dispatch" into Missing Route
+
+If First Route is "inventory<-payment:paid"
+If Second Route is "payment<-inventory:reserved"
+If Missing Route is "UnknownColleague"
+Print "Rockstar Mediator: passed"
+

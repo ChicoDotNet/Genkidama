@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"os/exec"
 	"sync"
 )
 
@@ -79,22 +80,10 @@ func iteratorPattern() {
 	must(!ok && fmt.Sprint(got) == "[10 20 30]")
 }
 
-// Mediator: colleagues communicate only through the mediator.
-type mediator struct{ events []string }
-
-func (m *mediator) notify(sender, event string) {
-	if sender == "button" && event == "click" {
-		m.events = append(m.events, "panel.refresh")
-	}
-	if sender == "panel" && event == "loaded" {
-		m.events = append(m.events, "button.enable")
-	}
-}
+// Mediator: the sweep delegates to the individually addressable canonical example.
 func mediatorPattern() {
-	m := &mediator{}
-	m.notify("button", "click")
-	m.notify("panel", "loaded")
-	must(fmt.Sprint(m.events) == "[panel.refresh button.enable]")
+	out, err := exec.Command("go", "run", "src/Systems/Go/patterns/mediator.go").CombinedOutput()
+	must(err == nil && string(out) == "Go Mediator: passed\n")
 }
 
 // Memento: state snapshot is opaque to the caretaker.

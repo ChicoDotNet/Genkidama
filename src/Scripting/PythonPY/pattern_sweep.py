@@ -9,6 +9,8 @@ from collections import deque
 from dataclasses import dataclass
 from typing import Callable
 
+from mediator import verify_mediator
+
 
 def command() -> None:
     balance = {"value": 100}
@@ -47,17 +49,6 @@ def iterator() -> None:
                 self.n -= 1
 
     assert list(Countdown(3)) == [3, 2, 1]
-
-
-def mediator() -> None:
-    events = []
-
-    class Mediator:
-        def send(self, sender, message):
-            events.append((sender, message))
-
-    Mediator().send("checkout", "paid")
-    assert events == [("checkout", "paid")]
 
 
 def memento() -> None:
@@ -417,7 +408,7 @@ CHECKS = [
     command,
     interpreter,
     iterator,
-    mediator,
+    verify_mediator,
     memento,
     observer,
     state,
