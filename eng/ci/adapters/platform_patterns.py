@@ -89,6 +89,15 @@ def validate_micropython_state(micropython: str) -> None:
     print("PASS MicroPython state.py", flush=True)
 
 
+def validate_rockstar_state(rockstar: str) -> None:
+    source = dc.ROOT / "src/Other/Rockstar/state.rock"
+    dc.require(source.is_file(), "Rockstar State canonical missing")
+    output = normalized(dc.run([rockstar, str(source)], capture=True))
+    expected = "locked\nlocked\nunlocked\nunlocked\nlocked\ninvalid\nrockstar-state: passed"
+    dc.require(output == expected, f"Rockstar State canonical output mismatch: expected={expected!r} actual={output!r}")
+    print("PASS Rockstar state.rock", flush=True)
+
+
 def validate_portable() -> None:
     dc.run([sys.executable, "eng/ci/adapters/platform_source_contracts.py"])
     validate_vba_state()
@@ -111,6 +120,7 @@ def validate_portable() -> None:
     output = dc.run([rockstar, str(dc.ROOT / "src/Other/Rockstar/example1.rock")], capture=True)
     for marker in ["Dark Button", "Dark Checkbox", "Light Button", "Light Checkbox"]:
         dc.require(marker in output.splitlines(), f"Rockstar contract missing {marker}")
+    validate_rockstar_state(rockstar)
 
 
 def main() -> int:
