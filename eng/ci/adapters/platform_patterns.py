@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import sqlite3
 import sys
 import tempfile
 from pathlib import Path
@@ -99,10 +100,33 @@ def validate_rockstar_state(rockstar: str) -> None:
     print("PASS Rockstar state.rock", flush=True)
 
 
+def validate_sql_state() -> None:
+    source = dc.ROOT / "src/Data/SQL/state.sql"
+    dc.require(source.is_file(), "SQL State canonical missing")
+    connection = sqlite3.connect(":memory:")
+    try:
+        connection.executescript(source.read_text(encoding="utf-8"))
+        trace = connection.execute("SELECT step, state FROM state_trace ORDER BY step").fetchall()
+        expected = [
+            (0, "locked"),
+            (1, "locked"),
+            (2, "unlocked"),
+            (3, "unlocked"),
+            (4, "locked"),
+        ]
+        dc.require(trace == expected, f"SQL State trace mismatch: expected={expected!r} actual={trace!r}")
+        invalid = connection.execute("SELECT observed_state FROM invalid_state_probe").fetchone()
+        dc.require(invalid == ("invalid",), f"SQL State invalid-state contract mismatch: {invalid!r}")
+    finally:
+        connection.close()
+    print("PASS SQL state.sql via sqlite3", flush=True)
+
+
 def validate_portable() -> None:
     dc.run([sys.executable, "eng/ci/adapters/platform_source_contracts.py"])
     validate_vba_state()
     validate_assembly()
+    validate_sql_state()
 
     godot = os.environ.get("GENKIDAMA_GODOT_BIN", "godot")
     output = dc.run([godot, "--headless", "--script", str(dc.ROOT / "src/Niche/GDScript/example1.gd")], capture=True)
