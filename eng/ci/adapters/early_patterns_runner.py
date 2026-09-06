@@ -12,7 +12,6 @@ import early_patterns as ep
 
 
 ORIGINAL_RECORD = ep.record
-ORIGINAL_VALIDATE_JVM = ep.validate_jvm
 ORIGINAL_VALIDATE_NATIVE = ep.validate_native
 
 
@@ -155,20 +154,30 @@ def run_java_main_class(files: list[tuple[str, Path]]) -> None:
 
 def validate_jvm_legacy(census: dict[str, int]) -> None:
     profile = os.environ.get("GENKIDAMA_JVM_PROFILE", "").lower()
-    if profile != "java25":
-        ORIGINAL_VALIDATE_JVM(census)
-        return
+    ep.dc.require(profile == "java25", f"unsupported JVM early-pattern profile: {profile}")
+
     java = ep.discover("src/Enterprise/Java", (".java",))
     ep.record(census, "java", java)
     run_java_main_class(java)
+
     scala = ep.discover("src/Functional/Scala", (".scala",))
     ep.record(census, "scala", scala)
     for key, source in scala:
         assert_legacy_output("Scala", key, ep.dc.run(["scala-cli", "run", str(source), "--server=false"], capture=True))
+
     clj = ep.discover("src/Functional/Clojure", (".clj",))
     ep.record(census, "clojure", clj)
     for key, source in clj:
         assert_legacy_output("Clojure", key, ep.dc.run(["clojure", "-M", str(source)], capture=True))
+
+    kotlin = ep.discover("src/Enterprise/Kotlin", (".kt",))
+    ep.record(census, "kotlin", kotlin)
+    ep.run_kotlin(kotlin)
+
+    groovy = ep.discover("src/Scripting/Groovy", (".groovy",))
+    ep.record(census, "groovy", groovy)
+    for key, source in groovy:
+        assert_legacy_output("Groovy", key, ep.dc.run(["groovy", str(source)], capture=True))
 
 
 def validate_native_legacy(census: dict[str, int]) -> None:
