@@ -523,10 +523,10 @@ fn nullObjectPattern() bool {
 
 pub fn main() void {
     const cases = [_]*const fn () bool{
-        commandPattern,      interpreterPattern,   iteratorPattern,          mediatorPattern,        memento.verifyMementoCanonical,           observerPattern,            statePattern,              strategyPattern,         templateMethodPattern,                 visitorPattern,
-        mvcPattern,          mvvmPattern,          microkernelPattern,       microservicesPattern,   enterpriseAdapterPattern, enterpriseBridgePattern,    enterpriseFacadePattern,   brokerPattern,           messageBusPattern,                     serviceLocatorPattern,
-        activeObjectPattern, monitorObjectPattern, halfSyncHalfAsyncPattern, leaderFollowersPattern, clientServerPattern,      peerToPeerPattern,          publishSubscribePattern,   distributedProxyPattern, presentationAbstractionControlPattern, modelViewPresenterPattern,
-        documentViewPattern, activeRecordPattern,  dataMapperPattern,        unitOfWorkPattern,      repositoryPattern,        dependencyInjectionPattern, lazyInitializationPattern, objectPoolPattern,       nullObjectPattern,
+        commandPattern,      interpreterPattern,   iteratorPattern,          mediatorPattern,        memento.verifyMementoCanonical, observerPattern,            statePattern,              strategyPattern,         templateMethodPattern,                 visitorPattern,
+        mvcPattern,          mvvmPattern,          microkernelPattern,       microservicesPattern,   enterpriseAdapterPattern,       enterpriseBridgePattern,    enterpriseFacadePattern,   brokerPattern,           messageBusPattern,                     serviceLocatorPattern,
+        activeObjectPattern, monitorObjectPattern, halfSyncHalfAsyncPattern, leaderFollowersPattern, clientServerPattern,            peerToPeerPattern,          publishSubscribePattern,   distributedProxyPattern, presentationAbstractionControlPattern, modelViewPresenterPattern,
+        documentViewPattern, activeRecordPattern,  dataMapperPattern,        unitOfWorkPattern,      repositoryPattern,              dependencyInjectionPattern, lazyInitializationPattern, objectPoolPattern,       nullObjectPattern,
     };
     std.debug.assert(cases.len == 39);
     for (cases) |case| std.debug.assert(case());
