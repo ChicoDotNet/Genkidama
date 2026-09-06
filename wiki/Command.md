@@ -2,9 +2,9 @@
 
 > **Familia:** Behavioral  
 > **Intención:** encapsular una solicitud o acción como un valor autónomo para desacoplar quién la solicita de quién la ejecuta y permitir tratarla como dato cuando se necesita encolar, registrar, parametrizar o deshacer.  
-> **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `1/49`  
-> **Cobertura de pruebas:** N/A — el catálogo usa ejemplos standalone multi-ecosistema; para MATLAB se valida comportamiento real con MATLAB Actions en lugar de inventar un porcentaje agregado.  
+> **Estado:** `validated`  
+> **Implementaciones de lenguaje:** `49/49`  
+> **Cobertura de pruebas:** N/A — los ejemplos son artefactos standalone políglotas; compile/analyze/runtime por ecosistema aporta una señal más fuerte que un porcentaje agregado sintético.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
 ## En una frase
@@ -30,7 +30,7 @@ Una llamada directa como `account.withdraw(20)` es suficiente cuando no existe e
 
 Representar cada solicitud como un **Command** que contiene la información necesaria para ejecutar una intención. Un **Invoker** decide cuándo ejecutarla, pero no implementa la operación. El **Receiver** o handler conoce el trabajo real. Una cola o historial puede conservar comandos porque la solicitud ya no es sólo una llamada efímera: tiene una representación propia.
 
-La intención no depende de clases. Un Command puede ser un objeto, record, closure, mensaje, estructura con function handles, discriminated union, tabla de datos o cualquier representación que conserve la operación y sus parámetros de forma que un invocador común pueda ejecutarla después.
+La intención no depende de clases. Un Command puede ser un objeto, record, closure, mensaje, estructura con function handles, discriminated union, tabla de datos o cualquier representación que conserve la operación y sus parámetros para que un invocador común pueda ejecutarla después.
 
 ## Participantes y responsabilidades
 
@@ -72,7 +72,7 @@ sequenceDiagram
     Note over A: balance = 150
 ```
 
-Lo importante no es la forma de clase, sino que el invocador manipula las solicitudes como valores y que la cuenta recibe el trabajo sólo cuando el Command se ejecuta.
+Lo importante no es la forma de clase, sino que el invocador manipula solicitudes como valores y la cuenta recibe el trabajo sólo cuando el Command se ejecuta.
 
 ## Ejemplo mínimo
 
@@ -86,13 +86,13 @@ undo(last(queue))
 => balance=150
 ```
 
-El invocador puede conservar y recorrer ambas operaciones mediante el mismo mecanismo. No necesita un `if` que conozca cómo depositar o retirar.
+El invocador conserva y recorre ambas operaciones mediante el mismo mecanismo. No necesita conocer cómo depositar o retirar.
 
 ## Aplicación real
 
 ### Operaciones administrativas encoladas y auditables
 
-Un backoffice puede recibir operaciones heterogéneas —crear una entidad, recalcular un documento, enviar una notificación o ejecutar una corrección— y representarlas como Commands antes de despacharlas. Esto permite separar la captura de intención de la ejecución, registrar qué se pidió y aplicar políticas comunes de retry, autorización o telemetría.
+Un backoffice puede recibir operaciones heterogéneas —crear una entidad, recalcular un documento, enviar una notificación o ejecutar una corrección— y representarlas como Commands antes de despacharlas. Esto separa captura de intención y ejecución, permite registrar qué se pidió y habilita políticas comunes de retry, autorización o telemetría.
 
 Si la llamada se ejecuta inmediatamente, nunca se almacena ni se trata de forma uniforme y el emisor conoce naturalmente al receptor, una llamada directa suele ser más clara. Command gana valor cuando la operación necesita viajar o adquirir ciclo de vida propio.
 
@@ -147,7 +147,7 @@ Tener un objeto llamado `CreateOrderCommand` no demuestra el patrón por sí sol
 
 ### Meter todo el dominio dentro del Command
 
-El Command conserva intención y parámetros; no obliga a duplicar las reglas del receptor. En arquitecturas con handlers, éste puede coordinar el caso de uso mientras las entidades y servicios de dominio siguen siendo responsables de sus invariantes.
+El Command conserva intención y parámetros; no obliga a duplicar las reglas del receptor. En arquitecturas con handlers, éste puede coordinar el caso de uso mientras entidades y servicios de dominio siguen siendo responsables de sus invariantes.
 
 ### Confundir Command con Strategy
 
@@ -167,61 +167,61 @@ Un retiro en memoria puede revertirse exactamente. Un correo enviado o un pago e
 
 ## Implementaciones por lenguaje
 
-Universo actual: **51 targets**. Command clasifica provisionalmente **49 Applicable** y **2 N/A**. HTML y CSS no poseen un modelo de ejecución capaz de encapsular y despachar una acción como valor. SQL declarativo permanece Applicable: una solicitud puede reificarse como datos relacionales (tipo de operación + parámetros + orden/estado) y un mecanismo SQL de despacho puede interpretar esa representación sin depender de clases.
+Universo actual: **51 targets**. Command clasifica **49 Applicable** y **2 N/A**. HTML y CSS no poseen por sí mismos un modelo de ejecución capaz de encapsular una solicitud como valor y despacharla hacia un receptor. SQL declarativo permanece Applicable porque una solicitud puede reificarse como datos relacionales y ser interpretada por un mecanismo de despacho sin depender de clases.
 
-Actualmente hay **1 ejemplo materializado y 1 verificado**. MATLAB pasó el gate nativo de MATLAB Actions; los otros 48 targets Applicable siguen pendientes dentro del mismo PR de Command durante las siguientes pasadas del experimento.
+Los 49 targets Applicable tienen un artefacto canónico individual y evidencia ejecutada proporcional al ecosistema. Los workflows/ledgers de sweep sólo orquestan o documentan esas fuentes; no las sustituyen.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
-| C# | Applicable | — | Pendiente | objeto/record + handler/dispatcher |
-| TypeScript | Applicable | — | Pendiente | objeto o closure ejecutable |
-| Python | Applicable | — | Pendiente | callable/objeto + invoker |
-| C++ | Applicable | — | Pendiente | value/object + execute |
-| Java | Applicable | — | Pendiente | command object + receiver |
-| Rust | Applicable | — | Pendiente | enum/trait + dispatcher |
-| Go | Applicable | — | Pendiente | struct + función/receiver |
-| PHP | Applicable | — | Pendiente | objeto callable + invoker |
-| F# | Applicable | — | Pendiente | discriminated union/función |
-| JavaScript | Applicable | — | Pendiente | objeto/closure + cola |
-| SQL declarativo | Applicable | — | Pendiente | solicitud reificada como fila + despacho declarativo |
-| Kotlin | Applicable | — | Pendiente | sealed command + handler |
-| Swift | Applicable | — | Pendiente | enum/protocol + executor |
-| Visual Basic .NET | Applicable | — | Pendiente | interface + handler |
-| C | Applicable | — | Pendiente | struct + function pointer |
-| Ruby | Applicable | — | Pendiente | objeto/Proc + invoker |
-| Lua | Applicable | — | Pendiente | tabla + función |
-| Bash | Applicable | — | Pendiente | datos + función de despacho |
-| PowerShell | Applicable | — | Pendiente | objeto/scriptblock + dispatcher |
-| Haskell | Applicable | — | Pendiente | ADT + interpreter |
-| Perl | Applicable | — | Pendiente | hash/coderef + invoker |
-| Pascal | Applicable | — | Pendiente | record/object + execute |
-| R | Applicable | — | Pendiente | lista/closure + executor |
-| GNU Octave | Applicable | — | Pendiente | struct + function handle |
-| OCaml | Applicable | — | Pendiente | variant + evaluator |
-| Common Lisp | Applicable | — | Pendiente | struct/list + function |
-| Scala | Applicable | — | Pendiente | case class/ADT + handler |
-| Julia | Applicable | — | Pendiente | struct + callable/dispatch |
-| Clojure | Applicable | — | Pendiente | map + function/dispatch |
-| Elixir | Applicable | — | Pendiente | struct/tuple + dispatcher |
-| Erlang | Applicable | — | Pendiente | tuple/message + executor |
-| Prolog | Applicable | — | Pendiente | term + dispatch predicate |
-| Groovy | Applicable | — | Pendiente | object/closure + invoker |
-| Ada | Applicable | — | Pendiente | tagged/record command + procedure |
-| Solidity | Applicable | — | Pendiente | encoded operation + dispatcher contract |
-| Fortran | Applicable | — | Pendiente | derived type + procedure dispatch |
-| Objective-C | Applicable | — | Pendiente | object/block + receiver |
-| Zig | Applicable | — | Pendiente | tagged union/struct + function |
-| Nim | Applicable | — | Pendiente | object/ref + proc |
-| Dart | Applicable | — | Pendiente | class/closure + invoker |
-| Crystal | Applicable | — | Pendiente | object/proc + dispatcher |
-| COBOL | Applicable | — | Pendiente | command record + paragraph dispatch |
-| VBA | Applicable | — | Pendiente | class/module data + procedure dispatcher |
-| GDScript | Applicable | — | Pendiente | object/Callable + queue |
-| Assembly | Applicable | — | Pendiente | opcode/data record + explicit dispatcher |
-| Delphi | Applicable | — | Pendiente | interface/object + execute |
-| MicroPython | Applicable | — | Pendiente | callable/object + queue |
-| Rockstar | Applicable | — | Pendiente | datos de operación + función de despacho |
-| MATLAB | Applicable | [`command.m`](../src/DataScience/MATLAB/command.m) | Pattern Command MATLAB #2 ✅ — native MATLAB Actions; setup 92 s, validation 6 s, total 98 s | structs + function handles + cola + undo |
+| C# | Applicable | [`Command.cs`](../src/Enterprise/C%23/patterns/Command.cs) | medium-high cohort .NET gate ✅ | objeto/record + handler/dispatcher |
+| TypeScript | Applicable | [`command.ts`](../src/Web/TypeScriptTS/patterns/command.ts) | medium-high cohort Node gate ✅ | objeto o closure ejecutable |
+| Python | Applicable | [`command.py`](../src/Scripting/PythonPY/patterns/command.py) | Python target gate ✅ | callable/objeto + invoker |
+| C++ | Applicable | [`command.cpp`](../src/Systems/C%2B%2B/patterns/command.cpp) | portable-functional native gate ✅ | value/function + execute |
+| Java | Applicable | [`command.java`](../src/Enterprise/Java/patterns/command.java) | portable-functional JVM gate ✅ | command value + receiver |
+| Rust | Applicable | [`command.rs`](../src/Systems/Rust/patterns/command.rs) | portable-functional native gate ✅ | funciones/enum/trait + dispatcher |
+| Go | Applicable | [`command.go`](../src/Systems/Go/patterns/command.go) | high-overhead native gate ✅ | funciones + dispatcher |
+| PHP | Applicable | [`command.php`](../src/Scripting/PHP/patterns/command.php) | PHP target gate ✅ | objeto/callable + invoker |
+| F# | Applicable | [`Command.fsx`](../src/Functional/F%23/patterns/Command.fsx) | medium-high cohort .NET gate ✅ | discriminated union/función |
+| JavaScript | Applicable | [`command.js`](../src/Web/JavaScriptJS/patterns/command.js) | JavaScript target gate ✅ | objeto/closure + cola |
+| SQL declarativo | Applicable | [`command.sql`](../src/Data/SQL/command.sql) | Command final SQLite runtime ✅ | solicitud reificada como fila + despacho |
+| Kotlin | Applicable | [`Command.kt`](../src/Enterprise/Kotlin/patterns/Command.kt) | medium-high cohort JVM gate ✅ | sealed command + handler |
+| Swift | Applicable | [`Command.swift`](../src/Systems/Swift/patterns/Command.swift) | medium-high cohort Swift gate ✅ | enum/protocol + executor |
+| Visual Basic .NET | Applicable | [`Command.vb`](../src/Enterprise/VB.NET/patterns/Command.vb) | medium-high cohort .NET gate ✅ | interface + handler |
+| C | Applicable | [`command.c`](../src/Systems/C/patterns/command.c) | portable-functional native gate ✅ | struct/function pointer |
+| Ruby | Applicable | [`command.rb`](../src/Scripting/Ruby/patterns/command.rb) | Ruby target gate ✅ | objeto/Proc + invoker |
+| Lua | Applicable | [`command.lua`](../src/Scripting/Lua/patterns/command.lua) | Lua target gate ✅ | tabla + función |
+| Bash | Applicable | [`command.sh`](../src/Scripting/Bash/patterns/command.sh) | Bash target gate ✅ | datos + función de despacho |
+| PowerShell | Applicable | [`command.ps1`](../src/Scripting/PowerShell/patterns/command.ps1) | portable-functional PowerShell gate ✅ | objeto/scriptblock + dispatcher |
+| Haskell | Applicable | [`Command.hs`](../src/Functional/Haskell/patterns/Command.hs) | high-overhead GHC gate ✅ | ADT + interpreter |
+| Perl | Applicable | [`command.pl`](../src/Scripting/Perl/command.pl) | Command final `perl -c` + runtime ✅ | hash/coderef + invoker |
+| Pascal | Applicable | [`command_pattern.pas`](../src/Systems/Pascal/command_pattern.pas) | medium-high GNU cohort gate ✅ | record/object + execute |
+| R | Applicable | [`command.R`](../src/DataScience/R/patterns/command.R) | portable-functional R gate ✅ | lista/closure + executor |
+| GNU Octave | Applicable | [`command.m`](../src/DataScience/Octave/patterns/command.m) | portable-functional Octave gate ✅ | struct + function handle |
+| OCaml | Applicable | [`command.ml`](../src/Functional/OCaml/patterns/command.ml) | portable-functional OCaml gate ✅ | variant + evaluator |
+| Common Lisp | Applicable | [`command.lisp`](../src/Functional/CommonLisp/patterns/command.lisp) | portable-functional SBCL gate ✅ | struct/list + function |
+| Scala | Applicable | [`Command.scala`](../src/Functional/Scala/patterns/Command.scala) | medium-high cohort JVM gate ✅ | case class/ADT + handler |
+| Julia | Applicable | [`command.jl`](../src/DataScience/Julia/patterns/command.jl) | high-overhead Julia gate ✅ | struct + callable/dispatch |
+| Clojure | Applicable | [`command.clj`](../src/Functional/Clojure/patterns/command.clj) | medium-high cohort JVM gate ✅ | map + function/dispatch |
+| Elixir | Applicable | [`command.exs`](../src/Functional/Elixir/patterns/command.exs) | portable-functional Elixir gate ✅ | struct/tuple + dispatcher |
+| Erlang | Applicable | [`command.erl`](../src/Functional/Erlang/patterns/command.erl) | portable-functional Erlang gate ✅ | tuple/message + executor |
+| Prolog | Applicable | [`command.pl`](../src/Functional/Prolog/patterns/command.pl) | portable-functional SWI-Prolog gate ✅ | term + dispatch predicate |
+| Groovy | Applicable | [`command.groovy`](../src/Functional/Groovy/patterns/command.groovy) | portable-functional Groovy gate ✅ | closure + invoker |
+| Ada | Applicable | [`command_pattern.adb`](../src/Systems/Ada/command_pattern.adb) | medium-high GNU cohort gate ✅ | tagged/record command + procedure |
+| Solidity | Applicable | [`Command.sol`](../src/Niche/Solidity/patterns/Command.sol) | medium-high Node/Solidity gate ✅ | encoded operation + dispatcher contract |
+| Fortran | Applicable | [`command.f90`](../src/Systems/Fortran/patterns/command.f90) | medium-high GNU cohort gate ✅ | derived type + procedure dispatch |
+| Objective-C | Applicable | [`command.m`](../src/Systems/Objective-C/patterns/command.m) | high-overhead Clang/GNUstep gate ✅ | object/protocol + receiver |
+| Zig | Applicable | [`command.zig`](../src/Systems/Zig/patterns/command.zig) | high-overhead Zig gate ✅ | tagged union/struct + function |
+| Nim | Applicable | [`command_example.nim`](../src/Niche/Nim/patterns/command_example.nim) | medium-high Nim gate ✅ | object/ref + proc |
+| Dart | Applicable | [`command.dart`](../src/Web/Dart/patterns/command.dart) | high-overhead Dart gate ✅ | class/closure + invoker |
+| Crystal | Applicable | [`command.cr`](../src/Niche/Crystal/patterns/command.cr) | high-overhead Crystal gate ✅ | object/proc + dispatcher |
+| COBOL | Applicable | [`command_pattern.cpy`](../src/Historical/Cobol/patterns/command_pattern.cpy) | medium-high GNU/COBOL gate ✅ | command record + paragraph dispatch |
+| VBA | Applicable | [`CommandExample.bas`](../src/Shell/VBA/CommandExample.bas) | Command final source contract ✅ | datos + procedure dispatcher; Office/VBA no disponible en hosted Linux |
+| GDScript | Applicable | [`command.gd`](../src/Niche/GDScript/command.gd) | Command final Godot 4.6.3 runtime ✅ | object/Callable + queue |
+| Assembly | Applicable | [`command.asm`](../src/LowLevel/Assembly/command.asm) | Command final NASM + ld + runtime ✅ | opcode/data record + dispatcher explícito |
+| Delphi | Applicable | [`CommandExample.pas`](../src/Enterprise/Delphi/CommandExample.pas) | Command final source contract ✅ | interface/object + execute; DCC no disponible en hosted Linux |
+| MicroPython | Applicable | [`command.py`](../src/Other/MicroPython/command.py) | Command final MicroPython 1.28.0 runtime ✅ | callable/object + queue |
+| Rockstar | Applicable | [`command.rock`](../src/Other/Rockstar/command.rock) | Command final Rockstar v2.0.31 runtime ✅ | datos de operación + función de despacho |
+| MATLAB | Applicable | [`command.m`](../src/DataScience/MATLAB/command.m) | native MATLAB Actions gate ✅ | structs + function handles + cola + undo |
 | HTML | N/A | — | — | markup declarativo sin modelo de ejecución para encapsular o despachar acciones |
 | CSS | N/A | — | — | reglas declarativas de estilo sin solicitudes ejecutables ni invocador/receiver |
 
