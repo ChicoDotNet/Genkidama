@@ -1,4 +1,4 @@
-name: Memento Reconcile Diagnostic
+name: Memento Zig Format Repair
 
 on:
   pull_request:
@@ -8,71 +8,52 @@ permissions:
   contents: write
 
 jobs:
-  diagnose:
+  repair:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Reconcile Memento onto certified dev
+      - name: Format reconciled Zig sweep with pinned toolchain
         shell: bash
         run: |
           set -euo pipefail
-          expected_memento=e9094b09392e613a450222c254bde616cf6fdc4b
+          expected_memento=84b0bac3b0efaab0c72c748c60a056b9169a852e
           expected_dev=785f6722112cda57a43c7cae26d006c43edd2a46
-          cp eng/ci/memento_reconcile_diag.py /tmp/memento_reconcile_diag.py
+          zig_version=0.16.0
+          zig_sha256=70e49664a74374b48b51e6f3fdfbf437f6395d42509050588bd49abe52ba3d00
+
           git config user.name "Genkidama Reconcile Bot"
           git config user.email "reconcile-bot@users.noreply.github.com"
           git fetch origin patterns/memento-kb006 dev
           test "$(git rev-parse origin/patterns/memento-kb006)" = "$expected_memento"
           test "$(git rev-parse origin/dev)" = "$expected_dev"
-          git checkout -B reconcile origin/patterns/memento-kb006
+          git checkout -B repair origin/patterns/memento-kb006
 
-          set +e
-          git merge --no-commit --no-ff origin/dev
-          merge_status=$?
-          set -e
-          echo "merge_exit=$merge_status"
+          archive="$RUNNER_TEMP/zig-$zig_version.tar.xz"
+          root="$RUNNER_TEMP/zig-$zig_version"
+          curl -fsSL "https://ziglang.org/download/$zig_version/zig-x86_64-linux-$zig_version.tar.xz" -o "$archive"
+          echo "$zig_sha256  $archive" | sha256sum -c -
+          mkdir -p "$root"
+          tar -xJf "$archive" --strip-components=1 -C "$root"
+          export PATH="$root:$PATH"
+          test "$(zig version)" = "$zig_version"
 
-          expected=$(cat <<'EOF'
-          eng/ci/adapters/dart_contracts.py
-          eng/ci/adapters/platform_patterns.py
-          eng/ci/adapters/platform_source_contracts.py
-          src/DataScience/Julia/pattern_sweep.jl
-          src/Functional/Haskell/PatternSweep.hs
-          src/Niche/Crystal/pattern_sweep.cr
-          src/Scripting/PythonPY/pattern_sweep.py
-          src/Systems/Objective-C/pattern_sweep.m
-          src/Systems/Zig/pattern_sweep.zig
-          src/Web/Dart/pattern_sweep.dart
-          EOF
-          )
-          actual="$(git diff --name-only --diff-filter=U | sort)"
-          printf '%s\n' "$actual" > /tmp/actual-conflicts
-          printf '%s\n' "$expected" | sed 's/^          //' | sort > /tmp/expected-conflicts
-          diff -u /tmp/expected-conflicts /tmp/actual-conflicts
-
-          while IFS= read -r path; do
-            git checkout --theirs -- "$path"
-          done < /tmp/expected-conflicts
-
-          python3 /tmp/memento_reconcile_diag.py
-          git add --pathspec-from-file=/tmp/expected-conflicts
-          test -z "$(git diff --name-only --diff-filter=U || true)"
-          git diff --cached --check -- $(cat /tmp/expected-conflicts)
-          python3 -m py_compile \
-            eng/ci/adapters/dart_contracts.py \
-            eng/ci/adapters/platform_patterns.py \
-            eng/ci/adapters/platform_source_contracts.py \
-            src/Scripting/PythonPY/pattern_sweep.py
-          python3 eng/ci/adapters/platform_source_contracts.py
-          python3 -B src/Scripting/PythonPY/pattern_sweep.py
+          before="$(git rev-parse HEAD:src/Systems/Zig/pattern_sweep.zig)"
+          zig fmt src/Systems/Zig/pattern_sweep.zig
+          zig fmt --check src/Systems/Zig/pattern_sweep.zig
+          git diff --check -- src/Systems/Zig/pattern_sweep.zig
+          changed="$(git diff --name-only)"
+          test "$changed" = "src/Systems/Zig/pattern_sweep.zig"
+          git add src/Systems/Zig/pattern_sweep.zig
+          after="$(git hash-object src/Systems/Zig/pattern_sweep.zig)"
+          test "$after" != "$before"
+          git diff --cached --stat
 
           git fetch origin patterns/memento-kb006 dev
           test "$(git rev-parse origin/patterns/memento-kb006)" = "$expected_memento"
           test "$(git rev-parse origin/dev)" = "$expected_dev"
-          git commit -m "merge: reconcile Memento with current dev"
-          reconciled="$(git rev-parse HEAD)"
-          echo "reconciled_head=$reconciled"
+          git commit -m "style: format reconciled Zig Memento sweep"
+          repaired="$(git rev-parse HEAD)"
           git push --force-with-lease=refs/heads/patterns/memento-kb006:$expected_memento origin HEAD:refs/heads/patterns/memento-kb006
-          echo "MEMENTO_RECONCILIATION_PUSHED=$reconciled"
+          echo "MEMENTO_ZIG_FORMAT_PUSHED=$repaired"
