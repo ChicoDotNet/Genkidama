@@ -1,4 +1,4 @@
-name: PR112 Merge Diagnostic
+name: PR112 Merge Resolver
 
 on:
   pull_request:
@@ -6,29 +6,146 @@ on:
       - dev
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  diagnose:
+  resolve:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Diagnose PR112 merge against dev
+          persist-credentials: true
+      - name: Reconcile PR112 with current dev
         shell: bash
+        env:
+          TARGET_BRANCH: patterns/iterator-kb006-final
         run: |
           set -euo pipefail
-          git fetch origin dev patterns/iterator-kb006-final
-          git checkout -B pr112 origin/patterns/iterator-kb006-final
+          git fetch origin dev "$TARGET_BRANCH"
+          git checkout -B pr112 "origin/$TARGET_BRANCH"
+          git config user.name 'Genkidama CI'
+          git config user.email 'ci@example.invalid'
+
           set +e
-          git -c user.name='Genkidama CI' -c user.email='ci@example.invalid' merge --no-commit --no-ff origin/dev
-          status=$?
+          git merge --no-commit --no-ff origin/dev
+          merge_status=$?
           set -e
-          echo "merge_status=$status"
-          echo '--- unresolved paths ---'
-          git diff --name-only --diff-filter=U | sort
-          echo '--- status ---'
-          git status --short
-          git merge --abort || true
-          exit 0
+          if [[ "$merge_status" -ne 0 ]]; then
+            unresolved="$(git diff --name-only --diff-filter=U | sort)"
+            expected=$'.github/workflows/pattern-high-overhead-cohort.yml\n.github/workflows/pattern-proxy-final.yml\n.github/workflows/pattern-sweep-python.yml\nsrc/Functional/Haskell/PatternSweep.hs\nsrc/Niche/Crystal/pattern_sweep.cr\nsrc/Systems/Go/pattern_sweep.go\nsrc/Systems/Zig/pattern_sweep.zig\nsrc/Web/Dart/pattern_sweep.dart'
+            if [[ "$unresolved" != "$expected" ]]; then
+              echo 'Unexpected conflict set:' >&2
+              printf '%s\n' "$unresolved" >&2
+              exit 1
+            fi
+          fi
+
+          # Current dev intentionally consolidated these pattern-specific workflows.
+          git rm -f --ignore-unmatch \
+            .github/workflows/pattern-command-final.yml \
+            .github/workflows/pattern-high-overhead-cohort.yml \
+            .github/workflows/pattern-interpreter-final.yml \
+            .github/workflows/pattern-iterator-high-overhead.yml \
+            .github/workflows/pattern-iterator-tail.yml \
+            .github/workflows/pattern-proxy-final.yml \
+            .github/workflows/pattern-sweep-python.yml \
+            .github/workflows/pr112-merge-diagnostic.yml
+
+          # For the five shared sweeps, current dev is authoritative; reapply only
+          # Iterator's canonical-delegation delta from PR112.
+          for path in \
+            src/Functional/Haskell/PatternSweep.hs \
+            src/Niche/Crystal/pattern_sweep.cr \
+            src/Systems/Go/pattern_sweep.go \
+            src/Systems/Zig/pattern_sweep.zig \
+            src/Web/Dart/pattern_sweep.dart; do
+            git checkout --theirs -- "$path"
+          done
+
+          python - <<'PY'
+          from pathlib import Path
+
+          # Haskell: preserve Mediator IO delegation, remove duplicate Iterator implementation,
+          # and execute the canonical Iterator source as the 39th sweep cell.
+          p = Path('src/Functional/Haskell/PatternSweep.hs')
+          s = p.read_text()
+          old = '''-- Iterator\ndata Iterator a = Iterator [a]\nnext :: Iterator a -> (Maybe a, Iterator a)\nnext (Iterator []) = (Nothing, Iterator [])\nnext (Iterator (x:xs)) = (Just x, Iterator xs)\niteratorCase :: Bool\niteratorCase = let (a,i1)=next (Iterator [10,20,30::Int]); (b,i2)=next i1; (c,i3)=next i2; (d,_)=next i3 in [a,b,c]==map Just [10,20,30] && d==Nothing\n'''
+          new = '-- Iterator is canonicalized in src/Functional/Haskell/Iterator.hs and executed from main.\n'
+          assert old in s
+          s = s.replace(old, new, 1)
+          s = s.replace('pureCases = [ commandCase, interpreterCase, iteratorCase, mementoCase,',
+                        'pureCases = [ commandCase, interpreterCase, mementoCase,', 1)
+          s = s.replace('must (length pureCases == 37)', 'must (length pureCases == 36)', 1)
+          needle = '  forM_ pureCases must\n  mediatorOk <- mediatorCase\n'
+          repl = '  forM_ pureCases must\n  iteratorOutput <- readProcess "runghc" ["src/Functional/Haskell/Iterator.hs"] ""\n  must (iteratorOutput == "iterator=10,20,30\\n")\n  mediatorOk <- mediatorCase\n'
+          assert needle in s
+          s = s.replace(needle, repl, 1)
+          p.write_text(s)
+
+          # Crystal: preserve Mediator canonical delegation and add Iterator canonical delegation.
+          p = Path('src/Niche/Crystal/pattern_sweep.cr')
+          s = p.read_text()
+          assert s.startswith('require "./mediator"\n')
+          s = s.replace('require "./mediator"\n', 'require "./mediator"\nrequire "./iterator"\n', 1)
+          start = s.index('# Iterator\n')
+          end = s.index('\n# Mediator\n', start)
+          s = s[:start] + '# Iterator\ndef iterator_pattern\n  must(run_iterator_example)\nend\n' + s[end:]
+          p.write_text(s)
+
+          # Go: preserve Mediator exec delegation; Iterator becomes canonical subprocess execution.
+          p = Path('src/Systems/Go/pattern_sweep.go')
+          s = p.read_text()
+          assert '\t"os/exec"\n' in s
+          assert '\t"strings"\n' not in s
+          s = s.replace('\t"os/exec"\n', '\t"os/exec"\n\t"strings"\n', 1)
+          start = s.index('// Iterator: explicit cursor hides traversal mechanics.\n')
+          end = s.index('\n// Mediator:', start)
+          block = '''// Iterator: the sweep executes the individually addressable canonical source.\nfunc iteratorPattern() {\n\tcmd := exec.Command("go", "run", "src/Systems/Go/iterator.go")\n\toutput, err := cmd.Output()\n\tmust(err == nil && strings.TrimSpace(string(output)) == "iterator=10,20,30")\n}\n'''
+          s = s[:start] + block + s[end:]
+          p.write_text(s)
+
+          # Zig: preserve Mediator module and delegate Iterator to its canonical module.
+          p = Path('src/Systems/Zig/pattern_sweep.zig')
+          s = p.read_text()
+          assert 'const mediator = @import("patterns/mediator.zig");\n' in s
+          s = s.replace('const mediator = @import("patterns/mediator.zig");\n',
+                        'const mediator = @import("patterns/mediator.zig");\nconst iterator_example = @import("iterator.zig");\n', 1)
+          start = s.index('// Iterator\n')
+          end = s.index('\n// Mediator\n', start)
+          block = '''// Iterator: delegate to the individually addressable canonical example.\nfn iteratorPattern() bool {\n    return iterator_example.runIteratorExample();\n}\n'''
+          s = s[:start] + block + s[end:]
+          p.write_text(s)
+
+          # Dart: preserve Mediator import and use canonical CursorIterator.
+          p = Path('src/Web/Dart/pattern_sweep.dart')
+          s = p.read_text()
+          assert "import 'mediator.dart' as mediator;\n" in s
+          s = s.replace("import 'mediator.dart' as mediator;\n",
+                        "import 'mediator.dart' as mediator;\nimport 'iterator.dart' as iterator_example;\n", 1)
+          start = s.index('// Iterator\n')
+          fn = s.index('void iteratorPattern() {\n', start)
+          class_block = s[start:fn]
+          assert 'class CursorIterator<T>' in class_block
+          s = s[:start] + '// Iterator: delegate to the individually addressable canonical example.\n' + s[fn:]
+          s = s.replace('final it = CursorIterator<int>([10, 20, 30]);',
+                        'final it = iterator_example.CursorIterator<int>([10, 20, 30]);', 1)
+          p.write_text(s)
+          PY
+
+          git add -A
+          if git diff --name-only --diff-filter=U | grep -q .; then
+            echo 'Unresolved conflicts remain:' >&2
+            git diff --name-only --diff-filter=U >&2
+            exit 1
+          fi
+
+          # The merge itself must retain modern CI and the v6 no-cache decision.
+          grep -Fq 'uses: gradle/actions/setup-gradle@v6' .github/workflows/polyglot.yml
+          grep -Fq 'cache-disabled: true' .github/workflows/polyglot.yml
+          test ! -e .github/workflows/pattern-high-overhead-cohort.yml
+          test ! -e .github/workflows/pattern-proxy-final.yml
+          test ! -e .github/workflows/pattern-sweep-python.yml
+
+          git commit -m 'merge: reconcile Iterator close-out with current dev'
+          git push origin HEAD:"$TARGET_BRANCH"
