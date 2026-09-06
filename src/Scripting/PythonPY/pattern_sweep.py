@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from typing import Callable
 
 from mediator import verify_mediator
+from strategy import verify as verify_strategy
 
 
 def command() -> None:
@@ -80,14 +81,6 @@ def state() -> None:
     assert door.state == "open"
 
 
-def strategy() -> None:
-    def choose(values, strategy_fn):
-        return strategy_fn(values)
-
-    assert choose([3, 1, 2], min) == 1
-    assert choose([3, 1, 2], max) == 3
-
-
 def template_method() -> None:
     class Report:
         def render(self):
@@ -130,7 +123,7 @@ def mvc() -> None:
 def mvvm() -> None:
     model = {"first": "Ada", "last": "Lovelace"}
     view_model = lambda: {"display_name": f"{model['first']} {model['last']}"}
-    assert view_model()["display_name"] == "Ada Lovelace"
+    assert view_model() == {"display_name": "Ada Lovelace"}
 
 
 def microkernel() -> None:
@@ -412,7 +405,7 @@ CHECKS = [
     memento,
     observer,
     state,
-    strategy,
+    verify_strategy,
     template_method,
     visitor,
     mvc,
