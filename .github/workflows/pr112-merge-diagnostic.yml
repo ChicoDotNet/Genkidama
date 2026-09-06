@@ -1,0 +1,33 @@
+name: PR112 Merge Diagnostic
+
+on:
+  push:
+    branches:
+      - patterns/iterator-kb006-final
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Diagnose merge against dev
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin dev
+          set +e
+          git -c user.name='Genkidama CI' -c user.email='ci@example.invalid' merge --no-commit --no-ff origin/dev
+          status=$?
+          set -e
+          echo "merge_status=$status"
+          echo '--- unresolved paths ---'
+          git diff --name-only --diff-filter=U | sort
+          echo '--- status ---'
+          git status --short
+          git merge --abort || true
+          exit 0
