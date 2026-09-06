@@ -47,8 +47,35 @@ def validate_assembly() -> None:
             print(f"PASS Assembly {filename}", flush=True)
 
 
+def validate_vba_state() -> None:
+    source = dc.ROOT / "src/Shell/VBA/state.bas"
+    dc.require(source.is_file(), "VBA State canonical missing")
+    text = source.read_text(encoding="utf-8")
+    lower = text.lower()
+    required = [
+        "option explicit",
+        "private enum gatestate",
+        "gatelocked = 0",
+        "gateunlocked = 1",
+        "private function transition",
+        "select case currentstate",
+        'if action = "coin" then',
+        'if action = "push" then',
+        "err.raise vbobjecterror + 513",
+        "public sub verifystatepattern()",
+        'requirestate state = gatelocked, "push while locked must preserve state"',
+        'requirestate state = gateunlocked, "duplicate coin must preserve unlocked state"',
+        'debug.print "vba-state: passed"',
+    ]
+    for marker in required:
+        dc.require(marker in lower, f"VBA State source contract missing {marker!r}")
+    dc.require(lower.count("state = transition(state,") == 4, "VBA State contract must exercise four transition decisions")
+    print("PASS VBA state.bas source contract", flush=True)
+
+
 def validate_portable() -> None:
     dc.run([sys.executable, "eng/ci/adapters/platform_source_contracts.py"])
+    validate_vba_state()
     validate_assembly()
 
     godot = os.environ.get("GENKIDAMA_GODOT_BIN", "godot")
