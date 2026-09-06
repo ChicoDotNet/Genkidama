@@ -1,0 +1,33 @@
+Transition takes State, Event
+If State is "locked"
+If Event is "coin"
+Give back "unlocked"
+Else
+Give back State
+Yeah
+Else
+If State is "unlocked"
+If Event is "push"
+Give back "locked"
+Else
+Give back State
+Yeah
+Else
+Give back "invalid"
+Yeah
+Yeah
+Yeah
+
+State is "locked"
+Print State
+Call Transition with State, "push" into State
+Print State
+Call Transition with State, "coin" into State
+Print State
+Call Transition with State, "coin" into State
+Print State
+Call Transition with State, "push" into State
+Print State
+Call Transition with "unknown", "coin" into Invalid State
+Print Invalid State
+Print "rockstar-state: passed"
