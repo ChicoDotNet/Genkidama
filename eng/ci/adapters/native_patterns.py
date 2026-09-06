@@ -99,20 +99,39 @@ def validate_rust() -> int:
 
 
 def validate_go() -> int:
-    source = ROOT / "src/Systems/Go/pattern_sweep.go"
-    if not source.is_file():
+    sweep = ROOT / "src/Systems/Go/pattern_sweep.go"
+    strategy = ROOT / "src/Systems/Go/strategy.go"
+    if not sweep.is_file():
         raise ContractError("Go pattern_sweep.go is missing")
+    if not strategy.is_file():
+        raise ContractError("Go canonical strategy.go is missing")
+
     run(["go", "version"])
-    unformatted = run(["gofmt", "-l", str(source)], capture=True).strip()
-    if unformatted:
-        raise ContractError(f"Go pattern sweep is not gofmt-clean: {unformatted}")
-    run(["go", "vet", str(source)])
-    output = run(["go", "run", str(source)], capture=True).strip()
+    for source in (sweep, strategy):
+        unformatted = run(["gofmt", "-l", str(source)], capture=True).strip()
+        if unformatted:
+            raise ContractError(f"Go source is not gofmt-clean: {unformatted}")
+
+    run(["go", "vet", str(sweep)])
+    output = run(["go", "run", str(sweep)], capture=True).strip()
     expected = "Go pattern sweep: 39/39 examples passed"
     if output != expected:
         raise ContractError(f"Go pattern sweep output mismatch: expected {expected!r}, got {output!r}")
+
+    with tempfile.TemporaryDirectory(prefix="genkidama-go-strategy-") as temp:
+        harness = Path(temp) / "strategy_contract.go"
+        harness.write_text(
+            strategy.read_text(encoding="utf-8")
+            + "\nfunc main() { if !verifyStrategy() { panic(\"Go Strategy contract failed\") } }\n",
+            encoding="utf-8",
+        )
+        run(["gofmt", "-w", str(harness)])
+        run(["go", "vet", str(harness)])
+        run(["go", "run", str(harness)])
+
     print(output, flush=True)
-    return EXPECTED
+    print("PASS Go strategy.go", flush=True)
+    return EXPECTED + 1
 
 
 def main() -> int:
