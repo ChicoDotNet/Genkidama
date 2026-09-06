@@ -5,7 +5,7 @@ on:
     branches: [dev]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   diagnose:
@@ -14,14 +14,18 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Resolve Memento conflicts deterministically
+      - name: Reconcile Memento onto certified dev
         shell: bash
         run: |
           set -euo pipefail
+          expected_memento=e9094b09392e613a450222c254bde616cf6fdc4b
+          expected_dev=785f6722112cda57a43c7cae26d006c43edd2a46
           cp eng/ci/memento_reconcile_diag.py /tmp/memento_reconcile_diag.py
-          git config user.name "Genkidama Merge Diagnostic"
-          git config user.email "merge-diagnostic@users.noreply.github.com"
+          git config user.name "Genkidama Reconcile Bot"
+          git config user.email "reconcile-bot@users.noreply.github.com"
           git fetch origin patterns/memento-kb006 dev
+          test "$(git rev-parse origin/patterns/memento-kb006)" = "$expected_memento"
+          test "$(git rev-parse origin/dev)" = "$expected_dev"
           git checkout -B reconcile origin/patterns/memento-kb006
 
           set +e
@@ -46,9 +50,6 @@ jobs:
           actual="$(git diff --name-only --diff-filter=U | sort)"
           printf '%s\n' "$actual" > /tmp/actual-conflicts
           printf '%s\n' "$expected" | sed 's/^          //' | sort > /tmp/expected-conflicts
-          echo "CONFLICTS_BEGIN"
-          cat /tmp/actual-conflicts
-          echo "CONFLICTS_END"
           diff -u /tmp/expected-conflicts /tmp/actual-conflicts
 
           while IFS= read -r path; do
@@ -57,14 +58,7 @@ jobs:
 
           python3 /tmp/memento_reconcile_diag.py
           git add --pathspec-from-file=/tmp/expected-conflicts
-
-          residual="$(git diff --name-only --diff-filter=U || true)"
-          if [[ -n "$residual" ]]; then
-            echo "Residual conflicts:"
-            printf '%s\n' "$residual"
-            exit 1
-          fi
-
+          test -z "$(git diff --name-only --diff-filter=U || true)"
           git diff --cached --check -- $(cat /tmp/expected-conflicts)
           python3 -m py_compile \
             eng/ci/adapters/dart_contracts.py \
@@ -74,8 +68,11 @@ jobs:
           python3 eng/ci/adapters/platform_source_contracts.py
           python3 -B src/Scripting/PythonPY/pattern_sweep.py
 
-          echo "STAGED_FILES_BEGIN"
-          git diff --cached --name-only
-          echo "STAGED_FILES_END"
-          git diff --cached --stat
-          echo "MEMENTO_RECONCILIATION_DRY_RUN_OK"
+          git fetch origin patterns/memento-kb006 dev
+          test "$(git rev-parse origin/patterns/memento-kb006)" = "$expected_memento"
+          test "$(git rev-parse origin/dev)" = "$expected_dev"
+          git commit -m "merge: reconcile Memento with current dev"
+          reconciled="$(git rev-parse HEAD)"
+          echo "reconciled_head=$reconciled"
+          git push --force-with-lease=refs/heads/patterns/memento-kb006:$expected_memento origin HEAD:refs/heads/patterns/memento-kb006
+          echo "MEMENTO_RECONCILIATION_PUSHED=$reconciled"
