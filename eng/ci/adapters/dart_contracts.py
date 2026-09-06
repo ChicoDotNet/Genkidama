@@ -75,14 +75,17 @@ def learn() -> None:
 
 def patterns() -> None:
     sweep = ROOT / "src/Web/Dart/pattern_sweep.dart"
-    canonical = ROOT / "src/Web/Dart/memento.dart"
-    for source in (canonical, sweep):
-        require(source.is_file(), f"Dart pattern source is missing: {source.relative_to(ROOT)}")
-        run(["dart", "format", "--output=none", "--set-exit-if-changed", str(source)])
-        run(["dart", "analyze", "--fatal-infos", "--fatal-warnings", str(source)])
-
+    mediator = ROOT / "src/Web/Dart/mediator.dart"
+    memento = ROOT / "src/Web/Dart/memento.dart"
+    sources = [str(sweep), str(mediator), str(memento)]
+    run(["dart", "format", "--output=none", "--set-exit-if-changed", *sources])
+    run(["dart", "analyze", "--fatal-infos", "--fatal-warnings", *sources])
     require(
-        last_line(run(["dart", "run", str(canonical)], capture=True)) == "Dart Memento: passed",
+        last_line(run(["dart", "run", str(mediator)], capture=True)) == "Dart Mediator: passed",
+        "Dart Mediator canonical output mismatch",
+    )
+    require(
+        last_line(run(["dart", "run", str(memento)], capture=True)) == "Dart Memento: passed",
         "Dart Memento canonical output mismatch",
     )
     require(

@@ -3,9 +3,10 @@ module Main where
 import Control.Concurrent (forkIO)
 import Control.Concurrent.MVar
 import Control.Monad (forM_)
-import Data.List (intercalate)
+import Data.List (intercalate, isInfixOf)
 import Data.Maybe (fromMaybe)
 import qualified Memento as Memento
+import System.Process (readProcess)
 
 must :: Bool -> IO ()
 must True = pure ()
@@ -31,21 +32,13 @@ eval (Mul a b) = eval a * eval b
 interpreterCase :: Bool
 interpreterCase = eval (Add (Lit 7) (Mul (Lit 3) (Lit 4))) == 19
 
--- Iterator
-data Iterator a = Iterator [a]
-next :: Iterator a -> (Maybe a, Iterator a)
-next (Iterator []) = (Nothing, Iterator [])
-next (Iterator (x:xs)) = (Just x, Iterator xs)
-iteratorCase :: Bool
-iteratorCase = let (a,i1)=next (Iterator [10,20,30::Int]); (b,i2)=next i1; (c,i3)=next i2; (d,_)=next i3 in [a,b,c]==map Just [10,20,30] && d==Nothing
+-- Iterator is canonicalized in src/Functional/Haskell/Iterator.hs and executed from main.
 
--- Mediator
-mediate :: String -> String -> [String]
-mediate "button" "click" = ["panel.refresh"]
-mediate "panel" "loaded" = ["button.enable"]
-mediate _ _ = []
-mediatorCase :: Bool
-mediatorCase = mediate "button" "click" ++ mediate "panel" "loaded" == ["panel.refresh","button.enable"]
+-- Mediator: delegate to the individually addressable canonical artifact.
+mediatorCase :: IO Bool
+mediatorCase = do
+  output <- readProcess "runghc" ["patterns/mediator.hs"] ""
+  pure ("Haskell Mediator: passed" `isInfixOf` output)
 
 -- Observer
 type Observer = Int -> String
@@ -299,15 +292,19 @@ nullObjectCase :: Bool
 nullObjectCase = let real msg="logged:"++msg; nullLogger _="" in real "processed:item-1"=="logged:processed:item-1" && nullLogger "processed:item-1"==""
 
 pureCases :: [Bool]
-pureCases = [ commandCase, interpreterCase, iteratorCase, mediatorCase, Memento.verifyMementoCanonical, observerCase, stateCase, strategyCase, templateMethodCase, visitorCase
+pureCases = [ commandCase, interpreterCase, Memento.verifyMementoCanonical, observerCase, stateCase, strategyCase, templateMethodCase, visitorCase
             , mvcCase, mvvmCase, microkernelCase, microservicesCase, enterpriseAdapterCase, enterpriseBridgeCase, enterpriseFacadeCase, brokerCase, messageBusCase, serviceLocatorCase
             , activeObjectCase, halfSyncHalfAsyncCase, leaderFollowersCase, clientServerCase, peerToPeerCase, publishSubscribeCase, distributedProxyCase, pacCase, mvpCase, documentViewCase
             , activeRecordCase, dataMapperCase, unitOfWorkCase, repositoryCase, dependencyInjectionCase, lazyInitializationCase, objectPoolCase, nullObjectCase ]
 
 main :: IO ()
 main = do
-  must (length pureCases == 38)
+  must (length pureCases == 36)
   forM_ pureCases must
+  iteratorOutput <- readProcess "runghc" ["src/Functional/Haskell/Iterator.hs"] ""
+  must (iteratorOutput == "iterator=10,20,30\n")
+  mediatorOk <- mediatorCase
+  must mediatorOk
   monitorOk <- monitorObjectCase
   must monitorOk
   putStrLn "Haskell pattern sweep: 39/39 examples passed"

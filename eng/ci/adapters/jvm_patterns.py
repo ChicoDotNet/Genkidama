@@ -77,7 +77,7 @@ def validate_kotlin_cells() -> None:
             shutil.copy2(source, source_root / source.name)
         shutil.copy2(sweep, source_root / sweep.name)
         (work / "settings.gradle.kts").write_text('rootProject.name = "genkidama-kotlin-patterns"\n', encoding="utf-8")
-        (work / "build.gradle.kts").write_text('plugins {\n    kotlin("jvm") version "2.4.10"\n    application\n}\n\nrepositories { mavenCentral() }\n\nkotlin { jvmToolchain(17) }\n\napplication { mainClass.set("PatternSweepKt") }\n\ntasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {\n    compilerOptions.allWarningsAsErrors.set(true)\n}\n', encoding="utf-8")
+        (work / "build.gradle.kts").write_text('plugins {\n    kotlin("jvm") version "2.4.10"\n    application\n}\n\nrepositories { mavenCentral() }\n\nkotlin { jvmToolchain(25) }\n\napplication { mainClass.set("PatternSweepKt") }\n\ntasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {\n    compilerOptions.allWarningsAsErrors.set(true)\n}\n', encoding="utf-8")
         run(["gradle", "--no-daemon", "run"], cwd=work)
     print(f"Kotlin pattern cells: {EXPECTED_CELLS}/{EXPECTED_CELLS} passed", flush=True)
 
@@ -93,21 +93,19 @@ def validate_groovy_cells() -> None:
 
 def main() -> int:
     run(["java", "--version"])
-    if PROFILE == "java25":
-        run(["javac", "-version"])
-        validate_java_cells()
-        validate_scala_sweep()
-        validate_clojure_sweep()
-        total = EXPECTED_CELLS * 3
-    elif PROFILE == "jvm17":
-        run(["gradle", "--version"])
-        run(["groovy", "--version"])
-        validate_kotlin_cells()
-        validate_groovy_cells()
-        total = EXPECTED_CELLS * 2
-    else:
-        raise ContractError("GENKIDAMA_JVM_PROFILE must be 'java25' or 'jvm17'")
-    print(f"JVM Patterns contract: PASS profile={PROFILE} validations={total}", flush=True)
+    if PROFILE != "java25":
+        raise ContractError("GENKIDAMA_JVM_PROFILE must be 'java25'")
+    run(["javac", "-version"])
+    run(["gradle", "--version"])
+    run(["kotlinc", "-version"])
+    run(["groovy", "--version"])
+    validate_java_cells()
+    validate_scala_sweep()
+    validate_clojure_sweep()
+    validate_kotlin_cells()
+    validate_groovy_cells()
+    total = EXPECTED_CELLS * 5
+    print(f"JVM Patterns contract: PASS profile=java25 validations={total}", flush=True)
     return 0
 
 

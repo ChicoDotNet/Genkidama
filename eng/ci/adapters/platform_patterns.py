@@ -14,12 +14,16 @@ ASSEMBLY_CONTRACTS: dict[str, str] = {
     "bridge.asm": "basic-tv=TV:on\nbasic-radio=Radio:on\nmute-tv=TV:muted\nmute-radio=Radio:muted",
     "builder.asm": "# Service status\n## Availability\n99.95%\n---\n<h1>Service status</h1>\n<h2>Availability</h2><p>99.95%</p>",
     "chain_of_responsibility.asm": "visited=faq>billing;handled=billing;result=refund(250)",
+    "command.asm": "balance=130;commands=2",
     "composite.asm": "leaf=2\ndocs=8\nroot=10",
     "decorator.asm": "base=alert\naudit=audit(alert)\nencrypted=enc(alert)\nstacked=audit(enc(alert))",
     "example1.asm": "Dark Button\nDark Checkbox\nLight Button\nLight Checkbox",
     "facade.asm": "checkout=auth(alice)>reserve(SKU-42)>charge(499)",
     "factory_method.asm": "PostgreSQL connect\nPostgreSQL query\nMySQL connect\nMySQL query",
     "flyweight.asm": "styles=2;shared=true;text=ABC",
+    "interpreter.asm": "interpreter=9",
+    "iterator.asm": "iterator=10,20,30",
+    "mediator.asm": "Assembly Mediator: passed",
     "memento.asm": "Assembly Memento: passed",
     "prototype.asm": "original=orders: metrics\nclone=orders-canary: metrics,tracing",
     "proxy.asm": "backend=1;fetches=1;first=doc(42);second=doc(42)",
@@ -69,7 +73,8 @@ def validate_portable() -> None:
     output = dc.run([godot, "--headless", "--script", str(dc.ROOT / "src/Niche/GDScript/example1.gd")], capture=True)
     for marker in ["Dark Button", "Dark Checkbox", "Light Button", "Light Checkbox"]:
         dc.require(marker in output.splitlines(), f"GDScript contract missing {marker}")
-
+    mediator_output = dc.run([godot, "--headless", "--script", str(dc.ROOT / "src/Niche/GDScript/mediator.gd")], capture=True)
+    dc.require("GDScript Mediator: passed" in mediator_output.splitlines(), "GDScript Mediator canonical output mismatch")
     memento_output = dc.run([godot, "--headless", "--script", str(dc.ROOT / "src/Niche/GDScript/memento.gd")], capture=True)
     dc.require("GDScript Memento: passed" in memento_output.splitlines(), "GDScript Memento contract failed")
 
@@ -77,16 +82,20 @@ def validate_portable() -> None:
     output = dc.run([micropython, str(dc.ROOT / "src/Other/MicroPython/example1.py")], capture=True)
     for marker in ["Dark Button", "Dark Checkbox", "Light Button", "Light Checkbox"]:
         dc.require(marker in output.splitlines(), f"MicroPython contract missing {marker}")
+    mediator_output = dc.run([micropython, str(dc.ROOT / "src/Other/MicroPython/mediator.py")], capture=True)
+    dc.require(dc.last_line(mediator_output) == "MicroPython Mediator: passed", "MicroPython Mediator canonical output mismatch")
     memento_output = dc.run([micropython, str(dc.ROOT / "src/Other/MicroPython/memento.py")], capture=True)
-    dc.require("MicroPython Memento: passed" in memento_output.splitlines(), "MicroPython Memento contract failed")
+    dc.require(dc.last_line(memento_output) == "MicroPython Memento: passed", "MicroPython Memento contract failed")
 
     rockstar = os.environ.get("GENKIDAMA_ROCKSTAR_BIN")
     dc.require(bool(rockstar), "GENKIDAMA_ROCKSTAR_BIN is required")
     output = dc.run([rockstar, str(dc.ROOT / "src/Other/Rockstar/example1.rock")], capture=True)
     for marker in ["Dark Button", "Dark Checkbox", "Light Button", "Light Checkbox"]:
         dc.require(marker in output.splitlines(), f"Rockstar contract missing {marker}")
+    mediator_output = dc.run([rockstar, str(dc.ROOT / "src/Other/Rockstar/mediator.rock")], capture=True)
+    dc.require(dc.last_line(mediator_output) == "Rockstar Mediator: passed", "Rockstar Mediator canonical output mismatch")
     memento_output = dc.run([rockstar, str(dc.ROOT / "src/Other/Rockstar/memento.rock")], capture=True)
-    dc.require("Rockstar Memento: passed" in memento_output.splitlines(), "Rockstar Memento contract failed")
+    dc.require(dc.last_line(memento_output) == "Rockstar Memento: passed", "Rockstar Memento contract failed")
 
 
 def main() -> int:

@@ -1,3 +1,5 @@
+require "./mediator"
+require "./iterator"
 require "./memento"
 
 def must(value : Bool)
@@ -60,42 +62,13 @@ def interpreter_pattern
 end
 
 # Iterator
-class CursorIterator
-  def initialize(@values : Array(Int32))
-    @index = 0
-  end
-
-  def next_value : Int32?
-    return nil if @index >= @values.size
-    value = @values[@index]
-    @index += 1
-    value
-  end
-end
-
 def iterator_pattern
-  it = CursorIterator.new([10, 20, 30])
-  visited = [] of Int32
-  while value = it.next_value
-    visited << value
-  end
-  must(visited == [10, 20, 30] && it.next_value.nil?)
+  must(run_iterator_example)
 end
 
 # Mediator
-class UiMediator
-  getter events = [] of String
-
-  def notify(sender : String, event : String)
-    @events << "panel.refresh" if sender == "button" && event == "click"
-    @events << "button.enable" if sender == "panel" && event == "loaded"
-  end
-end
-
 def mediator_pattern
-  m = UiMediator.new
-  m.notify("button", "click"); m.notify("panel", "loaded")
-  must(m.events.join(">") == "panel.refresh>button.enable")
+  verify_mediator
 end
 
 # Memento is delegated to the individually addressable canonical required above.
