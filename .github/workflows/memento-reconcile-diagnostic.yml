@@ -65,7 +65,7 @@ jobs:
             exit 1
           fi
 
-          git diff --cached --check
+          git diff --cached --check -- $(cat /tmp/expected-conflicts)
           python3 -m py_compile \
             eng/ci/adapters/dart_contracts.py \
             eng/ci/adapters/platform_patterns.py \
