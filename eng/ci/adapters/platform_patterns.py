@@ -81,6 +81,14 @@ def validate_gdscript_state(godot: str) -> None:
     print("PASS GDScript state.gd", flush=True)
 
 
+def validate_micropython_state(micropython: str) -> None:
+    source = dc.ROOT / "src/Other/MicroPython/state.py"
+    dc.require(source.is_file(), "MicroPython State canonical missing")
+    output = dc.run([micropython, str(source)], capture=True)
+    dc.require("MicroPython State: passed" in output.splitlines(), "MicroPython State canonical output mismatch")
+    print("PASS MicroPython state.py", flush=True)
+
+
 def validate_portable() -> None:
     dc.run([sys.executable, "eng/ci/adapters/platform_source_contracts.py"])
     validate_vba_state()
@@ -96,6 +104,7 @@ def validate_portable() -> None:
     output = dc.run([micropython, str(dc.ROOT / "src/Other/MicroPython/example1.py")], capture=True)
     for marker in ["Dark Button", "Dark Checkbox", "Light Button", "Light Checkbox"]:
         dc.require(marker in output.splitlines(), f"MicroPython contract missing {marker}")
+    validate_micropython_state(micropython)
 
     rockstar = os.environ.get("GENKIDAMA_ROCKSTAR_BIN")
     dc.require(bool(rockstar), "GENKIDAMA_ROCKSTAR_BIN is required")
