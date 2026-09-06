@@ -98,7 +98,7 @@ jobs:
         run: python eng/ci/run-family dotnet --learn --telemetry-file artifacts/ci/dotnet-windows.jsonl
 
   jvm-java25:
-    name: JVM / Java 25 + Scala + Clojure
+    name: JVM / Java 25 + Kotlin 2.4.10 + Groovy 5.1.1 + Scala + Clojure
     needs: detect
     if: needs.detect.outputs.jvm == 'true'
     runs-on: ubuntu-24.04
@@ -111,62 +111,46 @@ jobs:
           distribution: temurin
           java-version: '25'
           cache: maven
-      - name: Install Scala CLI and Clojure CLI
+      - uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: '9.6.1'
+          cache-disabled: true
+      - name: Install pinned JVM language toolchains
         shell: bash
         run: |
           set -euo pipefail
+
           curl -fsSL https://github.com/VirtusLab/scala-cli/releases/latest/download/scala-cli-x86_64-pc-linux.gz -o /tmp/scala-cli.gz
           gzip -d /tmp/scala-cli.gz
           sudo install -m 0755 /tmp/scala-cli /usr/local/bin/scala-cli
+
           curl -fsSL https://github.com/clojure/brew-install/releases/latest/download/linux-install.sh -o /tmp/clojure-install.sh
           chmod +x /tmp/clojure-install.sh
           sudo /tmp/clojure-install.sh
+
+          curl -fsSL https://github.com/JetBrains/kotlin/releases/download/v2.4.10/kotlin-compiler-2.4.10.zip -o /tmp/kotlin.zip
+          echo '473dd66c7a3ef4b182065b3da670466c1bf2773a9dbb0ed8b33a39fe9d4f876d  /tmp/kotlin.zip' | sha256sum -c -
+          sudo rm -rf /opt/kotlinc
+          sudo unzip -q /tmp/kotlin.zip -d /opt
+
+          curl -fsSL https://archive.apache.org/dist/groovy/5.1.1/distribution/apache-groovy-binary-5.1.1.zip -o /tmp/groovy.zip
+          echo '51a5a86c638abc618273f9f318ad2d906fcd4fecbdc1b9fa3c9f47c8c3cd753b  /tmp/groovy.zip' | sha256sum -c -
+          sudo rm -rf /opt/groovy-5.1.1
+          sudo unzip -q /tmp/groovy.zip -d /opt
+
+          echo '/opt/kotlinc/bin' >> "$GITHUB_PATH"
+          echo '/opt/groovy-5.1.1/bin' >> "$GITHUB_PATH"
+
+          java --version
+          /opt/kotlinc/bin/kotlinc -version
+          /opt/groovy-5.1.1/bin/groovy --version
           scala-cli version
           clojure --version
       - uses: actions/setup-python@v7
         with:
           python-version: '3.14.7'
-      - name: Run Java 25 Learn and Patterns contracts
+      - name: Run unified JVM Learn and Patterns contracts
         run: python eng/ci/run-family jvm --all --telemetry-file artifacts/ci/jvm-java25.jsonl
-
-  jvm17:
-    name: JVM / Kotlin + Groovy / Java 17
-    needs: detect
-    if: needs.detect.outputs.jvm == 'true'
-    runs-on: ubuntu-24.04
-    env:
-      GENKIDAMA_JVM_PROFILE: jvm17
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-java@v6
-        with:
-          distribution: temurin
-          java-version: '17'
-      - uses: gradle/actions/setup-gradle@v6
-        with:
-          gradle-version: '9.6.1'
-          cache-disabled: true
-      - name: Install Groovy and Kotlin command line
-        shell: bash
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends -y groovy
-          kotlin_url="$(curl -fsSL -H "Authorization: Bearer $GITHUB_TOKEN" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/JetBrains/kotlin/releases/latest | jq -r '.assets[] | select(.name | test("^kotlin-compiler-[0-9.]+\\.zip$")) | .browser_download_url' | head -n 1)"
-          test -n "$kotlin_url"
-          curl -fsSL "$kotlin_url" -o /tmp/kotlin.zip
-          sudo rm -rf /opt/kotlinc
-          sudo unzip -q /tmp/kotlin.zip -d /opt
-          echo "/opt/kotlinc/bin" >> "$GITHUB_PATH"
-          groovy --version
-          /opt/kotlinc/bin/kotlinc -version
-      - uses: actions/setup-python@v7
-        with:
-          python-version: '3.14.7'
-      - name: Run JVM 17 Learn and Patterns contracts
-        run: python eng/ci/run-family jvm --all --telemetry-file artifacts/ci/jvm17.jsonl
 
   native-gnu:
     name: Native / GCC
@@ -565,7 +549,6 @@ jobs:
       - dotnet-linux
       - dotnet-windows
       - jvm-java25
-      - jvm17
       - native-gnu
       - native-clang
       - native-rust
@@ -606,7 +589,7 @@ jobs:
           GNU_SELECTED: ${{ needs.detect.outputs.gnu }}
           GNU_RESULTS: ${{ needs.gnu.result }}
           JVM_SELECTED: ${{ needs.detect.outputs.jvm }}
-          JVM_RESULTS: ${{ needs.jvm-java25.result }},${{ needs.jvm17.result }}
+          JVM_RESULTS: ${{ needs.jvm-java25.result }}
           LONGTAIL_SELECTED: ${{ needs.detect.outputs.longtail }}
           LONGTAIL_RESULTS: ${{ needs.longtail.result }}
           NATIVE_SELECTED: ${{ needs.detect.outputs.native }}
