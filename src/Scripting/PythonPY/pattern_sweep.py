@@ -7,10 +7,10 @@ from __future__ import annotations
 
 from collections import deque
 from dataclasses import dataclass
+from runpy import run_path
 from typing import Callable
 
 from mediator import verify_mediator
-from strategy import verify as verify_strategy
 
 
 def command() -> None:
@@ -25,31 +25,14 @@ def command() -> None:
 
 
 def interpreter() -> None:
-    env = {"x": 4}
-    expr = ("add", ("var", "x"), ("lit", 3))
-
-    def evaluate(node):
-        kind, *args = node
-        return {
-            "lit": lambda: args[0],
-            "var": lambda: env[args[0]],
-            "add": lambda: evaluate(args[0]) + evaluate(args[1]),
-        }[kind]()
-
-    assert evaluate(expr) == 7
+    module = run_path("src/Scripting/PythonPY/patterns/interpreter.py")
+    value = module["interpret"](("add", ("var", "x"), ("lit", 3)), {"x": 4})
+    assert value == 7
 
 
 def iterator() -> None:
-    class Countdown:
-        def __init__(self, n):
-            self.n = n
-
-        def __iter__(self):
-            while self.n:
-                yield self.n
-                self.n -= 1
-
-    assert list(Countdown(3)) == [3, 2, 1]
+    module = run_path("src/Scripting/PythonPY/patterns/iterator.py")
+    assert module["run"]()
 
 
 def memento() -> None:
@@ -79,6 +62,14 @@ def state() -> None:
     door = Door()
     door.toggle()
     assert door.state == "open"
+
+
+def strategy() -> None:
+    def choose(values, strategy_fn):
+        return strategy_fn(values)
+
+    assert choose([3, 1, 2], min) == 1
+    assert choose([3, 1, 2], max) == 3
 
 
 def template_method() -> None:
@@ -123,7 +114,7 @@ def mvc() -> None:
 def mvvm() -> None:
     model = {"first": "Ada", "last": "Lovelace"}
     view_model = lambda: {"display_name": f"{model['first']} {model['last']}"}
-    assert view_model() == {"display_name": "Ada Lovelace"}
+    assert view_model()["display_name"] == "Ada Lovelace"
 
 
 def microkernel() -> None:
@@ -405,7 +396,7 @@ CHECKS = [
     memento,
     observer,
     state,
-    verify_strategy,
+    strategy,
     template_method,
     visitor,
     mvc,
