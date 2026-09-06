@@ -74,12 +74,21 @@ def learn() -> None:
 
 
 def patterns() -> None:
-    source = ROOT / "src/Web/Dart/pattern_sweep.dart"
-    run(["dart", "format", "--output=none", "--set-exit-if-changed", str(source)])
-    run(["dart", "analyze", "--fatal-infos", "--fatal-warnings", str(source)])
+    sweep = ROOT / "src/Web/Dart/pattern_sweep.dart"
+    state = ROOT / "src/Web/Dart/state.dart"
+
+    for source in (sweep, state):
+        require(source.is_file(), f"Dart pattern source missing: {source.relative_to(ROOT)}")
+        run(["dart", "format", "--output=none", "--set-exit-if-changed", str(source)])
+        run(["dart", "analyze", "--fatal-infos", "--fatal-warnings", str(source)])
+
     require(
-        last_line(run(["dart", "run", str(source)], capture=True)) == "Dart pattern sweep: 39/39 examples passed",
+        last_line(run(["dart", "run", str(sweep)], capture=True)) == "Dart pattern sweep: 39/39 examples passed",
         "Dart aggregate output mismatch",
+    )
+    require(
+        last_line(run(["dart", "run", str(state)], capture=True)) == "dart-state: passed",
+        "Dart State canonical output mismatch",
     )
 
 

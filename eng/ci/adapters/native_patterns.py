@@ -99,19 +99,35 @@ def validate_rust() -> int:
 
 
 def validate_go() -> int:
-    source = ROOT / "src/Systems/Go/pattern_sweep.go"
-    if not source.is_file():
+    sweep = ROOT / "src/Systems/Go/pattern_sweep.go"
+    state = ROOT / "src/Systems/Go/state.go"
+    if not sweep.is_file():
         raise ContractError("Go pattern_sweep.go is missing")
+    if not state.is_file():
+        raise ContractError("Go state.go canonical is missing")
+
     run(["go", "version"])
-    unformatted = run(["gofmt", "-l", str(source)], capture=True).strip()
-    if unformatted:
-        raise ContractError(f"Go pattern sweep is not gofmt-clean: {unformatted}")
-    run(["go", "vet", str(source)])
-    output = run(["go", "run", str(source)], capture=True).strip()
-    expected = "Go pattern sweep: 39/39 examples passed"
-    if output != expected:
-        raise ContractError(f"Go pattern sweep output mismatch: expected {expected!r}, got {output!r}")
-    print(output, flush=True)
+    for source in (sweep, state):
+        unformatted = run(["gofmt", "-l", str(source)], capture=True).strip()
+        if unformatted:
+            raise ContractError(f"Go source is not gofmt-clean: {unformatted}")
+        run(["go", "vet", str(source)])
+
+    sweep_output = run(["go", "run", str(sweep)], capture=True).strip()
+    expected_sweep = "Go pattern sweep: 39/39 examples passed"
+    if sweep_output != expected_sweep:
+        raise ContractError(
+            f"Go pattern sweep output mismatch: expected {expected_sweep!r}, got {sweep_output!r}"
+        )
+    print(sweep_output, flush=True)
+
+    state_output = run(["go", "run", str(state)], capture=True).strip()
+    expected_state = "go-state: passed"
+    if state_output != expected_state:
+        raise ContractError(
+            f"Go State output mismatch: expected {expected_state!r}, got {state_output!r}"
+        )
+    print(state_output, flush=True)
     return EXPECTED
 
 
