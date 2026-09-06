@@ -14,36 +14,68 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Replay Memento net-diff onto current dev
+      - name: Resolve Memento conflicts deterministically
         shell: bash
         run: |
           set -euo pipefail
+          cp eng/ci/memento_reconcile_diag.py /tmp/memento_reconcile_diag.py
           git config user.name "Genkidama Merge Diagnostic"
           git config user.email "merge-diagnostic@users.noreply.github.com"
           git fetch origin patterns/memento-kb006 dev
-          memento_head="$(git rev-parse origin/patterns/memento-kb006)"
-          dev_head="$(git rev-parse origin/dev)"
-          base="$(git merge-base "$memento_head" "$dev_head")"
-          echo "memento_head=$memento_head"
-          echo "dev_head=$dev_head"
-          echo "merge_base=$base"
-          git diff --binary "$base" "$memento_head" -- . > /tmp/memento.patch
-          git checkout --detach "$dev_head"
+          git checkout -B reconcile origin/patterns/memento-kb006
+
           set +e
-          git apply --3way --index /tmp/memento.patch
-          apply_status=$?
+          git merge --no-commit --no-ff origin/dev
+          merge_status=$?
           set -e
-          echo "apply_exit=$apply_status"
+          echo "merge_exit=$merge_status"
+
+          expected=$(cat <<'EOF'
+          eng/ci/adapters/dart_contracts.py
+          eng/ci/adapters/platform_patterns.py
+          eng/ci/adapters/platform_source_contracts.py
+          src/DataScience/Julia/pattern_sweep.jl
+          src/Functional/Haskell/PatternSweep.hs
+          src/Niche/Crystal/pattern_sweep.cr
+          src/Scripting/PythonPY/pattern_sweep.py
+          src/Systems/Objective-C/pattern_sweep.m
+          src/Systems/Zig/pattern_sweep.zig
+          src/Web/Dart/pattern_sweep.dart
+          EOF
+          )
+          actual="$(git diff --name-only --diff-filter=U | sort)"
+          printf '%s\n' "$actual" > /tmp/actual-conflicts
+          printf '%s\n' "$expected" | sed 's/^          //' | sort > /tmp/expected-conflicts
+          echo "CONFLICTS_BEGIN"
+          cat /tmp/actual-conflicts
+          echo "CONFLICTS_END"
+          diff -u /tmp/expected-conflicts /tmp/actual-conflicts
+
+          while IFS= read -r path; do
+            git checkout --theirs -- "$path"
+          done < /tmp/expected-conflicts
+
+          python3 /tmp/memento_reconcile_diag.py
+          git add --pathspec-from-file=/tmp/expected-conflicts
+
           residual="$(git diff --name-only --diff-filter=U || true)"
-          echo "RESIDUAL_CONFLICTS_BEGIN"
-          printf '%s\n' "$residual"
-          echo "RESIDUAL_CONFLICTS_END"
-          if [[ $apply_status -ne 0 || -n "$residual" ]]; then
+          if [[ -n "$residual" ]]; then
+            echo "Residual conflicts:"
+            printf '%s\n' "$residual"
             exit 1
           fi
+
           git diff --cached --check
+          python3 -m py_compile \
+            eng/ci/adapters/dart_contracts.py \
+            eng/ci/adapters/platform_patterns.py \
+            eng/ci/adapters/platform_source_contracts.py \
+            src/Scripting/PythonPY/pattern_sweep.py
+          python3 eng/ci/adapters/platform_source_contracts.py
+          python3 -B src/Scripting/PythonPY/pattern_sweep.py
+
           echo "STAGED_FILES_BEGIN"
           git diff --cached --name-only
           echo "STAGED_FILES_END"
           git diff --cached --stat
-          echo "RECONCILIATION_DRY_RUN_OK"
+          echo "MEMENTO_RECONCILIATION_DRY_RUN_OK"
