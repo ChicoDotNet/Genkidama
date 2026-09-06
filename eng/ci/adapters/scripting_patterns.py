@@ -25,6 +25,13 @@ def main() -> int:
         "Python State output mismatch",
     )
 
+    perl_state = dc.ROOT / "src/Scripting/Perl/state.pl"
+    dc.run(["perl", "-c", str(perl_state)])
+    dc.require(
+        dc.last_line(dc.run(["perl", str(perl_state)], capture=True)) == "perl-state: passed",
+        "Perl State output mismatch",
+    )
+
     ruby_files = dc.exact_glob(dc.ROOT / "src/Scripting/Ruby/patterns", "*.rb", "Ruby")
     for source in ruby_files:
         dc.run(["ruby", "-c", str(source)])
