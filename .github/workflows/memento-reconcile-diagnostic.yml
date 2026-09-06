@@ -18,6 +18,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          git config user.name "Genkidama Merge Diagnostic"
+          git config user.email "merge-diagnostic@users.noreply.github.com"
           git fetch origin patterns/memento-kb006 dev
           git checkout --detach origin/patterns/memento-kb006
           set +e
