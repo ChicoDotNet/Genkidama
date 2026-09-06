@@ -14,21 +14,53 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Inspect Memento merge against dev
+      - name: Dry-run semantic Memento reconciliation
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "Genkidama Merge Diagnostic"
           git config user.email "merge-diagnostic@users.noreply.github.com"
           git fetch origin patterns/memento-kb006 dev
-          git checkout --detach origin/patterns/memento-kb006
+          head="$(git rev-parse origin/patterns/memento-kb006)"
+          base="$(git merge-base "$head" origin/dev)"
+          paths=(
+            eng/ci/adapters/dart_contracts.py
+            eng/ci/adapters/platform_patterns.py
+            eng/ci/adapters/platform_source_contracts.py
+            src/DataScience/Julia/pattern_sweep.jl
+            src/Functional/Haskell/PatternSweep.hs
+            src/Niche/Crystal/pattern_sweep.cr
+            src/Scripting/PythonPY/pattern_sweep.py
+            src/Systems/Objective-C/pattern_sweep.m
+            src/Systems/Zig/pattern_sweep.zig
+            src/Web/Dart/pattern_sweep.dart
+          )
+          git diff --binary "$base" "$head" -- "${paths[@]}" > /tmp/memento-shared.patch
+          git checkout --detach "$head"
           set +e
           git merge --no-commit --no-ff origin/dev
-          status=$?
+          merge_status=$?
           set -e
-          echo "merge_exit=$status"
-          conflicts="$(git diff --name-only --diff-filter=U || true)"
-          echo "CONFLICTS_BEGIN"
-          printf '%s\n' "$conflicts"
-          echo "CONFLICTS_END"
-          git merge --abort || true
+          echo "initial_merge_exit=$merge_status"
+          initial="$(git diff --name-only --diff-filter=U || true)"
+          echo "INITIAL_CONFLICTS_BEGIN"
+          printf '%s\n' "$initial"
+          echo "INITIAL_CONFLICTS_END"
+          git checkout --theirs -- "${paths[@]}"
+          git add "${paths[@]}"
+          set +e
+          git apply --3way --index /tmp/memento-shared.patch
+          apply_status=$?
+          set -e
+          echo "reapply_exit=$apply_status"
+          residual="$(git diff --name-only --diff-filter=U || true)"
+          echo "RESIDUAL_CONFLICTS_BEGIN"
+          printf '%s\n' "$residual"
+          echo "RESIDUAL_CONFLICTS_END"
+          if [[ $apply_status -ne 0 || -n "$residual" ]]; then
+            exit 1
+          fi
+          rm -f .github/workflows/memento-reconcile-diagnostic.yml
+          git add -A
+          git diff --cached --check
+          echo "RECONCILIATION_DRY_RUN_OK"
