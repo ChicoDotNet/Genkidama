@@ -77,7 +77,9 @@ def patterns() -> None:
     sweep = ROOT / "src/Web/Dart/pattern_sweep.dart"
     mediator = ROOT / "src/Web/Dart/mediator.dart"
     memento = ROOT / "src/Web/Dart/memento.dart"
-    sources = [str(sweep), str(mediator), str(memento)]
+    observer = ROOT / "src/Web/Dart/observer.dart"
+    observer_verify = ROOT / "src/Web/Dart/observer_verify.dart"
+    sources = [str(sweep), str(mediator), str(memento), str(observer), str(observer_verify)]
     run(["dart", "format", "--output=none", "--set-exit-if-changed", *sources])
     run(["dart", "analyze", "--fatal-infos", "--fatal-warnings", *sources])
     require(
@@ -91,6 +93,10 @@ def patterns() -> None:
     require(
         last_line(run(["dart", "run", str(sweep)], capture=True)) == "Dart pattern sweep: 39/39 examples passed",
         "Dart aggregate output mismatch",
+    )
+    require(
+        last_line(run(["dart", "run", str(observer_verify)], capture=True)) == "Dart Observer: passed",
+        "Dart Observer output mismatch",
     )
 
 

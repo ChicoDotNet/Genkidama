@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 
+import 'observer.dart' as observer;
+
 import 'mediator.dart' as mediator;
 import 'iterator.dart' as iterator_example;
 import 'memento.dart' show verifyMementoCanonical;
@@ -98,20 +100,7 @@ void mediatorPattern() => mediator.verifyMediator();
 // Memento is implemented canonically in memento.dart; this sweep only orchestrates it.
 
 // Observer
-typedef Observer = String Function(int id);
-
-class Subject {
-  final _observers = <Observer>[];
-  void subscribe(Observer o) => _observers.add(o);
-  List<String> publish(int id) => _observers.map((o) => o(id)).toList();
-}
-
-void observerPattern() {
-  final s = Subject()
-    ..subscribe((id) => 'audit:$id')
-    ..subscribe((id) => 'dashboard:$id');
-  check(s.publish(42).join('>') == 'audit:42>dashboard:42');
-}
+void observerPattern() => check(observer.observerExamplePasses());
 
 // State
 enum GateState { locked, unlocked }

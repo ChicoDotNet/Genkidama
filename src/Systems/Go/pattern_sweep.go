@@ -66,23 +66,8 @@ func mediatorPattern() {
 	must(err == nil && string(out) == "Go Mediator: passed\n")
 }
 
-// Observer: subject knows callbacks, not concrete observers.
-type subject struct{ observers []func(int) string }
-
-func (s *subject) subscribe(f func(int) string) { s.observers = append(s.observers, f) }
-func (s subject) publish(id int) []string {
-	out := []string{}
-	for _, f := range s.observers {
-		out = append(out, f(id))
-	}
-	return out
-}
-func observerPattern() {
-	s := subject{}
-	s.subscribe(func(id int) string { return fmt.Sprintf("audit:%d", id) })
-	s.subscribe(func(id int) string { return fmt.Sprintf("dashboard:%d", id) })
-	must(fmt.Sprint(s.publish(42)) == "[audit:42 dashboard:42]")
-}
+// Observer: the sweep delegates to the individually addressable canonical example.
+func observerPattern() { must(observerExamplePasses()) }
 
 // State: behavior/transition are delegated to the current state value.
 type gateState string
@@ -102,6 +87,14 @@ func statePattern() {
 	must(s == "unlocked")
 	s = transition(s, "lock")
 	must(s == "locked")
+}
+
+// Strategy: algorithm is supplied independently of the context.
+func price(base int, strategy func(int) int) int { return strategy(base) }
+func strategyPattern() {
+	regular := func(v int) int { return v }
+	vip := func(v int) int { return v * 80 / 100 }
+	must(price(100, regular) == 100 && price(100, vip) == 80)
 }
 
 // Template Method: fixed skeleton calls variable steps.
@@ -584,7 +577,7 @@ func nullObjectPattern() {
 }
 
 func main() {
-	cases := []func(){commandPattern, interpreterPattern, iteratorPattern, mediatorPattern, verifyMementoCanonical, observerPattern, statePattern, verifyStrategy, templateMethodPattern, visitorPattern, mvcPattern, mvvmPattern, microkernelPattern, microservicesPattern, enterpriseAdapterPattern, enterpriseBridgePattern, enterpriseFacadePattern, brokerPattern, messageBusPattern, serviceLocatorPattern, activeObjectPattern, monitorObjectPattern, halfSyncHalfAsyncPattern, leaderFollowersPattern, clientServerPattern, peerToPeerPattern, publishSubscribePattern, distributedProxyPattern, presentationAbstractionControlPattern, modelViewPresenterPattern, documentViewPattern, activeRecordPattern, dataMapperPattern, unitOfWorkPattern, repositoryPattern, dependencyInjectionPattern, lazyInitializationPattern, objectPoolPattern, nullObjectPattern}
+	cases := []func(){commandPattern, interpreterPattern, iteratorPattern, mediatorPattern, verifyMementoCanonical, observerPattern, statePattern, strategyPattern, templateMethodPattern, visitorPattern, mvcPattern, mvvmPattern, microkernelPattern, microservicesPattern, enterpriseAdapterPattern, enterpriseBridgePattern, enterpriseFacadePattern, brokerPattern, messageBusPattern, serviceLocatorPattern, activeObjectPattern, monitorObjectPattern, halfSyncHalfAsyncPattern, leaderFollowersPattern, clientServerPattern, peerToPeerPattern, publishSubscribePattern, distributedProxyPattern, presentationAbstractionControlPattern, modelViewPresenterPattern, documentViewPattern, activeRecordPattern, dataMapperPattern, unitOfWorkPattern, repositoryPattern, dependencyInjectionPattern, lazyInitializationPattern, objectPoolPattern, nullObjectPattern}
 	must(len(cases) == 39)
 	for _, c := range cases {
 		c()

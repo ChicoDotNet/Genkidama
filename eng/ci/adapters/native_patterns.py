@@ -102,12 +102,12 @@ def validate_go() -> int:
     sweep = ROOT / "src/Systems/Go/pattern_sweep.go"
     memento = ROOT / "src/Systems/Go/memento.go"
     memento_test = ROOT / "src/Systems/Go/memento_test.go"
-    strategy = ROOT / "src/Systems/Go/strategy.go"
+    observer = ROOT / "src/Systems/Go/observer.go"
     for source, label in (
         (sweep, "Go pattern_sweep.go"),
         (memento, "Go memento.go canonical"),
         (memento_test, "Go memento_test.go canonical test"),
-        (strategy, "Go strategy.go canonical"),
+        (observer, "Go observer.go canonical"),
     ):
         if not source.is_file():
             raise ContractError(f"{label} is missing")
@@ -116,7 +116,7 @@ def validate_go() -> int:
     for source, label in (
         (memento, "Go Memento canonical"),
         (memento_test, "Go Memento canonical test"),
-        (strategy, "Go Strategy canonical"),
+        (observer, "Go Observer canonical"),
         (sweep, "Go pattern sweep"),
     ):
         unformatted = run(["gofmt", "-l", str(source)], capture=True).strip()
@@ -127,14 +127,30 @@ def validate_go() -> int:
     run(["go", "test", "-run", "^TestMementoCanonical$", "-count=1", str(memento), str(memento_test)])
     print("Go Memento: passed", flush=True)
 
-    run(["go", "vet", str(strategy)])
-    run(["go", "vet", str(sweep), str(memento), str(strategy)])
-    output = run(["go", "run", str(sweep), str(memento), str(strategy)], capture=True).strip()
+    run(["go", "vet", str(sweep), str(memento), str(observer)])
+    output = run(["go", "run", str(sweep), str(memento), str(observer)], capture=True).strip()
     expected = "Go pattern sweep: 39/39 examples passed"
     if output != expected:
         raise ContractError(f"Go pattern sweep output mismatch: expected {expected!r}, got {output!r}")
     print(output, flush=True)
-    print("Go Strategy: passed", flush=True)
+
+    verifier = observer.parent / "observer_verify_tmp.go"
+    verifier.write_text(
+        'package main\n\nimport "fmt"\n\nfunc main() {\n\tif !observerExamplePasses() { panic("Observer canonical failed") }\n\tfmt.Println("Go Observer: passed")\n}\n',
+        encoding="utf-8",
+    )
+    try:
+        unformatted_verifier = run(["gofmt", "-l", str(verifier)], capture=True).strip()
+        if unformatted_verifier:
+            run(["gofmt", "-w", str(verifier)])
+        run(["go", "vet", str(observer), str(verifier)])
+        observer_output = run(["go", "run", str(observer), str(verifier)], capture=True).strip()
+        if observer_output != "Go Observer: passed":
+            raise ContractError(f"Go Observer canonical output mismatch: {observer_output!r}")
+        print(observer_output, flush=True)
+    finally:
+        verifier.unlink(missing_ok=True)
+
     return EXPECTED + 2
 
 

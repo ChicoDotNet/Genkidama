@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -isrc/Functional/Haskell #-}
 module Main where
 
 import Control.Concurrent (forkIO)
@@ -5,6 +6,7 @@ import Control.Concurrent.MVar
 import Control.Monad (forM_)
 import Data.List (intercalate, isInfixOf)
 import Data.Maybe (fromMaybe)
+import qualified Observer
 import qualified Memento as Memento
 import System.Process (readProcess)
 
@@ -41,11 +43,8 @@ mediatorCase = do
   pure ("Haskell Mediator: passed" `isInfixOf` output)
 
 -- Observer
-type Observer = Int -> String
-publish :: [Observer] -> Int -> [String]
-publish observers value = map ($ value) observers
 observerCase :: Bool
-observerCase = publish [("audit:"++) . show, ("dashboard:"++) . show] 42 == ["audit:42","dashboard:42"]
+observerCase = Observer.examplePasses
 
 -- State
 data GateState = Locked | Unlocked deriving (Eq, Show)
@@ -56,11 +55,11 @@ transition s _ = s
 stateCase :: Bool
 stateCase = transition (transition Locked "unlock") "lock" == Locked
 
--- Strategy: delegate to the individually addressable canonical artifact.
-strategyCase :: IO Bool
-strategyCase = do
-  output <- readProcess "runghc" ["src/Functional/Haskell/patterns/Strategy.hs"] ""
-  pure (output == "regular=100;vip=80\n")
+-- Strategy
+price :: (Int -> Int) -> Int -> Int
+price strategy = strategy
+strategyCase :: Bool
+strategyCase = price id 100 == 100 && price (\v -> v * 80 `div` 100) 100 == 80
 
 -- Template Method
 pipeline :: String -> (() -> String) -> String
@@ -117,6 +116,7 @@ adaptCustomer :: LegacyCustomer -> CanonicalCustomer
 adaptCustomer (LegacyCustomer code cents) = CanonicalCustomer code (fromIntegral cents / 100)
 enterpriseAdapterCase :: Bool
 enterpriseAdapterCase = case adaptCustomer (LegacyCustomer 17 1250) of CanonicalCustomer i a -> i==17 && a==12.5
+
 -- Enterprise Bridge
 type Transport = String -> String
 sendNotice :: String -> String -> Transport -> String
@@ -236,6 +236,7 @@ loadRecord :: [PersonRecord] -> Int -> Maybe PersonRecord
 loadRecord table wanted = case filter (\(PersonRecord i _) -> i==wanted) table of r:_ -> Just r; [] -> Nothing
 activeRecordCase :: Bool
 activeRecordCase = loadRecord (saveRecord [] (PersonRecord 7 "Ada")) 7 == Just (PersonRecord 7 "Ada")
+
 -- Data Mapper
 data Person = Person Int String deriving (Eq,Show)
 data PersonRow = PersonRow String String
@@ -290,21 +291,19 @@ nullObjectCase :: Bool
 nullObjectCase = let real msg="logged:"++msg; nullLogger _="" in real "processed:item-1"=="logged:processed:item-1" && nullLogger "processed:item-1"==""
 
 pureCases :: [Bool]
-pureCases = [ commandCase, interpreterCase, Memento.verifyMementoCanonical, observerCase, stateCase, templateMethodCase, visitorCase
+pureCases = [ commandCase, interpreterCase, Memento.verifyMementoCanonical, observerCase, stateCase, strategyCase, templateMethodCase, visitorCase
             , mvcCase, mvvmCase, microkernelCase, microservicesCase, enterpriseAdapterCase, enterpriseBridgeCase, enterpriseFacadeCase, brokerCase, messageBusCase, serviceLocatorCase
             , activeObjectCase, halfSyncHalfAsyncCase, leaderFollowersCase, clientServerCase, peerToPeerCase, publishSubscribeCase, distributedProxyCase, pacCase, mvpCase, documentViewCase
             , activeRecordCase, dataMapperCase, unitOfWorkCase, repositoryCase, dependencyInjectionCase, lazyInitializationCase, objectPoolCase, nullObjectCase ]
 
 main :: IO ()
 main = do
-  must (length pureCases == 35)
+  must (length pureCases == 36)
   forM_ pureCases must
   iteratorOutput <- readProcess "runghc" ["src/Functional/Haskell/Iterator.hs"] ""
   must (iteratorOutput == "iterator=10,20,30\n")
   mediatorOk <- mediatorCase
   must mediatorOk
-  strategyOk <- strategyCase
-  must strategyOk
   monitorOk <- monitorObjectCase
   must monitorOk
   putStrLn "Haskell pattern sweep: 39/39 examples passed"
