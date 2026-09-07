@@ -3,6 +3,7 @@ const observer = @import("observer.zig");
 const mediator = @import("patterns/mediator.zig");
 const iterator_example = @import("iterator.zig");
 const memento = @import("memento.zig");
+const strategy = @import("patterns/strategy.zig");
 
 // Command
 const BalanceCommand = struct {
@@ -72,18 +73,9 @@ fn statePattern() bool {
     return opened == .unlocked and transitionGate(opened, .lock) == .locked;
 }
 
-// Strategy
-fn regularPrice(value: i32) i32 {
-    return value;
-}
-fn vipPrice(value: i32) i32 {
-    return @divTrunc(value * 80, 100);
-}
-fn applyPrice(value: i32, strategy: *const fn (i32) i32) i32 {
-    return strategy(value);
-}
+// Strategy is delegated to the individually addressable canonical imported above.
 fn strategyPattern() bool {
-    return applyPrice(100, regularPrice) == 100 and applyPrice(100, vipPrice) == 80;
+    return strategy.verifyStrategy();
 }
 
 // Template Method
