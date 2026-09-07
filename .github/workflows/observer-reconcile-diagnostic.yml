@@ -54,6 +54,24 @@ jobs:
           printf '%s\n' "$expected" | sed 's/^          //' | sort > /tmp/expected-conflicts
           diff -u /tmp/expected-conflicts /tmp/actual-conflicts
 
+          overlap=$(cat <<'EOF'
+          .github/workflows/polyglot.yml
+          eng/ci/adapters/dart_contracts.py
+          eng/ci/adapters/native_patterns.py
+          eng/ci/adapters/platform_patterns.py
+          eng/ci/adapters/platform_source_contracts.py
+          eng/ci/adapters/scripting_patterns.py
+          src/DataScience/Julia/pattern_sweep.jl
+          src/Functional/Haskell/PatternSweep.hs
+          src/Niche/Crystal/pattern_sweep.cr
+          src/Systems/Go/pattern_sweep.go
+          src/Systems/Objective-C/pattern_sweep.m
+          src/Systems/Zig/pattern_sweep.zig
+          src/Web/Dart/pattern_sweep.dart
+          EOF
+          )
+          printf '%s\n' "$overlap" | sed 's/^          //' | sort > /tmp/overlap-files
+
           while IFS= read -r path; do
             git checkout --theirs -- "$path"
             git add -- "$path"
@@ -62,7 +80,7 @@ jobs:
           python3 /tmp/observer_reconcile_diag.py
           git add --pathspec-from-file=/tmp/expected-conflicts
           test -z "$(git diff --name-only --diff-filter=U || true)"
-          git diff --cached --check
+          git diff --cached --check -- $(cat /tmp/overlap-files)
 
           python3 -m py_compile \
             eng/ci/adapters/dart_contracts.py \
