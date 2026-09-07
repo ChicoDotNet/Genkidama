@@ -322,8 +322,8 @@ void brokerPattern() {
 // Message Bus
 class Message {
   Message(this.topic, this.id);
-  final int id;
   final String topic;
+  final int id;
 }
 
 typedef MessageHandler = String Function(Message message);
