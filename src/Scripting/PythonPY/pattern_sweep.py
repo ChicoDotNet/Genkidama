@@ -11,6 +11,7 @@ from runpy import run_path
 from typing import Callable
 
 from mediator import verify_mediator
+from memento import verify_memento
 
 
 def command() -> None:
@@ -33,15 +34,6 @@ def interpreter() -> None:
 def iterator() -> None:
     module = run_path("src/Scripting/PythonPY/patterns/iterator.py")
     assert module["run"]()
-
-
-def memento() -> None:
-    state = {"text": "draft"}
-    snapshot = state.copy()
-    state["text"] = "edited"
-    state.clear()
-    state.update(snapshot)
-    assert state["text"] == "draft"
 
 
 def observer() -> None:
@@ -393,7 +385,7 @@ CHECKS = [
     interpreter,
     iterator,
     verify_mediator,
-    memento,
+    verify_memento,
     observer,
     state,
     strategy,

@@ -15,9 +15,24 @@ def main() -> int:
     if profile != "linux":
         raise dc.ContractError(f"unsupported scripting profile: {profile}")
 
+    python_memento = dc.ROOT / "src/Scripting/PythonPY/memento.py"
+    dc.run([sys.executable, "-m", "py_compile", str(python_memento)])
+    dc.require(
+        dc.last_line(dc.run([sys.executable, "-B", str(python_memento)], capture=True))
+        == "Python Memento: passed",
+        "Python Memento canonical output mismatch",
+    )
+
     py = dc.ROOT / "src/Scripting/PythonPY/pattern_sweep.py"
     dc.run([sys.executable, "-m", "py_compile", str(py)])
     dc.run([sys.executable, "-B", str(py)])
+
+    perl_memento = dc.ROOT / "src/Scripting/Perl/memento.pl"
+    dc.run(["perl", "-c", str(perl_memento)])
+    dc.require(
+        dc.last_line(dc.run(["perl", str(perl_memento)], capture=True)) == "Perl Memento: passed",
+        "Perl Memento canonical output mismatch",
+    )
 
     ruby_files = dc.exact_glob(dc.ROOT / "src/Scripting/Ruby/patterns", "*.rb", "Ruby")
     for source in ruby_files:

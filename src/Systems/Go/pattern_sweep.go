@@ -66,21 +66,6 @@ func mediatorPattern() {
 	must(err == nil && string(out) == "Go Mediator: passed\n")
 }
 
-// Memento: state snapshot is opaque to the caretaker.
-type editor struct{ state string }
-type editorMemento struct{ state string }
-
-func (e editor) save() editorMemento      { return editorMemento{e.state} }
-func (e *editor) restore(m editorMemento) { e.state = m.state }
-func mementoPattern() {
-	e := editor{"draft"}
-	m := e.save()
-	e.state = "published"
-	must(e.state == "published")
-	e.restore(m)
-	must(e.state == "draft")
-}
-
 // Observer: subject knows callbacks, not concrete observers.
 type subject struct{ observers []func(int) string }
 
@@ -607,7 +592,7 @@ func nullObjectPattern() {
 }
 
 func main() {
-	cases := []func(){commandPattern, interpreterPattern, iteratorPattern, mediatorPattern, mementoPattern, observerPattern, statePattern, strategyPattern, templateMethodPattern, visitorPattern, mvcPattern, mvvmPattern, microkernelPattern, microservicesPattern, enterpriseAdapterPattern, enterpriseBridgePattern, enterpriseFacadePattern, brokerPattern, messageBusPattern, serviceLocatorPattern, activeObjectPattern, monitorObjectPattern, halfSyncHalfAsyncPattern, leaderFollowersPattern, clientServerPattern, peerToPeerPattern, publishSubscribePattern, distributedProxyPattern, presentationAbstractionControlPattern, modelViewPresenterPattern, documentViewPattern, activeRecordPattern, dataMapperPattern, unitOfWorkPattern, repositoryPattern, dependencyInjectionPattern, lazyInitializationPattern, objectPoolPattern, nullObjectPattern}
+	cases := []func(){commandPattern, interpreterPattern, iteratorPattern, mediatorPattern, verifyMementoCanonical, observerPattern, statePattern, strategyPattern, templateMethodPattern, visitorPattern, mvcPattern, mvvmPattern, microkernelPattern, microservicesPattern, enterpriseAdapterPattern, enterpriseBridgePattern, enterpriseFacadePattern, brokerPattern, messageBusPattern, serviceLocatorPattern, activeObjectPattern, monitorObjectPattern, halfSyncHalfAsyncPattern, leaderFollowersPattern, clientServerPattern, peerToPeerPattern, publishSubscribePattern, distributedProxyPattern, presentationAbstractionControlPattern, modelViewPresenterPattern, documentViewPattern, activeRecordPattern, dataMapperPattern, unitOfWorkPattern, repositoryPattern, dependencyInjectionPattern, lazyInitializationPattern, objectPoolPattern, nullObjectPattern}
 	must(len(cases) == 39)
 	for _, c := range cases {
 		c()
