@@ -72,6 +72,23 @@ def main() -> int:
     ]:
         require(delphi_memento, pattern, label)
 
+    delphi_state = (ROOT / "src/Enterprise/Delphi/State.pas").read_text(encoding="utf-8")
+    for pattern, label in [
+        (r"TGateState\s*=\s*\(\s*gsLocked\s*,\s*gsUnlocked\s*,\s*gsInvalid\s*\)", "Delphi State enum"),
+        (r"function\s+Transition\s*\(\s*CurrentState:\s*TGateState;\s*const\s+Action:\s*string\s*\):\s*TGateState", "Delphi State transition function"),
+        (r"case\s+CurrentState\s+of.*gsLocked:.*Action\s*=\s*'coin'.*Result\s*:=\s*gsUnlocked.*Result\s*:=\s*gsLocked", "Delphi locked transition contract"),
+        (r"case\s+CurrentState\s+of.*gsUnlocked:.*Action\s*=\s*'push'.*Result\s*:=\s*gsLocked.*Result\s*:=\s*gsUnlocked", "Delphi unlocked transition contract"),
+        (r"else\s+Result\s*:=\s*gsInvalid", "Delphi unknown-state rejection"),
+        (r"State\s*:=\s*gsLocked;.*RequireState\(State,\s*gsLocked,\s*'initial state must be locked'\)", "Delphi initial state assertion"),
+        (r"State\s*:=\s*Transition\(State,\s*'push'\);\s*RequireState\(State,\s*gsLocked,\s*'push while locked must preserve state'\)", "Delphi invalid push assertion"),
+        (r"State\s*:=\s*Transition\(State,\s*'coin'\);\s*RequireState\(State,\s*gsUnlocked,\s*'coin while locked must unlock'\)", "Delphi unlock assertion"),
+        (r"State\s*:=\s*Transition\(State,\s*'coin'\);\s*RequireState\(State,\s*gsUnlocked,\s*'duplicate coin must preserve unlocked state'\)", "Delphi duplicate coin assertion"),
+        (r"State\s*:=\s*Transition\(State,\s*'push'\);\s*RequireState\(State,\s*gsLocked,\s*'push while unlocked must lock'\)", "Delphi relock assertion"),
+        (r"State\s*:=\s*Transition\(gsInvalid,\s*'coin'\);\s*RequireState\(State,\s*gsInvalid,\s*'unknown state must remain invalid'\)", "Delphi invalid-state assertion"),
+        (r"Writeln\('delphi-state:\s*passed'\)", "Delphi State sentinel"),
+    ]:
+        require(delphi_state, pattern, label)
+
     vba_mediator = (ROOT / "src/Shell/VBA/MediatorExample.bas").read_text(encoding="utf-8")
     for pattern, label in [
         (r"^Option Explicit$", "VBA Mediator Option Explicit"),
@@ -100,6 +117,7 @@ def main() -> int:
     print("Delphi Abstract Factory source contract: OK")
     print("Delphi Observer source contract: OK (Delphi 13.1 syntax reviewed; proprietary compiler unavailable in hosted CI)")
     print("Delphi Memento source contract: OK")
+    print("Delphi State source contract: OK")
     print("VBA Mediator source contract: OK")
     print("Delphi Mediator source contract: OK")
     return 0

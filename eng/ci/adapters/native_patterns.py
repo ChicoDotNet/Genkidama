@@ -53,7 +53,10 @@ def validate_c_cpp() -> int:
         for source in c_files:
             cell_source = work / "cell.c"
             cell_binary = work / "cell-c"
-            cell_source.write_text(source.read_text(encoding="utf-8") + "\nint main(void){return run()?0:1;}\n", encoding="utf-8")
+            cell_source.write_text(
+                source.read_text(encoding="utf-8") + "\nint main(void){return run()?0:1;}\n",
+                encoding="utf-8",
+            )
             run([c_compiler, "-std=c23", "-Wall", "-Wextra", "-Werror", str(cell_source), "-o", str(cell_binary)])
             run([str(cell_binary)])
             print(f"PASS C {source.name}", flush=True)
@@ -61,7 +64,10 @@ def validate_c_cpp() -> int:
         for source in cpp_files:
             cell_source = work / "cell.cpp"
             cell_binary = work / "cell-cpp"
-            cell_source.write_text(source.read_text(encoding="utf-8") + "\nint main(){return run()?0:1;}\n", encoding="utf-8")
+            cell_source.write_text(
+                source.read_text(encoding="utf-8") + "\nint main(){return run()?0:1;}\n",
+                encoding="utf-8",
+            )
             run([cpp_compiler, "-std=c++23", "-Wall", "-Wextra", "-Werror", str(cell_source), "-o", str(cell_binary)])
             run([str(cell_binary)])
             print(f"PASS C++ {source.name}", flush=True)
@@ -80,7 +86,10 @@ def validate_rust() -> int:
         for source in files:
             cell_source = work / "cell.rs"
             cell_binary = work / ("cell.exe" if os.name == "nt" else "cell")
-            cell_source.write_text(source.read_text(encoding="utf-8") + "\nfn main(){assert!(run());}\n", encoding="utf-8")
+            cell_source.write_text(
+                source.read_text(encoding="utf-8") + "\nfn main(){assert!(run());}\n",
+                encoding="utf-8",
+            )
             run(["rustc", "--edition=2024", "-D", "warnings", str(cell_source), "-o", str(cell_binary)])
             run([str(cell_binary)])
             print(f"PASS Rust {source.name}", flush=True)
@@ -94,12 +103,14 @@ def validate_go() -> int:
     memento = ROOT / "src/Systems/Go/memento.go"
     memento_test = ROOT / "src/Systems/Go/memento_test.go"
     observer = ROOT / "src/Systems/Go/observer.go"
+    state = ROOT / "src/Systems/Go/state.go"
     strategy = ROOT / "src/Systems/Go/strategy.go"
     for source, label in (
         (sweep, "Go pattern_sweep.go"),
         (memento, "Go memento.go canonical"),
         (memento_test, "Go memento_test.go canonical test"),
         (observer, "Go observer.go canonical"),
+        (state, "Go state.go canonical"),
         (strategy, "Go strategy.go canonical"),
     ):
         if not source.is_file():
@@ -110,6 +121,7 @@ def validate_go() -> int:
         (memento, "Go Memento canonical"),
         (memento_test, "Go Memento canonical test"),
         (observer, "Go Observer canonical"),
+        (state, "Go State canonical"),
         (strategy, "Go Strategy canonical"),
         (sweep, "Go pattern sweep"),
     ):
@@ -146,7 +158,13 @@ def validate_go() -> int:
     finally:
         verifier.unlink(missing_ok=True)
 
-    return EXPECTED + 3
+    run(["go", "vet", str(state)])
+    state_output = run(["go", "run", str(state)], capture=True).strip()
+    if state_output != "go-state: passed":
+        raise ContractError(f"Go State canonical output mismatch: {state_output!r}")
+    print(state_output, flush=True)
+
+    return EXPECTED + 4
 
 
 def main() -> int:

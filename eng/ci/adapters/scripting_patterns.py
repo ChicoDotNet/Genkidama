@@ -76,6 +76,7 @@ def main() -> int:
     py = dc.ROOT / "src/Scripting/PythonPY/pattern_sweep.py"
     dc.run([sys.executable, "-m", "py_compile", str(py)])
     dc.run([sys.executable, "-B", str(py)])
+
     python_observer = dc.ROOT / "src/Scripting/PythonPY/observer.py"
     dc.run([sys.executable, "-m", "py_compile", str(python_observer)])
     dc.require(
@@ -83,7 +84,15 @@ def main() -> int:
         "Python Observer canonical output mismatch",
     )
 
+    python_state = dc.ROOT / "src/Scripting/PythonPY/patterns/state.py"
+    dc.run([sys.executable, "-m", "py_compile", str(python_state)])
+    dc.require(
+        dc.last_line(dc.run([sys.executable, "-B", str(python_state)], capture=True)) == "python-state: passed",
+        "Python State output mismatch",
+    )
+
     perl = ensure_stable_perl()
+
     perl_observer = dc.ROOT / "src/Scripting/Perl/observer.pl"
     dc.run([str(perl), "-c", str(perl_observer)])
     dc.require(
@@ -92,10 +101,17 @@ def main() -> int:
     )
 
     perl_memento = dc.ROOT / "src/Scripting/Perl/memento.pl"
-    dc.run(["perl", "-c", str(perl_memento)])
+    dc.run([str(perl), "-c", str(perl_memento)])
     dc.require(
-        dc.last_line(dc.run(["perl", str(perl_memento)], capture=True)) == "Perl Memento: passed",
+        dc.last_line(dc.run([str(perl), str(perl_memento)], capture=True)) == "Perl Memento: passed",
         "Perl Memento canonical output mismatch",
+    )
+
+    perl_state = dc.ROOT / "src/Scripting/Perl/state.pl"
+    dc.run([str(perl), "-c", str(perl_state)])
+    dc.require(
+        dc.last_line(dc.run([str(perl), str(perl_state)], capture=True)) == "perl-state: passed",
+        "Perl State output mismatch",
     )
 
     ruby_files = dc.exact_glob(dc.ROOT / "src/Scripting/Ruby/patterns", "*.rb", "Ruby")
@@ -132,8 +148,8 @@ def main() -> int:
 
     perl_mediator = dc.ROOT / "src/Scripting/Perl/mediator.pl"
     dc.require(perl_mediator.is_file(), "Perl Mediator canonical source missing")
-    dc.run(["perl", "-c", str(perl_mediator)])
-    perl_output = dc.run(["perl", str(perl_mediator)], capture=True)
+    dc.run([str(perl), "-c", str(perl_mediator)])
+    perl_output = dc.run([str(perl), str(perl_mediator)], capture=True)
     dc.require(dc.last_line(perl_output) == "Perl Mediator: passed", "Perl Mediator canonical output mismatch")
 
     dc.run([sys.executable, "eng/ci/adapters/prototype.py", "scripting"])

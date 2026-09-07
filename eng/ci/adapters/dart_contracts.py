@@ -79,7 +79,8 @@ def patterns() -> None:
     memento = ROOT / "src/Web/Dart/memento.dart"
     observer = ROOT / "src/Web/Dart/observer.dart"
     observer_verify = ROOT / "src/Web/Dart/observer_verify.dart"
-    sources = [str(sweep), str(mediator), str(memento), str(observer), str(observer_verify)]
+    state = ROOT / "src/Web/Dart/state.dart"
+    sources = [str(sweep), str(mediator), str(memento), str(observer), str(observer_verify), str(state)]
     run(["dart", "format", "--output=none", "--set-exit-if-changed", *sources])
     run(["dart", "analyze", "--fatal-infos", "--fatal-warnings", *sources])
     require(
@@ -97,6 +98,10 @@ def patterns() -> None:
     require(
         last_line(run(["dart", "run", str(observer_verify)], capture=True)) == "Dart Observer: passed",
         "Dart Observer output mismatch",
+    )
+    require(
+        last_line(run(["dart", "run", str(state)], capture=True)) == "dart-state: passed",
+        "Dart State canonical output mismatch",
     )
 
 
