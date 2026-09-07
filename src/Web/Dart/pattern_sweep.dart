@@ -5,6 +5,7 @@ import 'observer.dart' as observer;
 import 'mediator.dart' as mediator;
 import 'iterator.dart' as iterator_example;
 import 'memento.dart' show verifyMementoCanonical;
+import 'patterns/strategy.dart' show verifyStrategy;
 
 void check(bool condition) {
   if (!condition) throw StateError('pattern assertion failed');
@@ -120,12 +121,7 @@ void statePattern() {
   check(s == GateState.locked);
 }
 
-// Strategy
-typedef PricingStrategy = int Function(int value);
-int price(int value, PricingStrategy strategy) => strategy(value);
-void strategyPattern() => check(
-  price(100, (v) => v) == 100 && price(100, (v) => v * 80 ~/ 100) == 80,
-);
+// Strategy is implemented canonically in patterns/strategy.dart; this sweep only orchestrates it.
 
 // Template Method
 String pipeline(String read, String Function() transform) =>
@@ -326,8 +322,8 @@ void brokerPattern() {
 // Message Bus
 class Message {
   Message(this.topic, this.id);
-  final String topic;
   final int id;
+  final String topic;
 }
 
 typedef MessageHandler = String Function(Message message);
@@ -705,7 +701,7 @@ void main() {
     verifyMementoCanonical,
     observerPattern,
     statePattern,
-    strategyPattern,
+    verifyStrategy,
     templateMethodPattern,
     visitorPattern,
     mvcPattern,
