@@ -149,7 +149,7 @@ Extraer algoritmos pero mantener un `switch` distribuido por todo el sistema só
 
 ## Validación automatizada
 
-Los canónicos Python, C, C++ y Rust añadidos o reparados en este PR completaron Quality/Product/Polyglot en verde. La auditoría JVM confirmó además que Groovy ya era un canónico Strategy válido y Java quedó certificado con `javac -Xlint:all -Werror` + runtime dentro del cohort JVM. Go ya tiene un canónico individual `strategy.go` y el head `534fb0e5` completó Quality/Product/Polyglot verde, incluyendo `gofmt`, `go vet`, runtime del sweep y ejecución del canónico. El sweep Go conserva todavía una implementación Strategy histórica duplicada; es deuda acotada a retirar antes de continuar el cierre horizontal.
+Los canónicos Python, C, C++ y Rust añadidos o reparados en este PR completaron Quality/Product/Polyglot en verde en heads anteriores. La auditoría JVM confirmó además que Groovy ya era un canónico Strategy válido y Java quedó certificado con `javac -Xlint:all -Werror` + runtime dentro del cohort JVM. Go ya tiene un canónico individual `strategy.go`. La reconciliación post-Memento elimina la duplicación histórica de Strategy tanto en Python como en Go: ambos sweeps delegan a sus canónicos, preservando simultáneamente las delegaciones Memento integradas en `dev`. El head actual se re-certifica antes de acreditar evidencia verde nueva.
 
 La matriz permanece incompleta: ningún `pattern_sweep.*` se acredita como sustituto de un canónico direccionable y cada celda nueva se acredita sólo con evidencia real del gate correspondiente.
 
@@ -165,14 +165,14 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Solidity | Applicable | [`Strategy.sol`](../src/Niche/Solidity/patterns/Strategy.sol) | materializado; VERIFY horizontal pendiente | Política seleccionable. |
 | Fortran | Applicable | [`strategy.f90`](../src/Systems/Fortran/patterns/strategy.f90) | materializado; VERIFY horizontal pendiente | Procedimiento intercambiable. |
 | Pascal | Applicable | [`strategy_pattern.pas`](../src/Systems/Pascal/strategy_pattern.pas) | materializado; VERIFY horizontal pendiente | Procedural type/callback. |
-| Python | Applicable | [`strategy.py`](../src/Scripting/PythonPY/strategy.py) | `py_compile` + runtime; Polyglot verde | Función de orden superior; sweep delegado al canónico. |
+| Python | Applicable | [`strategy.py`](../src/Scripting/PythonPY/strategy.py) | `py_compile` + runtime en head previo; re-certificación actual pendiente | Función de orden superior; sweep delegado al canónico. |
 | Visual Basic .NET | Applicable | [`Strategy.vb`](../src/Enterprise/VB.NET/patterns/Strategy.vb) | materializado; VERIFY horizontal pendiente | Delegate/interfaz. |
-| C++ | Applicable | [`strategy.cpp`](../src/Systems/C%2B%2B/patterns/strategy.cpp) | compile + runtime; Polyglot verde | `std::function` intercambiable. |
+| C++ | Applicable | [`strategy.cpp`](../src/Systems/C%2B%2B/patterns/strategy.cpp) | compile + runtime; Polyglot verde en head previo | `std::function` intercambiable. |
 | Objective-C | Applicable | — | pendiente | Puede expresarse con objeto/protocolo, block o selector. |
-| Java | Applicable | [`strategy.java`](../src/Enterprise/Java/patterns/strategy.java) | `javac -Xlint:all -Werror` + runtime; Polyglot verde | `IntUnaryOperator` pasado al mismo contexto. |
-| Rust | Applicable | [`strategy.rs`](../src/Systems/Rust/patterns/strategy.rs) | compile + runtime; Polyglot verde | Closure genérica `Fn`. |
+| Java | Applicable | [`strategy.java`](../src/Enterprise/Java/patterns/strategy.java) | `javac -Xlint:all -Werror` + runtime; Polyglot verde en head previo | `IntUnaryOperator` pasado al mismo contexto. |
+| Rust | Applicable | [`strategy.rs`](../src/Systems/Rust/patterns/strategy.rs) | compile + runtime; Polyglot verde en head previo | Closure genérica `Fn`. |
 | Zig | Applicable | — | pendiente | Function pointer/comptime strategy. |
-| Go | Applicable | [`strategy.go`](../src/Systems/Go/strategy.go) | `gofmt` + `go vet` + runtime; Polyglot verde | Function value pasado al contexto; sweep histórico aún duplica esta semántica. |
+| Go | Applicable | [`strategy.go`](../src/Systems/Go/strategy.go) | `gofmt` + `go vet` + runtime en head previo; re-certificación actual pendiente | Function value pasado al contexto; sweep delegado al canónico. |
 | PHP | Applicable | [`strategy.php`](../src/Scripting/PHP/patterns/strategy.php) | materializado; VERIFY horizontal pendiente | Callable/closure. |
 | Nim | Applicable | [`strategy_example.nim`](../src/Niche/Nim/patterns/strategy_example.nim) | materializado; VERIFY horizontal pendiente | Proc value. |
 | Dart | Applicable | — | pendiente | Function value/interfaz. |
@@ -184,9 +184,9 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Haskell | Applicable | — | pendiente | Función como estrategia. |
 | COBOL | Applicable | [`strategy_pattern.cpy`](../src/Historical/Cobol/patterns/strategy_pattern.cpy) | materializado; VERIFY horizontal pendiente | Dispatch procedural. |
 | Scala | Applicable | [`Strategy.scala`](../src/Functional/Scala/patterns/Strategy.scala) | materializado; VERIFY horizontal pendiente | Function value/trait. |
-| Groovy | Applicable | [`strategy.groovy`](../src/Functional/Groovy/patterns/strategy.groovy) | runtime individual en JVM cohort; Polyglot verde | Closure pasada al contexto `choose`. |
+| Groovy | Applicable | [`strategy.groovy`](../src/Functional/Groovy/patterns/strategy.groovy) | runtime individual en JVM cohort; Polyglot verde en head previo | Closure pasada al contexto `choose`. |
 | Ruby | Applicable | [`strategy.rb`](../src/Scripting/Ruby/patterns/strategy.rb) | materializado; VERIFY horizontal pendiente | Proc/module function. |
-| C | Applicable | [`strategy.c`](../src/Systems/C/patterns/strategy.c) | compile + runtime; Polyglot verde | Function pointer pasado al contexto. |
+| C | Applicable | [`strategy.c`](../src/Systems/C/patterns/strategy.c) | compile + runtime; Polyglot verde en head previo | Function pointer pasado al contexto. |
 | OCaml | Applicable | [`strategy.ml`](../src/Functional/OCaml/patterns/strategy.ml) | materializado; VERIFY horizontal pendiente | Función de orden superior. |
 | Julia | Applicable | — | pendiente | Function value/multiple dispatch. |
 | VBA | Applicable | — | pendiente | Function dispatch/módulo; host Office puede limitar runtime CI. |
