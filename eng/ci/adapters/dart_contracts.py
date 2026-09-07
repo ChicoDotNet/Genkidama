@@ -75,16 +75,29 @@ def learn() -> None:
 
 def patterns() -> None:
     sweep = ROOT / "src/Web/Dart/pattern_sweep.dart"
+    mediator = ROOT / "src/Web/Dart/mediator.dart"
+    memento = ROOT / "src/Web/Dart/memento.dart"
+    observer = ROOT / "src/Web/Dart/observer.dart"
+    observer_verify = ROOT / "src/Web/Dart/observer_verify.dart"
     state = ROOT / "src/Web/Dart/state.dart"
-
-    for source in (sweep, state):
-        require(source.is_file(), f"Dart pattern source missing: {source.relative_to(ROOT)}")
-        run(["dart", "format", "--output=none", "--set-exit-if-changed", str(source)])
-        run(["dart", "analyze", "--fatal-infos", "--fatal-warnings", str(source)])
-
+    sources = [str(sweep), str(mediator), str(memento), str(observer), str(observer_verify), str(state)]
+    run(["dart", "format", "--output=none", "--set-exit-if-changed", *sources])
+    run(["dart", "analyze", "--fatal-infos", "--fatal-warnings", *sources])
+    require(
+        last_line(run(["dart", "run", str(mediator)], capture=True)) == "Dart Mediator: passed",
+        "Dart Mediator canonical output mismatch",
+    )
+    require(
+        last_line(run(["dart", "run", str(memento)], capture=True)) == "Dart Memento: passed",
+        "Dart Memento canonical output mismatch",
+    )
     require(
         last_line(run(["dart", "run", str(sweep)], capture=True)) == "Dart pattern sweep: 39/39 examples passed",
         "Dart aggregate output mismatch",
+    )
+    require(
+        last_line(run(["dart", "run", str(observer_verify)], capture=True)) == "Dart Observer: passed",
+        "Dart Observer output mismatch",
     )
     require(
         last_line(run(["dart", "run", str(state)], capture=True)) == "dart-state: passed",
