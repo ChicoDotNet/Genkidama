@@ -65,6 +65,14 @@ def main() -> int:
         "Python Memento canonical output mismatch",
     )
 
+    python_strategy = dc.ROOT / "src/Scripting/PythonPY/strategy.py"
+    dc.run([sys.executable, "-m", "py_compile", str(python_strategy)])
+    dc.require(
+        dc.last_line(dc.run([sys.executable, "-B", str(python_strategy)], capture=True))
+        == "python-strategy: passed",
+        "Python Strategy canonical output mismatch",
+    )
+
     py = dc.ROOT / "src/Scripting/PythonPY/pattern_sweep.py"
     dc.run([sys.executable, "-m", "py_compile", str(py)])
     dc.run([sys.executable, "-B", str(py)])
