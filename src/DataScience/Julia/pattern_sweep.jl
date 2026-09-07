@@ -1,4 +1,5 @@
 # Language-major Design Pattern sweep: 39 remaining patterns.
+include("observer.jl")
 include("iterator.jl")
 must(value::Bool) = value || error("pattern assertion failed")
 include("patterns/mediator.jl")
@@ -36,14 +37,7 @@ mediator_pattern() = must(verify_mediator())
 # Memento is delegated to the individually addressable canonical included above.
 
 # Observer
-mutable struct Subject; observers::Vector{Function}; end
-Subject() = Subject(Function[])
-subscribe!(subject::Subject, observer::Function) = push!(subject.observers, observer)
-publish(subject::Subject, id::Int) = [observer(id) for observer in subject.observers]
-function observer_pattern()
-    subject = Subject(); subscribe!(subject, id -> "audit:$id"); subscribe!(subject, id -> "dashboard:$id")
-    must(publish(subject, 42) == ["audit:42", "dashboard:42"])
-end
+observer_pattern() = must(ObserverExample.example_passes())
 
 # State
 @enum GateState locked unlocked

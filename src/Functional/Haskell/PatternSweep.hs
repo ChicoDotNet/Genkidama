@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -isrc/Functional/Haskell #-}
 module Main where
 
 import Control.Concurrent (forkIO)
@@ -5,6 +6,7 @@ import Control.Concurrent.MVar
 import Control.Monad (forM_)
 import Data.List (intercalate, isInfixOf)
 import Data.Maybe (fromMaybe)
+import qualified Observer
 import qualified Memento as Memento
 import System.Process (readProcess)
 
@@ -41,11 +43,8 @@ mediatorCase = do
   pure ("Haskell Mediator: passed" `isInfixOf` output)
 
 -- Observer
-type Observer = Int -> String
-publish :: [Observer] -> Int -> [String]
-publish observers value = map ($ value) observers
 observerCase :: Bool
-observerCase = publish [("audit:"++) . show, ("dashboard:"++) . show] 42 == ["audit:42","dashboard:42"]
+observerCase = Observer.examplePasses
 
 -- State
 data GateState = Locked | Unlocked deriving (Eq, Show)

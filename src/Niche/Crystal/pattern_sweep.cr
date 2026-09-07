@@ -2,6 +2,8 @@ require "./mediator"
 require "./iterator"
 require "./memento"
 
+require "./observer"
+
 def must(value : Bool)
   raise "pattern assertion failed" unless value
 end
@@ -74,25 +76,8 @@ end
 # Memento is delegated to the individually addressable canonical required above.
 
 # Observer
-class Subject
-  def initialize
-    @observers = [] of Proc(Int32, String)
-  end
-
-  def subscribe(observer : Proc(Int32, String))
-    @observers << observer
-  end
-
-  def publish(id : Int32) : Array(String)
-    @observers.map { |o| o.call(id) }
-  end
-end
-
 def observer_pattern
-  s = Subject.new
-  s.subscribe(->(id : Int32) { "audit:#{id}" })
-  s.subscribe(->(id : Int32) { "dashboard:#{id}" })
-  must(s.publish(42) == ["audit:42", "dashboard:42"])
+  must(ObserverExample.example_passes?)
 end
 
 # State
