@@ -1,7 +1,9 @@
 package main
 
-// price applies an interchangeable pricing policy without knowing its algorithm.
-func price(base int, strategy func(int) int) int {
+// strategyPrice applies an interchangeable pricing policy without knowing its algorithm.
+// The distinct helper name keeps this canonical source linkable beside the historical
+// aggregate sweep while that sweep is being deduplicated after the Observer reconciliation.
+func strategyPrice(base int, strategy func(int) int) int {
 	return strategy(base)
 }
 
@@ -15,10 +17,14 @@ func verifyStrategy() {
 		return value
 	}
 
-	if !(price(100, regular) == 100 &&
-		price(100, vip) == 80 &&
-		price(100, campaign) == 75 &&
-		price(80, campaign) == 80) {
+	if !(strategyPrice(100, regular) == 100 &&
+		strategyPrice(100, vip) == 80 &&
+		strategyPrice(100, campaign) == 75 &&
+		strategyPrice(80, campaign) == 80) {
 		panic("Go Strategy contract failed")
 	}
+}
+
+func init() {
+	verifyStrategy()
 }
