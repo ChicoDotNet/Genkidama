@@ -100,35 +100,67 @@ def validate_rust() -> int:
 
 def validate_go() -> int:
     sweep = ROOT / "src/Systems/Go/pattern_sweep.go"
+    memento = ROOT / "src/Systems/Go/memento.go"
+    memento_test = ROOT / "src/Systems/Go/memento_test.go"
+    observer = ROOT / "src/Systems/Go/observer.go"
     state = ROOT / "src/Systems/Go/state.go"
-    if not sweep.is_file():
-        raise ContractError("Go pattern_sweep.go is missing")
-    if not state.is_file():
-        raise ContractError("Go state.go canonical is missing")
+    for source, label in (
+        (sweep, "Go pattern_sweep.go"),
+        (memento, "Go memento.go canonical"),
+        (memento_test, "Go memento_test.go canonical test"),
+        (observer, "Go observer.go canonical"),
+        (state, "Go state.go canonical"),
+    ):
+        if not source.is_file():
+            raise ContractError(f"{label} is missing")
 
     run(["go", "version"])
-    for source in (sweep, state):
+    for source, label in (
+        (memento, "Go Memento canonical"),
+        (memento_test, "Go Memento canonical test"),
+        (observer, "Go Observer canonical"),
+        (state, "Go State canonical"),
+        (sweep, "Go pattern sweep"),
+    ):
         unformatted = run(["gofmt", "-l", str(source)], capture=True).strip()
         if unformatted:
-            raise ContractError(f"Go source is not gofmt-clean: {unformatted}")
-        run(["go", "vet", str(source)])
+            raise ContractError(f"{label} is not gofmt-clean: {unformatted}")
 
-    sweep_output = run(["go", "run", str(sweep)], capture=True).strip()
-    expected_sweep = "Go pattern sweep: 39/39 examples passed"
-    if sweep_output != expected_sweep:
-        raise ContractError(
-            f"Go pattern sweep output mismatch: expected {expected_sweep!r}, got {sweep_output!r}"
-        )
-    print(sweep_output, flush=True)
+    run(["go", "vet", str(memento), str(memento_test)])
+    run(["go", "test", "-run", "^TestMementoCanonical$", "-count=1", str(memento), str(memento_test)])
+    print("Go Memento: passed", flush=True)
 
+    run(["go", "vet", str(sweep), str(memento), str(observer)])
+    output = run(["go", "run", str(sweep), str(memento), str(observer)], capture=True).strip()
+    expected = "Go pattern sweep: 39/39 examples passed"
+    if output != expected:
+        raise ContractError(f"Go pattern sweep output mismatch: expected {expected!r}, got {output!r}")
+    print(output, flush=True)
+
+    verifier = observer.parent / "observer_verify_tmp.go"
+    verifier.write_text(
+        'package main\n\nimport "fmt"\n\nfunc main() {\n\tif !observerExamplePasses() { panic("Observer canonical failed") }\n\tfmt.Println("Go Observer: passed")\n}\n',
+        encoding="utf-8",
+    )
+    try:
+        unformatted_verifier = run(["gofmt", "-l", str(verifier)], capture=True).strip()
+        if unformatted_verifier:
+            run(["gofmt", "-w", str(verifier)])
+        run(["go", "vet", str(observer), str(verifier)])
+        observer_output = run(["go", "run", str(observer), str(verifier)], capture=True).strip()
+        if observer_output != "Go Observer: passed":
+            raise ContractError(f"Go Observer canonical output mismatch: {observer_output!r}")
+        print(observer_output, flush=True)
+    finally:
+        verifier.unlink(missing_ok=True)
+
+    run(["go", "vet", str(state)])
     state_output = run(["go", "run", str(state)], capture=True).strip()
-    expected_state = "go-state: passed"
-    if state_output != expected_state:
-        raise ContractError(
-            f"Go State output mismatch: expected {expected_state!r}, got {state_output!r}"
-        )
+    if state_output != "go-state: passed":
+        raise ContractError(f"Go State canonical output mismatch: {state_output!r}")
     print(state_output, flush=True)
-    return EXPECTED
+
+    return EXPECTED + 3
 
 
 def main() -> int:
