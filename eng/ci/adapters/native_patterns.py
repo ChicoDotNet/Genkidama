@@ -103,11 +103,13 @@ def validate_go() -> int:
     memento = ROOT / "src/Systems/Go/memento.go"
     memento_test = ROOT / "src/Systems/Go/memento_test.go"
     observer = ROOT / "src/Systems/Go/observer.go"
+    state = ROOT / "src/Systems/Go/state.go"
     for source, label in (
         (sweep, "Go pattern_sweep.go"),
         (memento, "Go memento.go canonical"),
         (memento_test, "Go memento_test.go canonical test"),
         (observer, "Go observer.go canonical"),
+        (state, "Go state.go canonical"),
     ):
         if not source.is_file():
             raise ContractError(f"{label} is missing")
@@ -117,6 +119,7 @@ def validate_go() -> int:
         (memento, "Go Memento canonical"),
         (memento_test, "Go Memento canonical test"),
         (observer, "Go Observer canonical"),
+        (state, "Go State canonical"),
         (sweep, "Go pattern sweep"),
     ):
         unformatted = run(["gofmt", "-l", str(source)], capture=True).strip()
@@ -151,7 +154,13 @@ def validate_go() -> int:
     finally:
         verifier.unlink(missing_ok=True)
 
-    return EXPECTED + 2
+    run(["go", "vet", str(state)])
+    state_output = run(["go", "run", str(state)], capture=True).strip()
+    if state_output != "go-state: passed":
+        raise ContractError(f"Go State canonical output mismatch: {state_output!r}")
+    print(state_output, flush=True)
+
+    return EXPECTED + 3
 
 
 def main() -> int:

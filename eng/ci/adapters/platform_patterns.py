@@ -5,7 +5,6 @@ import hashlib
 import os
 import shutil
 import sqlite3
-import sqlite3
 import sys
 import tarfile
 import tempfile
@@ -38,6 +37,7 @@ ASSEMBLY_CONTRACTS: dict[str, str] = {
     "prototype.asm": "original=orders: metrics\nclone=orders-canary: metrics,tracing",
     "proxy.asm": "backend=1;fetches=1;first=doc(42);second=doc(42)",
     "singleton.asm": "same=true\ncount=1",
+    "state.asm": "locked\nlocked\nunlocked\nunlocked\nlocked\ninvalid\nassembly-state: passed",
 }
 
 
@@ -95,6 +95,32 @@ def validate_assembly() -> None:
             print(f"PASS Assembly {filename}", flush=True)
 
 
+def validate_vba_state() -> None:
+    source = dc.ROOT / "src/Shell/VBA/state.bas"
+    dc.require(source.is_file(), "VBA State canonical missing")
+    text = source.read_text(encoding="utf-8")
+    lower = text.lower()
+    required = [
+        "option explicit",
+        "private enum gatestate",
+        "gatelocked = 0",
+        "gateunlocked = 1",
+        "private function transition",
+        "select case currentstate",
+        'if action = "coin" then',
+        'if action = "push" then',
+        "err.raise vbobjecterror + 513",
+        "public sub verifystatepattern()",
+        'requirestate state = gatelocked, "push while locked must preserve state"',
+        'requirestate state = gateunlocked, "duplicate coin must preserve unlocked state"',
+        'debug.print "vba-state: passed"',
+    ]
+    for marker in required:
+        dc.require(marker in lower, f"VBA State source contract missing {marker!r}")
+    dc.require(lower.count("state = transition(state,") == 4, "VBA State contract must exercise four transition decisions")
+    print("PASS VBA state.bas source contract", flush=True)
+
+
 def validate_sql_observer() -> None:
     source = (dc.ROOT / "src/Data/SQL/observer.sql").read_text(encoding="utf-8")
     connection = sqlite3.connect(":memory:")
@@ -117,11 +143,60 @@ def validate_sql_memento() -> None:
     print("PASS SQL memento.sql", flush=True)
 
 
+def validate_sql_state() -> None:
+    source = dc.ROOT / "src/Data/SQL/state.sql"
+    dc.require(source.is_file(), "SQL State canonical missing")
+    connection = sqlite3.connect(":memory:")
+    try:
+        connection.executescript(source.read_text(encoding="utf-8"))
+        trace = connection.execute("SELECT step, state FROM state_trace ORDER BY step").fetchall()
+        expected = [
+            (0, "locked"),
+            (1, "locked"),
+            (2, "unlocked"),
+            (3, "unlocked"),
+            (4, "locked"),
+        ]
+        dc.require(trace == expected, f"SQL State trace mismatch: expected={expected!r} actual={trace!r}")
+        invalid = connection.execute("SELECT observed_state FROM invalid_state_probe").fetchone()
+        dc.require(invalid == ("invalid",), f"SQL State invalid-state contract mismatch: {invalid!r}")
+    finally:
+        connection.close()
+    print("PASS SQL state.sql via sqlite3", flush=True)
+
+
+def validate_gdscript_state(godot: str) -> None:
+    source = dc.ROOT / "src/Niche/GDScript/state.gd"
+    dc.require(source.is_file(), "GDScript State canonical missing")
+    output = dc.run([godot, "--headless", "--script", str(source)], capture=True)
+    dc.require("gdscript-state: passed" in output.splitlines(), "GDScript State canonical output mismatch")
+    print("PASS GDScript state.gd", flush=True)
+
+
+def validate_micropython_state(micropython: str) -> None:
+    source = dc.ROOT / "src/Other/MicroPython/state.py"
+    dc.require(source.is_file(), "MicroPython State canonical missing")
+    output = dc.run([micropython, str(source)], capture=True)
+    dc.require("MicroPython State: passed" in output.splitlines(), "MicroPython State canonical output mismatch")
+    print("PASS MicroPython state.py", flush=True)
+
+
+def validate_rockstar_state(rockstar: str) -> None:
+    source = dc.ROOT / "src/Other/Rockstar/state.rock"
+    dc.require(source.is_file(), "Rockstar State canonical missing")
+    output = normalized(dc.run([rockstar, str(source)], capture=True))
+    expected = "locked\nlocked\nunlocked\nunlocked\nlocked\ninvalid\nrockstar-state: passed"
+    dc.require(output == expected, f"Rockstar State canonical output mismatch: expected={expected!r} actual={output!r}")
+    print("PASS Rockstar state.rock", flush=True)
+
+
 def validate_portable() -> None:
     dc.run([sys.executable, "eng/ci/adapters/platform_source_contracts.py"])
+    validate_vba_state()
     validate_assembly()
     validate_sql_observer()
     validate_sql_memento()
+    validate_sql_state()
 
     godot = os.environ.get("GENKIDAMA_GODOT_BIN", "godot")
     output = dc.run([godot, "--headless", "--script", str(dc.ROOT / "src/Niche/GDScript/example1.gd")], capture=True)
@@ -131,16 +206,15 @@ def validate_portable() -> None:
     dc.require("GDScript Mediator: passed" in mediator_output.splitlines(), "GDScript Mediator canonical output mismatch")
     memento_output = dc.run([godot, "--headless", "--script", str(dc.ROOT / "src/Niche/GDScript/memento.gd")], capture=True)
     dc.require("GDScript Memento: passed" in memento_output.splitlines(), "GDScript Memento contract failed")
-
     observer_output = dc.run([godot, "--headless", "--script", str(dc.ROOT / "src/Niche/GDScript/observer.gd")], capture=True)
     observer_marker = "observer=audit:draft,published;dashboard:draft;duplicate=rejected;second-unsubscribe=rejected"
     dc.require(observer_marker in observer_output.splitlines(), "GDScript Observer behavioral contract failed")
+    validate_gdscript_state(godot)
 
     micropython = os.environ.get("GENKIDAMA_MICROPYTHON_BIN", "/tmp/micropython/ports/unix/build-standard/micropython")
     output = dc.run([micropython, str(dc.ROOT / "src/Other/MicroPython/example1.py")], capture=True)
     for marker in ["Dark Button", "Dark Checkbox", "Light Button", "Light Checkbox"]:
         dc.require(marker in output.splitlines(), f"MicroPython contract missing {marker}")
-
     observer_output = dc.run([micropython, str(dc.ROOT / "src/Other/MicroPython/observer.py")], capture=True)
     observer_marker = "observer=audit:draft,published;dashboard:draft;duplicate=rejected;second-unsubscribe=rejected"
     dc.require(observer_marker in observer_output.splitlines(), "MicroPython Observer behavioral contract failed")
@@ -148,13 +222,13 @@ def validate_portable() -> None:
     dc.require(dc.last_line(mediator_output) == "MicroPython Mediator: passed", "MicroPython Mediator canonical output mismatch")
     memento_output = dc.run([micropython, str(dc.ROOT / "src/Other/MicroPython/memento.py")], capture=True)
     dc.require(dc.last_line(memento_output) == "MicroPython Memento: passed", "MicroPython Memento contract failed")
+    validate_micropython_state(micropython)
 
     rockstar = os.environ.get("GENKIDAMA_ROCKSTAR_BIN")
     dc.require(bool(rockstar), "GENKIDAMA_ROCKSTAR_BIN is required")
     output = dc.run([rockstar, str(dc.ROOT / "src/Other/Rockstar/example1.rock")], capture=True)
     for marker in ["Dark Button", "Dark Checkbox", "Light Button", "Light Checkbox"]:
         dc.require(marker in output.splitlines(), f"Rockstar contract missing {marker}")
-
     observer_output = dc.run([rockstar, str(dc.ROOT / "src/Other/Rockstar/observer.rock")], capture=True)
     observer_marker = "observer=audit:draft,published;dashboard:draft;duplicate=rejected;second-unsubscribe=rejected"
     dc.require(observer_marker in observer_output.splitlines(), "Rockstar Observer behavioral contract failed")
@@ -162,6 +236,7 @@ def validate_portable() -> None:
     dc.require(dc.last_line(mediator_output) == "Rockstar Mediator: passed", "Rockstar Mediator canonical output mismatch")
     memento_output = dc.run([rockstar, str(dc.ROOT / "src/Other/Rockstar/memento.rock")], capture=True)
     dc.require(dc.last_line(memento_output) == "Rockstar Memento: passed", "Rockstar Memento contract failed")
+    validate_rockstar_state(rockstar)
 
 
 def main() -> int:
@@ -169,8 +244,6 @@ def main() -> int:
     if profile == "portable":
         validate_portable()
     elif profile == "matlab":
-        # Local developer path when a MATLAB license is available. GitHub-hosted
-        # runners invoke the same .m contract through matlab-actions/run-command.
         dc.run(["matlab", "-batch", "run('eng/ci/adapters/matlab_contract.m')"])
     else:
         raise dc.ContractError(f"unsupported platform profile: {profile}")
