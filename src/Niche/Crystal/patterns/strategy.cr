@@ -11,5 +11,7 @@ def verify_strategy : Bool
   price(100, regular) == 100 && price(100, vip) == 80
 end
 
-raise "Strategy contract failed" unless verify_strategy
-puts "regular=100;vip=80"
+if PROGRAM_NAME == __FILE__
+  raise "Strategy contract failed" unless verify_strategy
+  puts "regular=100;vip=80"
+end
