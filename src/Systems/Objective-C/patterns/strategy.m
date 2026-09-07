@@ -22,15 +22,18 @@ static NSInteger ApplyPrice(NSInteger value, id<PricingStrategy> strategy) {
     return [strategy price:value];
 }
 
+BOOL verifyStrategy(void) {
+    id<PricingStrategy> regular = [RegularPricing new];
+    id<PricingStrategy> vip = [VipPricing new];
+    return ApplyPrice(100, regular) == 100 && ApplyPrice(100, vip) == 80;
+}
+
+#ifndef GENKIDAMA_STRATEGY_EMBEDDED
 int main(void) {
     @autoreleasepool {
-        id<PricingStrategy> regular = [RegularPricing new];
-        id<PricingStrategy> vip = [VipPricing new];
-        if (ApplyPrice(100, regular) != 100 || ApplyPrice(100, vip) != 80) {
-            NSLog(@"Strategy contract failed");
-            return 1;
-        }
-        NSLog(@"regular=100;vip=80");
+        NSCAssert(verifyStrategy(), @"Objective-C Strategy contract failed");
+        puts("Objective-C Strategy: passed");
     }
     return 0;
 }
+#endif
