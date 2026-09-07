@@ -76,12 +76,17 @@ def learn() -> None:
 def patterns() -> None:
     sweep = ROOT / "src/Web/Dart/pattern_sweep.dart"
     mediator = ROOT / "src/Web/Dart/mediator.dart"
-    sources = [str(sweep), str(mediator)]
+    memento = ROOT / "src/Web/Dart/memento.dart"
+    sources = [str(sweep), str(mediator), str(memento)]
     run(["dart", "format", "--output=none", "--set-exit-if-changed", *sources])
     run(["dart", "analyze", "--fatal-infos", "--fatal-warnings", *sources])
     require(
         last_line(run(["dart", "run", str(mediator)], capture=True)) == "Dart Mediator: passed",
         "Dart Mediator canonical output mismatch",
+    )
+    require(
+        last_line(run(["dart", "run", str(memento)], capture=True)) == "Dart Memento: passed",
+        "Dart Memento canonical output mismatch",
     )
     require(
         last_line(run(["dart", "run", str(sweep)], capture=True)) == "Dart pattern sweep: 39/39 examples passed",

@@ -1,0 +1,21 @@
+Save takes State
+Give back State
+Yeah
+
+Restore takes Snapshot
+Give back Snapshot
+Yeah
+
+State is "draft"
+Call Save with State into Caretaker
+State is "published"
+
+If Caretaker is "draft"
+Call Restore with Caretaker into State
+If State is "draft"
+State is "restored-edit"
+If Caretaker is "draft"
+Print "Rockstar Memento: passed"
+Yeah
+Yeah
+Yeah

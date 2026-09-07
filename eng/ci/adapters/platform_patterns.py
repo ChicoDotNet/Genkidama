@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import sqlite3
 import sys
 import tempfile
 from pathlib import Path
@@ -23,6 +24,7 @@ ASSEMBLY_CONTRACTS: dict[str, str] = {
     "interpreter.asm": "interpreter=9",
     "iterator.asm": "iterator=10,20,30",
     "mediator.asm": "Assembly Mediator: passed",
+    "memento.asm": "Assembly Memento: passed",
     "prototype.asm": "original=orders: metrics\nclone=orders-canary: metrics,tracing",
     "proxy.asm": "backend=1;fetches=1;first=doc(42);second=doc(42)",
     "singleton.asm": "same=true\ncount=1",
@@ -51,9 +53,21 @@ def validate_assembly() -> None:
             print(f"PASS Assembly {filename}", flush=True)
 
 
+def validate_sql_memento() -> None:
+    source = (dc.ROOT / "src/Data/SQL/memento.sql").read_text(encoding="utf-8")
+    connection = sqlite3.connect(":memory:")
+    try:
+        row = connection.execute(source).fetchone()
+    finally:
+        connection.close()
+    dc.require(row == ("SQL Memento: passed",), f"SQL Memento contract failed: {row!r}")
+    print("PASS SQL memento.sql", flush=True)
+
+
 def validate_portable() -> None:
     dc.run([sys.executable, "eng/ci/adapters/platform_source_contracts.py"])
     validate_assembly()
+    validate_sql_memento()
 
     godot = os.environ.get("GENKIDAMA_GODOT_BIN", "godot")
     output = dc.run([godot, "--headless", "--script", str(dc.ROOT / "src/Niche/GDScript/example1.gd")], capture=True)
@@ -61,6 +75,8 @@ def validate_portable() -> None:
         dc.require(marker in output.splitlines(), f"GDScript contract missing {marker}")
     mediator_output = dc.run([godot, "--headless", "--script", str(dc.ROOT / "src/Niche/GDScript/mediator.gd")], capture=True)
     dc.require("GDScript Mediator: passed" in mediator_output.splitlines(), "GDScript Mediator canonical output mismatch")
+    memento_output = dc.run([godot, "--headless", "--script", str(dc.ROOT / "src/Niche/GDScript/memento.gd")], capture=True)
+    dc.require("GDScript Memento: passed" in memento_output.splitlines(), "GDScript Memento contract failed")
 
     micropython = os.environ.get("GENKIDAMA_MICROPYTHON_BIN", "/tmp/micropython/ports/unix/build-standard/micropython")
     output = dc.run([micropython, str(dc.ROOT / "src/Other/MicroPython/example1.py")], capture=True)
@@ -68,6 +84,8 @@ def validate_portable() -> None:
         dc.require(marker in output.splitlines(), f"MicroPython contract missing {marker}")
     mediator_output = dc.run([micropython, str(dc.ROOT / "src/Other/MicroPython/mediator.py")], capture=True)
     dc.require(dc.last_line(mediator_output) == "MicroPython Mediator: passed", "MicroPython Mediator canonical output mismatch")
+    memento_output = dc.run([micropython, str(dc.ROOT / "src/Other/MicroPython/memento.py")], capture=True)
+    dc.require(dc.last_line(memento_output) == "MicroPython Memento: passed", "MicroPython Memento contract failed")
 
     rockstar = os.environ.get("GENKIDAMA_ROCKSTAR_BIN")
     dc.require(bool(rockstar), "GENKIDAMA_ROCKSTAR_BIN is required")
@@ -76,6 +94,8 @@ def validate_portable() -> None:
         dc.require(marker in output.splitlines(), f"Rockstar contract missing {marker}")
     mediator_output = dc.run([rockstar, str(dc.ROOT / "src/Other/Rockstar/mediator.rock")], capture=True)
     dc.require(dc.last_line(mediator_output) == "Rockstar Mediator: passed", "Rockstar Mediator canonical output mismatch")
+    memento_output = dc.run([rockstar, str(dc.ROOT / "src/Other/Rockstar/memento.rock")], capture=True)
+    dc.require(dc.last_line(memento_output) == "Rockstar Memento: passed", "Rockstar Memento contract failed")
 
 
 def main() -> int:

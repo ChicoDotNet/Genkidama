@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'mediator.dart' as mediator;
 import 'iterator.dart' as iterator_example;
+import 'memento.dart' show verifyMementoCanonical;
 
 void check(bool condition) {
   if (!condition) throw StateError('pattern assertion failed');
@@ -94,27 +95,7 @@ void iteratorPattern() {
 // Mediator
 void mediatorPattern() => mediator.verifyMediator();
 
-// Memento
-class EditorMemento {
-  const EditorMemento(this.state);
-  final String state;
-}
-
-class Editor {
-  Editor(this.state);
-  String state;
-  EditorMemento save() => EditorMemento(state);
-  void restore(EditorMemento m) => state = m.state;
-}
-
-void mementoPattern() {
-  final e = Editor('draft');
-  final snapshot = e.save();
-  e.state = 'published';
-  check(e.state == 'published');
-  e.restore(snapshot);
-  check(e.state == 'draft');
-}
+// Memento is implemented canonically in memento.dart; this sweep only orchestrates it.
 
 // Observer
 typedef Observer = String Function(int id);
@@ -732,7 +713,7 @@ void main() {
     interpreterPattern,
     iteratorPattern,
     mediatorPattern,
-    mementoPattern,
+    verifyMementoCanonical,
     observerPattern,
     statePattern,
     strategyPattern,

@@ -5,6 +5,7 @@ import Control.Concurrent.MVar
 import Control.Monad (forM_)
 import Data.List (intercalate, isInfixOf)
 import Data.Maybe (fromMaybe)
+import qualified Memento as Memento
 import System.Process (readProcess)
 
 must :: Bool -> IO ()
@@ -38,13 +39,6 @@ mediatorCase :: IO Bool
 mediatorCase = do
   output <- readProcess "runghc" ["patterns/mediator.hs"] ""
   pure ("Haskell Mediator: passed" `isInfixOf` output)
-
--- Memento
-newtype EditorMemento = EditorMemento String
-restoreEditor :: EditorMemento -> String
-restoreEditor (EditorMemento s) = s
-mementoCase :: Bool
-mementoCase = let original="draft"; snapshot=EditorMemento original; changed="published" in changed=="published" && restoreEditor snapshot=="draft"
 
 -- Observer
 type Observer = Int -> String
@@ -298,7 +292,7 @@ nullObjectCase :: Bool
 nullObjectCase = let real msg="logged:"++msg; nullLogger _="" in real "processed:item-1"=="logged:processed:item-1" && nullLogger "processed:item-1"==""
 
 pureCases :: [Bool]
-pureCases = [ commandCase, interpreterCase, mementoCase, observerCase, stateCase, strategyCase, templateMethodCase, visitorCase
+pureCases = [ commandCase, interpreterCase, Memento.verifyMementoCanonical, observerCase, stateCase, strategyCase, templateMethodCase, visitorCase
             , mvcCase, mvvmCase, microkernelCase, microservicesCase, enterpriseAdapterCase, enterpriseBridgeCase, enterpriseFacadeCase, brokerCase, messageBusCase, serviceLocatorCase
             , activeObjectCase, halfSyncHalfAsyncCase, leaderFollowersCase, clientServerCase, peerToPeerCase, publishSubscribeCase, distributedProxyCase, pacCase, mvpCase, documentViewCase
             , activeRecordCase, dataMapperCase, unitOfWorkCase, repositoryCase, dependencyInjectionCase, lazyInitializationCase, objectPoolCase, nullObjectCase ]

@@ -100,38 +100,42 @@ def validate_rust() -> int:
 
 def validate_go() -> int:
     sweep = ROOT / "src/Systems/Go/pattern_sweep.go"
+    memento = ROOT / "src/Systems/Go/memento.go"
+    memento_test = ROOT / "src/Systems/Go/memento_test.go"
     strategy = ROOT / "src/Systems/Go/strategy.go"
-    if not sweep.is_file():
-        raise ContractError("Go pattern_sweep.go is missing")
-    if not strategy.is_file():
-        raise ContractError("Go canonical strategy.go is missing")
+    for source, label in (
+        (sweep, "Go pattern_sweep.go"),
+        (memento, "Go memento.go canonical"),
+        (memento_test, "Go memento_test.go canonical test"),
+        (strategy, "Go strategy.go canonical"),
+    ):
+        if not source.is_file():
+            raise ContractError(f"{label} is missing")
 
     run(["go", "version"])
-    for source in (sweep, strategy):
+    for source, label in (
+        (memento, "Go Memento canonical"),
+        (memento_test, "Go Memento canonical test"),
+        (strategy, "Go Strategy canonical"),
+        (sweep, "Go pattern sweep"),
+    ):
         unformatted = run(["gofmt", "-l", str(source)], capture=True).strip()
         if unformatted:
-            raise ContractError(f"Go source is not gofmt-clean: {unformatted}")
+            raise ContractError(f"{label} is not gofmt-clean: {unformatted}")
 
-    run(["go", "vet", str(sweep)])
-    output = run(["go", "run", str(sweep)], capture=True).strip()
+    run(["go", "vet", str(memento), str(memento_test)])
+    run(["go", "test", "-run", "^TestMementoCanonical$", "-count=1", str(memento), str(memento_test)])
+    print("Go Memento: passed", flush=True)
+
+    run(["go", "vet", str(strategy)])
+    run(["go", "vet", str(sweep), str(memento), str(strategy)])
+    output = run(["go", "run", str(sweep), str(memento), str(strategy)], capture=True).strip()
     expected = "Go pattern sweep: 39/39 examples passed"
     if output != expected:
         raise ContractError(f"Go pattern sweep output mismatch: expected {expected!r}, got {output!r}")
-
-    with tempfile.TemporaryDirectory(prefix="genkidama-go-strategy-") as temp:
-        harness = Path(temp) / "strategy_contract.go"
-        harness.write_text(
-            strategy.read_text(encoding="utf-8")
-            + "\nfunc main() { if !verifyStrategy() { panic(\"Go Strategy contract failed\") } }\n",
-            encoding="utf-8",
-        )
-        run(["gofmt", "-w", str(harness)])
-        run(["go", "vet", str(harness)])
-        run(["go", "run", str(harness)])
-
     print(output, flush=True)
-    print("PASS Go strategy.go", flush=True)
-    return EXPECTED + 1
+    print("Go Strategy: passed", flush=True)
+    return EXPECTED + 2
 
 
 def main() -> int:

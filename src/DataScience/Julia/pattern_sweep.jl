@@ -2,6 +2,7 @@
 include("iterator.jl")
 must(value::Bool) = value || error("pattern assertion failed")
 include("patterns/mediator.jl")
+include(joinpath(@__DIR__, "memento.jl"))
 
 # Command
 struct BalanceCommand
@@ -32,15 +33,7 @@ interpreter_pattern() = must(evaluate(AddExpr(Literal(7), MulExpr(Literal(3), Li
 # Mediator: delegate to the individually addressable canonical source.
 mediator_pattern() = must(verify_mediator())
 
-# Memento
-struct EditorMemento; state::String; end
-mutable struct Editor; state::String; end
-save(editor::Editor) = EditorMemento(editor.state)
-restore!(editor::Editor, memento::EditorMemento) = (editor.state = memento.state)
-function memento_pattern()
-    editor = Editor("draft"); snapshot = save(editor); editor.state = "published"
-    must(editor.state == "published"); restore!(editor, snapshot); must(editor.state == "draft")
-end
+# Memento is delegated to the individually addressable canonical included above.
 
 # Observer
 mutable struct Subject; observers::Vector{Function}; end
@@ -375,7 +368,7 @@ const PATTERNS = [
 must(length(PATTERNS) == 39)
 
 for pattern in (
-    command_pattern, interpreter_pattern, mediator_pattern, memento_pattern, observer_pattern, state_pattern, strategy_pattern, template_method_pattern, visitor_pattern,
+    command_pattern, interpreter_pattern, mediator_pattern, verify_memento_canonical, observer_pattern, state_pattern, strategy_pattern, template_method_pattern, visitor_pattern,
     mvc_pattern, mvvm_pattern, microkernel_pattern, microservices_pattern, enterprise_adapter_pattern, enterprise_bridge_pattern, enterprise_facade_pattern, broker_pattern, message_bus_pattern, service_locator_pattern,
     active_object_pattern, monitor_object_pattern, half_sync_half_async_pattern, leader_followers_pattern, client_server_pattern, peer_to_peer_pattern, publish_subscribe_pattern, distributed_proxy_pattern,
     presentation_abstraction_control_pattern, model_view_presenter_pattern, document_view_pattern, active_record_pattern, data_mapper_pattern, unit_of_work_pattern, repository_pattern,
