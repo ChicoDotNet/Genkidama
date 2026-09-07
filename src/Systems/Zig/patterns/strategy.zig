@@ -14,8 +14,12 @@ fn vip(value: i32) i32 {
     return @divTrunc(value * 80, 100);
 }
 
+pub fn verifyStrategy() bool {
+    return price(100, regular) == 100 and price(100, vip) == 80;
+}
+
 pub fn main() !void {
-    if (price(100, regular) != 100 or price(100, vip) != 80) {
+    if (!verifyStrategy()) {
         return error.StrategyContractFailed;
     }
     std.debug.print("regular=100;vip=80\n", .{});
