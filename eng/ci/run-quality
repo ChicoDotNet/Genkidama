@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 from engine import _guard, main_quality
+from kb006_audit import main as main_kb006_audit
+
+
+def main() -> int:
+    quality_exit = main_quality()
+    if quality_exit != 0:
+        return quality_exit
+    return main_kb006_audit(["audit"])
+
 
 if __name__ == "__main__":
-    _guard(main_quality)
+    _guard(main)
