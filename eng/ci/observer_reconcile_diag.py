@@ -8,18 +8,16 @@ from pathlib import Path
 BASE = "505f331b1d10644474beb55a8d8aeb1138fb791a"
 OBSERVER = "48cc70c7ecf91d6d8e8f4f350daf12eea46f0a43"
 
+# Only files that Git itself reports as unresolved are replayed. Files that
+# merge cleanly remain under Git's native three-way result and are not touched.
 PATHS = [
-    ".github/workflows/polyglot.yml",
     "eng/ci/adapters/dart_contracts.py",
     "eng/ci/adapters/native_patterns.py",
     "eng/ci/adapters/platform_patterns.py",
     "eng/ci/adapters/platform_source_contracts.py",
-    "eng/ci/adapters/scripting_patterns.py",
     "src/DataScience/Julia/pattern_sweep.jl",
     "src/Functional/Haskell/PatternSweep.hs",
     "src/Niche/Crystal/pattern_sweep.cr",
-    "src/Systems/Go/pattern_sweep.go",
-    "src/Systems/Objective-C/pattern_sweep.m",
     "src/Systems/Zig/pattern_sweep.zig",
     "src/Web/Dart/pattern_sweep.dart",
 ]
@@ -51,8 +49,7 @@ def choose_anchor(lines: list[str], context: list[str], *, prefer_last: bool) ->
     if not context:
         return None
     max_width = min(6, len(context))
-    widths = range(max_width, 0, -1)
-    for width in widths:
+    for width in range(max_width, 0, -1):
         anchor = context[-width:] if prefer_last else context[:width]
         hits = occurrences(lines, anchor)
         if len(hits) == 1:
@@ -98,15 +95,7 @@ def replay_edit(
     if left is None and right is None:
         raise SystemExit(f"{path}: {tag} has no unique insertion anchor; new={compact(new)!r}")
 
-    if left is not None:
-        insert_at = left[1]
-        # If the right anchor is immediately reachable, preserve the exact gap.
-        # If dev added another pattern in the gap, Observer still belongs after
-        # its unique left context; subsequent edits remain independently guarded.
-    else:
-        assert right is not None
-        insert_at = right[0]
-
+    insert_at = left[1] if left is not None else right[0]  # type: ignore[index]
     return current[:insert_at] + new + current[insert_at:]
 
 
@@ -120,9 +109,6 @@ def replay_path(path: str) -> None:
     edits = [op for op in matcher.get_opcodes() if op[0] != "equal"]
     print(f"{path}: replaying {len(edits)} Observer edit blocks", flush=True)
 
-    # SequenceMatcher coordinates refer to immutable base/Observer snapshots.
-    # Each edit is located again in the evolving dev text by exact content or
-    # unique surrounding anchors, so offsets cannot silently drift.
     for ordinal, (tag, i1, i2, j1, j2) in enumerate(edits, start=1):
         old = base[i1:i2]
         new = observer[j1:j2]
@@ -132,8 +118,6 @@ def replay_path(path: str) -> None:
 
     target.write_text("".join(current), encoding="utf-8")
 
-    # Contract replay postcondition: every Observer-side changed block must now
-    # be represented, while dev-only content remains because we started from dev.
     final = target.read_text(encoding="utf-8").splitlines(keepends=True)
     matcher = difflib.SequenceMatcher(a=base, b=observer, autojunk=False)
     for ordinal, (tag, i1, i2, j1, j2) in enumerate(
