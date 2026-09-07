@@ -59,7 +59,7 @@ stateCase = transition (transition Locked "unlock") "lock" == Locked
 -- Strategy: delegate to the individually addressable canonical artifact.
 strategyCase :: IO Bool
 strategyCase = do
-  output <- readProcess "runghc" ["patterns/Strategy.hs"] ""
+  output <- readProcess "runghc" ["src/Functional/Haskell/patterns/Strategy.hs"] ""
   pure (output == "regular=100;vip=80\n")
 
 -- Template Method
