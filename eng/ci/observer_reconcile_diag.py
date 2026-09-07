@@ -8,10 +8,9 @@ from pathlib import Path
 BASE = "505f331b1d10644474beb55a8d8aeb1138fb791a"
 OBSERVER = "48cc70c7ecf91d6d8e8f4f350daf12eea46f0a43"
 
-# Only files that Git itself reports as unresolved are replayed. Files that
-# merge cleanly remain under Git's native three-way result and are not touched.
+# dart_contracts.py has a true same-block overlap (Memento + Observer) and is
+# composed explicitly below. The remaining unresolved files use guarded replay.
 PATHS = [
-    "eng/ci/adapters/dart_contracts.py",
     "eng/ci/adapters/native_patterns.py",
     "eng/ci/adapters/platform_patterns.py",
     "eng/ci/adapters/platform_source_contracts.py",
@@ -56,6 +55,23 @@ def choose_anchor(lines: list[str], context: list[str], *, prefer_last: bool) ->
             start = hits[0]
             return start, start + width
     return None
+
+
+def replace_once(path: str, old: str, new: str) -> None:
+    target = Path(path)
+    text = target.read_text(encoding="utf-8")
+    count = text.count(old)
+    if count != 1:
+        raise SystemExit(f"{path}: expected exactly one explicit composition anchor, found {count}")
+    target.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+
+def compose_dart_contracts() -> None:
+    path = "eng/ci/adapters/dart_contracts.py"
+    old = '''def patterns() -> None:\n    sweep = ROOT / "src/Web/Dart/pattern_sweep.dart"\n    mediator = ROOT / "src/Web/Dart/mediator.dart"\n    memento = ROOT / "src/Web/Dart/memento.dart"\n    sources = [str(sweep), str(mediator), str(memento)]\n    run(["dart", "format", "--output=none", "--set-exit-if-changed", *sources])\n    run(["dart", "analyze", "--fatal-infos", "--fatal-warnings", *sources])\n    require(\n        last_line(run(["dart", "run", str(mediator)], capture=True)) == "Dart Mediator: passed",\n        "Dart Mediator canonical output mismatch",\n    )\n    require(\n        last_line(run(["dart", "run", str(memento)], capture=True)) == "Dart Memento: passed",\n        "Dart Memento canonical output mismatch",\n    )\n    require(\n        last_line(run(["dart", "run", str(sweep)], capture=True)) == "Dart pattern sweep: 39/39 examples passed",\n        "Dart aggregate output mismatch",\n    )\n'''
+    new = '''def patterns() -> None:\n    sweep = ROOT / "src/Web/Dart/pattern_sweep.dart"\n    mediator = ROOT / "src/Web/Dart/mediator.dart"\n    memento = ROOT / "src/Web/Dart/memento.dart"\n    observer = ROOT / "src/Web/Dart/observer.dart"\n    observer_verify = ROOT / "src/Web/Dart/observer_verify.dart"\n    sources = [str(sweep), str(mediator), str(memento), str(observer), str(observer_verify)]\n    run(["dart", "format", "--output=none", "--set-exit-if-changed", *sources])\n    run(["dart", "analyze", "--fatal-infos", "--fatal-warnings", *sources])\n    require(\n        last_line(run(["dart", "run", str(mediator)], capture=True)) == "Dart Mediator: passed",\n        "Dart Mediator canonical output mismatch",\n    )\n    require(\n        last_line(run(["dart", "run", str(memento)], capture=True)) == "Dart Memento: passed",\n        "Dart Memento canonical output mismatch",\n    )\n    require(\n        last_line(run(["dart", "run", str(sweep)], capture=True)) == "Dart pattern sweep: 39/39 examples passed",\n        "Dart aggregate output mismatch",\n    )\n    require(\n        last_line(run(["dart", "run", str(observer_verify)], capture=True)) == "Dart Observer: passed",\n        "Dart Observer output mismatch",\n    )\n'''
+    replace_once(path, old, new)
+    print(f"{path}: explicit Memento + Observer composition PASS", flush=True)
 
 
 def replay_edit(
@@ -129,9 +145,10 @@ def replay_path(path: str) -> None:
 
 
 def main() -> int:
+    compose_dart_contracts()
     for path in PATHS:
         replay_path(path)
-    print(f"Observer semantic replay: PASS files={len(PATHS)}", flush=True)
+    print(f"Observer semantic replay: PASS files={len(PATHS) + 1}", flush=True)
     return 0
 
 
