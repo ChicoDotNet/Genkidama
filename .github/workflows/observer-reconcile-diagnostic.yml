@@ -1,0 +1,91 @@
+name: Observer Reconcile Diagnostic
+
+on:
+  pull_request:
+    branches: [dev]
+
+permissions:
+  contents: write
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Reconcile Observer onto certified dev
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected_observer=48cc70c7ecf91d6d8e8f4f350daf12eea46f0a43
+          expected_dev=7f7f8e45274e1a6988ac9e981183ba3787fdca4d
+          cp eng/ci/observer_reconcile_diag.py /tmp/observer_reconcile_diag.py
+
+          git config user.name "Genkidama Reconcile Bot"
+          git config user.email "reconcile-bot@users.noreply.github.com"
+          git fetch origin patterns/observer-kb006 dev
+          test "$(git rev-parse origin/patterns/observer-kb006)" = "$expected_observer"
+          test "$(git rev-parse origin/dev)" = "$expected_dev"
+          git checkout -B reconcile origin/patterns/observer-kb006
+
+          set +e
+          git merge --no-commit --no-ff origin/dev
+          merge_status=$?
+          set -e
+          echo "merge_exit=$merge_status"
+          test "$merge_status" -ne 0
+
+          expected=$(cat <<'EOF'
+          .github/workflows/polyglot.yml
+          eng/ci/adapters/dart_contracts.py
+          eng/ci/adapters/native_patterns.py
+          eng/ci/adapters/platform_patterns.py
+          eng/ci/adapters/platform_source_contracts.py
+          eng/ci/adapters/scripting_patterns.py
+          src/DataScience/Julia/pattern_sweep.jl
+          src/Functional/Haskell/PatternSweep.hs
+          src/Niche/Crystal/pattern_sweep.cr
+          src/Systems/Go/pattern_sweep.go
+          src/Systems/Objective-C/pattern_sweep.m
+          src/Systems/Zig/pattern_sweep.zig
+          src/Web/Dart/pattern_sweep.dart
+          EOF
+          )
+          actual="$(git diff --name-only --diff-filter=U | sort)"
+          printf '%s\n' "$actual" > /tmp/actual-conflicts
+          printf '%s\n' "$expected" | sed 's/^          //' | sort > /tmp/expected-conflicts
+          diff -u /tmp/expected-conflicts /tmp/actual-conflicts
+
+          # Establish current dev as the baseline for every shared boundary.
+          while IFS= read -r path; do
+            git checkout --theirs -- "$path"
+            git add -- "$path"
+          done < /tmp/expected-conflicts
+
+          # Replay only Observer's net responsibility from the immutable common base.
+          python3 /tmp/observer_reconcile_diag.py
+          git add --pathspec-from-file=/tmp/expected-conflicts
+          test -z "$(git diff --name-only --diff-filter=U || true)"
+          git diff --cached --check
+
+          python3 -m py_compile \
+            eng/ci/adapters/dart_contracts.py \
+            eng/ci/adapters/native_patterns.py \
+            eng/ci/adapters/platform_patterns.py \
+            eng/ci/adapters/platform_source_contracts.py \
+            eng/ci/adapters/scripting_patterns.py
+          python3 eng/ci/adapters/platform_source_contracts.py
+          python3 -B src/Scripting/PythonPY/pattern_sweep.py
+          GENKIDAMA_NATIVE_PROFILE=go python3 eng/ci/adapters/native_patterns.py
+
+          git fetch origin patterns/observer-kb006 dev
+          test "$(git rev-parse origin/patterns/observer-kb006)" = "$expected_observer"
+          test "$(git rev-parse origin/dev)" = "$expected_dev"
+          git status --short
+          git commit -m "merge: reconcile Observer with current dev"
+          reconciled="$(git rev-parse HEAD)"
+          echo "reconciled_head=$reconciled"
+          git push --force-with-lease=refs/heads/patterns/observer-kb006:$expected_observer origin HEAD:refs/heads/patterns/observer-kb006
+          echo "OBSERVER_RECONCILIATION_PUSHED=$reconciled"
