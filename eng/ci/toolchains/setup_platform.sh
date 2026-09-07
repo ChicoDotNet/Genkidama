@@ -7,7 +7,7 @@ rm -rf /tmp/godot && mkdir -p /tmp/godot
 unzip -q /tmp/godot.zip -d /tmp/godot
 sudo install -m 0755 /tmp/godot/Godot_v4.6.3-stable_linux.x86_64 /usr/local/bin/godot
 echo 'GENKIDAMA_GODOT_BIN=/usr/local/bin/godot' >> "$GITHUB_ENV"
-git clone --depth 1 --branch v1.28.0 --recurse-submodules https://github.com/micropython/micropython.git /tmp/micropython
+git clone --depth 1 --branch v1.29.0 --recurse-submodules https://github.com/micropython/micropython.git /tmp/micropython
 make -C /tmp/micropython/mpy-cross -j2
 make -C /tmp/micropython/ports/unix -j2
 micropython_bin=/tmp/micropython/ports/unix/build-standard/micropython

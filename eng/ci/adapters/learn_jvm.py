@@ -24,7 +24,7 @@ def run(argv: list[str], *, cwd: Path = ROOT, env: dict[str, str] | None = None)
         raise ContractError(f"command failed with exit {completed.returncode}: {' '.join(argv)}")
 
 
-def java25_contract() -> None:
+def java_contract() -> None:
     app = ROOT / "learn/es/java/app"
     run(["java", "--version"])
     run(["mvn", "--version"])
@@ -68,7 +68,7 @@ def java25_contract() -> None:
                     process.wait(timeout=5)
 
 
-def jvm17_contract() -> None:
+def kotlin_contract() -> None:
     run(["java", "--version"])
     run(["gradle", "--version"])
 
@@ -90,13 +90,11 @@ def jvm17_contract() -> None:
 
 
 def main() -> int:
-    if PROFILE == "java25":
-        java25_contract()
-    elif PROFILE == "jvm17":
-        jvm17_contract()
-    else:
-        raise ContractError("GENKIDAMA_JVM_PROFILE must be 'java25' or 'jvm17'")
-    print(f"JVM Learn contract: PASS profile={PROFILE}", flush=True)
+    if PROFILE != "java25":
+        raise ContractError("GENKIDAMA_JVM_PROFILE must be 'java25'")
+    java_contract()
+    kotlin_contract()
+    print("JVM Learn contract: PASS profile=java25", flush=True)
     return 0
 
 

@@ -15,8 +15,8 @@ assert(isequal(r.visited, [10 20 30]));
 assert(r.finished);
 
 r = mediator;
-assert(r.buttonEvent == "panel.refresh");
-assert(r.panelEvent == "button.enable");
+assert(r.events == "inventory<-payment:paid>payment<-inventory:reserved");
+assert(r.rejectedUnknown);
 
 r = memento;
 assert(r.changed == "published");

@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"math"
+	"os/exec"
+	"strings"
 	"sync"
 )
 
@@ -51,84 +53,21 @@ type mul struct{ a, b expr }
 func (x mul) eval() int   { return x.a.eval() * x.b.eval() }
 func interpreterPattern() { must(add{lit(7), mul{lit(3), lit(4)}}.eval() == 19) }
 
-// Iterator: explicit cursor hides traversal mechanics.
-type intIterator struct {
-	values []int
-	index  int
-}
-
-func (it *intIterator) next() (int, bool) {
-	if it.index >= len(it.values) {
-		return 0, false
-	}
-	v := it.values[it.index]
-	it.index++
-	return v, true
-}
+// Iterator: the sweep executes the individually addressable canonical source.
 func iteratorPattern() {
-	it := &intIterator{values: []int{10, 20, 30}}
-	got := []int{}
-	for {
-		v, ok := it.next()
-		if !ok {
-			break
-		}
-		got = append(got, v)
-	}
-	_, ok := it.next()
-	must(!ok && fmt.Sprint(got) == "[10 20 30]")
+	cmd := exec.Command("go", "run", "src/Systems/Go/iterator.go")
+	output, err := cmd.Output()
+	must(err == nil && strings.TrimSpace(string(output)) == "iterator=10,20,30")
 }
 
-// Mediator: colleagues communicate only through the mediator.
-type mediator struct{ events []string }
-
-func (m *mediator) notify(sender, event string) {
-	if sender == "button" && event == "click" {
-		m.events = append(m.events, "panel.refresh")
-	}
-	if sender == "panel" && event == "loaded" {
-		m.events = append(m.events, "button.enable")
-	}
-}
+// Mediator: the sweep delegates to the individually addressable canonical example.
 func mediatorPattern() {
-	m := &mediator{}
-	m.notify("button", "click")
-	m.notify("panel", "loaded")
-	must(fmt.Sprint(m.events) == "[panel.refresh button.enable]")
+	out, err := exec.Command("go", "run", "src/Systems/Go/patterns/mediator.go").CombinedOutput()
+	must(err == nil && string(out) == "Go Mediator: passed\n")
 }
 
-// Memento: state snapshot is opaque to the caretaker.
-type editor struct{ state string }
-type editorMemento struct{ state string }
-
-func (e editor) save() editorMemento      { return editorMemento{e.state} }
-func (e *editor) restore(m editorMemento) { e.state = m.state }
-func mementoPattern() {
-	e := editor{"draft"}
-	m := e.save()
-	e.state = "published"
-	must(e.state == "published")
-	e.restore(m)
-	must(e.state == "draft")
-}
-
-// Observer: subject knows callbacks, not concrete observers.
-type subject struct{ observers []func(int) string }
-
-func (s *subject) subscribe(f func(int) string) { s.observers = append(s.observers, f) }
-func (s subject) publish(id int) []string {
-	out := []string{}
-	for _, f := range s.observers {
-		out = append(out, f(id))
-	}
-	return out
-}
-func observerPattern() {
-	s := subject{}
-	s.subscribe(func(id int) string { return fmt.Sprintf("audit:%d", id) })
-	s.subscribe(func(id int) string { return fmt.Sprintf("dashboard:%d", id) })
-	must(fmt.Sprint(s.publish(42)) == "[audit:42 dashboard:42]")
-}
+// Observer: the sweep delegates to the individually addressable canonical example.
+func observerPattern() { must(observerExamplePasses()) }
 
 // State: behavior/transition are delegated to the current state value.
 type gateState string
@@ -638,7 +577,7 @@ func nullObjectPattern() {
 }
 
 func main() {
-	cases := []func(){commandPattern, interpreterPattern, iteratorPattern, mediatorPattern, mementoPattern, observerPattern, statePattern, strategyPattern, templateMethodPattern, visitorPattern, mvcPattern, mvvmPattern, microkernelPattern, microservicesPattern, enterpriseAdapterPattern, enterpriseBridgePattern, enterpriseFacadePattern, brokerPattern, messageBusPattern, serviceLocatorPattern, activeObjectPattern, monitorObjectPattern, halfSyncHalfAsyncPattern, leaderFollowersPattern, clientServerPattern, peerToPeerPattern, publishSubscribePattern, distributedProxyPattern, presentationAbstractionControlPattern, modelViewPresenterPattern, documentViewPattern, activeRecordPattern, dataMapperPattern, unitOfWorkPattern, repositoryPattern, dependencyInjectionPattern, lazyInitializationPattern, objectPoolPattern, nullObjectPattern}
+	cases := []func(){commandPattern, interpreterPattern, iteratorPattern, mediatorPattern, verifyMementoCanonical, observerPattern, statePattern, strategyPattern, templateMethodPattern, visitorPattern, mvcPattern, mvvmPattern, microkernelPattern, microservicesPattern, enterpriseAdapterPattern, enterpriseBridgePattern, enterpriseFacadePattern, brokerPattern, messageBusPattern, serviceLocatorPattern, activeObjectPattern, monitorObjectPattern, halfSyncHalfAsyncPattern, leaderFollowersPattern, clientServerPattern, peerToPeerPattern, publishSubscribePattern, distributedProxyPattern, presentationAbstractionControlPattern, modelViewPresenterPattern, documentViewPattern, activeRecordPattern, dataMapperPattern, unitOfWorkPattern, repositoryPattern, dependencyInjectionPattern, lazyInitializationPattern, objectPoolPattern, nullObjectPattern}
 	must(len(cases) == 39)
 	for _, c := range cases {
 		c()

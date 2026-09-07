@@ -7,7 +7,11 @@ from __future__ import annotations
 
 from collections import deque
 from dataclasses import dataclass
+from runpy import run_path
 from typing import Callable
+
+from mediator import verify_mediator
+from memento import verify_memento
 
 
 def command() -> None:
@@ -22,51 +26,14 @@ def command() -> None:
 
 
 def interpreter() -> None:
-    env = {"x": 4}
-    expr = ("add", ("var", "x"), ("lit", 3))
-
-    def evaluate(node):
-        kind, *args = node
-        return {
-            "lit": lambda: args[0],
-            "var": lambda: env[args[0]],
-            "add": lambda: evaluate(args[0]) + evaluate(args[1]),
-        }[kind]()
-
-    assert evaluate(expr) == 7
+    module = run_path("src/Scripting/PythonPY/patterns/interpreter.py")
+    value = module["interpret"](("add", ("var", "x"), ("lit", 3)), {"x": 4})
+    assert value == 7
 
 
 def iterator() -> None:
-    class Countdown:
-        def __init__(self, n):
-            self.n = n
-
-        def __iter__(self):
-            while self.n:
-                yield self.n
-                self.n -= 1
-
-    assert list(Countdown(3)) == [3, 2, 1]
-
-
-def mediator() -> None:
-    events = []
-
-    class Mediator:
-        def send(self, sender, message):
-            events.append((sender, message))
-
-    Mediator().send("checkout", "paid")
-    assert events == [("checkout", "paid")]
-
-
-def memento() -> None:
-    state = {"text": "draft"}
-    snapshot = state.copy()
-    state["text"] = "edited"
-    state.clear()
-    state.update(snapshot)
-    assert state["text"] == "draft"
+    module = run_path("src/Scripting/PythonPY/patterns/iterator.py")
+    assert module["run"]()
 
 
 def observer() -> None:
@@ -417,8 +384,8 @@ CHECKS = [
     command,
     interpreter,
     iterator,
-    mediator,
-    memento,
+    verify_mediator,
+    verify_memento,
     observer,
     state,
     strategy,

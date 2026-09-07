@@ -1,5 +1,11 @@
 import 'dart:math' as math;
 
+import 'observer.dart' as observer;
+
+import 'mediator.dart' as mediator;
+import 'iterator.dart' as iterator_example;
+import 'memento.dart' show verifyMementoCanonical;
+
 void check(bool condition) {
   if (!condition) throw StateError('pattern assertion failed');
 }
@@ -78,17 +84,9 @@ void interpreterPattern() => check(
   AddExpr(Literal(7), MultiplyExpr(Literal(3), Literal(4))).eval() == 19,
 );
 
-// Iterator
-class CursorIterator<T> {
-  CursorIterator(this.values);
-  final List<T> values;
-  int _index = 0;
-  bool get hasNext => _index < values.length;
-  T next() => values[_index++];
-}
-
+// Iterator: delegate to the individually addressable canonical example.
 void iteratorPattern() {
-  final it = CursorIterator<int>([10, 20, 30]);
+  final it = iterator_example.CursorIterator<int>([10, 20, 30]);
   final visited = <int>[];
   while (it.hasNext) {
     visited.add(it.next());
@@ -97,58 +95,12 @@ void iteratorPattern() {
 }
 
 // Mediator
-class UiMediator {
-  final events = <String>[];
-  void notify(String sender, String event) {
-    if (sender == 'button' && event == 'click') events.add('panel.refresh');
-    if (sender == 'panel' && event == 'loaded') events.add('button.enable');
-  }
-}
+void mediatorPattern() => mediator.verifyMediator();
 
-void mediatorPattern() {
-  final m = UiMediator()
-    ..notify('button', 'click')
-    ..notify('panel', 'loaded');
-  check(m.events.join('>') == 'panel.refresh>button.enable');
-}
-
-// Memento
-class EditorMemento {
-  const EditorMemento(this.state);
-  final String state;
-}
-
-class Editor {
-  Editor(this.state);
-  String state;
-  EditorMemento save() => EditorMemento(state);
-  void restore(EditorMemento m) => state = m.state;
-}
-
-void mementoPattern() {
-  final e = Editor('draft');
-  final snapshot = e.save();
-  e.state = 'published';
-  check(e.state == 'published');
-  e.restore(snapshot);
-  check(e.state == 'draft');
-}
+// Memento is implemented canonically in memento.dart; this sweep only orchestrates it.
 
 // Observer
-typedef Observer = String Function(int id);
-
-class Subject {
-  final _observers = <Observer>[];
-  void subscribe(Observer o) => _observers.add(o);
-  List<String> publish(int id) => _observers.map((o) => o(id)).toList();
-}
-
-void observerPattern() {
-  final s = Subject()
-    ..subscribe((id) => 'audit:$id')
-    ..subscribe((id) => 'dashboard:$id');
-  check(s.publish(42).join('>') == 'audit:42>dashboard:42');
-}
+void observerPattern() => check(observer.observerExamplePasses());
 
 // State
 enum GateState { locked, unlocked }
@@ -750,7 +702,7 @@ void main() {
     interpreterPattern,
     iteratorPattern,
     mediatorPattern,
-    mementoPattern,
+    verifyMementoCanonical,
     observerPattern,
     statePattern,
     strategyPattern,
