@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Encapsular algoritmos o políticas intercambiables detrás de un mismo contrato para poder elegirlos sin cambiar al consumidor.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `36/49` Applicable con canónico individual direccionable verificado; 13 Applicable aún requieren extracción, implementación, delegación o reparación canónica.  
+> **Implementaciones de lenguaje:** `37/49` Applicable con canónico individual direccionable verificado; 12 Applicable aún requieren extracción, implementación, delegación o reparación canónica.  
 > **Cobertura de pruebas:** `N/A` agregada — la matriz polyglot usa compile/analyze/runtime/source-contract según ecosistema; el piso de 44% aplica donde exista coverage significativo.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -149,9 +149,9 @@ Extraer algoritmos pero mantener un `switch` distribuido por todo el sistema só
 
 ## Validación automatizada
 
-El head `a5b9012be8096513d27fb34e53a0f3f3812a4bbb` completó Quality, Product CI y Polyglot CI en verde. Python, Haskell y Go permanecen delegados a sus canónicos. Dart ejecuta `verifyStrategy()` desde `pattern_sweep.dart`, conserva el contrato agregado `Dart pattern sweep: 39/39 examples passed` y queda acreditado sin una segunda implementación inline.
+El head `b7bbeb0cf26adeab5bb0045cb72165e4abc85e85` completó Quality, Product CI y Polyglot CI en verde. Python, Haskell, Go, Dart y Crystal permanecen delegados a sus canónicos. Dart conserva el contrato agregado `Dart pattern sweep: 39/39 examples passed`; Crystal conserva su sweep canónico verificado y queda acreditado sin una segunda implementación inline.
 
-Crystal, Zig, Julia y Objective-C ya tienen canónicos individuales materializados y enlazados abajo. Se mantienen pendientes de crédito final mientras sus sweeps conserven la implementación Strategy histórica en vez de delegar al canónico. Ningún `pattern_sweep.*` se acredita como sustituto de un canónico direccionable.
+Zig, Julia y Objective-C ya tienen canónicos individuales materializados y enlazados abajo. Se mantienen pendientes de crédito final mientras sus sweeps conserven la implementación Strategy histórica en vez de delegar al canónico. Ningún `pattern_sweep.*` se acredita como sustituto de un canónico direccionable.
 
 ## Implementaciones por lenguaje
 
@@ -175,11 +175,11 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Go | Applicable | [`strategy.go`](../src/Systems/Go/strategy.go) | `gofmt` + `go vet` + runtime; Polyglot verde | Function value pasado al contexto; sweep delegado al canónico. |
 | PHP | Applicable | [`strategy.php`](../src/Scripting/PHP/patterns/strategy.php) | materializado; VERIFY horizontal pendiente | Callable/closure. |
 | Nim | Applicable | [`strategy_example.nim`](../src/Niche/Nim/patterns/strategy_example.nim) | materializado; VERIFY horizontal pendiente | Proc value. |
-| Dart | Applicable | [`strategy.dart`](../src/Web/Dart/patterns/strategy.dart) | analyzer + runtime/sweep 39/39; Polyglot verde en `a5b9012...` | Function value; sweep delegado a `verifyStrategy()`. |
+| Dart | Applicable | [`strategy.dart`](../src/Web/Dart/patterns/strategy.dart) | analyzer + runtime/sweep 39/39; Polyglot verde | Function value; sweep delegado a `verifyStrategy()`. |
 | Kotlin | Applicable | [`Strategy.kt`](../src/Enterprise/Kotlin/patterns/Strategy.kt) | materializado; VERIFY horizontal pendiente | Lambda/interface. |
 | Swift | Applicable | [`Strategy.swift`](../src/Systems/Swift/patterns/Strategy.swift) | materializado; VERIFY horizontal pendiente | Closure/protocol. |
 | F# | Applicable | [`Strategy.fsx`](../src/Functional/F%23/patterns/Strategy.fsx) | materializado; VERIFY horizontal pendiente | Función de orden superior. |
-| Crystal | Applicable | [`strategy.cr`](../src/Niche/Crystal/patterns/strategy.cr) | materializado; delegación del sweep pendiente | Proc/objeto intercambiable. |
+| Crystal | Applicable | [`strategy.cr`](../src/Niche/Crystal/patterns/strategy.cr) | runtime/sweep 39/39; Long-tail y Polyglot verdes | Proc/objeto intercambiable; sweep delegado al canónico. |
 | Lua | Applicable | [`strategy.lua`](../src/Scripting/Lua/patterns/strategy.lua) | materializado; VERIFY horizontal pendiente | Funciones en tabla. |
 | Haskell | Applicable | [`Strategy.hs`](../src/Functional/Haskell/patterns/Strategy.hs) | canónico ejecutado por sweep; Long-tail y Polyglot verdes | Función como estrategia; runner deduplicado. |
 | COBOL | Applicable | [`strategy_pattern.cpy`](../src/Historical/Cobol/patterns/strategy_pattern.cpy) | materializado; VERIFY horizontal pendiente | Dispatch procedural. |
@@ -223,7 +223,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 - La sustituibilidad del contrato importa más que la forma OO.
 - Funciones, closures, traits, punteros, módulos y predicados pueden ser implementaciones idiomáticas.
 - State es el vecino más fácil de confundir: cambia por estado interno, no por elección de política.
-- La matriz está en progreso: 36/49 Applicable tienen canónico individual verificado; 13 requieren cierre antes de `validated`.
+- La matriz está en progreso: 37/49 Applicable tienen canónico individual verificado; 12 requieren cierre antes de `validated`.
 
 ## Referencias
 
