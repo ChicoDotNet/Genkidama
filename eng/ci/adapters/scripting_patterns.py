@@ -57,6 +57,14 @@ def main() -> int:
     if profile != "linux":
         raise dc.ContractError(f"unsupported scripting profile: {profile}")
 
+    python_memento = dc.ROOT / "src/Scripting/PythonPY/memento.py"
+    dc.run([sys.executable, "-m", "py_compile", str(python_memento)])
+    dc.require(
+        dc.last_line(dc.run([sys.executable, "-B", str(python_memento)], capture=True))
+        == "Python Memento: passed",
+        "Python Memento canonical output mismatch",
+    )
+
     py = dc.ROOT / "src/Scripting/PythonPY/pattern_sweep.py"
     dc.run([sys.executable, "-m", "py_compile", str(py)])
     dc.run([sys.executable, "-B", str(py)])
@@ -73,6 +81,13 @@ def main() -> int:
     dc.require(
         "OBSERVER_PERL_OK" in dc.run([str(perl), str(perl_observer)], capture=True).splitlines(),
         "Perl Observer behavioral contract failed",
+    )
+
+    perl_memento = dc.ROOT / "src/Scripting/Perl/memento.pl"
+    dc.run(["perl", "-c", str(perl_memento)])
+    dc.require(
+        dc.last_line(dc.run(["perl", str(perl_memento)], capture=True)) == "Perl Memento: passed",
+        "Perl Memento canonical output mismatch",
     )
 
     ruby_files = dc.exact_glob(dc.ROOT / "src/Scripting/Ruby/patterns", "*.rb", "Ruby")
@@ -106,6 +121,12 @@ def main() -> int:
         dc.run([luac, "-p", str(source)])
         dc.run([lua, str(source)])
     dc.run([lua, str(dc.ROOT / "src/Scripting/Lua/pattern_sweep.lua")])
+
+    perl_mediator = dc.ROOT / "src/Scripting/Perl/mediator.pl"
+    dc.require(perl_mediator.is_file(), "Perl Mediator canonical source missing")
+    dc.run(["perl", "-c", str(perl_mediator)])
+    perl_output = dc.run(["perl", str(perl_mediator)], capture=True)
+    dc.require(dc.last_line(perl_output) == "Perl Mediator: passed", "Perl Mediator canonical output mismatch")
 
     dc.run([sys.executable, "eng/ci/adapters/prototype.py", "scripting"])
     print("Scripting Patterns contract: PASS without duplicate PowerShell sweep", flush=True)

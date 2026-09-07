@@ -24,6 +24,17 @@ def main() -> int:
     ]:
         require(vba, pattern, label)
 
+    vba_memento = (ROOT / "src/Shell/VBA/memento.bas").read_text(encoding="utf-8")
+    for pattern, label in [
+        (r"^Option Explicit$", "VBA Memento Option Explicit"),
+        (r"Private\s+Type\s+MementoSnapshot.*Title\s+As\s+String.*Tags\s+As\s+String.*End\s+Type", "VBA Memento snapshot value"),
+        (r"Private\s+Type\s+Document.*Title\s+As\s+String.*Tags\s+As\s+String.*End\s+Type", "VBA Memento originator value"),
+        (r"Function\s+SaveMemento\s*\(ByRef\s+originator\s+As\s+Document\)\s+As\s+MementoSnapshot.*snapshot\.Title\s*=\s*originator\.Title.*snapshot\.Tags\s*=\s*originator\.Tags", "VBA originator owns capture"),
+        (r"Sub\s+RestoreMemento\s*\(ByRef\s+originator\s+As\s+Document,\s*ByRef\s+snapshot\s+As\s+MementoSnapshot\).*originator\.Title\s*=\s*snapshot\.Title.*originator\.Tags\s*=\s*snapshot\.Tags", "VBA originator owns restore"),
+        (r"caretakerSnapshot\s*=\s*SaveMemento\(originator\).*originator\.Title\s*=\s*\"published\".*RestoreMemento\s+originator,\s*caretakerSnapshot.*Debug\.Assert\s+originator\.Title\s*=\s*\"draft\".*Debug\.Assert\s+caretakerSnapshot\.Title\s*=\s*\"draft\"", "VBA Memento mutation restore and snapshot independence"),
+    ]:
+        require(vba_memento, pattern, label)
+
     delphi = (ROOT / "src/Enterprise/Delphi/Example1.pas").read_text(encoding="utf-8")
     for pattern, label in [
         (r"IUIFactory\s*=\s*interface.*function\s+CreateButton:\s*IButton;.*function\s+CreateCheckbox:\s*ICheckbox;", "Delphi abstract factory interface"),
@@ -51,9 +62,46 @@ def main() -> int:
     ]:
         require(delphi_observer, pattern, label)
 
+    delphi_memento = (ROOT / "src/Enterprise/Delphi/Memento.pas").read_text(encoding="utf-8")
+    for pattern, label in [
+        (r"TMementoSnapshot\s*=\s*record.*Title:\s*string;.*Tags:\s*string;.*end;", "Delphi Memento snapshot record"),
+        (r"TDocument\s*=\s*class.*function\s+SaveMemento:\s*TMementoSnapshot;.*procedure\s+RestoreMemento\(const\s+Snapshot:\s*TMementoSnapshot\);", "Delphi originator capture/restore API"),
+        (r"function\s+TDocument\.SaveMemento:\s*TMementoSnapshot;.*Result\.Title\s*:=\s*FTitle;.*Result\.Tags\s*:=\s*FTags;", "Delphi originator owns capture"),
+        (r"procedure\s+TDocument\.RestoreMemento\(const\s+Snapshot:\s*TMementoSnapshot\);.*FTitle\s*:=\s*Snapshot\.Title;.*FTags\s*:=\s*Snapshot\.Tags;", "Delphi originator owns restore"),
+        (r"CaretakerSnapshot\s*:=\s*Originator\.SaveMemento;.*Originator\.Title\s*:=\s*'published';.*Originator\.RestoreMemento\(CaretakerSnapshot\);.*Originator\.Title\s*<>\s*'draft'.*CaretakerSnapshot\.Title\s*<>\s*'draft'", "Delphi Memento mutation restore and snapshot independence"),
+    ]:
+        require(delphi_memento, pattern, label)
+
+    vba_mediator = (ROOT / "src/Shell/VBA/MediatorExample.bas").read_text(encoding="utf-8")
+    for pattern, label in [
+        (r"^Option Explicit$", "VBA Mediator Option Explicit"),
+        (r"Function\s+RouteMessage\s*\(.*senderName.*targetName.*messageText.*Select\s+Case\s+targetName", "VBA Mediator owns routing"),
+        (r"PaymentSend.*RouteMessage\(\"payment\",\s*\"inventory\"", "VBA payment routes through mediator"),
+        (r"InventorySend.*RouteMessage\(\"inventory\",\s*\"payment\"", "VBA inventory routes through mediator"),
+        (r"UnknownColleague:.*targetName", "VBA Mediator unknown colleague failure"),
+        (r"VBA Mediator: passed", "VBA Mediator verification sentinel"),
+    ]:
+        require(vba_mediator, pattern, label)
+
+    delphi_mediator = (ROOT / "src/Enterprise/Delphi/MediatorExample.pas").read_text(encoding="utf-8")
+    for pattern, label in [
+        (r"TCheckoutMediator\s*=\s*class.*function\s+Route", "Delphi Mediator owns routing"),
+        (r"TPaymentColleague.*FMediator:\s*TCheckoutMediator.*function\s+Send", "Delphi payment colleague depends on mediator"),
+        (r"TInventoryColleague.*FMediator:\s*TCheckoutMediator.*function\s+Send", "Delphi inventory colleague depends on mediator"),
+        (r"Route\('payment',\s*'inventory'", "Delphi payment routes through mediator"),
+        (r"Route\('inventory',\s*'payment'", "Delphi inventory routes through mediator"),
+        (r"UnknownColleague:.*TargetName", "Delphi Mediator unknown colleague failure"),
+        (r"Delphi Mediator: passed", "Delphi Mediator verification sentinel"),
+    ]:
+        require(delphi_mediator, pattern, label)
+
     print("VBA Abstract Factory source contract: OK")
+    print("VBA Memento source contract: OK")
     print("Delphi Abstract Factory source contract: OK")
     print("Delphi Observer source contract: OK (Delphi 13.1 syntax reviewed; proprietary compiler unavailable in hosted CI)")
+    print("Delphi Memento source contract: OK")
+    print("VBA Mediator source contract: OK")
+    print("Delphi Mediator source contract: OK")
     return 0
 
 

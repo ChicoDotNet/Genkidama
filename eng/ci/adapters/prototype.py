@@ -131,9 +131,9 @@ def main() -> int:
         validate_csharp(); validate_fsharp()
     elif args.family == "jvm":
         profile = os.environ.get("GENKIDAMA_JVM_PROFILE", "java25").lower()
-        if profile == "java25": validate_java()
-        elif profile == "jvm17": validate_kotlin()
-        else: raise SystemExit(f"Unsupported JVM profile for Prototype: {profile}")
+        if profile != "java25":
+            raise SystemExit(f"Unsupported JVM profile for Prototype: {profile}")
+        validate_java(); validate_kotlin()
     elif args.family == "native":
         profile = os.environ.get("GENKIDAMA_NATIVE_PROFILE", "").lower()
         if profile == "gnu": validate_cpp()

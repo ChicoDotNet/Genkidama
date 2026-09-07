@@ -99,19 +99,36 @@ def validate_rust() -> int:
 
 
 def validate_go() -> int:
-    source = ROOT / "src/Systems/Go/pattern_sweep.go"
+    sweep = ROOT / "src/Systems/Go/pattern_sweep.go"
+    memento = ROOT / "src/Systems/Go/memento.go"
+    memento_test = ROOT / "src/Systems/Go/memento_test.go"
     observer = ROOT / "src/Systems/Go/observer.go"
-    if not source.is_file():
-        raise ContractError("Go pattern_sweep.go is missing")
-    if not observer.is_file():
-        raise ContractError("Go Observer canonical is missing")
-    run(["go", "version"])
-    unformatted = run(["gofmt", "-l", str(source), str(observer)], capture=True).strip()
-    if unformatted:
-        raise ContractError(f"Go sources are not gofmt-clean: {unformatted}")
-    run(["go", "vet", str(source), str(observer)])
+    for source, label in (
+        (sweep, "Go pattern_sweep.go"),
+        (memento, "Go memento.go canonical"),
+        (memento_test, "Go memento_test.go canonical test"),
+        (observer, "Go observer.go canonical"),
+    ):
+        if not source.is_file():
+            raise ContractError(f"{label} is missing")
 
-    output = run(["go", "run", str(source), str(observer)], capture=True).strip()
+    run(["go", "version"])
+    for source, label in (
+        (memento, "Go Memento canonical"),
+        (memento_test, "Go Memento canonical test"),
+        (observer, "Go Observer canonical"),
+        (sweep, "Go pattern sweep"),
+    ):
+        unformatted = run(["gofmt", "-l", str(source)], capture=True).strip()
+        if unformatted:
+            raise ContractError(f"{label} is not gofmt-clean: {unformatted}")
+
+    run(["go", "vet", str(memento), str(memento_test)])
+    run(["go", "test", "-run", "^TestMementoCanonical$", "-count=1", str(memento), str(memento_test)])
+    print("Go Memento: passed", flush=True)
+
+    run(["go", "vet", str(sweep), str(memento), str(observer)])
+    output = run(["go", "run", str(sweep), str(memento), str(observer)], capture=True).strip()
     expected = "Go pattern sweep: 39/39 examples passed"
     if output != expected:
         raise ContractError(f"Go pattern sweep output mismatch: expected {expected!r}, got {output!r}")
@@ -134,7 +151,7 @@ def validate_go() -> int:
     finally:
         verifier.unlink(missing_ok=True)
 
-    return EXPECTED + 1
+    return EXPECTED + 2
 
 
 def main() -> int:

@@ -1,6 +1,14 @@
 #import <Foundation/Foundation.h>
 #import <stdlib.h>
 #import <math.h>
+#define GENKIDAMA_ITERATOR_EMBEDDED 1
+#import "iterator.m"
+
+#define GENKIDAMA_MEDIATOR_EMBEDDED 1
+#import "patterns/mediator.m"
+#undef GENKIDAMA_MEDIATOR_EMBEDDED
+
+#import "memento.m"
 
 static void must(BOOL value) { if (!value) abort(); }
 
@@ -49,35 +57,11 @@ static BOOL interpreterPattern(void) {
 
 // Iterator
 static BOOL iteratorPattern(void) {
-    NSEnumerator *iterator = [@[@10, @20, @30] objectEnumerator]; NSMutableArray *visited = [NSMutableArray array]; id value;
-    while ((value = [iterator nextObject]) != nil) [visited addObject:value];
-    return [visited isEqualToArray:@[@10, @20, @30]] && [iterator nextObject] == nil;
+    return iteratorExamplePasses();
 }
 
-// Mediator
-@interface UiMediator : NSObject { NSMutableArray *_events; }
-- (void)notifySender:(NSString *)sender event:(NSString *)event;
-- (NSArray *)events;
-@end
-@implementation UiMediator
-- (instancetype)init { if ((self = [super init])) _events = [NSMutableArray array]; return self; }
-- (void)notifySender:(NSString *)sender event:(NSString *)event { if ([sender isEqualToString:@"button"] && [event isEqualToString:@"click"]) [_events addObject:@"panel.refresh"]; if ([sender isEqualToString:@"panel"] && [event isEqualToString:@"loaded"]) [_events addObject:@"button.enable"]; }
-- (NSArray *)events { return _events; }
-@end
-static BOOL mediatorPattern(void) { UiMediator *m = [UiMediator new]; [m notifySender:@"button" event:@"click"]; [m notifySender:@"panel" event:@"loaded"]; return [[m events] isEqualToArray:@[@"panel.refresh", @"button.enable"]]; }
-
-// Memento
-@interface Editor : NSObject { NSString *_state; }
-- (instancetype)initWithState:(NSString *)state; - (NSString *)save; - (void)restore:(NSString *)snapshot; - (void)setState:(NSString *)state; - (NSString *)state;
-@end
-@implementation Editor
-- (instancetype)initWithState:(NSString *)state { if ((self = [super init])) _state = [state copy]; return self; }
-- (NSString *)save { return [_state copy]; }
-- (void)restore:(NSString *)snapshot { _state = [snapshot copy]; }
-- (void)setState:(NSString *)state { _state = [state copy]; }
-- (NSString *)state { return _state; }
-@end
-static BOOL mementoPattern(void) { Editor *e = [[Editor alloc] initWithState:@"draft"]; NSString *snapshot = [e save]; [e setState:@"published"]; BOOL changed = [[e state] isEqualToString:@"published"]; [e restore:snapshot]; return changed && [[e state] isEqualToString:@"draft"]; }
+// Mediator: delegate to the individually addressable canonical source.
+static BOOL mediatorPattern(void) { return verifyMediator(); }
 
 // Observer delegates to the individually addressable canonical source.
 #define GENKIDAMA_OBSERVER_NO_MAIN
@@ -339,7 +323,7 @@ static BOOL nullObjectPattern(void) { return [[[RealLogger new] log:@"processed:
 int main(void) {
     @autoreleasepool {
         BOOL (*cases[])(void) = {
-            commandPattern, interpreterPattern, iteratorPattern, mediatorPattern, mementoPattern, observerPattern, statePattern, strategyPattern, templateMethodPattern, visitorPattern,
+            commandPattern, interpreterPattern, iteratorPattern, mediatorPattern, verifyMementoCanonical, observerPattern, statePattern, strategyPattern, templateMethodPattern, visitorPattern,
             mvcPattern, mvvmPattern, microkernelPattern, microservicesPattern, enterpriseAdapterPattern, enterpriseBridgePattern, enterpriseFacadePattern, brokerPattern, messageBusPattern, serviceLocatorPattern,
             activeObjectPattern, monitorObjectPattern, halfSyncHalfAsyncPattern, leaderFollowersPattern, clientServerPattern, peerToPeerPattern, publishSubscribePattern, distributedProxyPattern,
             presentationAbstractionControlPattern, modelViewPresenterPattern, documentViewPattern, activeRecordPattern, dataMapperPattern, unitOfWorkPattern, repositoryPattern,
