@@ -65,11 +65,8 @@ def state() -> None:
 
 
 def strategy() -> None:
-    def choose(values, strategy_fn):
-        return strategy_fn(values)
-
-    assert choose([3, 1, 2], min) == 1
-    assert choose([3, 1, 2], max) == 3
+    module = run_path("src/Scripting/PythonPY/strategy.py")
+    module["verify"]()
 
 
 def template_method() -> None:
