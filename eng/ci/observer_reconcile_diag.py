@@ -8,10 +8,10 @@ from pathlib import Path
 BASE = "505f331b1d10644474beb55a8d8aeb1138fb791a"
 OBSERVER = "48cc70c7ecf91d6d8e8f4f350daf12eea46f0a43"
 
-# dart_contracts.py has a true same-block overlap (Memento + Observer) and is
-# composed explicitly below. The remaining unresolved files use guarded replay.
+# dart_contracts.py and native_patterns.py have true same-block overlaps
+# (Memento + Observer) and are composed explicitly below. The remaining
+# unresolved files use guarded replay.
 PATHS = [
-    "eng/ci/adapters/native_patterns.py",
     "eng/ci/adapters/platform_patterns.py",
     "eng/ci/adapters/platform_source_contracts.py",
     "src/DataScience/Julia/pattern_sweep.jl",
@@ -70,6 +70,14 @@ def compose_dart_contracts() -> None:
     path = "eng/ci/adapters/dart_contracts.py"
     old = '''def patterns() -> None:\n    sweep = ROOT / "src/Web/Dart/pattern_sweep.dart"\n    mediator = ROOT / "src/Web/Dart/mediator.dart"\n    memento = ROOT / "src/Web/Dart/memento.dart"\n    sources = [str(sweep), str(mediator), str(memento)]\n    run(["dart", "format", "--output=none", "--set-exit-if-changed", *sources])\n    run(["dart", "analyze", "--fatal-infos", "--fatal-warnings", *sources])\n    require(\n        last_line(run(["dart", "run", str(mediator)], capture=True)) == "Dart Mediator: passed",\n        "Dart Mediator canonical output mismatch",\n    )\n    require(\n        last_line(run(["dart", "run", str(memento)], capture=True)) == "Dart Memento: passed",\n        "Dart Memento canonical output mismatch",\n    )\n    require(\n        last_line(run(["dart", "run", str(sweep)], capture=True)) == "Dart pattern sweep: 39/39 examples passed",\n        "Dart aggregate output mismatch",\n    )\n'''
     new = '''def patterns() -> None:\n    sweep = ROOT / "src/Web/Dart/pattern_sweep.dart"\n    mediator = ROOT / "src/Web/Dart/mediator.dart"\n    memento = ROOT / "src/Web/Dart/memento.dart"\n    observer = ROOT / "src/Web/Dart/observer.dart"\n    observer_verify = ROOT / "src/Web/Dart/observer_verify.dart"\n    sources = [str(sweep), str(mediator), str(memento), str(observer), str(observer_verify)]\n    run(["dart", "format", "--output=none", "--set-exit-if-changed", *sources])\n    run(["dart", "analyze", "--fatal-infos", "--fatal-warnings", *sources])\n    require(\n        last_line(run(["dart", "run", str(mediator)], capture=True)) == "Dart Mediator: passed",\n        "Dart Mediator canonical output mismatch",\n    )\n    require(\n        last_line(run(["dart", "run", str(memento)], capture=True)) == "Dart Memento: passed",\n        "Dart Memento canonical output mismatch",\n    )\n    require(\n        last_line(run(["dart", "run", str(sweep)], capture=True)) == "Dart pattern sweep: 39/39 examples passed",\n        "Dart aggregate output mismatch",\n    )\n    require(\n        last_line(run(["dart", "run", str(observer_verify)], capture=True)) == "Dart Observer: passed",\n        "Dart Observer output mismatch",\n    )\n'''
+    replace_once(path, old, new)
+    print(f"{path}: explicit Memento + Observer composition PASS", flush=True)
+
+
+def compose_native_go_contracts() -> None:
+    path = "eng/ci/adapters/native_patterns.py"
+    old = '''def validate_go() -> int:\n    sweep = ROOT / "src/Systems/Go/pattern_sweep.go"\n    canonical = ROOT / "src/Systems/Go/memento.go"\n    canonical_test = ROOT / "src/Systems/Go/memento_test.go"\n    for source, label in (\n        (sweep, "Go pattern_sweep.go"),\n        (canonical, "Go memento.go canonical"),\n        (canonical_test, "Go memento_test.go canonical test"),\n    ):\n        if not source.is_file():\n            raise ContractError(f"{label} is missing")\n\n    run(["go", "version"])\n    for source, label in (\n        (canonical, "Go Memento canonical"),\n        (canonical_test, "Go Memento canonical test"),\n        (sweep, "Go pattern sweep"),\n    ):\n        unformatted = run(["gofmt", "-l", str(source)], capture=True).strip()\n        if unformatted:\n            raise ContractError(f"{label} is not gofmt-clean: {unformatted}")\n\n    run(["go", "vet", str(canonical), str(canonical_test)])\n    run(["go", "test", "-run", "^TestMementoCanonical$", "-count=1", str(canonical), str(canonical_test)])\n    print("Go Memento: passed", flush=True)\n\n    run(["go", "vet", str(sweep), str(canonical)])\n    output = run(["go", "run", str(sweep), str(canonical)], capture=True).strip()\n    expected = "Go pattern sweep: 39/39 examples passed"\n    if output != expected:\n        raise ContractError(f"Go pattern sweep output mismatch: expected {expected!r}, got {output!r}")\n    print(output, flush=True)\n    return EXPECTED + 1\n'''
+    new = '''def validate_go() -> int:\n    sweep = ROOT / "src/Systems/Go/pattern_sweep.go"\n    memento = ROOT / "src/Systems/Go/memento.go"\n    memento_test = ROOT / "src/Systems/Go/memento_test.go"\n    observer = ROOT / "src/Systems/Go/observer.go"\n    for source, label in (\n        (sweep, "Go pattern_sweep.go"),\n        (memento, "Go memento.go canonical"),\n        (memento_test, "Go memento_test.go canonical test"),\n        (observer, "Go observer.go canonical"),\n    ):\n        if not source.is_file():\n            raise ContractError(f"{label} is missing")\n\n    run(["go", "version"])\n    for source, label in (\n        (memento, "Go Memento canonical"),\n        (memento_test, "Go Memento canonical test"),\n        (observer, "Go Observer canonical"),\n        (sweep, "Go pattern sweep"),\n    ):\n        unformatted = run(["gofmt", "-l", str(source)], capture=True).strip()\n        if unformatted:\n            raise ContractError(f"{label} is not gofmt-clean: {unformatted}")\n\n    run(["go", "vet", str(memento), str(memento_test)])\n    run(["go", "test", "-run", "^TestMementoCanonical$", "-count=1", str(memento), str(memento_test)])\n    print("Go Memento: passed", flush=True)\n\n    run(["go", "vet", str(sweep), str(memento), str(observer)])\n    output = run(["go", "run", str(sweep), str(memento), str(observer)], capture=True).strip()\n    expected = "Go pattern sweep: 39/39 examples passed"\n    if output != expected:\n        raise ContractError(f"Go pattern sweep output mismatch: expected {expected!r}, got {output!r}")\n    print(output, flush=True)\n\n    verifier = observer.parent / "observer_verify_tmp.go"\n    verifier.write_text(\n        'package main\\n\\nimport "fmt"\\n\\nfunc main() {\\n\\tif !observerExamplePasses() { panic("Observer canonical failed") }\\n\\tfmt.Println("Go Observer: passed")\\n}\\n',\n        encoding="utf-8",\n    )\n    try:\n        unformatted_verifier = run(["gofmt", "-l", str(verifier)], capture=True).strip()\n        if unformatted_verifier:\n            run(["gofmt", "-w", str(verifier)])\n        run(["go", "vet", str(observer), str(verifier)])\n        observer_output = run(["go", "run", str(observer), str(verifier)], capture=True).strip()\n        if observer_output != "Go Observer: passed":\n            raise ContractError(f"Go Observer canonical output mismatch: {observer_output!r}")\n        print(observer_output, flush=True)\n    finally:\n        verifier.unlink(missing_ok=True)\n\n    return EXPECTED + 2\n'''
     replace_once(path, old, new)
     print(f"{path}: explicit Memento + Observer composition PASS", flush=True)
 
@@ -146,9 +154,10 @@ def replay_path(path: str) -> None:
 
 def main() -> int:
     compose_dart_contracts()
+    compose_native_go_contracts()
     for path in PATHS:
         replay_path(path)
-    print(f"Observer semantic replay: PASS files={len(PATHS) + 1}", flush=True)
+    print(f"Observer semantic replay: PASS files={len(PATHS) + 2}", flush=True)
     return 0
 
 
