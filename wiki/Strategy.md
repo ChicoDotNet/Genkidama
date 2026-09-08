@@ -2,8 +2,8 @@
 
 > **Familia:** Behavioral  
 > **Intención:** Encapsular algoritmos o políticas intercambiables detrás de un mismo contrato para poder elegirlos sin cambiar al consumidor.  
-> **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `42/49` Applicable con canónico individual direccionable verificado; 7 Applicable aún requieren implementación o verificación canónica.  
+> **Estado:** `validated`  
+> **Implementaciones de lenguaje:** `49/49` Applicable con canónico individual direccionable y verificado.  
 > **Cobertura de pruebas:** `N/A` agregada — la matriz polyglot usa compile/analyze/runtime/source-contract según ecosistema; el piso de 44% aplica donde exista coverage significativo.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -84,7 +84,7 @@ Si sólo existe una fórmula estable o una única bifurcación trivial que no cr
 
 ## En Genkidama
 
-La filosofía del repositorio menciona Strategy como una opción natural para canales de notificación y modos de autenticación, pero esta reconciliación todavía no acredita un uso productivo deliberado específico sin enlazar primero una implementación real. Por ahora, la ficha no fuerza arquitectura productiva ni convierte similitudes accidentales en evidencia del patrón.
+La filosofía del repositorio menciona Strategy como una opción natural para canales de notificación y modos de autenticación, pero esta reconciliación no acredita un uso productivo deliberado específico sin enlazar una implementación real. La ficha no fuerza arquitectura productiva ni convierte similitudes accidentales en evidencia del patrón.
 
 ## Cuándo usarlo
 
@@ -149,67 +149,67 @@ Extraer algoritmos pero mantener un `switch` distribuido por todo el sistema só
 
 ## Validación automatizada
 
-Los heads `e070b33a75a65890f0df4135c3e5101c8ff5e320`, `074938eefd3a7dcbaa62874ada18a18e78e0ec0d` y `5b540045bfa06db1bac2e2ad0ee64d7b45104afa` completaron Quality, Product CI y Polyglot CI en verde, acreditando respectivamente Objective-C, VBA y GDScript después de sus validaciones exact-head. Zig, Julia y Objective-C ya delegan sus sweeps a los canónicos; la deuda de implementaciones Strategy duplicadas en runners está pagada.
+El head `ff8aa6d0182cdb054b28df219cf5ab83f839b12b` completó Quality, Product CI y Polyglot CI en verde. Polyglot certificó todos los cohorts aplicables del catálogo, incluido `Platform / portable + source contracts` con Assembly, Godot, MicroPython y Rockstar reales; Functional con OCaml/Common Lisp/Prolog; JVM; GNU-family; scripting; MATLAB; long-tail; Data/Shell; BEAM; Go; Rust; Swift; Web y .NET.
 
-Perl queda materializado en este incremento con un canónico direccionable y validación `perl -c` + runtime añadida al cohort Scripting, pero no se acredita hasta que el head que contiene esa integración cierre sus checks. Ningún `pattern_sweep.*` se acredita como sustituto de un canónico direccionable.
+Con ese exact-head VERIFY, las 49 celdas Applicable tienen canónico individual direccionable y evidencia proporcional. Los sweeps conservan únicamente responsabilidad de orquestación; la deuda de implementaciones Strategy duplicadas en runners está pagada. Ningún `pattern_sweep.*` se acredita como sustituto de un canónico direccionable.
 
 ## Implementaciones por lenguaje
 
 La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 45 lenguajes v1 y 6 adicionales. Clasificación: **49 Applicable + 2 N/A**.
 
-| Lenguaje | Aplicabilidad | Ejemplo verificado / pendiente | Validación | Nota |
+| Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
-| C# | Applicable | [`Strategy.cs`](../src/Enterprise/C%23/patterns/Strategy.cs) | materializado; VERIFY horizontal pendiente | Delegado/función intercambiable. |
-| TypeScript | Applicable | [`strategy.ts`](../src/Web/TypeScriptTS/patterns/strategy.ts) | materializado; VERIFY horizontal pendiente | Función de orden superior. |
-| Ada | Applicable | [`strategy_pattern.adb`](../src/Systems/Ada/strategy_pattern.adb) | materializado; VERIFY horizontal pendiente | Access-to-function. |
-| Solidity | Applicable | [`Strategy.sol`](../src/Niche/Solidity/patterns/Strategy.sol) | materializado; VERIFY horizontal pendiente | Política seleccionable. |
-| Fortran | Applicable | [`strategy.f90`](../src/Systems/Fortran/patterns/strategy.f90) | materializado; VERIFY horizontal pendiente | Procedimiento intercambiable. |
-| Pascal | Applicable | [`strategy_pattern.pas`](../src/Systems/Pascal/strategy_pattern.pas) | materializado; VERIFY horizontal pendiente | Procedural type/callback. |
+| C# | Applicable | [`Strategy.cs`](../src/Enterprise/C%23/patterns/Strategy.cs) | .NET Pattern contracts; Polyglot verde | Delegado/función intercambiable. |
+| TypeScript | Applicable | [`strategy.ts`](../src/Web/TypeScriptTS/patterns/strategy.ts) | Web Pattern contracts; Polyglot verde | Función de orden superior. |
+| Ada | Applicable | [`strategy_pattern.adb`](../src/Systems/Ada/strategy_pattern.adb) | GNU-family compile/runtime; Polyglot verde | Access-to-function. |
+| Solidity | Applicable | [`Strategy.sol`](../src/Niche/Solidity/patterns/Strategy.sol) | Web Pattern contracts; Polyglot verde | Política seleccionable. |
+| Fortran | Applicable | [`strategy.f90`](../src/Systems/Fortran/patterns/strategy.f90) | GNU-family compile/runtime; Polyglot verde | Procedimiento intercambiable. |
+| Pascal | Applicable | [`strategy_pattern.pas`](../src/Systems/Pascal/strategy_pattern.pas) | GNU-family compile/runtime; Polyglot verde | Procedural type/callback. |
 | Python | Applicable | [`strategy.py`](../src/Scripting/PythonPY/strategy.py) | `py_compile` + runtime; Polyglot verde | Función de orden superior; sweep delegado al canónico. |
-| Visual Basic .NET | Applicable | [`Strategy.vb`](../src/Enterprise/VB.NET/patterns/Strategy.vb) | materializado; VERIFY horizontal pendiente | Delegate/interfaz. |
+| Visual Basic .NET | Applicable | [`Strategy.vb`](../src/Enterprise/VB.NET/patterns/Strategy.vb) | .NET Pattern contracts; Polyglot verde | Delegate/interfaz. |
 | C++ | Applicable | [`strategy.cpp`](../src/Systems/C%2B%2B/patterns/strategy.cpp) | compile + runtime; Polyglot verde | `std::function` intercambiable. |
-| Objective-C | Applicable | [`strategy.m`](../src/Systems/Objective-C/patterns/strategy.m) | runtime/sweep 39/39; Long-tail y Polyglot verdes | Block + `verifyStrategy()`; sweep delegado al canónico. |
-| Java | Applicable | [`strategy.java`](../src/Enterprise/Java/patterns/strategy.java) | `javac -Xlint:all -Werror` + runtime; Polyglot verde | `IntUnaryOperator` pasado al mismo contexto. |
+| Objective-C | Applicable | [`strategy.m`](../src/Systems/Objective-C/patterns/strategy.m) | runtime/sweep; Long-tail y Polyglot verdes | Block + `verifyStrategy()`; sweep delegado al canónico. |
+| Java | Applicable | [`strategy.java`](../src/Enterprise/Java/patterns/strategy.java) | JVM compile/runtime; Polyglot verde | `IntUnaryOperator` pasado al mismo contexto. |
 | Rust | Applicable | [`strategy.rs`](../src/Systems/Rust/patterns/strategy.rs) | compile + runtime; Polyglot verde | Closure genérica `Fn`. |
-| Zig | Applicable | [`strategy.zig`](../src/Systems/Zig/patterns/strategy.zig) | runtime/sweep 39/39; Long-tail y Polyglot verdes | Function pointer; sweep delegado a `verifyStrategy()`. |
+| Zig | Applicable | [`strategy.zig`](../src/Systems/Zig/patterns/strategy.zig) | runtime/sweep; Long-tail y Polyglot verdes | Function pointer; sweep delegado a `verifyStrategy()`. |
 | Go | Applicable | [`strategy.go`](../src/Systems/Go/strategy.go) | `gofmt` + `go vet` + runtime; Polyglot verde | Function value pasado al contexto; sweep delegado al canónico. |
-| PHP | Applicable | [`strategy.php`](../src/Scripting/PHP/patterns/strategy.php) | materializado; VERIFY horizontal pendiente | Callable/closure. |
-| Nim | Applicable | [`strategy_example.nim`](../src/Niche/Nim/patterns/strategy_example.nim) | materializado; VERIFY horizontal pendiente | Proc value. |
-| Dart | Applicable | [`strategy.dart`](../src/Web/Dart/patterns/strategy.dart) | analyzer + runtime/sweep 39/39; Polyglot verde | Function value; sweep delegado a `verifyStrategy()`. |
-| Kotlin | Applicable | [`Strategy.kt`](../src/Enterprise/Kotlin/patterns/Strategy.kt) | materializado; VERIFY horizontal pendiente | Lambda/interface. |
-| Swift | Applicable | [`Strategy.swift`](../src/Systems/Swift/patterns/Strategy.swift) | materializado; VERIFY horizontal pendiente | Closure/protocol. |
-| F# | Applicable | [`Strategy.fsx`](../src/Functional/F%23/patterns/Strategy.fsx) | materializado; VERIFY horizontal pendiente | Función de orden superior. |
-| Crystal | Applicable | [`strategy.cr`](../src/Niche/Crystal/patterns/strategy.cr) | runtime/sweep 39/39; Long-tail y Polyglot verdes | Proc/objeto intercambiable; sweep delegado al canónico. |
-| Lua | Applicable | [`strategy.lua`](../src/Scripting/Lua/patterns/strategy.lua) | materializado; VERIFY horizontal pendiente | Funciones en tabla. |
+| PHP | Applicable | [`strategy.php`](../src/Scripting/PHP/patterns/strategy.php) | Scripting Pattern contracts; Polyglot verde | Callable/closure. |
+| Nim | Applicable | [`strategy_example.nim`](../src/Niche/Nim/patterns/strategy_example.nim) | Long-tail Pattern contracts; Polyglot verde | Proc value. |
+| Dart | Applicable | [`strategy.dart`](../src/Web/Dart/patterns/strategy.dart) | analyzer + runtime/sweep; Polyglot verde | Function value; sweep delegado a `verifyStrategy()`. |
+| Kotlin | Applicable | [`Strategy.kt`](../src/Enterprise/Kotlin/patterns/Strategy.kt) | JVM Pattern contracts; Polyglot verde | Lambda/interface. |
+| Swift | Applicable | [`Strategy.swift`](../src/Systems/Swift/patterns/Strategy.swift) | Swift Pattern contracts; Polyglot verde | Closure/protocol. |
+| F# | Applicable | [`Strategy.fsx`](../src/Functional/F%23/patterns/Strategy.fsx) | .NET Pattern contracts; Polyglot verde | Función de orden superior. |
+| Crystal | Applicable | [`strategy.cr`](../src/Niche/Crystal/patterns/strategy.cr) | runtime/sweep; Long-tail y Polyglot verdes | Proc/objeto intercambiable; sweep delegado al canónico. |
+| Lua | Applicable | [`strategy.lua`](../src/Scripting/Lua/patterns/strategy.lua) | Scripting Pattern contracts; Polyglot verde | Funciones en tabla. |
 | Haskell | Applicable | [`Strategy.hs`](../src/Functional/Haskell/patterns/Strategy.hs) | canónico ejecutado por sweep; Long-tail y Polyglot verdes | Función como estrategia; runner deduplicado. |
-| COBOL | Applicable | [`strategy_pattern.cpy`](../src/Historical/Cobol/patterns/strategy_pattern.cpy) | materializado; VERIFY horizontal pendiente | Dispatch procedural. |
-| Scala | Applicable | [`Strategy.scala`](../src/Functional/Scala/patterns/Strategy.scala) | materializado; VERIFY horizontal pendiente | Function value/trait. |
+| COBOL | Applicable | [`strategy_pattern.cpy`](../src/Historical/Cobol/patterns/strategy_pattern.cpy) | GNU-family compile/runtime; Polyglot verde | Dispatch procedural. |
+| Scala | Applicable | [`Strategy.scala`](../src/Functional/Scala/patterns/Strategy.scala) | JVM Pattern contracts; Polyglot verde | Function value/trait. |
 | Groovy | Applicable | [`strategy.groovy`](../src/Functional/Groovy/patterns/strategy.groovy) | runtime individual en JVM cohort; Polyglot verde | Closure pasada al contexto `choose`. |
-| Ruby | Applicable | [`strategy.rb`](../src/Scripting/Ruby/patterns/strategy.rb) | materializado; VERIFY horizontal pendiente | Proc/module function. |
+| Ruby | Applicable | [`strategy.rb`](../src/Scripting/Ruby/patterns/strategy.rb) | Scripting Pattern contracts; Polyglot verde | Proc/module function. |
 | C | Applicable | [`strategy.c`](../src/Systems/C/patterns/strategy.c) | compile + runtime; Polyglot verde | Function pointer pasado al contexto. |
-| OCaml | Applicable | [`strategy.ml`](../src/Functional/OCaml/patterns/strategy.ml) | materializado; VERIFY horizontal pendiente | Función de orden superior. |
-| Julia | Applicable | [`strategy.jl`](../src/DataScience/Julia/patterns/strategy.jl) | runtime/sweep 39/39; Long-tail y Polyglot verdes | Function value; sweep delegado a `verify_strategy()`. |
+| OCaml | Applicable | [`strategy.ml`](../src/Functional/OCaml/patterns/strategy.ml) | Functional Pattern contracts; Polyglot verde | Función de orden superior. |
+| Julia | Applicable | [`strategy.jl`](../src/DataScience/Julia/patterns/strategy.jl) | runtime/sweep; Long-tail y Polyglot verdes | Function value; sweep delegado a `verify_strategy()`. |
 | VBA | Applicable | [`strategy.bas`](../src/Shell/VBA/strategy.bas) | executable source contract; Polyglot verde | Contrato `IStrategyPricing`; host Office no está disponible razonablemente en Linux CI. |
 | GDScript | Applicable | [`strategy.gd`](../src/Niche/GDScript/strategy.gd) | Godot headless runtime; Polyglot verde | `Callable` intercambiable con regular, VIP y campaña. |
-| JavaScript | Applicable | [`strategy.js`](../src/Web/JavaScriptJS/patterns/strategy.js) | materializado; VERIFY horizontal pendiente | Función de primera clase. |
-| MATLAB | Applicable | [`strategy.m`](../src/DataScience/MATLAB/strategy.m) | materializado; VERIFY horizontal pendiente | Function handle. |
-| Perl | Applicable | [`strategy.pl`](../src/Scripting/Perl/strategy.pl) | `perl -c` + runtime; exact-head VERIFY pendiente | Coderef/subrutina pasada al mismo contexto; rechaza estrategias no-callable. |
-| R | Applicable | [`strategy.R`](../src/DataScience/R/patterns/strategy.R) | materializado; VERIFY horizontal pendiente | Función como argumento. |
-| PowerShell | Applicable | [`strategy.ps1`](../src/Scripting/PowerShell/patterns/strategy.ps1) | materializado; VERIFY horizontal pendiente | ScriptBlock. |
+| JavaScript | Applicable | [`strategy.js`](../src/Web/JavaScriptJS/patterns/strategy.js) | Web Pattern contracts; Polyglot verde | Función de primera clase. |
+| MATLAB | Applicable | [`strategy.m`](../src/DataScience/MATLAB/strategy.m) | MATLAB Pattern contract; Polyglot verde | Function handle. |
+| Perl | Applicable | [`strategy.pl`](../src/Scripting/Perl/strategy.pl) | `perl -c` + runtime; Polyglot verde | Coderef/subrutina pasada al mismo contexto; rechaza estrategias no-callable. |
+| R | Applicable | [`strategy.R`](../src/DataScience/R/patterns/strategy.R) | Data/Shell Pattern contracts; Polyglot verde | Función como argumento. |
+| PowerShell | Applicable | [`strategy.ps1`](../src/Scripting/PowerShell/patterns/strategy.ps1) | Data/Shell/Scripting contracts; Polyglot verde | ScriptBlock. |
 | HTML | N/A | — | — | Markup estático no posee un mecanismo ejecutable para seleccionar/invocar algoritmos; JavaScript es target separado. |
-| Assembly | Applicable | — | pendiente | Tabla/puntero de función o dispatch de rutina. |
-| Elixir | Applicable | [`strategy.exs`](../src/Functional/Elixir/patterns/strategy.exs) | materializado; VERIFY horizontal pendiente | Función/MFA intercambiable. |
-| Shell | Applicable | [`strategy.sh`](../src/Scripting/Bash/patterns/strategy.sh) | materializado; VERIFY horizontal pendiente | Nombre de función/comando como estrategia. |
-| Erlang | Applicable | [`strategy.erl`](../src/Functional/Erlang/patterns/strategy.erl) | materializado; VERIFY horizontal pendiente | Fun/MFA. |
-| Clojure | Applicable | [`strategy.clj`](../src/Functional/Clojure/patterns/strategy.clj) | materializado; VERIFY horizontal pendiente | Función como valor. |
-| Common Lisp | Applicable | [`strategy.lisp`](../src/Functional/CommonLisp/patterns/strategy.lisp) | materializado; VERIFY horizontal pendiente | Function designator. |
-| Prolog | Applicable | — | pendiente | Predicado/política seleccionable. |
-| Delphi | Applicable | — | pendiente | Method pointer/interface/procedure variable. |
-| GNU Octave | Applicable | [`strategy.m`](../src/DataScience/Octave/patterns/strategy.m) | materializado; VERIFY horizontal pendiente | Function handle. |
-| SQL | Applicable | — | pendiente | Política puede expresarse como relación/tabla seleccionable o query strategy sin exigir OO. |
+| Assembly | Applicable | [`strategy.asm`](../src/LowLevel/Assembly/strategy.asm) | NASM compile + link + runtime; Polyglot verde | Puntero a rutina/dispatch de función. |
+| Elixir | Applicable | [`strategy.exs`](../src/Functional/Elixir/patterns/strategy.exs) | BEAM Pattern contracts; Polyglot verde | Función/MFA intercambiable. |
+| Shell | Applicable | [`strategy.sh`](../src/Scripting/Bash/patterns/strategy.sh) | Scripting Pattern contracts; Polyglot verde | Nombre de función/comando como estrategia. |
+| Erlang | Applicable | [`strategy.erl`](../src/Functional/Erlang/patterns/strategy.erl) | BEAM Pattern contracts; Polyglot verde | Fun/MFA. |
+| Clojure | Applicable | [`strategy.clj`](../src/Functional/Clojure/patterns/strategy.clj) | JVM Pattern contracts; Polyglot verde | Función como valor. |
+| Common Lisp | Applicable | [`strategy.lisp`](../src/Functional/CommonLisp/patterns/strategy.lisp) | Functional Pattern contracts; Polyglot verde | Function designator. |
+| Prolog | Applicable | [`strategy.pl`](../src/Functional/Prolog/strategy.pl) | SWI-Prolog runtime; Polyglot verde | Predicado/política seleccionable. |
+| Delphi | Applicable | [`Strategy.pas`](../src/Enterprise/Delphi/Strategy.pas) | executable source contract; Polyglot verde | Contrato abstracto y estrategias sustituibles; DCC no disponible razonablemente en Linux CI. |
+| GNU Octave | Applicable | [`strategy.m`](../src/DataScience/Octave/patterns/strategy.m) | Data/Shell Pattern contracts; Polyglot verde | Function handle. |
+| SQL | Applicable | [`strategy.sql`](../src/Data/SQL/strategy.sql) | SQLite runtime contract; Polyglot verde | Política expresada como relación seleccionable y contexto estable. |
 | CSS | N/A | — | — | CSS selecciona reglas de estilo, no invoca algoritmos intercambiables como responsabilidad ejecutable autónoma. |
-| MicroPython | Applicable | — | pendiente | Callable/función intercambiable. |
-| Rockstar | Applicable | — | pendiente | Funciones seleccionables si el runtime soporta el contrato necesario. |
+| MicroPython | Applicable | [`strategy.py`](../src/Other/MicroPython/strategy.py) | MicroPython runtime; Polyglot verde | Callable/función intercambiable. |
+| Rockstar | Applicable | [`strategy.rock`](../src/Other/Rockstar/strategy.rock) | Rockstar runtime; Polyglot verde | Referencia de función intercambiable pasada al mismo contexto. |
 
 ## Comprueba que lo entendiste
 
@@ -223,7 +223,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 - La sustituibilidad del contrato importa más que la forma OO.
 - Funciones, closures, traits, punteros, módulos y predicados pueden ser implementaciones idiomáticas.
 - State es el vecino más fácil de confundir: cambia por estado interno, no por elección de política.
-- La matriz está en progreso: 42/49 Applicable tienen canónico individual verificado; Perl está materializado pendiente de exact-head VERIFY y quedan seis celdas aún sin canónico.
+- La matriz está completa: 49/49 Applicable tienen canónico individual direccionable y verificado; HTML y CSS son los únicos N/A con justificación técnica.
 
 ## Referencias
 
