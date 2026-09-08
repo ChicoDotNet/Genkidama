@@ -207,6 +207,15 @@ def validate_rockstar_state(rockstar: str) -> None:
     print("PASS Rockstar state.rock", flush=True)
 
 
+def validate_rockstar_strategy(rockstar: str) -> None:
+    source = dc.ROOT / "src/Other/Rockstar/strategy.rock"
+    dc.require(source.is_file(), "Rockstar Strategy canonical missing")
+    output = normalized(dc.run([rockstar, str(source)], capture=True))
+    expected = "strategy=regular:100;vip:80;campaign:75;below:80;missing:invalid"
+    dc.require(output == expected, f"Rockstar Strategy canonical output mismatch: expected={expected!r} actual={output!r}")
+    print("PASS Rockstar strategy.rock", flush=True)
+
+
 def validate_portable() -> None:
     dc.run([sys.executable, "eng/ci/adapters/platform_source_contracts.py"])
     validate_vba_state()
@@ -256,6 +265,7 @@ def validate_portable() -> None:
     memento_output = dc.run([rockstar, str(dc.ROOT / "src/Other/Rockstar/memento.rock")], capture=True)
     dc.require(dc.last_line(memento_output) == "Rockstar Memento: passed", "Rockstar Memento contract failed")
     validate_rockstar_state(rockstar)
+    validate_rockstar_strategy(rockstar)
 
 
 def main() -> int:
