@@ -114,6 +114,14 @@ def main() -> int:
         "Perl State output mismatch",
     )
 
+    perl_strategy = dc.ROOT / "src/Scripting/Perl/strategy.pl"
+    dc.require(perl_strategy.is_file(), "Perl Strategy canonical source missing")
+    dc.run([str(perl), "-c", str(perl_strategy)])
+    dc.require(
+        dc.last_line(dc.run([str(perl), str(perl_strategy)], capture=True)) == "Perl Strategy: passed",
+        "Perl Strategy behavioral contract failed",
+    )
+
     ruby_files = dc.exact_glob(dc.ROOT / "src/Scripting/Ruby/patterns", "*.rb", "Ruby")
     for source in ruby_files:
         dc.run(["ruby", "-c", str(source)])

@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Encapsular algoritmos o políticas intercambiables detrás de un mismo contrato para poder elegirlos sin cambiar al consumidor.  
 > **Estado:** `in-progress`  
-> **Implementaciones de lenguaje:** `37/49` Applicable con canónico individual direccionable verificado; 12 Applicable aún requieren extracción, implementación, delegación o reparación canónica.  
+> **Implementaciones de lenguaje:** `42/49` Applicable con canónico individual direccionable verificado; 7 Applicable aún requieren implementación o verificación canónica.  
 > **Cobertura de pruebas:** `N/A` agregada — la matriz polyglot usa compile/analyze/runtime/source-contract según ecosistema; el piso de 44% aplica donde exista coverage significativo.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -149,9 +149,9 @@ Extraer algoritmos pero mantener un `switch` distribuido por todo el sistema só
 
 ## Validación automatizada
 
-El head `b7bbeb0cf26adeab5bb0045cb72165e4abc85e85` completó Quality, Product CI y Polyglot CI en verde. Python, Haskell, Go, Dart y Crystal permanecen delegados a sus canónicos. Dart conserva el contrato agregado `Dart pattern sweep: 39/39 examples passed`; Crystal conserva su sweep canónico verificado y queda acreditado sin una segunda implementación inline.
+Los heads `e070b33a75a65890f0df4135c3e5101c8ff5e320`, `074938eefd3a7dcbaa62874ada18a18e78e0ec0d` y `5b540045bfa06db1bac2e2ad0ee64d7b45104afa` completaron Quality, Product CI y Polyglot CI en verde, acreditando respectivamente Objective-C, VBA y GDScript después de sus validaciones exact-head. Zig, Julia y Objective-C ya delegan sus sweeps a los canónicos; la deuda de implementaciones Strategy duplicadas en runners está pagada.
 
-Zig, Julia y Objective-C ya tienen canónicos individuales materializados y enlazados abajo. Se mantienen pendientes de crédito final mientras sus sweeps conserven la implementación Strategy histórica en vez de delegar al canónico. Ningún `pattern_sweep.*` se acredita como sustituto de un canónico direccionable.
+Perl queda materializado en este incremento con un canónico direccionable y validación `perl -c` + runtime añadida al cohort Scripting, pero no se acredita hasta que el head que contiene esa integración cierre sus checks. Ningún `pattern_sweep.*` se acredita como sustituto de un canónico direccionable.
 
 ## Implementaciones por lenguaje
 
@@ -168,10 +168,10 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Python | Applicable | [`strategy.py`](../src/Scripting/PythonPY/strategy.py) | `py_compile` + runtime; Polyglot verde | Función de orden superior; sweep delegado al canónico. |
 | Visual Basic .NET | Applicable | [`Strategy.vb`](../src/Enterprise/VB.NET/patterns/Strategy.vb) | materializado; VERIFY horizontal pendiente | Delegate/interfaz. |
 | C++ | Applicable | [`strategy.cpp`](../src/Systems/C%2B%2B/patterns/strategy.cpp) | compile + runtime; Polyglot verde | `std::function` intercambiable. |
-| Objective-C | Applicable | [`strategy.m`](../src/Systems/Objective-C/patterns/strategy.m) | materializado; delegación del sweep pendiente | Puede expresarse idiomáticamente con block. |
+| Objective-C | Applicable | [`strategy.m`](../src/Systems/Objective-C/patterns/strategy.m) | runtime/sweep 39/39; Long-tail y Polyglot verdes | Block + `verifyStrategy()`; sweep delegado al canónico. |
 | Java | Applicable | [`strategy.java`](../src/Enterprise/Java/patterns/strategy.java) | `javac -Xlint:all -Werror` + runtime; Polyglot verde | `IntUnaryOperator` pasado al mismo contexto. |
 | Rust | Applicable | [`strategy.rs`](../src/Systems/Rust/patterns/strategy.rs) | compile + runtime; Polyglot verde | Closure genérica `Fn`. |
-| Zig | Applicable | [`strategy.zig`](../src/Systems/Zig/patterns/strategy.zig) | materializado; delegación del sweep pendiente | Function pointer/comptime strategy. |
+| Zig | Applicable | [`strategy.zig`](../src/Systems/Zig/patterns/strategy.zig) | runtime/sweep 39/39; Long-tail y Polyglot verdes | Function pointer; sweep delegado a `verifyStrategy()`. |
 | Go | Applicable | [`strategy.go`](../src/Systems/Go/strategy.go) | `gofmt` + `go vet` + runtime; Polyglot verde | Function value pasado al contexto; sweep delegado al canónico. |
 | PHP | Applicable | [`strategy.php`](../src/Scripting/PHP/patterns/strategy.php) | materializado; VERIFY horizontal pendiente | Callable/closure. |
 | Nim | Applicable | [`strategy_example.nim`](../src/Niche/Nim/patterns/strategy_example.nim) | materializado; VERIFY horizontal pendiente | Proc value. |
@@ -188,12 +188,12 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Ruby | Applicable | [`strategy.rb`](../src/Scripting/Ruby/patterns/strategy.rb) | materializado; VERIFY horizontal pendiente | Proc/module function. |
 | C | Applicable | [`strategy.c`](../src/Systems/C/patterns/strategy.c) | compile + runtime; Polyglot verde | Function pointer pasado al contexto. |
 | OCaml | Applicable | [`strategy.ml`](../src/Functional/OCaml/patterns/strategy.ml) | materializado; VERIFY horizontal pendiente | Función de orden superior. |
-| Julia | Applicable | [`strategy.jl`](../src/DataScience/Julia/patterns/strategy.jl) | materializado; delegación del sweep pendiente | Function value/multiple dispatch. |
-| VBA | Applicable | — | pendiente | Function dispatch/módulo; host Office puede limitar runtime CI. |
-| GDScript | Applicable | — | pendiente | Callable/objeto strategy. |
+| Julia | Applicable | [`strategy.jl`](../src/DataScience/Julia/patterns/strategy.jl) | runtime/sweep 39/39; Long-tail y Polyglot verdes | Function value; sweep delegado a `verify_strategy()`. |
+| VBA | Applicable | [`strategy.bas`](../src/Shell/VBA/strategy.bas) | executable source contract; Polyglot verde | Contrato `IStrategyPricing`; host Office no está disponible razonablemente en Linux CI. |
+| GDScript | Applicable | [`strategy.gd`](../src/Niche/GDScript/strategy.gd) | Godot headless runtime; Polyglot verde | `Callable` intercambiable con regular, VIP y campaña. |
 | JavaScript | Applicable | [`strategy.js`](../src/Web/JavaScriptJS/patterns/strategy.js) | materializado; VERIFY horizontal pendiente | Función de primera clase. |
 | MATLAB | Applicable | [`strategy.m`](../src/DataScience/MATLAB/strategy.m) | materializado; VERIFY horizontal pendiente | Function handle. |
-| Perl | Applicable | — | pendiente | Coderef/subrutina. |
+| Perl | Applicable | [`strategy.pl`](../src/Scripting/Perl/strategy.pl) | `perl -c` + runtime; exact-head VERIFY pendiente | Coderef/subrutina pasada al mismo contexto; rechaza estrategias no-callable. |
 | R | Applicable | [`strategy.R`](../src/DataScience/R/patterns/strategy.R) | materializado; VERIFY horizontal pendiente | Función como argumento. |
 | PowerShell | Applicable | [`strategy.ps1`](../src/Scripting/PowerShell/patterns/strategy.ps1) | materializado; VERIFY horizontal pendiente | ScriptBlock. |
 | HTML | N/A | — | — | Markup estático no posee un mecanismo ejecutable para seleccionar/invocar algoritmos; JavaScript es target separado. |
@@ -223,7 +223,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 - La sustituibilidad del contrato importa más que la forma OO.
 - Funciones, closures, traits, punteros, módulos y predicados pueden ser implementaciones idiomáticas.
 - State es el vecino más fácil de confundir: cambia por estado interno, no por elección de política.
-- La matriz está en progreso: 37/49 Applicable tienen canónico individual verificado; 12 requieren cierre antes de `validated`.
+- La matriz está en progreso: 42/49 Applicable tienen canónico individual verificado; Perl está materializado pendiente de exact-head VERIFY y quedan seis celdas aún sin canónico.
 
 ## Referencias
 
