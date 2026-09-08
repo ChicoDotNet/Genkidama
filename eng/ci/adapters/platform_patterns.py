@@ -190,6 +190,14 @@ def validate_micropython_state(micropython: str) -> None:
     print("PASS MicroPython state.py", flush=True)
 
 
+def validate_micropython_strategy(micropython: str) -> None:
+    source = dc.ROOT / "src/Other/MicroPython/strategy.py"
+    dc.require(source.is_file(), "MicroPython Strategy canonical missing")
+    output = dc.run([micropython, str(source)], capture=True)
+    dc.require("MicroPython Strategy: passed" in output.splitlines(), "MicroPython Strategy canonical output mismatch")
+    print("PASS MicroPython strategy.py", flush=True)
+
+
 def validate_rockstar_state(rockstar: str) -> None:
     source = dc.ROOT / "src/Other/Rockstar/state.rock"
     dc.require(source.is_file(), "Rockstar State canonical missing")
@@ -233,6 +241,7 @@ def validate_portable() -> None:
     memento_output = dc.run([micropython, str(dc.ROOT / "src/Other/MicroPython/memento.py")], capture=True)
     dc.require(dc.last_line(memento_output) == "MicroPython Memento: passed", "MicroPython Memento contract failed")
     validate_micropython_state(micropython)
+    validate_micropython_strategy(micropython)
 
     rockstar = os.environ.get("GENKIDAMA_ROCKSTAR_BIN")
     dc.require(bool(rockstar), "GENKIDAMA_ROCKSTAR_BIN is required")
