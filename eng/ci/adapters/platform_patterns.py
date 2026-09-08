@@ -173,6 +173,14 @@ def validate_gdscript_state(godot: str) -> None:
     print("PASS GDScript state.gd", flush=True)
 
 
+def validate_gdscript_strategy(godot: str) -> None:
+    source = dc.ROOT / "src/Niche/GDScript/strategy.gd"
+    dc.require(source.is_file(), "GDScript Strategy canonical missing")
+    output = dc.run([godot, "--headless", "--script", str(source)], capture=True)
+    dc.require("GDScript Strategy: passed" in output.splitlines(), "GDScript Strategy behavioral contract failed")
+    print("PASS GDScript strategy.gd", flush=True)
+
+
 def validate_micropython_state(micropython: str) -> None:
     source = dc.ROOT / "src/Other/MicroPython/state.py"
     dc.require(source.is_file(), "MicroPython State canonical missing")
@@ -210,6 +218,7 @@ def validate_portable() -> None:
     observer_marker = "observer=audit:draft,published;dashboard:draft;duplicate=rejected;second-unsubscribe=rejected"
     dc.require(observer_marker in observer_output.splitlines(), "GDScript Observer behavioral contract failed")
     validate_gdscript_state(godot)
+    validate_gdscript_strategy(godot)
 
     micropython = os.environ.get("GENKIDAMA_MICROPYTHON_BIN", "/tmp/micropython/ports/unix/build-standard/micropython")
     output = dc.run([micropython, str(dc.ROOT / "src/Other/MicroPython/example1.py")], capture=True)
