@@ -120,6 +120,9 @@ def main() -> int:
     ocaml_files = exact_files(ROOT / "src/Functional/OCaml/patterns", ".ml", "OCaml")
     lisp_files = exact_files(ROOT / "src/Functional/CommonLisp/patterns", ".lisp", "Common Lisp")
     prolog_files = exact_files(ROOT / "src/Functional/Prolog/patterns", ".pl", "Prolog")
+    prolog_strategy = ROOT / "src/Functional/Prolog/strategy.pl"
+    if not prolog_strategy.is_file():
+        raise ContractError(f"Prolog Strategy canonical missing: {prolog_strategy}")
 
     stem_sets = {
         "OCaml": {path.stem for path in ocaml_files},
@@ -175,10 +178,20 @@ def main() -> int:
             run([*swipl, "-q", "-f", source_in_repo])
             print(f"PASS Prolog {source.name}", flush=True)
 
+        strategy_in_repo = prolog_strategy.relative_to(ROOT).as_posix()
+        strategy_output = run([*swipl, "-q", "-f", strategy_in_repo], capture=True)
+        expected_strategy = "Prolog Strategy: regular=100;vip=80;campaign=75;below=80"
+        if expected_strategy not in strategy_output:
+            raise ContractError(
+                f"Prolog Strategy output missing {expected_strategy!r}: {strategy_output!r}"
+            )
+        print("PASS Prolog strategy.pl", flush=True)
+
     print(f"OCaml pattern cells: {EXPECTED}/{EXPECTED} passed", flush=True)
     print(f"Common Lisp pattern cells: {EXPECTED}/{EXPECTED} passed", flush=True)
     print(f"Prolog pattern cells: {EXPECTED}/{EXPECTED} passed", flush=True)
-    print(f"Functional Patterns contract: PASS validations={EXPECTED * 3}", flush=True)
+    print("Prolog Strategy canonical: PASS", flush=True)
+    print(f"Functional Patterns contract: PASS validations={EXPECTED * 3 + 1}", flush=True)
     return 0
 
 
