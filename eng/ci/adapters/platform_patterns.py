@@ -38,6 +38,7 @@ ASSEMBLY_CONTRACTS: dict[str, str] = {
     "proxy.asm": "backend=1;fetches=1;first=doc(42);second=doc(42)",
     "singleton.asm": "same=true\ncount=1",
     "state.asm": "locked\nlocked\nunlocked\nunlocked\nlocked\ninvalid\nassembly-state: passed",
+    "strategy.asm": "strategy=regular:100;vip:80;campaign:75;below:80",
 }
 
 
