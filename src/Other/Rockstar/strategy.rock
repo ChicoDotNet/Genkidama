@@ -1,0 +1,41 @@
+Regular takes Price
+Return Price
+End (Regular)
+
+VIP takes Price
+Put Price times 80 over 100 into Result
+Return Result
+End (VIP)
+
+Campaign takes Price
+If Price is less than 100
+Return Price
+End (Campaign boundary)
+Put Price times 75 over 100 into Result
+Return Result
+End (Campaign)
+
+Apply takes Strategy and Price
+If Strategy is mysterious
+Return "invalid"
+End (Missing strategy)
+Call Strategy with Price into Result
+Return Result
+End (Apply)
+
+Call Apply with Regular, 100 into RegularPrice
+Call Apply with VIP, 100 into VIPPrice
+Call Apply with Campaign, 100 into CampaignPrice
+Call Apply with Campaign, 80 into BoundaryPrice
+Call Apply with mysterious, 100 into MissingPrice
+
+Put "strategy=regular:" plus RegularPrice into Summary
+Put Summary plus ";vip:" into Summary
+Put Summary plus VIPPrice into Summary
+Put Summary plus ";campaign:" into Summary
+Put Summary plus CampaignPrice into Summary
+Put Summary plus ";below:" into Summary
+Put Summary plus BoundaryPrice into Summary
+Put Summary plus ";missing:" into Summary
+Put Summary plus MissingPrice into Summary
+Print Summary
