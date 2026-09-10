@@ -89,14 +89,6 @@ func statePattern() {
 	must(s == "locked")
 }
 
-// Strategy: algorithm is supplied independently of the context.
-func price(base int, strategy func(int) int) int { return strategy(base) }
-func strategyPattern() {
-	regular := func(v int) int { return v }
-	vip := func(v int) int { return v * 80 / 100 }
-	must(price(100, regular) == 100 && price(100, vip) == 80)
-}
-
 // Template Method: fixed skeleton calls variable steps.
 func pipeline(read string, transform func() string) string {
 	return read + ">" + transform() + ">publish"
@@ -577,7 +569,7 @@ func nullObjectPattern() {
 }
 
 func main() {
-	cases := []func(){commandPattern, interpreterPattern, iteratorPattern, mediatorPattern, verifyMementoCanonical, observerPattern, statePattern, strategyPattern, templateMethodPattern, visitorPattern, mvcPattern, mvvmPattern, microkernelPattern, microservicesPattern, enterpriseAdapterPattern, enterpriseBridgePattern, enterpriseFacadePattern, brokerPattern, messageBusPattern, serviceLocatorPattern, activeObjectPattern, monitorObjectPattern, halfSyncHalfAsyncPattern, leaderFollowersPattern, clientServerPattern, peerToPeerPattern, publishSubscribePattern, distributedProxyPattern, presentationAbstractionControlPattern, modelViewPresenterPattern, documentViewPattern, activeRecordPattern, dataMapperPattern, unitOfWorkPattern, repositoryPattern, dependencyInjectionPattern, lazyInitializationPattern, objectPoolPattern, nullObjectPattern}
+	cases := []func(){commandPattern, interpreterPattern, iteratorPattern, mediatorPattern, verifyMementoCanonical, observerPattern, statePattern, verifyStrategy, templateMethodPattern, visitorPattern, mvcPattern, mvvmPattern, microkernelPattern, microservicesPattern, enterpriseAdapterPattern, enterpriseBridgePattern, enterpriseFacadePattern, brokerPattern, messageBusPattern, serviceLocatorPattern, activeObjectPattern, monitorObjectPattern, halfSyncHalfAsyncPattern, leaderFollowersPattern, clientServerPattern, peerToPeerPattern, publishSubscribePattern, distributedProxyPattern, presentationAbstractionControlPattern, modelViewPresenterPattern, documentViewPattern, activeRecordPattern, dataMapperPattern, unitOfWorkPattern, repositoryPattern, dependencyInjectionPattern, lazyInitializationPattern, objectPoolPattern, nullObjectPattern}
 	must(len(cases) == 39)
 	for _, c := range cases {
 		c()

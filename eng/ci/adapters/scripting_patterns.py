@@ -65,6 +65,14 @@ def main() -> int:
         "Python Memento canonical output mismatch",
     )
 
+    python_strategy = dc.ROOT / "src/Scripting/PythonPY/strategy.py"
+    dc.run([sys.executable, "-m", "py_compile", str(python_strategy)])
+    dc.require(
+        dc.last_line(dc.run([sys.executable, "-B", str(python_strategy)], capture=True))
+        == "python-strategy: passed",
+        "Python Strategy canonical output mismatch",
+    )
+
     py = dc.ROOT / "src/Scripting/PythonPY/pattern_sweep.py"
     dc.run([sys.executable, "-m", "py_compile", str(py)])
     dc.run([sys.executable, "-B", str(py)])
@@ -104,6 +112,14 @@ def main() -> int:
     dc.require(
         dc.last_line(dc.run([str(perl), str(perl_state)], capture=True)) == "perl-state: passed",
         "Perl State output mismatch",
+    )
+
+    perl_strategy = dc.ROOT / "src/Scripting/Perl/strategy.pl"
+    dc.require(perl_strategy.is_file(), "Perl Strategy canonical source missing")
+    dc.run([str(perl), "-c", str(perl_strategy)])
+    dc.require(
+        dc.last_line(dc.run([str(perl), str(perl_strategy)], capture=True)) == "Perl Strategy: passed",
+        "Perl Strategy behavioral contract failed",
     )
 
     ruby_files = dc.exact_glob(dc.ROOT / "src/Scripting/Ruby/patterns", "*.rb", "Ruby")

@@ -38,6 +38,7 @@ ASSEMBLY_CONTRACTS: dict[str, str] = {
     "proxy.asm": "backend=1;fetches=1;first=doc(42);second=doc(42)",
     "singleton.asm": "same=true\ncount=1",
     "state.asm": "locked\nlocked\nunlocked\nunlocked\nlocked\ninvalid\nassembly-state: passed",
+    "strategy.asm": "strategy=regular:100;vip:80;campaign:75;below:80",
 }
 
 
@@ -173,12 +174,28 @@ def validate_gdscript_state(godot: str) -> None:
     print("PASS GDScript state.gd", flush=True)
 
 
+def validate_gdscript_strategy(godot: str) -> None:
+    source = dc.ROOT / "src/Niche/GDScript/strategy.gd"
+    dc.require(source.is_file(), "GDScript Strategy canonical missing")
+    output = dc.run([godot, "--headless", "--script", str(source)], capture=True)
+    dc.require("GDScript Strategy: passed" in output.splitlines(), "GDScript Strategy behavioral contract failed")
+    print("PASS GDScript strategy.gd", flush=True)
+
+
 def validate_micropython_state(micropython: str) -> None:
     source = dc.ROOT / "src/Other/MicroPython/state.py"
     dc.require(source.is_file(), "MicroPython State canonical missing")
     output = dc.run([micropython, str(source)], capture=True)
     dc.require("MicroPython State: passed" in output.splitlines(), "MicroPython State canonical output mismatch")
     print("PASS MicroPython state.py", flush=True)
+
+
+def validate_micropython_strategy(micropython: str) -> None:
+    source = dc.ROOT / "src/Other/MicroPython/strategy.py"
+    dc.require(source.is_file(), "MicroPython Strategy canonical missing")
+    output = dc.run([micropython, str(source)], capture=True)
+    dc.require("MicroPython Strategy: passed" in output.splitlines(), "MicroPython Strategy canonical output mismatch")
+    print("PASS MicroPython strategy.py", flush=True)
 
 
 def validate_rockstar_state(rockstar: str) -> None:
@@ -188,6 +205,15 @@ def validate_rockstar_state(rockstar: str) -> None:
     expected = "locked\nlocked\nunlocked\nunlocked\nlocked\ninvalid\nrockstar-state: passed"
     dc.require(output == expected, f"Rockstar State canonical output mismatch: expected={expected!r} actual={output!r}")
     print("PASS Rockstar state.rock", flush=True)
+
+
+def validate_rockstar_strategy(rockstar: str) -> None:
+    source = dc.ROOT / "src/Other/Rockstar/strategy.rock"
+    dc.require(source.is_file(), "Rockstar Strategy canonical missing")
+    output = normalized(dc.run([rockstar, str(source)], capture=True))
+    expected = "strategy=regular:100;vip:80;campaign:75;below:80;missing:invalid"
+    dc.require(output == expected, f"Rockstar Strategy canonical output mismatch: expected={expected!r} actual={output!r}")
+    print("PASS Rockstar strategy.rock", flush=True)
 
 
 def validate_portable() -> None:
@@ -210,6 +236,7 @@ def validate_portable() -> None:
     observer_marker = "observer=audit:draft,published;dashboard:draft;duplicate=rejected;second-unsubscribe=rejected"
     dc.require(observer_marker in observer_output.splitlines(), "GDScript Observer behavioral contract failed")
     validate_gdscript_state(godot)
+    validate_gdscript_strategy(godot)
 
     micropython = os.environ.get("GENKIDAMA_MICROPYTHON_BIN", "/tmp/micropython/ports/unix/build-standard/micropython")
     output = dc.run([micropython, str(dc.ROOT / "src/Other/MicroPython/example1.py")], capture=True)
@@ -223,6 +250,7 @@ def validate_portable() -> None:
     memento_output = dc.run([micropython, str(dc.ROOT / "src/Other/MicroPython/memento.py")], capture=True)
     dc.require(dc.last_line(memento_output) == "MicroPython Memento: passed", "MicroPython Memento contract failed")
     validate_micropython_state(micropython)
+    validate_micropython_strategy(micropython)
 
     rockstar = os.environ.get("GENKIDAMA_ROCKSTAR_BIN")
     dc.require(bool(rockstar), "GENKIDAMA_ROCKSTAR_BIN is required")
@@ -237,6 +265,7 @@ def validate_portable() -> None:
     memento_output = dc.run([rockstar, str(dc.ROOT / "src/Other/Rockstar/memento.rock")], capture=True)
     dc.require(dc.last_line(memento_output) == "Rockstar Memento: passed", "Rockstar Memento contract failed")
     validate_rockstar_state(rockstar)
+    validate_rockstar_strategy(rockstar)
 
 
 def main() -> int:

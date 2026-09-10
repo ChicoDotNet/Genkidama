@@ -8,6 +8,10 @@
 #import "patterns/mediator.m"
 #undef GENKIDAMA_MEDIATOR_EMBEDDED
 
+#define GENKIDAMA_STRATEGY_EMBEDDED
+#import "patterns/strategy.m"
+#undef GENKIDAMA_STRATEGY_EMBEDDED
+
 #import "memento.m"
 
 static void must(BOOL value) { if (!value) abort(); }
@@ -74,19 +78,8 @@ typedef NS_ENUM(NSInteger, GateState) { GateLocked, GateUnlocked };
 static GateState transitionGate(GateState state, NSString *action) { if (state == GateLocked && [action isEqualToString:@"unlock"]) return GateUnlocked; if (state == GateUnlocked && [action isEqualToString:@"lock"]) return GateLocked; return state; }
 static BOOL statePattern(void) { GateState state = transitionGate(GateLocked, @"unlock"); return state == GateUnlocked && transitionGate(state, @"lock") == GateLocked; }
 
-// Strategy
-@protocol PricingStrategy <NSObject>
-- (NSInteger)price:(NSInteger)value;
-@end
-@interface RegularPricing : NSObject <PricingStrategy> @end
-@implementation RegularPricing
-- (NSInteger)price:(NSInteger)value { return value; }
-@end
-@interface VipPricing : NSObject <PricingStrategy> @end
-@implementation VipPricing
-- (NSInteger)price:(NSInteger)value { return value * 80 / 100; }
-@end
-static BOOL strategyPattern(void) { id<PricingStrategy> regular = [RegularPricing new]; id<PricingStrategy> vip = [VipPricing new]; return [regular price:100] == 100 && [vip price:100] == 80; }
+// Strategy delegates to the individually addressable canonical source.
+static BOOL strategyPattern(void) { return verifyStrategy(); }
 
 // Template Method
 @interface DataPipeline : NSObject

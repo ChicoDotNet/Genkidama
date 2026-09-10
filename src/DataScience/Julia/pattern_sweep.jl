@@ -4,6 +4,7 @@ include("iterator.jl")
 must(value::Bool) = value || error("pattern assertion failed")
 include("patterns/mediator.jl")
 include(joinpath(@__DIR__, "memento.jl"))
+include(joinpath(@__DIR__, "patterns", "strategy.jl"))
 
 # Command
 struct BalanceCommand
@@ -51,9 +52,7 @@ function state_pattern()
     must(state == unlocked && transition(state, "lock") == locked)
 end
 
-# Strategy
-price(value::Int, strategy::Function) = strategy(value)
-strategy_pattern() = must(price(100, identity) == 100 && price(100, value -> value * 80 ÷ 100) == 80)
+# Strategy is delegated to the individually addressable canonical included above.
 
 # Template Method
 pipeline(read_step::String, transform::Function) = "$read_step>$(transform())>publish"
@@ -362,7 +361,7 @@ const PATTERNS = [
 must(length(PATTERNS) == 39)
 
 for pattern in (
-    command_pattern, interpreter_pattern, mediator_pattern, verify_memento_canonical, observer_pattern, state_pattern, strategy_pattern, template_method_pattern, visitor_pattern,
+    command_pattern, interpreter_pattern, mediator_pattern, verify_memento_canonical, observer_pattern, state_pattern, verify_strategy, template_method_pattern, visitor_pattern,
     mvc_pattern, mvvm_pattern, microkernel_pattern, microservices_pattern, enterprise_adapter_pattern, enterprise_bridge_pattern, enterprise_facade_pattern, broker_pattern, message_bus_pattern, service_locator_pattern,
     active_object_pattern, monitor_object_pattern, half_sync_half_async_pattern, leader_followers_pattern, client_server_pattern, peer_to_peer_pattern, publish_subscribe_pattern, distributed_proxy_pattern,
     presentation_abstraction_control_pattern, model_view_presenter_pattern, document_view_pattern, active_record_pattern, data_mapper_pattern, unit_of_work_pattern, repository_pattern,

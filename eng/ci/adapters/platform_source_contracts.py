@@ -89,6 +89,20 @@ def main() -> int:
     ]:
         require(delphi_state, pattern, label)
 
+    delphi_strategy = (ROOT / "src/Enterprise/Delphi/Strategy.pas").read_text(encoding="utf-8")
+    for pattern, label in [
+        (r"TPricingStrategy\s*=\s*class\s+abstract.*function\s+Calculate\(BasePrice:\s*Integer\):\s*Integer;\s*virtual;\s*abstract", "Delphi Strategy contract"),
+        (r"TRegularPricing\s*=\s*class\(TPricingStrategy\).*function\s+Calculate", "Delphi regular strategy"),
+        (r"TVipPricing\s*=\s*class\(TPricingStrategy\).*function\s+Calculate", "Delphi VIP strategy"),
+        (r"TCampaignPricing\s*=\s*class\(TPricingStrategy\).*function\s+Calculate", "Delphi campaign strategy"),
+        (r"TPricingContext\s*=\s*class.*FStrategy:\s*TPricingStrategy.*procedure\s+SetStrategy\(AStrategy:\s*TPricingStrategy\).*function\s+Price", "Delphi Strategy context"),
+        (r"function\s+TPricingContext\.Price.*FStrategy\.Calculate\(BasePrice\)", "Delphi context delegates to strategy"),
+        (r"RequireEqual\(Context\.Price\(100\),\s*100,\s*'regular pricing'\).*Context\.SetStrategy\(Vip\).*RequireEqual\(Context\.Price\(100\),\s*80,\s*'VIP pricing'\)", "Delphi regular and VIP substitution"),
+        (r"Context\.SetStrategy\(Campaign\).*RequireEqual\(Context\.Price\(100\),\s*75,\s*'campaign pricing'\).*RequireEqual\(Context\.Price\(80\),\s*80,\s*'campaign threshold boundary'\)", "Delphi campaign and boundary contracts"),
+        (r"Writeln\('Delphi Strategy:\s*passed'\)", "Delphi Strategy sentinel"),
+    ]:
+        require(delphi_strategy, pattern, label)
+
     vba_mediator = (ROOT / "src/Shell/VBA/MediatorExample.bas").read_text(encoding="utf-8")
     for pattern, label in [
         (r"^Option Explicit$", "VBA Mediator Option Explicit"),
@@ -118,6 +132,7 @@ def main() -> int:
     print("Delphi Observer source contract: OK (Delphi 13.1 syntax reviewed; proprietary compiler unavailable in hosted CI)")
     print("Delphi Memento source contract: OK")
     print("Delphi State source contract: OK")
+    print("Delphi Strategy source contract: OK (Delphi compiler unavailable in hosted CI)")
     print("VBA Mediator source contract: OK")
     print("Delphi Mediator source contract: OK")
     return 0

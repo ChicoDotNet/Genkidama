@@ -55,11 +55,7 @@ transition s _ = s
 stateCase :: Bool
 stateCase = transition (transition Locked "unlock") "lock" == Locked
 
--- Strategy
-price :: (Int -> Int) -> Int -> Int
-price strategy = strategy
-strategyCase :: Bool
-strategyCase = price id 100 == 100 && price (\v -> v * 80 `div` 100) 100 == 80
+-- Strategy is canonicalized in src/Functional/Haskell/patterns/Strategy.hs and executed from main.
 
 -- Template Method
 pipeline :: String -> (() -> String) -> String
@@ -291,19 +287,21 @@ nullObjectCase :: Bool
 nullObjectCase = let real msg="logged:"++msg; nullLogger _="" in real "processed:item-1"=="logged:processed:item-1" && nullLogger "processed:item-1"==""
 
 pureCases :: [Bool]
-pureCases = [ commandCase, interpreterCase, Memento.verifyMementoCanonical, observerCase, stateCase, strategyCase, templateMethodCase, visitorCase
+pureCases = [ commandCase, interpreterCase, Memento.verifyMementoCanonical, observerCase, stateCase, templateMethodCase, visitorCase
             , mvcCase, mvvmCase, microkernelCase, microservicesCase, enterpriseAdapterCase, enterpriseBridgeCase, enterpriseFacadeCase, brokerCase, messageBusCase, serviceLocatorCase
             , activeObjectCase, halfSyncHalfAsyncCase, leaderFollowersCase, clientServerCase, peerToPeerCase, publishSubscribeCase, distributedProxyCase, pacCase, mvpCase, documentViewCase
             , activeRecordCase, dataMapperCase, unitOfWorkCase, repositoryCase, dependencyInjectionCase, lazyInitializationCase, objectPoolCase, nullObjectCase ]
 
 main :: IO ()
 main = do
-  must (length pureCases == 36)
+  must (length pureCases == 35)
   forM_ pureCases must
   iteratorOutput <- readProcess "runghc" ["src/Functional/Haskell/Iterator.hs"] ""
   must (iteratorOutput == "iterator=10,20,30\n")
   mediatorOk <- mediatorCase
   must mediatorOk
+  strategyOutput <- readProcess "runghc" ["src/Functional/Haskell/patterns/Strategy.hs"] ""
+  must (strategyOutput == "regular=100;vip=80\n")
   monitorOk <- monitorObjectCase
   must monitorOk
   putStrLn "Haskell pattern sweep: 39/39 examples passed"

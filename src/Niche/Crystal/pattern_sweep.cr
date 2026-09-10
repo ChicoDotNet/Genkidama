@@ -3,6 +3,7 @@ require "./iterator"
 require "./memento"
 
 require "./observer"
+require "./patterns/strategy"
 
 def must(value : Bool)
   raise "pattern assertion failed" unless value
@@ -97,15 +98,9 @@ def state_pattern
   must(state == GateState::Unlocked && transition(state, "lock") == GateState::Locked)
 end
 
-# Strategy
-def price(value : Int32, strategy : Proc(Int32, Int32)) : Int32
-  strategy.call(value)
-end
-
+# Strategy is delegated to the individually addressable canonical required above.
 def strategy_pattern
-  regular = ->(v : Int32) { v }
-  vip = ->(v : Int32) { v * 80 // 100 }
-  must(price(100, regular) == 100 && price(100, vip) == 80)
+  must(verify_strategy)
 end
 
 # Template Method

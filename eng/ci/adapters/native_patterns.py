@@ -104,12 +104,14 @@ def validate_go() -> int:
     memento_test = ROOT / "src/Systems/Go/memento_test.go"
     observer = ROOT / "src/Systems/Go/observer.go"
     state = ROOT / "src/Systems/Go/state.go"
+    strategy = ROOT / "src/Systems/Go/strategy.go"
     for source, label in (
         (sweep, "Go pattern_sweep.go"),
         (memento, "Go memento.go canonical"),
         (memento_test, "Go memento_test.go canonical test"),
         (observer, "Go observer.go canonical"),
         (state, "Go state.go canonical"),
+        (strategy, "Go strategy.go canonical"),
     ):
         if not source.is_file():
             raise ContractError(f"{label} is missing")
@@ -120,6 +122,7 @@ def validate_go() -> int:
         (memento_test, "Go Memento canonical test"),
         (observer, "Go Observer canonical"),
         (state, "Go State canonical"),
+        (strategy, "Go Strategy canonical"),
         (sweep, "Go pattern sweep"),
     ):
         unformatted = run(["gofmt", "-l", str(source)], capture=True).strip()
@@ -130,12 +133,13 @@ def validate_go() -> int:
     run(["go", "test", "-run", "^TestMementoCanonical$", "-count=1", str(memento), str(memento_test)])
     print("Go Memento: passed", flush=True)
 
-    run(["go", "vet", str(sweep), str(memento), str(observer)])
-    output = run(["go", "run", str(sweep), str(memento), str(observer)], capture=True).strip()
+    run(["go", "vet", str(sweep), str(memento), str(observer), str(strategy)])
+    output = run(["go", "run", str(sweep), str(memento), str(observer), str(strategy)], capture=True).strip()
     expected = "Go pattern sweep: 39/39 examples passed"
     if output != expected:
         raise ContractError(f"Go pattern sweep output mismatch: expected {expected!r}, got {output!r}")
     print(output, flush=True)
+    print("Go Strategy: passed", flush=True)
 
     verifier = observer.parent / "observer_verify_tmp.go"
     verifier.write_text(
@@ -160,7 +164,7 @@ def validate_go() -> int:
         raise ContractError(f"Go State canonical output mismatch: {state_output!r}")
     print(state_output, flush=True)
 
-    return EXPECTED + 3
+    return EXPECTED + 4
 
 
 def main() -> int:
