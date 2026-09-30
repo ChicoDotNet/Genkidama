@@ -590,6 +590,7 @@ jobs:
       - dart-windows
       - swift
       - longtail
+      - mojo
       - platform-portable
       - platform-matlab
     runs-on: ubuntu-24.04
