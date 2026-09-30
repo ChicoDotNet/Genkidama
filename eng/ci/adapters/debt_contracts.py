@@ -308,6 +308,35 @@ def patterns_longtail() -> None:
         run(["nim", "c", "--threads:on", "--hints:off", f"-o:{work / 'nim'}", str(nim)])
         require(last_line(run([str(work / "nim")], capture=True)) == "Nim pattern sweep: 39/39 examples passed", "Nim aggregate output mismatch")
 
+    mojo_root = ROOT / "src/Systems/Mojo"
+    mojo_manifest = mojo_root / "pixi.toml"
+    expected_sources = [
+        "adapter.mojo",
+        "microkernel.mojo",
+        "monitor_object.mojo",
+        "strategy.mojo",
+    ]
+    expected_tests = [
+        "test_adapter.mojo",
+        "test_microkernel.mojo",
+        "test_monitor_object.mojo",
+        "test_strategy.mojo",
+    ]
+    mojo_sources = sorted(path.name for path in (mojo_root / "patterns").glob("*.mojo") if path.name != "__init__.mojo")
+    mojo_tests = sorted(path.name for path in (mojo_root / "tests").glob("test_*.mojo"))
+    require(mojo_sources == expected_sources, f"Mojo calibration sources mismatch: {mojo_sources}")
+    require(mojo_tests == expected_tests, f"Mojo calibration tests mismatch: {mojo_tests}")
+    pixi = ["pixi", "run", "--manifest-path", str(mojo_manifest)]
+    run([*pixi, "mojo", "--version"])
+    for test_name in mojo_tests:
+        run([*pixi, "mojo", "run", "-I", str(mojo_root), str(mojo_root / "tests" / test_name)])
+    mojo_sweep = mojo_root / "pattern_sweep.mojo"
+    require(
+        last_line(run([*pixi, "mojo", "run", "-I", str(mojo_root), str(mojo_sweep)], capture=True))
+        == "mojo-pattern-sweep: 4/52 calibration passed",
+        "Mojo calibration aggregate output mismatch",
+    )
+
 
 def patterns_platform() -> None:
     profile = os.environ.get("GENKIDAMA_PLATFORM_PROFILE", "portable").lower()
