@@ -153,6 +153,14 @@ Turn the Design Pattern catalog into a connected and executable learning referen
 
 A pattern is not complete until **every language in which the pattern can be implemented meaningfully has a verified example**. This is language-set completeness, not a demand for 100% code/test coverage. `N/A` requires technical justification and review; lack of classes/OOP syntax is not enough.
 
+### Mojo target expansion — target 52
+
+As of 2026-09-30, Mojo joins the maintained Design Pattern language set as **target 52**. Final matrix completeness from this point forward includes Mojo wherever the pattern intent is Applicable.
+
+The first calibration slice deliberately materializes four representative cells — Adapter, Strategy, Microkernel and Monitor Object — before scaling the remaining column. Its authoritative partial ledger is [`docs/pattern-sweeps/mojo.md`](pattern-sweeps/mojo.md). The other 48 Mojo cells remain incomplete and must not be inferred from the calibration work.
+
+This expansion does not rewrite historical measurements below: the earlier language-major experiment genuinely began with 51 targets. Mojo is a subsequent target-set expansion.
+
 ### Owner-approved matrix scheduling experiment — language-major, expensive targets first
 
 The owner first approved the matrix experiment after Chain of Responsibility was integrated into `dev`, then clarified its intended granularity on 2026-08-27: **a slow/high-overhead language should cover all remaining patterns in one coherent implementation/CI slice whenever practical**.
