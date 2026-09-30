@@ -23,7 +23,7 @@ The first slice deliberately probes four different language forces before scalin
 
 ## Toolchain and verification
 
-The target pins Mojo **1.1.0**, the current stable release when this slice was authored, in [`pixi.toml`](../../src/Systems/Mojo/pixi.toml). The existing Polyglot `longtail` job owns provisioning so Mojo does not create another top-level CI family.
+The target pins Mojo **1.1.0**, the current stable release when this slice was authored, in [`pixi.toml`](../../src/Systems/Mojo/pixi.toml). Mojo owns a dedicated Polyglot runtime family so a Mojo-only change does not pay the Haskell/Crystal/Zig/Julia/Objective-C/Nim setup cost and cannot be masked by an unrelated long-tail provisioning failure.
 
 For this calibration slice the gate must:
 
