@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "target": "Mojo",
+  "universe": 52,
+  "implemented": [
+    "adapter",
+    "microkernel",
+    "monitor_object",
+    "strategy"
+  ]
+}
