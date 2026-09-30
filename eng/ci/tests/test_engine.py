@@ -80,12 +80,12 @@ class RegistryTests(unittest.TestCase):
         self.assertNotIn("portable-functional", self.registry["families"])
         self.assertNotIn("patterns-portable-functional-507", self.registry["targets"])
 
-    def test_mojo_pattern_change_selects_longtail_only(self) -> None:
+    def test_mojo_pattern_change_selects_mojo_only(self) -> None:
         result = engine.classify_paths(
             ["src/Systems/Mojo/patterns/strategy.mojo"],
             self.registry,
         )
-        self.assertEqual(result["polyglot"], ["longtail"])
+        self.assertEqual(result["polyglot"], ["mojo"])
         self.assertFalse(result["full"])
 
     def test_unknown_path_fails_safe_to_full(self) -> None:
