@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -64,31 +65,53 @@ def main() -> int:
     pixi = ["pixi", "run", "--manifest-path", str(MANIFEST)]
     dc.run([*pixi, "mojo", "--version"])
 
+    failed: list[str] = []
     for test_name in actual_tests:
-        dc.run(
-            [
-                *pixi,
-                "mojo",
-                "run",
-                "-I",
-                str(MOJO_ROOT),
-                str(MOJO_ROOT / "tests" / test_name),
-            ]
-        )
-
-    output = dc.run(
-        [
+        argv = [
             *pixi,
             "mojo",
             "run",
             "-I",
             str(MOJO_ROOT),
-            str(MOJO_ROOT / "pattern_sweep.mojo"),
-        ],
-        capture=True,
+            str(MOJO_ROOT / "tests" / test_name),
+        ]
+        print(f"$ {' '.join(argv)}", flush=True)
+        completed = subprocess.run(argv, cwd=ROOT, text=True, check=False)
+        if completed.returncode != 0:
+            failed.append(test_name)
+            print(f"MOJO_CELL_FAIL {test_name} exit={completed.returncode}", flush=True)
+        else:
+            print(f"MOJO_CELL_PASS {test_name}", flush=True)
+
+    aggregate_argv = [
+        *pixi,
+        "mojo",
+        "run",
+        "-I",
+        str(MOJO_ROOT),
+        str(MOJO_ROOT / "pattern_sweep.mojo"),
+    ]
+    print(f"$ {' '.join(aggregate_argv)}", flush=True)
+    aggregate = subprocess.run(
+        aggregate_argv,
+        cwd=ROOT,
+        text=True,
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
     )
+    output = aggregate.stdout or ""
+    if output:
+        print(output, end="" if output.endswith("\n") else "\n", flush=True)
     expected_sentinel = f"mojo-pattern-sweep: {len(implemented)}/52 passed"
-    dc.require(dc.last_line(output) == expected_sentinel, "Mojo aggregate output mismatch")
+    if aggregate.returncode != 0 or dc.last_line(output) != expected_sentinel:
+        failed.append("pattern_sweep.mojo")
+
+    if failed:
+        raise dc.ContractError(
+            f"Mojo validation failures ({len(failed)}): {', '.join(failed)}"
+        )
+
     print(
         f"Mojo patterns: PASS contracted={len(contracted)}/52 implemented={len(implemented)}/52",
         flush=True,
