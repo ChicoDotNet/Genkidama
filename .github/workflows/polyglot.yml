@@ -472,7 +472,7 @@ jobs:
         run: python3 eng/ci/run-family swift --all --telemetry-file artifacts/ci/swift.jsonl
 
   longtail:
-    name: Long-tail / Haskell + Crystal + Zig + Julia + Objective-C + Nim
+    name: Long-tail / Haskell + Crystal + Zig + Julia + Objective-C + Nim + Mojo
     needs: detect
     if: needs.detect.outputs.longtail == 'true'
     runs-on: ubuntu-24.04
@@ -492,6 +492,10 @@ jobs:
       - uses: julia-actions/setup-julia@v3
         with:
           version: '1.12.7'
+      - uses: prefix-dev/setup-pixi@v0.10.0
+        with:
+          pixi-version: v0.81.0
+          run-install: false
       - name: Install pinned Zig, Nim and Objective-C toolchains
         shell: bash
         run: bash eng/ci/toolchains/setup_longtail.sh
