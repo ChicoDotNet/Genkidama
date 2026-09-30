@@ -32,6 +32,7 @@ jobs:
       gnu: ${{ steps.classify.outputs.gnu }}
       jvm: ${{ steps.classify.outputs.jvm }}
       longtail: ${{ steps.classify.outputs.longtail }}
+      mojo: ${{ steps.classify.outputs.mojo }}
       native: ${{ steps.classify.outputs.native }}
       platform: ${{ steps.classify.outputs.platform }}
       scripting: ${{ steps.classify.outputs.scripting }}
@@ -59,7 +60,7 @@ jobs:
             result="$(eng/ci/detect-changes "$BASE_SHA" "$HEAD_SHA")"
           fi
           echo "$result"
-          for family in beam data-shell dart dotnet functional git gnu jvm longtail native platform scripting swift web; do
+          for family in beam data-shell dart dotnet functional git gnu jvm longtail mojo native platform scripting swift web; do
             value="$(python -c 'import json,sys; d=json.loads(sys.argv[1]); print("true" if sys.argv[2] in d["polyglot"] else "false")' "$result" "$family")"
             key="${family//-/_}"
             echo "$key=$value" >> "$GITHUB_OUTPUT"
@@ -472,7 +473,7 @@ jobs:
         run: python3 eng/ci/run-family swift --all --telemetry-file artifacts/ci/swift.jsonl
 
   longtail:
-    name: Long-tail / Haskell + Crystal + Zig + Julia + Objective-C + Nim + Mojo
+    name: Long-tail / Haskell + Crystal + Zig + Julia + Objective-C + Nim
     needs: detect
     if: needs.detect.outputs.longtail == 'true'
     runs-on: ubuntu-24.04
@@ -492,15 +493,28 @@ jobs:
       - uses: julia-actions/setup-julia@v3
         with:
           version: '1.12.7'
-      - uses: prefix-dev/setup-pixi@v0.10.0
-        with:
-          pixi-version: v0.81.0
-          run-install: false
       - name: Install pinned Zig, Nim and Objective-C toolchains
         shell: bash
         run: bash eng/ci/toolchains/setup_longtail.sh
       - name: Run long-tail Pattern contracts
         run: python eng/ci/run-family longtail --patterns --telemetry-file artifacts/ci/longtail.jsonl
+
+  mojo:
+    name: Mojo / 1.1.0
+    needs: detect
+    if: needs.detect.outputs.mojo == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - uses: prefix-dev/setup-pixi@v0.10.0
+        with:
+          pixi-version: v0.81.0
+          run-install: false
+      - name: Run Mojo Pattern contracts
+        run: python eng/ci/run-family mojo --patterns --telemetry-file artifacts/ci/mojo.jsonl
 
   platform-portable:
     name: Platform / portable + source contracts
@@ -602,6 +616,8 @@ jobs:
           JVM_RESULTS: ${{ needs.jvm-java25.result }}
           LONGTAIL_SELECTED: ${{ needs.detect.outputs.longtail }}
           LONGTAIL_RESULTS: ${{ needs.longtail.result }}
+          MOJO_SELECTED: ${{ needs.detect.outputs.mojo }}
+          MOJO_RESULTS: ${{ needs.mojo.result }}
           NATIVE_SELECTED: ${{ needs.detect.outputs.native }}
           NATIVE_RESULTS: ${{ needs.native-gnu.result }},${{ needs.native-clang.result }},${{ needs.native-rust.result }},${{ needs.native-go.result }},${{ needs.native-msvc.result }}
           PLATFORM_SELECTED: ${{ needs.detect.outputs.platform }}
@@ -640,6 +656,7 @@ jobs:
           check_family GNU "$GNU_SELECTED" "$GNU_RESULTS"
           check_family JVM "$JVM_SELECTED" "$JVM_RESULTS"
           check_family Long-tail "$LONGTAIL_SELECTED" "$LONGTAIL_RESULTS"
+          check_family Mojo "$MOJO_SELECTED" "$MOJO_RESULTS"
           check_family Native "$NATIVE_SELECTED" "$NATIVE_RESULTS"
           check_family Platform "$PLATFORM_SELECTED" "$PLATFORM_RESULTS"
           check_family Scripting "$SCRIPTING_SELECTED" "$SCRIPTING_RESULTS"
