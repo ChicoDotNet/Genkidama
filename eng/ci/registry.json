@@ -180,7 +180,7 @@
       "git": ["learn/es/git/"],
       "gnu": ["learn/es/cobol/", "src/Systems/Ada/", "src/Historical/Ada/", "src/Systems/Pascal/", "src/Historical/Cobol/", "src/Systems/Fortran/", "src/Historical/Fortran/"],
       "jvm": ["learn/es/java/", "learn/es/kotlin/", "src/Enterprise/Java/", "src/Enterprise/Kotlin/", "src/Functional/Groovy/", "src/Functional/Scala/", "src/Functional/Clojure/"],
-      "longtail": ["src/Functional/Haskell/", "src/Niche/Crystal/", "src/Systems/Zig/", "src/DataScience/Julia/", "src/Systems/Objective-C/", "src/Niche/Nim/"],
+      "longtail": ["src/Functional/Haskell/", "src/Niche/Crystal/", "src/Systems/Zig/", "src/DataScience/Julia/", "src/Systems/Objective-C/", "src/Niche/Nim/", "src/Systems/Mojo/"],
       "native": ["learn/es/c/", "learn/es/cpp/", "learn/es/rust/", "learn/es/go/", "src/Systems/C/", "src/Systems/C++/", "src/Systems/Rust/", "src/Systems/Go/"],
       "platform": ["src/Shell/VBA/", "src/Enterprise/Delphi/", "src/Niche/GDScript/", "src/DataScience/MATLAB/", "src/Other/MicroPython/", "src/Other/Rockstar/", "src/LowLevel/Assembly/"],
       "scripting": ["learn/es/php/", "learn/es/powershell/", "learn/es/python/", "learn/es/ruby/", "src/Scripting/Bash/", "src/Scripting/Lua/", "src/Scripting/PHP/", "src/Scripting/PythonPY/", "src/Scripting/Ruby/"],
