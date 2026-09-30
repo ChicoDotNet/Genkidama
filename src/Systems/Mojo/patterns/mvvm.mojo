@@ -1,4 +1,4 @@
-struct Model:
+struct Model(Copyable):
     var count: Int
 
     def __init__(out self, count: Int):
