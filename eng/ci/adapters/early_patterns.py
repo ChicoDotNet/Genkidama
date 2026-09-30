@@ -416,25 +416,30 @@ def validate_longtail(census: dict[str, int]) -> None:
 def validate_mojo(census: dict[str, int]) -> None:
     files = discover("src/Systems/Mojo/patterns", (".mojo",))
     record(census, "mojo", files)
+    expected = set(PATTERN_MARKERS)
+    actual = {key for key, _ in files}
     dc.require(
-        [key for key, _ in files] == ["adapter"],
-        f"Mojo calibration pre-CoR census changed: {[key for key, _ in files]}",
+        actual == expected,
+        f"Mojo pre-CoR census changed: expected={sorted(expected)} actual={sorted(actual)}",
     )
-    test = ROOT / "src/Systems/Mojo/tests/test_adapter.mojo"
     manifest = ROOT / "src/Systems/Mojo/pixi.toml"
-    dc.run(
-        [
-            "pixi",
-            "run",
-            "--manifest-path",
-            str(manifest),
-            "mojo",
-            "run",
-            "-I",
-            str(ROOT / "src/Systems/Mojo"),
-            str(test),
-        ]
-    )
+    mojo_root = ROOT / "src/Systems/Mojo"
+    for key, _ in files:
+        test = mojo_root / "tests" / f"test_{key}.mojo"
+        dc.require(test.is_file(), f"Mojo pre-CoR validation missing {test.name}")
+        dc.run(
+            [
+                "pixi",
+                "run",
+                "--manifest-path",
+                str(manifest),
+                "mojo",
+                "run",
+                "-I",
+                str(mojo_root),
+                str(test),
+            ]
+        )
 
 
 def validate_platform(census: dict[str, int]) -> None:
