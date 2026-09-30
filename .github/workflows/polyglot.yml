@@ -487,6 +487,8 @@ jobs:
           ghc-version: '9.14.1'
           cabal-version: '3.16.1.0'
           cabal-update: false
+      - name: Refresh apt metadata for Crystal dependencies
+        run: sudo apt-get update
       - uses: crystal-lang/install-crystal@v1
         with:
           crystal: '1.21.0'
