@@ -3,7 +3,7 @@
 > **Familia:** Structural  
 > **Intención:** componer objetos en estructuras árbol para tratar hojas y grupos mediante el mismo contrato.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `48/48`  
+> **Implementaciones de lenguaje:** `49/49`  
 > **Cobertura de pruebas:** N/A — los ejemplos standalone usan evidencia proporcional por ecosistema; no existe una métrica homogénea defendible.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -147,7 +147,7 @@ Decorator agrega responsabilidad alrededor de un componente; Composite agrega re
 
 ## Implementaciones por lenguaje
 
-El universo canónico mantiene **51 targets**: **48 Applicable** y **3 N/A**. Los **48 Applicable tienen ejemplo real enlazado y evidencia verificada**. Los gates usan compile/run, warnings estrictos, formatters, runtimes oficiales o source-contract proporcional según el ecosistema.
+El universo canónico mantiene **52 targets**: **49 Applicable** y **3 N/A**. Los **49 Applicable tienen ejemplo real enlazado y evidencia verificada**. Los gates usan compile/run, warnings estrictos, formatters, runtimes oficiales o source-contract proporcional según el ecosistema.
 
 | Lenguaje | Aplicabilidad | Ejemplo | Validación |
 |---|---|---|---|
@@ -202,6 +202,7 @@ El universo canónico mantiene **51 targets**: **48 Applicable** y **3 N/A**. Lo
 | HTML | N/A | — | markup declarativo; la operación ejecutable pertenece al runtime. |
 | CSS | N/A | — | reglas declarativas; no expresan por sí mismas una operación uniforme runtime parte-todo. |
 | SQL | N/A | — | SQL declarativo consulta jerarquías, pero no representa por sí mismo objetos `Component` con comportamiento uniforme. |
+| Mojo | Applicable | [`composite.mojo`](../src/Systems/Mojo/patterns/composite.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_composite.mojo), Mojo 1.1.0; gate 52/52 green |
 
 ## Comprueba que lo entendiste
 

@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Centralizar la coordinación entre colegas para que colaboren sin conocerse ni llamarse directamente entre sí.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `48/48` — los 51 targets están reconciliados: 48 Applicable con canónico verificado y 3 N/A técnicamente justificados (HTML, CSS y SQL declarativo).  
+> **Implementaciones de lenguaje:** `49/49` — los 52 targets están reconciliados: 49 Applicable con canónico verificado y 3 N/A técnicamente justificados (HTML, CSS y SQL declarativo).  
 > **Cobertura de pruebas:** `N/A` — los ejemplos son standalone y heterogéneos; se usa compile/analyze/runtime y failure modes cuando es la evidencia más fuerte razonable.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -150,7 +150,7 @@ Centralizar coordinación no significa mover toda la lógica de negocio al media
 
 ## Implementaciones por lenguaje
 
-La tabla es autoritativa para las 51 celdas actuales: 48 targets son Applicable y cuentan con canónico verificado; HTML, CSS y SQL declarativo son N/A con justificación técnica. El head certificado por Quality, Product CI y Polyglot CI incluye también Perl, GDScript, Assembly, MicroPython, Rockstar, VBA y Delphi.
+La tabla es autoritativa para las 52 celdas actuales: 48 targets son Applicable y cuentan con canónico verificado; HTML, CSS y SQL declarativo son N/A con justificación técnica. El head certificado por Quality, Product CI y Polyglot CI incluye también Perl, GDScript, Assembly, MicroPython, Rockstar, VBA y Delphi.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -205,6 +205,7 @@ La tabla es autoritativa para las 51 celdas actuales: 48 targets son Applicable 
 | Delphi | Applicable | [`MediatorExample.pas`](../src/Enterprise/Delphi/MediatorExample.pas) | Platform source contracts / Polyglot CI ✅ | Object Pascal con mediador propietario del routing y `UnknownColleague`. |
 | MicroPython | Applicable | [`mediator.py`](../src/Other/MicroPython/mediator.py) | MicroPython runtime / Polyglot CI ✅ | Dict de callables y coordinación bidireccional. |
 | Rockstar | Applicable | [`mediator.rock`](../src/Other/Rockstar/mediator.rock) | Rockstar runtime / Polyglot CI ✅ | Coordinación central expresada con las primitivas ejecutables del lenguaje. |
+| Mojo | Applicable | [`mediator.mojo`](../src/Systems/Mojo/patterns/mediator.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_mediator.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
 
 ## Comprueba que lo entendiste
 

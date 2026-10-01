@@ -153,6 +153,16 @@ Turn the Design Pattern catalog into a connected and executable learning referen
 
 A pattern is not complete until **every language in which the pattern can be implemented meaningfully has a verified example**. This is language-set completeness, not a demand for 100% code/test coverage. `N/A` requires technical justification and review; lack of classes/OOP syntax is not enough.
 
+### Mojo target expansion — target 52
+
+As of 2026-09-30, Mojo is maintained as **target 52** in the Design Pattern language universe and is registered in [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml) as a non-v1 backlog language.
+
+The language-major slice is now **52/52 Applicable, 52/52 canonical sources materialized and 52/52 behavioral TestSuite contracts green on Mojo 1.1.0**. The authoritative evidence is [`docs/pattern-sweeps/mojo.md`](pattern-sweeps/mojo.md).
+
+Documentation reconciliation is intentionally honest: the 21 already-authored canonical pattern pages now include Mojo in their current denominator and language matrix. The other 31 pattern pages were empty before this target expansion; their Mojo cells are verified in the sweep ledger, but their broader KB-006 page-authoring debt remains separate and must not be represented as completed by this slice.
+
+This expansion does not rewrite historical measurements below: the earlier language-major experiment genuinely began with 51 targets.
+
 ### Owner-approved matrix scheduling experiment — language-major, expensive targets first
 
 The owner first approved the matrix experiment after Chain of Responsibility was integrated into `dev`, then clarified its intended granularity on 2026-08-27: **a slow/high-overhead language should cover all remaining patterns in one coherent implementation/CI slice whenever practical**.

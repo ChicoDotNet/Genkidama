@@ -1,0 +1,9 @@
+[workspace]
+name = "genkidama-mojo-patterns"
+version = "0.1.0"
+description = "Mojo Design Pattern examples for the Genkidama matrix"
+channels = ["https://conda.modular.com/max/", "conda-forge"]
+platforms = ["linux-64"]
+
+[dependencies]
+mojo = "==1.1.0"

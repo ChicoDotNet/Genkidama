@@ -413,6 +413,25 @@ def validate_longtail(census: dict[str, int]) -> None:
             assert_output("Nim", key, dc.run([str(binary)], capture=True))
 
 
+def validate_mojo(census: dict[str, int]) -> None:
+    files = discover("src/Systems/Mojo/patterns", (".mojo",))
+    record(census, "mojo", files)
+    expected = set(PATTERN_MARKERS)
+    actual = {key for key, _ in files}
+    dc.require(
+        actual == expected,
+        f"Mojo pre-CoR census changed: expected={sorted(expected)} actual={sorted(actual)}",
+    )
+    mojo_root = ROOT / "src/Systems/Mojo"
+    for key, _ in files:
+        test = mojo_root / "tests" / f"test_{key}.mojo"
+        dc.require(test.is_file(), f"Mojo pre-CoR validation missing {test.name}")
+    print(
+        "EARLY_MOJO delegated=patterns-mojo behavioral-evidence=52-cell-gate",
+        flush=True,
+    )
+
+
 def validate_platform(census: dict[str, int]) -> None:
     profile = os.environ.get("GENKIDAMA_PLATFORM_PROFILE", "portable").lower()
     if profile == "matlab":
@@ -444,6 +463,7 @@ VALIDATORS = {
     "dart": validate_dart,
     "swift": validate_swift,
     "longtail": validate_longtail,
+    "mojo": validate_mojo,
     "platform": validate_platform,
 }
 

@@ -50,25 +50,30 @@ def validate_foundation(errors: list[str]) -> None:
             fail(errors, f"missing required foundation file: {path.relative_to(ROOT)}")
 
 
-def validate_catalog(errors: list[str]) -> tuple[dict, set[str]]:
+def validate_catalog(errors: list[str]) -> tuple[dict, set[str], set[str]]:
     catalog = load_yaml(META / "catalog.yml")
     courses = catalog.get("courses")
     if not isinstance(courses, list):
         fail(errors, "catalog.yml: courses must be a list")
-        return catalog, set()
+        return catalog, set(), set()
 
     slugs = [course.get("slug") for course in courses if isinstance(course, dict)]
     unique_slugs = {slug for slug in slugs if isinstance(slug, str)}
     if len(slugs) != len(unique_slugs):
         fail(errors, "catalog.yml: course slugs must be unique")
 
-    current = [c for c in courses if isinstance(c, dict) and c.get("v1_required") is True]
-    additional = [c for c in courses if isinstance(c, dict) and c.get("v1_required") is False]
-
-    if len(current) != 45:
-        fail(errors, f"catalog.yml: expected 45 v1 courses, found {len(current)}")
-    if len(additional) != 6:
-        fail(errors, f"catalog.yml: expected 6 planned additional courses, found {len(additional)}")
+    if len(courses) != 52:
+        fail(errors, f"catalog.yml: expected 52 language targets, found {len(courses)}")
+    v1_required_slugs = {
+        c.get("slug")
+        for c in courses
+        if isinstance(c, dict)
+        and c.get("v1_required") is True
+        and isinstance(c.get("slug"), str)
+    }
+    counts = catalog.get("counts")
+    if not isinstance(counts, dict) or counts.get("language_targets") != 52:
+        fail(errors, "catalog.yml: counts.language_targets must be 52")
 
     if catalog.get("source_locale") != "es":
         fail(errors, "catalog.yml: source_locale must be es")
@@ -94,10 +99,14 @@ def validate_catalog(errors: list[str]) -> tuple[dict, set[str]]:
             if not course.get(field):
                 fail(errors, f"catalog.yml: course entry missing {field}: {course!r}")
 
-    return catalog, unique_slugs
+    return catalog, unique_slugs, v1_required_slugs
 
 
-def validate_progress(errors: list[str], catalog_slugs: set[str]) -> None:
+def validate_progress(
+    errors: list[str],
+    catalog_slugs: set[str],
+    v1_required_slugs: set[str],
+) -> None:
     progress = load_yaml(META / "progress.yml")
     courses = progress.get("courses")
     if not isinstance(courses, dict):
@@ -108,8 +117,14 @@ def validate_progress(errors: list[str], catalog_slugs: set[str]) -> None:
     if unknown:
         fail(errors, f"progress.yml: unknown course slugs: {sorted(unknown)}")
 
-    if len(courses) != 45:
-        fail(errors, f"progress.yml: expected progress for 45 v1 courses, found {len(courses)}")
+    tracked = set(courses)
+    if tracked != v1_required_slugs:
+        missing = sorted(v1_required_slugs - tracked)
+        extra = sorted(tracked - v1_required_slugs)
+        fail(
+            errors,
+            f"progress.yml: v1_required tracking mismatch; missing={missing} extra={extra}",
+        )
 
     for index, slug in enumerate(EXPECTED_PILOTS, start=1):
         item = courses.get(slug, {})
@@ -243,8 +258,8 @@ def main() -> int:
     errors: list[str] = []
     try:
         validate_foundation(errors)
-        _, catalog_slugs = validate_catalog(errors)
-        validate_progress(errors, catalog_slugs)
+        _, catalog_slugs, v1_required_slugs = validate_catalog(errors)
+        validate_progress(errors, catalog_slugs, v1_required_slugs)
         validate_course_directories(errors, catalog_slugs)
         validate_lesson_navigation(errors)
         validate_markdown_links(errors)
@@ -258,7 +273,7 @@ def main() -> int:
         return 1
 
     print("Genkidama Learn validation passed.")
-    print("Validated 45 v1 language courses, 6 planned additions, transversal Git, metadata, lesson navigation and Markdown links.")
+    print("Validated 52 cataloged language targets, transversal Git, metadata, lesson navigation and Markdown links.")
     return 0
 
 

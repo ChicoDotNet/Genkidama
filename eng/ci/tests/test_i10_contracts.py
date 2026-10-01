@@ -78,6 +78,7 @@ class I10RegistryCoverageTests(unittest.TestCase):
             "src/Functional/Scala/PatternSweep.scala": "jvm",
             "src/Enterprise/C#/AdapterExample.cs": "dotnet",
             "src/Other/Rockstar/proxy.rock": "platform",
+            "src/Systems/Mojo/patterns/strategy.mojo": "mojo",
         }
         for path, family in cases.items():
             with self.subTest(path=path):
@@ -214,6 +215,18 @@ class I10LegacyEntrypointTests(unittest.TestCase):
         self.assertIn("crystal: '1.21.0'", text)
         self.assertIn("version: '1.12.7'", text)
         self.assertIn("run: bash eng/ci/toolchains/setup_longtail.sh", text)
+
+    def test_polyglot_mojo_workflow_pins_runtime(self) -> None:
+        text = (ROOT / ".github/workflows/polyglot.yml").read_text(encoding="utf-8")
+        self.assertIn("name: Mojo / 1.1.0", text)
+        self.assertIn("prefix-dev/setup-pixi@v0.10.0", text)
+        self.assertIn("pixi-version: v0.81.0", text)
+        self.assertIn("run-family mojo --patterns", text)
+
+    def test_mojo_manifest_pins_stable_toolchain(self) -> None:
+        text = (ROOT / "src/Systems/Mojo/pixi.toml").read_text(encoding="utf-8")
+        self.assertIn('"https://conda.modular.com/max/"', text)
+        self.assertIn('mojo = "==1.1.0"', text)
 
 
 if __name__ == "__main__":

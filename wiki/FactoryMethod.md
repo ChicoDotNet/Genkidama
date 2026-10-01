@@ -3,7 +3,7 @@
 > **Familia:** Creational  
 > **Intención:** definir una operación estable que necesita crear un producto, dejando que una variante sustituible decida qué producto concreto construir.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `48/48`  
+> **Implementaciones de lenguaje:** `49/49`  
 > **Cobertura de pruebas:** N/A — la completitud se valida por lenguaje con compile/run o evidencia proporcional; no existe una métrica homogénea transversal.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -177,7 +177,7 @@ El head `24a66dfa92441e4c16d2029c142f4db235021b8c` produjo evidencia verde compl
 
 ## Implementaciones por lenguaje
 
-La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): **45 targets v1 + 6 adicionales = 51**. Factory Method clasifica **48 Applicable** y **3 N/A**. Los 48 ejemplos están materializados y verificados.
+La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): **52 targets actuales**. Factory Method clasifica **49 Applicable** y **3 N/A**. Los 49 ejemplos están materializados y verificados.
 
 | Lenguaje | Aplicabilidad | Ejemplo | Validación | Estado |
 |---|---|---|---|---|
@@ -232,6 +232,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | HTML | N/A | — | Markup declarativo; el hook ejecutable pertenece a otro runtime/lenguaje. | N/A |
 | SQL | N/A | — | SQL declarativo; no se fuerza un dialecto procedural bajo la etiqueta SQL. | N/A |
 | CSS | N/A | — | Presentación declarativa; no expresa por sí sola una operación runtime con creación sustituible. | N/A |
+| Mojo | Applicable | [`factory_method.mojo`](../src/Systems/Mojo/patterns/factory_method.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_factory_method.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
 
 Factory Method alcanza **implemented == applicable == 48** con evidencia proporcional completa.
 

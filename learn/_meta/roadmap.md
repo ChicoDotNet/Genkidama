@@ -23,9 +23,9 @@ No se crean esqueletos vacíos de cursos.
 
 ## Curso transversal — Git
 
-Git se enseña como curso transversal independiente de los 45 lenguajes V1. **ReleaseDesk está completo en 17/17 lecciones** y funciona como infraestructura pedagógica compartida: los cursos de lenguaje lo recomiendan cuando necesitan control de versiones, ramas, colaboración, diagnóstico o recuperación en vez de duplicar mini-cursos de Git.
+Git se enseña como curso transversal independiente del catálogo de 52 lenguajes. **ReleaseDesk está completo en 17/17 lecciones** y funciona como infraestructura pedagógica compartida: los cursos de lenguaje lo recomiendan cuando necesitan control de versiones, ramas, colaboración, diagnóstico o recuperación en vez de duplicar mini-cursos de Git.
 
-Su estado se conserva en `progress.yml` bajo `transversal_courses` y no altera el denominador de 45 lenguajes.
+Su estado se conserva en `progress.yml` bajo `transversal_courses` y no altera el catálogo de 52 lenguajes.
 
 ## Fase 1 — Pilotos
 

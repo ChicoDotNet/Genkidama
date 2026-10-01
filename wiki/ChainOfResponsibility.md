@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** permitir que una solicitud recorra una secuencia de posibles manejadores hasta que uno asuma la responsabilidad, sin acoplar al emisor con un receptor concreto.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `49/49`  
+> **Implementaciones de lenguaje:** `50/50`  
 > **Cobertura de pruebas:** N/A — ejemplos standalone multi-ecosistema; se usa compilación, runtime, análisis o contrato por lenguaje en lugar de inventar un porcentaje agregado.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -150,9 +150,9 @@ Una cadena sin fallback o error explícito puede terminar sin respuesta. El ejem
 
 ## Implementaciones por lenguaje
 
-Universo actual: **51 targets**. Chain of Responsibility clasifica **49 Applicable** y **2 N/A**. SQL declarativo permanece Applicable porque una secuencia ordenada de reglas/CTEs puede representar receptores que se evalúan hasta que uno acepta; no requiere clases para preservar la intención.
+Universo actual: **52 targets**. Chain of Responsibility clasifica **50 Applicable** y **2 N/A**. SQL declarativo permanece Applicable porque una secuencia ordenada de reglas/CTEs puede representar receptores que se evalúan hasta que uno acepta; no requiere clases para preservar la intención.
 
-Actualmente hay **49 ejemplos materializados y 49 verificados** en este PR. La tabla siguiente es la fuente autoritativa de completitud de lenguajes para este patrón.
+Actualmente hay **50 ejemplos materializados y 49 verificados** en este PR. La tabla siguiente es la fuente autoritativa de completitud de lenguajes para este patrón.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -207,6 +207,7 @@ Actualmente hay **49 ejemplos materializados y 49 verificados** en este PR. La t
 | MATLAB | Applicable | [`chain_of_responsibility.m`](../src/DataScience/MATLAB/chain_of_responsibility.m) | Chain Edge #2 ✅ | structs ordenados + short-circuit; MATLAB Actions runtime |
 | HTML | N/A | — | — | markup declarativo sin ejecución ni transferencia de una solicitud entre receptores |
 | CSS | N/A | — | — | reglas declarativas de estilo sin flujo ejecutable de responsabilidad entre handlers |
+| Mojo | Applicable | [`chain_of_responsibility.mojo`](../src/Systems/Mojo/patterns/chain_of_responsibility.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_chain_of_responsibility.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
 
 ## Comprueba que lo entendiste
 

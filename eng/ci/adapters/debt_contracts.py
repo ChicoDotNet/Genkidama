@@ -309,6 +309,8 @@ def patterns_longtail() -> None:
         require(last_line(run([str(work / "nim")], capture=True)) == "Nim pattern sweep: 39/39 examples passed", "Nim aggregate output mismatch")
 
 
+
+
 def patterns_platform() -> None:
     profile = os.environ.get("GENKIDAMA_PLATFORM_PROFILE", "portable").lower()
     if profile == "matlab":

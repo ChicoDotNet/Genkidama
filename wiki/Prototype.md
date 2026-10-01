@@ -3,7 +3,7 @@
 > **Familia:** Creational  
 > **Intención:** crear nuevos objetos copiando una instancia prototipo existente cuando reutilizar su estado configurado resulta más claro o económico que reconstruirlo desde cero.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `48/48`  
+> **Implementaciones de lenguaje:** `49/49`  
 > **Cobertura de pruebas:** N/A — no existe una métrica homogénea entre los ejemplos standalone; se usará la evidencia más fuerte razonablemente disponible por target.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -147,7 +147,7 @@ Duplicar IDs únicos, sockets, handles, locks o conexiones puede producir dos ob
 
 ## Implementaciones por lenguaje
 
-La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 45 lenguajes v1 y 6 adicionales. La clasificación mantiene 48 `Applicable` y 3 `N/A`. Hay **48 ejemplos materializados y 48 verificados**.
+La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 52 targets actuales. La clasificación mantiene 48 `Applicable` y 3 `N/A`. Hay **49 ejemplos materializados y 48 verificados**.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -202,6 +202,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | CSS | N/A | — | — | CSS define reglas de presentación; no expresa una operación runtime de clonación de objetos. |
 | MicroPython | Applicable | [`prototype.py`](../src/Other/MicroPython/prototype.py) | ✅ MicroPython 1.28.0 Unix port | Copia explícita ejecutada en el Unix port oficial. |
 | Rockstar | Applicable | [`prototype.rock`](../src/Other/Rockstar/prototype.rock) | ✅ Rockstar v2.0.31 runtime | Keyed arrays copiados campo a campo con el runtime oficial fijado por SHA-256. |
+| Mojo | Applicable | [`prototype.mojo`](../src/Systems/Mojo/patterns/prototype.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_prototype.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
 
 ## Comprueba que lo entendiste
 

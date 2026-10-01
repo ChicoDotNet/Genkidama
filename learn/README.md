@@ -24,7 +24,7 @@ Cada lenguaje tiene una sola aplicación canónica principal que crece durante e
 
 Es infraestructura pedagógica compartida: los cursos de lenguaje lo recomiendan en vez de duplicar una mini-lección de Git dentro de cada ruta.
 
-Git se sigue y valida aparte; **no altera el conteo de 45 lenguajes de Learn v1**.
+Git se sigue y valida aparte; **no altera el catálogo de 52 lenguajes**.
 
 ## Idioma
 
