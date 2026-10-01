@@ -162,7 +162,7 @@ La evidencia es proporcional al ecosistema: compilación/análisis/runtime cuand
 
 ## Implementaciones por lenguaje
 
-La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 45 lenguajes v1, 6 adicionales previos y Mojo como target #52. La clasificación final es **50 Applicable + 2 N/A**.
+La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 52 targets actuales. La clasificación final es **50 Applicable + 2 N/A**.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
