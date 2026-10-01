@@ -177,7 +177,7 @@ El head `24a66dfa92441e4c16d2029c142f4db235021b8c` produjo evidencia verde compl
 
 ## Implementaciones por lenguaje
 
-La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): **45 targets v1 + 6 adicionales previos + Mojo = 52**. Factory Method clasifica **49 Applicable** y **3 N/A**. Los 49 ejemplos están materializados y verificados.
+La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): **52 targets actuales**. Factory Method clasifica **49 Applicable** y **3 N/A**. Los 49 ejemplos están materializados y verificados.
 
 | Lenguaje | Aplicabilidad | Ejemplo | Validación | Estado |
 |---|---|---|---|---|
