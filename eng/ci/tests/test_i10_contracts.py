@@ -79,6 +79,8 @@ class I10RegistryCoverageTests(unittest.TestCase):
             "src/Enterprise/C#/AdapterExample.cs": "dotnet",
             "src/Other/Rockstar/proxy.rock": "platform",
             "src/Systems/Mojo/patterns/strategy.mojo": "mojo",
+            "src/Systems/Chapel/patterns/strategy.chpl": "chapel",
+            "src/Accelerated/OpenCL/patterns/strategy.c": "accelerated",
         }
         for path, family in cases.items():
             with self.subTest(path=path):

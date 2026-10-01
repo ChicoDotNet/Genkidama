@@ -1,0 +1,9 @@
+#include "object_pool.h"
+
+#include <assert.h>
+
+int main(int argc, char **argv) {
+    assert(argc == 2);
+    assert(run_object_pool(argv[1]) == 1);
+    return 0;
+}

@@ -479,6 +479,46 @@
           ]
         }
       ]
+    },
+    "patterns-chapel": {
+      "setup": [
+        {
+          "label": "Inspect Chapel 2.10.0 toolchain",
+          "argv": [
+            "chpl",
+            "--version"
+          ]
+        }
+      ],
+      "validation": [
+        {
+          "label": "Validate Chapel pattern contracts",
+          "argv": [
+            "{python}",
+            "eng/ci/adapters/chapel_patterns.py"
+          ]
+        }
+      ]
+    },
+    "patterns-opencl": {
+      "setup": [
+        {
+          "label": "Inspect OpenCL CPU runtime",
+          "argv": [
+            "clinfo",
+            "--list"
+          ]
+        }
+      ],
+      "validation": [
+        {
+          "label": "Validate OpenCL accelerated pattern pilot",
+          "argv": [
+            "{python}",
+            "eng/ci/adapters/opencl_patterns.py"
+          ]
+        }
+      ]
     }
   },
   "families": {
@@ -534,6 +574,12 @@
     },
     "mojo": {
       "patterns": "patterns-mojo"
+    },
+    "chapel": {
+      "patterns": "patterns-chapel"
+    },
+    "accelerated": {
+      "patterns": "patterns-opencl"
     }
   },
   "change_detection": {
@@ -661,6 +707,12 @@
       ],
       "mojo": [
         "src/Systems/Mojo/"
+      ],
+      "chapel": [
+        "src/Systems/Chapel/"
+      ],
+      "accelerated": [
+        "src/Accelerated/OpenCL/"
       ]
     }
   }

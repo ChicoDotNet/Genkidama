@@ -80,6 +80,22 @@ class RegistryTests(unittest.TestCase):
         self.assertNotIn("portable-functional", self.registry["families"])
         self.assertNotIn("patterns-portable-functional-507", self.registry["targets"])
 
+    def test_chapel_pattern_change_selects_chapel_only(self) -> None:
+        result = engine.classify_paths(
+            ["src/Systems/Chapel/patterns/strategy.chpl"],
+            self.registry,
+        )
+        self.assertEqual(result["polyglot"], ["chapel"])
+        self.assertFalse(result["full"])
+
+    def test_opencl_pattern_change_selects_accelerated_only(self) -> None:
+        result = engine.classify_paths(
+            ["src/Accelerated/OpenCL/patterns/strategy.c"],
+            self.registry,
+        )
+        self.assertEqual(result["polyglot"], ["accelerated"])
+        self.assertFalse(result["full"])
+
     def test_mojo_pattern_change_selects_mojo_only(self) -> None:
         result = engine.classify_paths(
             ["src/Systems/Mojo/patterns/strategy.mojo"],

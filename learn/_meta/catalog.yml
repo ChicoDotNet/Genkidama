@@ -11,7 +11,7 @@ translation_order:
 - ru
 - de
 counts:
-  language_targets: 52
+  language_targets: 53
 pilots:
 - csharp
 - python
@@ -337,3 +337,9 @@ courses:
   linguist_detected: false
   status: backlog
   canonical_app: Laboratorio de cómputo de alto rendimiento y patrones de diseño con tipos de valor, funciones y concurrencia
+- slug: chapel
+  name: Chapel
+  v1_required: false
+  linguist_detected: true
+  status: backlog
+  canonical_app: Laboratorio de programación paralela y distribuida con tareas, locales y dominios

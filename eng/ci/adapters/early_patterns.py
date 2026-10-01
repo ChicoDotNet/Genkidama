@@ -450,7 +450,34 @@ def validate_platform(census: dict[str, int]) -> None:
     for key, source in rock: assert_output("Rockstar", key, dc.run([rockstar, str(source)], capture=True))
 
 
+
+def validate_chapel(census: dict[str, int]) -> None:
+    files = discover("src/Systems/Chapel/patterns", (".chpl",))
+    record(census, "chapel", files)
+    expected = set(PATTERN_MARKERS)
+    actual = {key for key, _ in files}
+    dc.require(
+        actual == expected,
+        f"Chapel pre-CoR census changed: expected={sorted(expected)} actual={sorted(actual)}",
+    )
+    root = ROOT / "src/Systems/Chapel"
+    for key, _ in files:
+        dc.require((root / "tests" / f"test_{key}.chpl").is_file(), f"Chapel pre-CoR validation missing test_{key}.chpl")
+    print("EARLY_CHAPEL delegated=patterns-chapel behavioral-evidence=52-cell-gate", flush=True)
+
+
+def validate_accelerated(census: dict[str, int]) -> None:
+    files = discover("src/Accelerated/OpenCL/patterns", (".c",))
+    record(census, "opencl", files)
+    root = ROOT / "src/Accelerated/OpenCL"
+    for key, _ in files:
+        dc.require((root / "tests" / f"test_{key}.c").is_file(), f"OpenCL pilot validation missing test_{key}.c")
+    print("EARLY_OPENCL delegated=patterns-opencl behavioral-evidence=accelerated-pilot", flush=True)
+
+
 VALIDATORS = {
+    "accelerated": validate_accelerated,
+    "chapel": validate_chapel,
     "dotnet": validate_dotnet,
     "jvm": validate_jvm,
     "native": validate_native,
