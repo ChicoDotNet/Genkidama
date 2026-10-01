@@ -2,104 +2,100 @@
 
 > **Target:** Mojo  
 > **Target position:** 52nd maintained Genkidama Design Pattern language target  
-> **State:** full validation contract materialized; implementation expansion in progress  
+> **State:** 52/52 canonical cells implemented and behaviorally verified  
 > **Universe:** 52 catalog patterns  
-> **Iteration 1:** 4 canonical cells implemented and green  
-> **Iteration 2 contract-first checkpoint:** 52/52 validation contracts materialized, 4/52 implementations present before the implementation pass  
-> **Applicability hypothesis:** 52 Applicable / 0 N/A, subject to implementation evidence  
-> **Promotion boundary:** this ledger records the Mojo column only; no pattern becomes complete merely because its Mojo cell is green.
+> **Applicability:** 52 Applicable / 0 N/A  
+> **Toolchain:** Mojo 1.1.0 via Pixi  
+> **Promotion boundary:** this ledger certifies the Mojo column; final pattern-page completeness still follows KB-006.
 
-## Delivery strategy
+## Delivery history
 
-Iteration 2 changes the batching strategy from small implementation batches to **contract-first column construction**:
+Iteration 1 calibrated the target with Adapter, Strategy, Microkernel and Monitor Object. Iteration 2 switched to an owner-approved **contract-first** batch: all 52 validation contracts were fixed first, then the remaining 48 canonical sources were materialized in one coherent implementation pass.
 
-1. materialize the behavioral validation contract for every remaining pattern;
-2. record the whole target column in this ledger;
-3. implement against those already-fixed contracts in a large pass;
-4. use CI failures as implementation diagnostics rather than as a scheduling boundary.
+The first mass execution produced **51/52 green**. MVVM was the only defect: its small value model needed `ImplicitlyCopyable` rather than `Copyable` for the ownership semantics used by the view-model. After that hardening, the reviewed head produced **52/52 green**.
 
-A red intermediate commit is therefore intentional when a contracted test references a canonical source that has not yet been materialized. The final implementation commit for the iteration is responsible for moving as many of those contracts to green as practical.
+## Full 52-cell ledger
 
-## Why Mojo enters as target 52
+Every row owns an individually addressable source and standalone Mojo `TestSuite` contract. The aggregate runner only certifies the census; it does not replace the cell artifacts.
 
-Mojo is added as a first-class Design Pattern target rather than as a documentation-only experiment. KB-006 therefore applies normally: each Applicable pattern must own an individually addressable canonical Mojo source and behavioral verification.
-
-Iteration 1 established four calibration cells — Adapter, Strategy, Microkernel and Monitor Object — and verified Mojo 1.1.0 in its own isolated Polyglot family. That calibration measured approximately **6.2 s setup + 17.2 s validation = 23.4 s total** for the four-cell slice, so implementation throughput rather than CI setup is now the primary batching constraint.
-
-## Full 52-cell contract ledger
-
-Every row below now has a standalone Mojo `TestSuite` contract. Rows whose canonical source is still marked pending are deliberately red until their implementation lands.
-
-| Family | Pattern | Validation contract | Canonical source | State before implementation pass |
+| Family | Pattern | Validation | Canonical source | State |
 |---|---|---|---|---|
-| Creational | Abstract Factory | [`test_abstract_factory.mojo`](../../src/Systems/Mojo/tests/test_abstract_factory.mojo) | `abstract_factory.mojo` pending | contracted; implementation pending |
-| Creational | Builder | [`test_builder.mojo`](../../src/Systems/Mojo/tests/test_builder.mojo) | `builder.mojo` pending | contracted; implementation pending |
-| Creational | Factory Method | [`test_factory_method.mojo`](../../src/Systems/Mojo/tests/test_factory_method.mojo) | `factory_method.mojo` pending | contracted; implementation pending |
-| Creational | Prototype | [`test_prototype.mojo`](../../src/Systems/Mojo/tests/test_prototype.mojo) | `prototype.mojo` pending | contracted; implementation pending |
-| Creational | Singleton | [`test_singleton.mojo`](../../src/Systems/Mojo/tests/test_singleton.mojo) | `singleton.mojo` pending | contracted; implementation pending |
-| Structural | Adapter | [`test_adapter.mojo`](../../src/Systems/Mojo/tests/test_adapter.mojo) | [`adapter.mojo`](../../src/Systems/Mojo/patterns/adapter.mojo) | implemented + previously green |
-| Structural | Bridge | [`test_bridge.mojo`](../../src/Systems/Mojo/tests/test_bridge.mojo) | `bridge.mojo` pending | contracted; implementation pending |
-| Structural | Composite | [`test_composite.mojo`](../../src/Systems/Mojo/tests/test_composite.mojo) | `composite.mojo` pending | contracted; implementation pending |
-| Structural | Decorator | [`test_decorator.mojo`](../../src/Systems/Mojo/tests/test_decorator.mojo) | `decorator.mojo` pending | contracted; implementation pending |
-| Structural | Facade | [`test_facade.mojo`](../../src/Systems/Mojo/tests/test_facade.mojo) | `facade.mojo` pending | contracted; implementation pending |
-| Structural | Flyweight | [`test_flyweight.mojo`](../../src/Systems/Mojo/tests/test_flyweight.mojo) | `flyweight.mojo` pending | contracted; implementation pending |
-| Structural | Proxy | [`test_proxy.mojo`](../../src/Systems/Mojo/tests/test_proxy.mojo) | `proxy.mojo` pending | contracted; implementation pending |
-| Behavioral | Chain of Responsibility | [`test_chain_of_responsibility.mojo`](../../src/Systems/Mojo/tests/test_chain_of_responsibility.mojo) | `chain_of_responsibility.mojo` pending | contracted; implementation pending |
-| Behavioral | Command | [`test_command.mojo`](../../src/Systems/Mojo/tests/test_command.mojo) | `command.mojo` pending | contracted; implementation pending |
-| Behavioral | Interpreter | [`test_interpreter.mojo`](../../src/Systems/Mojo/tests/test_interpreter.mojo) | `interpreter.mojo` pending | contracted; implementation pending |
-| Behavioral | Iterator | [`test_iterator.mojo`](../../src/Systems/Mojo/tests/test_iterator.mojo) | `iterator.mojo` pending | contracted; implementation pending |
-| Behavioral | Mediator | [`test_mediator.mojo`](../../src/Systems/Mojo/tests/test_mediator.mojo) | `mediator.mojo` pending | contracted; implementation pending |
-| Behavioral | Memento | [`test_memento.mojo`](../../src/Systems/Mojo/tests/test_memento.mojo) | `memento.mojo` pending | contracted; implementation pending |
-| Behavioral | Observer | [`test_observer.mojo`](../../src/Systems/Mojo/tests/test_observer.mojo) | `observer.mojo` pending | contracted; implementation pending |
-| Behavioral | State | [`test_state.mojo`](../../src/Systems/Mojo/tests/test_state.mojo) | `state.mojo` pending | contracted; implementation pending |
-| Behavioral | Strategy | [`test_strategy.mojo`](../../src/Systems/Mojo/tests/test_strategy.mojo) | [`strategy.mojo`](../../src/Systems/Mojo/patterns/strategy.mojo) | implemented + previously green |
-| Behavioral | Template Method | [`test_template_method.mojo`](../../src/Systems/Mojo/tests/test_template_method.mojo) | `template_method.mojo` pending | contracted; implementation pending |
-| Behavioral | Visitor | [`test_visitor.mojo`](../../src/Systems/Mojo/tests/test_visitor.mojo) | `visitor.mojo` pending | contracted; implementation pending |
-| Architectural | MVC | [`test_mvc.mojo`](../../src/Systems/Mojo/tests/test_mvc.mojo) | `mvc.mojo` pending | contracted; implementation pending |
-| Architectural | MVVM | [`test_mvvm.mojo`](../../src/Systems/Mojo/tests/test_mvvm.mojo) | `mvvm.mojo` pending | contracted; implementation pending |
-| Architectural | Microkernel | [`test_microkernel.mojo`](../../src/Systems/Mojo/tests/test_microkernel.mojo) | [`microkernel.mojo`](../../src/Systems/Mojo/patterns/microkernel.mojo) | implemented + previously green |
-| Architectural | Microservices | [`test_microservices.mojo`](../../src/Systems/Mojo/tests/test_microservices.mojo) | `microservices.mojo` pending | contracted; implementation pending |
-| Integration | Enterprise Adapter | [`test_enterprise_adapter.mojo`](../../src/Systems/Mojo/tests/test_enterprise_adapter.mojo) | `enterprise_adapter.mojo` pending | contracted; implementation pending |
-| Integration | Enterprise Bridge | [`test_enterprise_bridge.mojo`](../../src/Systems/Mojo/tests/test_enterprise_bridge.mojo) | `enterprise_bridge.mojo` pending | contracted; implementation pending |
-| Integration | Enterprise Facade | [`test_enterprise_facade.mojo`](../../src/Systems/Mojo/tests/test_enterprise_facade.mojo) | `enterprise_facade.mojo` pending | contracted; implementation pending |
-| Integration | Broker | [`test_broker.mojo`](../../src/Systems/Mojo/tests/test_broker.mojo) | `broker.mojo` pending | contracted; implementation pending |
-| Integration | Message Bus | [`test_message_bus.mojo`](../../src/Systems/Mojo/tests/test_message_bus.mojo) | `message_bus.mojo` pending | contracted; implementation pending |
-| Integration | Service Locator | [`test_service_locator.mojo`](../../src/Systems/Mojo/tests/test_service_locator.mojo) | `service_locator.mojo` pending | contracted; implementation pending |
-| Concurrency | Active Object | [`test_active_object.mojo`](../../src/Systems/Mojo/tests/test_active_object.mojo) | `active_object.mojo` pending | contracted; implementation pending |
-| Concurrency | Monitor Object | [`test_monitor_object.mojo`](../../src/Systems/Mojo/tests/test_monitor_object.mojo) | [`monitor_object.mojo`](../../src/Systems/Mojo/patterns/monitor_object.mojo) | implemented + previously green |
-| Concurrency | Half-Sync / Half-Async | [`test_half_sync_half_async.mojo`](../../src/Systems/Mojo/tests/test_half_sync_half_async.mojo) | `half_sync_half_async.mojo` pending | contracted; implementation pending |
-| Concurrency | Leader / Followers | [`test_leader_followers.mojo`](../../src/Systems/Mojo/tests/test_leader_followers.mojo) | `leader_followers.mojo` pending | contracted; implementation pending |
-| Distribution | Client-Server | [`test_client_server.mojo`](../../src/Systems/Mojo/tests/test_client_server.mojo) | `client_server.mojo` pending | contracted; implementation pending |
-| Distribution | Peer-to-Peer | [`test_peer_to_peer.mojo`](../../src/Systems/Mojo/tests/test_peer_to_peer.mojo) | `peer_to_peer.mojo` pending | contracted; implementation pending |
-| Distribution | Publish-Subscribe | [`test_publish_subscribe.mojo`](../../src/Systems/Mojo/tests/test_publish_subscribe.mojo) | `publish_subscribe.mojo` pending | contracted; implementation pending |
-| Distribution | Distributed Proxy | [`test_distributed_proxy.mojo`](../../src/Systems/Mojo/tests/test_distributed_proxy.mojo) | `distributed_proxy.mojo` pending | contracted; implementation pending |
-| Presentation | Presentation-Abstraction-Control | [`test_presentation_abstraction_control.mojo`](../../src/Systems/Mojo/tests/test_presentation_abstraction_control.mojo) | `presentation_abstraction_control.mojo` pending | contracted; implementation pending |
-| Presentation | Model-View-Presenter | [`test_model_view_presenter.mojo`](../../src/Systems/Mojo/tests/test_model_view_presenter.mojo) | `model_view_presenter.mojo` pending | contracted; implementation pending |
-| Presentation | Document-View | [`test_document_view.mojo`](../../src/Systems/Mojo/tests/test_document_view.mojo) | `document_view.mojo` pending | contracted; implementation pending |
-| Persistence | Active Record | [`test_active_record.mojo`](../../src/Systems/Mojo/tests/test_active_record.mojo) | `active_record.mojo` pending | contracted; implementation pending |
-| Persistence | Data Mapper | [`test_data_mapper.mojo`](../../src/Systems/Mojo/tests/test_data_mapper.mojo) | `data_mapper.mojo` pending | contracted; implementation pending |
-| Persistence | Unit of Work | [`test_unit_of_work.mojo`](../../src/Systems/Mojo/tests/test_unit_of_work.mojo) | `unit_of_work.mojo` pending | contracted; implementation pending |
-| Persistence | Repository | [`test_repository.mojo`](../../src/Systems/Mojo/tests/test_repository.mojo) | `repository.mojo` pending | contracted; implementation pending |
-| Additional | Dependency Injection | [`test_dependency_injection.mojo`](../../src/Systems/Mojo/tests/test_dependency_injection.mojo) | `dependency_injection.mojo` pending | contracted; implementation pending |
-| Additional | Lazy Initialization | [`test_lazy_initialization.mojo`](../../src/Systems/Mojo/tests/test_lazy_initialization.mojo) | `lazy_initialization.mojo` pending | contracted; implementation pending |
-| Additional | Object Pool | [`test_object_pool.mojo`](../../src/Systems/Mojo/tests/test_object_pool.mojo) | `object_pool.mojo` pending | contracted; implementation pending |
-| Additional | Null Object | [`test_null_object.mojo`](../../src/Systems/Mojo/tests/test_null_object.mojo) | `null_object.mojo` pending | contracted; implementation pending |
+| Creational | Abstract Factory | [`test_abstract_factory.mojo`](../../src/Systems/Mojo/tests/test_abstract_factory.mojo) | [`abstract_factory.mojo`](../../src/Systems/Mojo/patterns/abstract_factory.mojo) | green |
+| Creational | Builder | [`test_builder.mojo`](../../src/Systems/Mojo/tests/test_builder.mojo) | [`builder.mojo`](../../src/Systems/Mojo/patterns/builder.mojo) | green |
+| Creational | Factory Method | [`test_factory_method.mojo`](../../src/Systems/Mojo/tests/test_factory_method.mojo) | [`factory_method.mojo`](../../src/Systems/Mojo/patterns/factory_method.mojo) | green |
+| Creational | Prototype | [`test_prototype.mojo`](../../src/Systems/Mojo/tests/test_prototype.mojo) | [`prototype.mojo`](../../src/Systems/Mojo/patterns/prototype.mojo) | green |
+| Creational | Singleton | [`test_singleton.mojo`](../../src/Systems/Mojo/tests/test_singleton.mojo) | [`singleton.mojo`](../../src/Systems/Mojo/patterns/singleton.mojo) | green |
+| Structural | Adapter | [`test_adapter.mojo`](../../src/Systems/Mojo/tests/test_adapter.mojo) | [`adapter.mojo`](../../src/Systems/Mojo/patterns/adapter.mojo) | green |
+| Structural | Bridge | [`test_bridge.mojo`](../../src/Systems/Mojo/tests/test_bridge.mojo) | [`bridge.mojo`](../../src/Systems/Mojo/patterns/bridge.mojo) | green |
+| Structural | Composite | [`test_composite.mojo`](../../src/Systems/Mojo/tests/test_composite.mojo) | [`composite.mojo`](../../src/Systems/Mojo/patterns/composite.mojo) | green |
+| Structural | Decorator | [`test_decorator.mojo`](../../src/Systems/Mojo/tests/test_decorator.mojo) | [`decorator.mojo`](../../src/Systems/Mojo/patterns/decorator.mojo) | green |
+| Structural | Facade | [`test_facade.mojo`](../../src/Systems/Mojo/tests/test_facade.mojo) | [`facade.mojo`](../../src/Systems/Mojo/patterns/facade.mojo) | green |
+| Structural | Flyweight | [`test_flyweight.mojo`](../../src/Systems/Mojo/tests/test_flyweight.mojo) | [`flyweight.mojo`](../../src/Systems/Mojo/patterns/flyweight.mojo) | green |
+| Structural | Proxy | [`test_proxy.mojo`](../../src/Systems/Mojo/tests/test_proxy.mojo) | [`proxy.mojo`](../../src/Systems/Mojo/patterns/proxy.mojo) | green |
+| Behavioral | Chain of Responsibility | [`test_chain_of_responsibility.mojo`](../../src/Systems/Mojo/tests/test_chain_of_responsibility.mojo) | [`chain_of_responsibility.mojo`](../../src/Systems/Mojo/patterns/chain_of_responsibility.mojo) | green |
+| Behavioral | Command | [`test_command.mojo`](../../src/Systems/Mojo/tests/test_command.mojo) | [`command.mojo`](../../src/Systems/Mojo/patterns/command.mojo) | green |
+| Behavioral | Interpreter | [`test_interpreter.mojo`](../../src/Systems/Mojo/tests/test_interpreter.mojo) | [`interpreter.mojo`](../../src/Systems/Mojo/patterns/interpreter.mojo) | green |
+| Behavioral | Iterator | [`test_iterator.mojo`](../../src/Systems/Mojo/tests/test_iterator.mojo) | [`iterator.mojo`](../../src/Systems/Mojo/patterns/iterator.mojo) | green |
+| Behavioral | Mediator | [`test_mediator.mojo`](../../src/Systems/Mojo/tests/test_mediator.mojo) | [`mediator.mojo`](../../src/Systems/Mojo/patterns/mediator.mojo) | green |
+| Behavioral | Memento | [`test_memento.mojo`](../../src/Systems/Mojo/tests/test_memento.mojo) | [`memento.mojo`](../../src/Systems/Mojo/patterns/memento.mojo) | green |
+| Behavioral | Observer | [`test_observer.mojo`](../../src/Systems/Mojo/tests/test_observer.mojo) | [`observer.mojo`](../../src/Systems/Mojo/patterns/observer.mojo) | green |
+| Behavioral | State | [`test_state.mojo`](../../src/Systems/Mojo/tests/test_state.mojo) | [`state.mojo`](../../src/Systems/Mojo/patterns/state.mojo) | green |
+| Behavioral | Strategy | [`test_strategy.mojo`](../../src/Systems/Mojo/tests/test_strategy.mojo) | [`strategy.mojo`](../../src/Systems/Mojo/patterns/strategy.mojo) | green |
+| Behavioral | Template Method | [`test_template_method.mojo`](../../src/Systems/Mojo/tests/test_template_method.mojo) | [`template_method.mojo`](../../src/Systems/Mojo/patterns/template_method.mojo) | green |
+| Behavioral | Visitor | [`test_visitor.mojo`](../../src/Systems/Mojo/tests/test_visitor.mojo) | [`visitor.mojo`](../../src/Systems/Mojo/patterns/visitor.mojo) | green |
+| Architectural | MVC | [`test_mvc.mojo`](../../src/Systems/Mojo/tests/test_mvc.mojo) | [`mvc.mojo`](../../src/Systems/Mojo/patterns/mvc.mojo) | green |
+| Architectural | MVVM | [`test_mvvm.mojo`](../../src/Systems/Mojo/tests/test_mvvm.mojo) | [`mvvm.mojo`](../../src/Systems/Mojo/patterns/mvvm.mojo) | green |
+| Architectural | Microkernel | [`test_microkernel.mojo`](../../src/Systems/Mojo/tests/test_microkernel.mojo) | [`microkernel.mojo`](../../src/Systems/Mojo/patterns/microkernel.mojo) | green |
+| Architectural | Microservices | [`test_microservices.mojo`](../../src/Systems/Mojo/tests/test_microservices.mojo) | [`microservices.mojo`](../../src/Systems/Mojo/patterns/microservices.mojo) | green |
+| Integration | Enterprise Adapter | [`test_enterprise_adapter.mojo`](../../src/Systems/Mojo/tests/test_enterprise_adapter.mojo) | [`enterprise_adapter.mojo`](../../src/Systems/Mojo/patterns/enterprise_adapter.mojo) | green |
+| Integration | Enterprise Bridge | [`test_enterprise_bridge.mojo`](../../src/Systems/Mojo/tests/test_enterprise_bridge.mojo) | [`enterprise_bridge.mojo`](../../src/Systems/Mojo/patterns/enterprise_bridge.mojo) | green |
+| Integration | Enterprise Facade | [`test_enterprise_facade.mojo`](../../src/Systems/Mojo/tests/test_enterprise_facade.mojo) | [`enterprise_facade.mojo`](../../src/Systems/Mojo/patterns/enterprise_facade.mojo) | green |
+| Integration | Broker | [`test_broker.mojo`](../../src/Systems/Mojo/tests/test_broker.mojo) | [`broker.mojo`](../../src/Systems/Mojo/patterns/broker.mojo) | green |
+| Integration | Message Bus | [`test_message_bus.mojo`](../../src/Systems/Mojo/tests/test_message_bus.mojo) | [`message_bus.mojo`](../../src/Systems/Mojo/patterns/message_bus.mojo) | green |
+| Integration | Service Locator | [`test_service_locator.mojo`](../../src/Systems/Mojo/tests/test_service_locator.mojo) | [`service_locator.mojo`](../../src/Systems/Mojo/patterns/service_locator.mojo) | green |
+| Concurrency | Active Object | [`test_active_object.mojo`](../../src/Systems/Mojo/tests/test_active_object.mojo) | [`active_object.mojo`](../../src/Systems/Mojo/patterns/active_object.mojo) | green |
+| Concurrency | Monitor Object | [`test_monitor_object.mojo`](../../src/Systems/Mojo/tests/test_monitor_object.mojo) | [`monitor_object.mojo`](../../src/Systems/Mojo/patterns/monitor_object.mojo) | green |
+| Concurrency | Half-Sync / Half-Async | [`test_half_sync_half_async.mojo`](../../src/Systems/Mojo/tests/test_half_sync_half_async.mojo) | [`half_sync_half_async.mojo`](../../src/Systems/Mojo/patterns/half_sync_half_async.mojo) | green |
+| Concurrency | Leader / Followers | [`test_leader_followers.mojo`](../../src/Systems/Mojo/tests/test_leader_followers.mojo) | [`leader_followers.mojo`](../../src/Systems/Mojo/patterns/leader_followers.mojo) | green |
+| Distribution | Client-Server | [`test_client_server.mojo`](../../src/Systems/Mojo/tests/test_client_server.mojo) | [`client_server.mojo`](../../src/Systems/Mojo/patterns/client_server.mojo) | green |
+| Distribution | Peer-to-Peer | [`test_peer_to_peer.mojo`](../../src/Systems/Mojo/tests/test_peer_to_peer.mojo) | [`peer_to_peer.mojo`](../../src/Systems/Mojo/patterns/peer_to_peer.mojo) | green |
+| Distribution | Publish-Subscribe | [`test_publish_subscribe.mojo`](../../src/Systems/Mojo/tests/test_publish_subscribe.mojo) | [`publish_subscribe.mojo`](../../src/Systems/Mojo/patterns/publish_subscribe.mojo) | green |
+| Distribution | Distributed Proxy | [`test_distributed_proxy.mojo`](../../src/Systems/Mojo/tests/test_distributed_proxy.mojo) | [`distributed_proxy.mojo`](../../src/Systems/Mojo/patterns/distributed_proxy.mojo) | green |
+| Presentation | Presentation-Abstraction-Control | [`test_presentation_abstraction_control.mojo`](../../src/Systems/Mojo/tests/test_presentation_abstraction_control.mojo) | [`presentation_abstraction_control.mojo`](../../src/Systems/Mojo/patterns/presentation_abstraction_control.mojo) | green |
+| Presentation | Model-View-Presenter | [`test_model_view_presenter.mojo`](../../src/Systems/Mojo/tests/test_model_view_presenter.mojo) | [`model_view_presenter.mojo`](../../src/Systems/Mojo/patterns/model_view_presenter.mojo) | green |
+| Presentation | Document-View | [`test_document_view.mojo`](../../src/Systems/Mojo/tests/test_document_view.mojo) | [`document_view.mojo`](../../src/Systems/Mojo/patterns/document_view.mojo) | green |
+| Persistence | Active Record | [`test_active_record.mojo`](../../src/Systems/Mojo/tests/test_active_record.mojo) | [`active_record.mojo`](../../src/Systems/Mojo/patterns/active_record.mojo) | green |
+| Persistence | Data Mapper | [`test_data_mapper.mojo`](../../src/Systems/Mojo/tests/test_data_mapper.mojo) | [`data_mapper.mojo`](../../src/Systems/Mojo/patterns/data_mapper.mojo) | green |
+| Persistence | Unit of Work | [`test_unit_of_work.mojo`](../../src/Systems/Mojo/tests/test_unit_of_work.mojo) | [`unit_of_work.mojo`](../../src/Systems/Mojo/patterns/unit_of_work.mojo) | green |
+| Persistence | Repository | [`test_repository.mojo`](../../src/Systems/Mojo/tests/test_repository.mojo) | [`repository.mojo`](../../src/Systems/Mojo/patterns/repository.mojo) | green |
+| Additional | Dependency Injection | [`test_dependency_injection.mojo`](../../src/Systems/Mojo/tests/test_dependency_injection.mojo) | [`dependency_injection.mojo`](../../src/Systems/Mojo/patterns/dependency_injection.mojo) | green |
+| Additional | Lazy Initialization | [`test_lazy_initialization.mojo`](../../src/Systems/Mojo/tests/test_lazy_initialization.mojo) | [`lazy_initialization.mojo`](../../src/Systems/Mojo/patterns/lazy_initialization.mojo) | green |
+| Additional | Object Pool | [`test_object_pool.mojo`](../../src/Systems/Mojo/tests/test_object_pool.mojo) | [`object_pool.mojo`](../../src/Systems/Mojo/patterns/object_pool.mojo) | green |
+| Additional | Null Object | [`test_null_object.mojo`](../../src/Systems/Mojo/tests/test_null_object.mojo) | [`null_object.mojo`](../../src/Systems/Mojo/patterns/null_object.mojo) | green |
 
-## Toolchain and verification
+## Verification evidence
 
-The target pins Mojo **1.1.0** in [`pixi.toml`](../../src/Systems/Mojo/pixi.toml). Mojo owns a dedicated Polyglot runtime family, so a Mojo-only change does not pay the Haskell/Crystal/Zig/Julia/Objective-C/Nim setup cost and cannot be masked by an unrelated long-tail provisioning failure.
+The dedicated `Mojo / 1.1.0` Polyglot family:
 
-The target-local [`patterns.json`](../../src/Systems/Mojo/patterns.json) distinguishes:
+1. resolves the pinned Mojo environment once;
+2. requires the exact 52-source and 52-test census from [`patterns.json`](../../src/Systems/Mojo/patterns.json);
+3. executes every standalone TestSuite and reports all failures before exiting;
+4. requires the aggregate sentinel `mojo-pattern-sweep: 52/52 passed`.
 
-- **contracted** — a behavioral test exists and is part of the 52-cell validation census;
-- **implemented** — the corresponding individually addressable canonical source exists.
+On the completed column, observed telemetry was approximately **3.2 s setup + 204.6 s validation = 207.8 s** for the 52-cell target gate.
 
-The validator fails closed when either census drifts. It executes every contracted test, so contracting ahead of implementation intentionally creates a precise red boundary.
+The historical pre-Chain-of-Responsibility census contains **13 Mojo cells**. Those cells are already exercised by the 52-cell target gate; the historical runner therefore checks their census and matching test presence without executing them a second time.
+
+## Pattern-page reconciliation
+
+The repository currently has **21 authored pattern pages** and **31 pre-existing empty pattern pages**.
+
+This slice reconciles Mojo into all 21 pages that already carry a canonical language matrix: their current target denominator becomes 52, their Applicable/implemented counter includes Mojo, and each page links directly to its Mojo source and test.
+
+The other 31 pages were empty before the Mojo work. This slice does not fabricate completion for them. Their Mojo source/test cells are complete and green here in the authoritative language-major ledger, while full prose/table authoring for those pages remains pre-existing KB-006 debt.
 
 ## Coverage and evidence
 
-No synthetic line-coverage percentage is assigned to these standalone teaching artifacts. Native Mojo compilation plus executable `TestSuite` behavior is the primary evidence. Failure-path checks are added where they materially teach the pattern contract rather than merely inflate test count.
+No synthetic line-coverage percentage is assigned to these standalone teaching artifacts. Native Mojo compilation plus executable behavioral assertions is the stronger evidence. Failure-path checks are used where they materially teach the contract.
 
-The repository-wide >=44% rule remains unchanged where meaningful line-coverage instrumentation exists.
-
-`stable for promotion: no` until the Mojo implementation census reaches its intended slice, its target gate is green on the reviewed head, and the branch is reconciled with current `dev`.
+`stable for promotion: pending repository-wide reviewed-head reconciliation`.

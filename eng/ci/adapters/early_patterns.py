@@ -422,24 +422,14 @@ def validate_mojo(census: dict[str, int]) -> None:
         actual == expected,
         f"Mojo pre-CoR census changed: expected={sorted(expected)} actual={sorted(actual)}",
     )
-    manifest = ROOT / "src/Systems/Mojo/pixi.toml"
     mojo_root = ROOT / "src/Systems/Mojo"
     for key, _ in files:
         test = mojo_root / "tests" / f"test_{key}.mojo"
         dc.require(test.is_file(), f"Mojo pre-CoR validation missing {test.name}")
-        dc.run(
-            [
-                "pixi",
-                "run",
-                "--manifest-path",
-                str(manifest),
-                "mojo",
-                "run",
-                "-I",
-                str(mojo_root),
-                str(test),
-            ]
-        )
+    print(
+        "EARLY_MOJO delegated=patterns-mojo behavioral-evidence=52-cell-gate",
+        flush=True,
+    )
 
 
 def validate_platform(census: dict[str, int]) -> None:

@@ -155,11 +155,13 @@ A pattern is not complete until **every language in which the pattern can be imp
 
 ### Mojo target expansion — target 52
 
-As of 2026-09-30, Mojo joins the maintained Design Pattern language set as **target 52**. Final matrix completeness from this point forward includes Mojo wherever the pattern intent is Applicable.
+As of 2026-09-30, Mojo is maintained as **target 52** in the Design Pattern language universe and is registered in [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml) as a non-v1 backlog language.
 
-The first calibration slice deliberately materializes four representative cells — Adapter, Strategy, Microkernel and Monitor Object — before scaling the remaining column. Its authoritative partial ledger is [`docs/pattern-sweeps/mojo.md`](pattern-sweeps/mojo.md). The other 48 Mojo cells remain incomplete and must not be inferred from the calibration work.
+The language-major slice is now **52/52 Applicable, 52/52 canonical sources materialized and 52/52 behavioral TestSuite contracts green on Mojo 1.1.0**. The authoritative evidence is [`docs/pattern-sweeps/mojo.md`](pattern-sweeps/mojo.md).
 
-This expansion does not rewrite historical measurements below: the earlier language-major experiment genuinely began with 51 targets. Mojo is a subsequent target-set expansion.
+Documentation reconciliation is intentionally honest: the 21 already-authored canonical pattern pages now include Mojo in their current denominator and language matrix. The other 31 pattern pages were empty before this target expansion; their Mojo cells are verified in the sweep ledger, but their broader KB-006 page-authoring debt remains separate and must not be represented as completed by this slice.
+
+This expansion does not rewrite historical measurements below: the earlier language-major experiment genuinely began with 51 targets.
 
 ### Owner-approved matrix scheduling experiment — language-major, expensive targets first
 
