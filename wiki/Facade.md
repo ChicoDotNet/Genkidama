@@ -3,8 +3,8 @@
 > **Familia:** Structural  
 > **Intención:** ofrecer una interfaz deliberadamente simple y estable para coordinar un subsistema más amplio sin ocultar que sus componentes siguen existiendo.  
 > **Estado:** `validated`  
-> **Implementaciones verificadas:** `48/48`  
-> **Implementaciones materializadas:** `48/48`  
+> **Implementaciones verificadas:** `49/49`  
+> **Implementaciones materializadas:** `49/49`  
 > **Cobertura de pruebas:** N/A — la completitud se valida por comportamiento/toolchain en múltiples ecosistemas standalone; no existe una métrica homogénea agregable.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -149,7 +149,7 @@ Facade no implica necesariamente encapsulación absoluta. Clientes especializado
 
 ## Implementaciones por lenguaje
 
-El universo canónico mantiene **52 targets**. Para Facade, **48 son Applicable** y **HTML, CSS y SQL declarativo son N/A**. Los **48/49 Applicable están materializados, enlazados y verificados** mediante los gates Facade Mainstream, Middle, Portable y Final.
+El universo canónico mantiene **52 targets**. Para Facade, **48 son Applicable** y **HTML, CSS y SQL declarativo son N/A**. Los **49/49 Applicable están materializados, enlazados y verificados** mediante los gates Facade Mainstream, Middle, Portable y Final.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo | Validación | Nota |
 |---|---|---|---|---|
