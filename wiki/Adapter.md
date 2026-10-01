@@ -138,7 +138,7 @@ El Adapter traduce contratos. Reglas de negocio independientes del proveedor per
 
 ## Implementaciones por lenguaje
 
-La fuente canónica mantiene **52 targets**. Adapter es `Applicable` en 48 y `N/A` en HTML, CSS y SQL declarativo. Los **49/50 ejemplos Applicable están materializados, enlazados y verificados** mediante CI ejecutable o evidencia proporcional de plataforma.
+La fuente canónica mantiene **52 targets**. Adapter es `Applicable` en 48 y `N/A` en HTML, CSS y SQL declarativo. Los **49/49 ejemplos Applicable están materializados, enlazados y verificados** mediante CI ejecutable o evidencia proporcional de plataforma.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
