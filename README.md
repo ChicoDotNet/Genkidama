@@ -104,7 +104,7 @@ The educational catalog may include examples in:
 
 [Genkidama Learn](learn/README.md) extends the educational side of the repository with practical, application-centered courses designed to take a learner from zero knowledge of a language to a reasonable Junior Developer / Entry Level foundation.
 
-The canonical source is initially Spanish, with 45 current language courses planned for v1 and five pilots used to stabilize the format before scaling.
+The canonical source is initially Spanish, with **52 language targets in the catalog** and five pilots used to stabilize the format before scaling.
 
 ## Documentation
 
