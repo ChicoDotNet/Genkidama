@@ -3,7 +3,7 @@
 > **Familia:** Structural  
 > **Intención:** separar una abstracción de su implementación para que ambas dimensiones puedan variar y evolucionar de forma independiente.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `48/48`  
+> **Implementaciones de lenguaje:** `49/49`  
 > **Cobertura de pruebas:** N/A — los ejemplos standalone se validan con compile/run/análisis proporcional; no existe una métrica homogénea defendible entre ecosistemas.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -148,7 +148,7 @@ Si sólo existe una implementación estable y no hay evidencia de otra dimensió
 
 ## Implementaciones por lenguaje
 
-La tabla es autoritativa para la completitud de lenguaje. El universo canónico mantiene **51 targets**: **48 Applicable** y **3 N/A**. Los **48/48 ejemplos están materializados y verificados** con la validación más fuerte y ligera razonablemente disponible para cada ecosistema.
+La tabla es autoritativa para la completitud de lenguaje. El universo canónico mantiene **52 targets**: **49 Applicable** y **3 N/A**. Los **49/50 ejemplos están materializados y verificados** con la validación más fuerte y ligera razonablemente disponible para cada ecosistema.
 
 | Lenguaje | Aplicabilidad | Ejemplo | Validación | Nota |
 |---|---|---|---|---|
@@ -203,6 +203,7 @@ La tabla es autoritativa para la completitud de lenguaje. El universo canónico 
 | HTML | N/A | — | — | markup declarativo; cualquier Bridge ejecutable pertenece al runtime que lo procesa. |
 | CSS | N/A | — | — | reglas declarativas de presentación sin abstracciones/runtime calls que desacoplar. |
 | SQL | N/A | — | — | SQL declarativo transforma/consulta datos, pero no expresa por sí solo dos dimensiones runtime de abstracción e implementación. |
+| Mojo | Applicable | [`bridge.mojo`](../src/Systems/Mojo/patterns/bridge.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_bridge.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
 
 ## Comprueba que lo entendiste
 

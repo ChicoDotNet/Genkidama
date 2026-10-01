@@ -3,7 +3,7 @@
 > **Familia:** Creational  
 > **Intención:** asegurar una única instancia lógica dentro de un alcance definido y ofrecer un punto de acceso controlado cuando esa unicidad resuelve una presión real.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `48/48`  
+> **Implementaciones de lenguaje:** `49/49`  
 > **Cobertura de pruebas:** N/A — catálogo multilenguaje heterogéneo; se usa evidencia proporcional por target.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -144,7 +144,7 @@ Acumular muchas dependencias detrás de un Singleton convierte el acceso global 
 
 ## Implementaciones por lenguaje
 
-La fuente canónica mantiene **51 targets**: 48 `Applicable` y 3 `N/A`. Los **48 Applicable tienen un ejemplo real, enlazado y verificado** mediante el runtime, compilador, analizador o source-contract proporcional más fuerte razonablemente disponible.
+La fuente canónica mantiene **52 targets**: 48 `Applicable` y 3 `N/A`. Los **49 Applicable tienen un ejemplo real, enlazado y verificado** mediante el runtime, compilador, analizador o source-contract proporcional más fuerte razonablemente disponible.
 
 | Lenguaje | Aplicabilidad | Ejemplo | Validación actual | Nota |
 |---|---|---|---|---|
@@ -199,6 +199,7 @@ La fuente canónica mantiene **51 targets**: 48 `Applicable` y 3 `N/A`. Los **48
 | CSS | N/A | — | — | Reglas declarativas sin ciclo de vida de instancia runtime. |
 | MicroPython | Applicable | [`singleton.py`](../src/Other/MicroPython/singleton.py) | ✅ verificado | Cache de instancia ejecutada en Unix port oficial 1.28.0. |
 | Rockstar | Applicable | [`singleton.rock`](../src/Other/Rockstar/singleton.rock) | ✅ verificado | Estado único mediante keyed array del runtime y accessor. |
+| Mojo | Applicable | [`singleton.mojo`](../src/Systems/Mojo/patterns/singleton.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_singleton.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
 
 ### Clasificación N/A
 

@@ -3,7 +3,7 @@
 > **Familia:** Structural  
 > **Intención:** convertir la interfaz de una dependencia existente en el contrato que un cliente necesita, sin modificar ni al cliente ni a la dependencia adaptada.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `48/48`  
+> **Implementaciones de lenguaje:** `49/49`  
 > **Cobertura de pruebas:** N/A — el catálogo usa evidencia proporcional por ecosistema; no existe una métrica homogénea entre ejemplos standalone.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -138,7 +138,7 @@ El Adapter traduce contratos. Reglas de negocio independientes del proveedor per
 
 ## Implementaciones por lenguaje
 
-La fuente canónica mantiene **51 targets**. Adapter es `Applicable` en 48 y `N/A` en HTML, CSS y SQL declarativo. Los **48/48 ejemplos Applicable están materializados, enlazados y verificados** mediante CI ejecutable o evidencia proporcional de plataforma.
+La fuente canónica mantiene **52 targets**. Adapter es `Applicable` en 48 y `N/A` en HTML, CSS y SQL declarativo. Los **49/50 ejemplos Applicable están materializados, enlazados y verificados** mediante CI ejecutable o evidencia proporcional de plataforma.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -193,6 +193,7 @@ La fuente canónica mantiene **51 targets**. Adapter es `Applicable` en 48 y `N/
 | CSS | N/A | — | — | Reglas declarativas de presentación sin llamadas de componente a adaptar. |
 | MicroPython | Applicable | [`adapter.py`](../src/Other/MicroPython/adapter.py) | ✅ MicroPython 1.28.0 Unix port oficial + run | Duck typing/clases livianas bajo el runtime MicroPython real. |
 | Rockstar | Applicable | [`adapter.rock`](../src/Other/Rockstar/adapter.rock) | ✅ Rockstar v2.0.31 oficial + salida exacta | Keyed array + función Adapter traducen la representación. |
+| Mojo | Applicable | [`adapter.mojo`](../src/Systems/Mojo/patterns/adapter.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_adapter.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
 
 ## Comprueba que lo entendiste
 

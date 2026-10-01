@@ -3,7 +3,7 @@
 > **Familia:** Creational  
 > **Intención:** Proporcionar una abstracción para crear familias de productos relacionados o dependientes sin acoplar al cliente a sus tipos concretos.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `48/48`  
+> **Implementaciones de lenguaje:** `49/49`  
 > **Cobertura de pruebas:** `N/A` — este catálogo valida ejemplos por compilación/ejecución cuando es práctico; no existe una métrica homogénea de line coverage entre 48 ecosistemas.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -192,7 +192,7 @@ Esto es evidencia de ejecución o, donde el runtime propietario no está razonab
 
 ## Implementaciones por lenguaje
 
-La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 45 lenguajes v1 y 6 adicionales planeados. `Applicable` significa que el patrón puede expresarse de forma razonablemente idiomática. `N/A` exige una razón técnica.
+La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 45 lenguajes v1, 6 adicionales previos y Mojo como target #52. `Applicable` significa que el patrón puede expresarse de forma razonablemente idiomática. `N/A` exige una razón técnica.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -247,6 +247,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | CSS | N/A | — | — | CSS selecciona estilos; no crea familias de objetos runtime. |
 | MicroPython | Applicable | [`example1.py`](../src/Other/MicroPython/example1.py) | MicroPython 1.28.0 Unix port build/run ✅ | Una factory dinámica conserva la familia completa en el runtime real. |
 | Rockstar | Applicable | [`example1.rock`](../src/Other/Rockstar/example1.rock) | Rockstar v2.0.31 official runtime + exact output ✅ | Dos funciones-fábrica devuelven hashes de productos relacionados; una familia se selecciona una sola vez. |
+| Mojo | Applicable | [`abstract_factory.mojo`](../src/Systems/Mojo/patterns/abstract_factory.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_abstract_factory.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
 
 **Cobertura actual verificada: 48 / 48 lenguajes Applicable (100% de completitud de lenguaje; no confundir con test coverage).**
 

@@ -149,7 +149,7 @@ Facade no implica necesariamente encapsulación absoluta. Clientes especializado
 
 ## Implementaciones por lenguaje
 
-El universo canónico mantiene **51 targets**. Para Facade, **48 son Applicable** y **HTML, CSS y SQL declarativo son N/A**. Los **48/48 Applicable están materializados, enlazados y verificados** mediante los gates Facade Mainstream, Middle, Portable y Final.
+El universo canónico mantiene **52 targets**. Para Facade, **48 son Applicable** y **HTML, CSS y SQL declarativo son N/A**. Los **48/49 Applicable están materializados, enlazados y verificados** mediante los gates Facade Mainstream, Middle, Portable y Final.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo | Validación | Nota |
 |---|---|---|---|---|
@@ -204,6 +204,7 @@ El universo canónico mantiene **51 targets**. Para Facade, **48 son Applicable*
 | HTML | N/A | — | — | markup declarativo sin ejecución/coordinación propia; requiere un runtime externo para implementar la intención. |
 | CSS | N/A | — | — | lenguaje de estilos declarativo sin frontera ejecutable que coordine subsistemas. |
 | SQL declarativo | N/A | — | — | una consulta declarativa describe datos; sin procedimientos/runtime adicional no ofrece una API de aplicación que coordine subsistemas. |
+| Mojo | Applicable | [`facade.mojo`](../src/Systems/Mojo/patterns/facade.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_facade.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
 
 ## Comprueba que lo entendiste
 

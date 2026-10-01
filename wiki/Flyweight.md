@@ -3,7 +3,7 @@
 > **Familia:** Structural  
 > **Intención:** compartir estado intrínseco reutilizable entre muchas representaciones ligeras y mantener fuera del objeto compartido el estado que cambia por contexto.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `48/48`  
+> **Implementaciones de lenguaje:** `49/49`  
 > **Cobertura de pruebas:** N/A — ejemplos standalone multi-ecosistema; se usa compilación, runtime, análisis o contrato por lenguaje en lugar de inventar un porcentaje agregado.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -135,7 +135,7 @@ Si dos contextos reciben el mismo Flyweight y uno puede mutarlo, el ahorro de me
 
 ## Implementaciones por lenguaje
 
-Universo actual: **51 targets**. Flyweight clasifica **48 Applicable** y **3 N/A**. La ausencia de clases no convierte un lenguaje ejecutable en N/A.
+Universo actual: **52 targets**. Flyweight clasifica **49 Applicable** y **3 N/A**. La ausencia de clases no convierte un lenguaje ejecutable en N/A.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -190,6 +190,7 @@ Universo actual: **51 targets**. Flyweight clasifica **48 Applicable** y **3 N/A
 | HTML | N/A | — | — | markup declarativo sin runtime propio ni identidad/pool ejecutable para esta intención |
 | CSS | N/A | — | — | comparte reglas declarativas, pero no implementa por sí solo una fábrica/pool runtime de Flyweights |
 | SQL declarativo | N/A | — | — | puede deduplicar datos, pero necesita una capa procedural/runtime adicional para expresar este ejemplo de objeto/contexto |
+| Mojo | Applicable | [`flyweight.mojo`](../src/Systems/Mojo/patterns/flyweight.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_flyweight.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
 
 ## Comprueba que lo entendiste
 
