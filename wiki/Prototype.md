@@ -147,7 +147,7 @@ Duplicar IDs únicos, sockets, handles, locks o conexiones puede producir dos ob
 
 ## Implementaciones por lenguaje
 
-La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 45 lenguajes v1, 6 adicionales previos y Mojo. La clasificación mantiene 48 `Applicable` y 3 `N/A`. Hay **49 ejemplos materializados y 48 verificados**.
+La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 52 targets actuales. La clasificación mantiene 48 `Applicable` y 3 `N/A`. Hay **49 ejemplos materializados y 48 verificados**.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
