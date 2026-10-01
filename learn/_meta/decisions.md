@@ -124,7 +124,7 @@ Nunca merge ni auto-merge por parte de la iniciativa autónoma.
 
 Cada curso DEBE disponer de un gate de CI ejecutable independiente y acotado por paths del propio curso.
 
-Un cambio localizado en `learn/es/vba/**`, por ejemplo, NO DEBE compilar ni ejecutar las pruebas de los otros 44 lenguajes. Debe ejecutar únicamente:
+Un cambio localizado en `learn/es/vba/**`, por ejemplo, NO DEBE compilar ni ejecutar las pruebas de los otros 51 lenguajes del catálogo. Debe ejecutar únicamente:
 
 1. la validación común ligera de Genkidama Learn; y
 2. el build/test/lint/smoke específico de VBA que técnicamente corresponda.
@@ -188,7 +188,7 @@ El owner usa como **heurística operativa** que diferir deuda hasta el final pue
 
 Aplicación inicial: un enlace faltante entre lecciones no sólo se corrige; el validador común comprueba navegación secuencial para impedir que el mismo tipo de deuda reaparezca silenciosamente.
 
-## GL-016 — Git es un curso transversal compartido, no un lenguaje 46
+## GL-016 — Git es un curso transversal compartido, fuera del catálogo de 52 lenguajes
 
 **Fecha:** 2026-08-13  
 **Estado:** aceptada
@@ -197,7 +197,7 @@ El curso independiente de Git comienza bajo `learn/es/git/` y se considera infra
 
 Reglas:
 
-1. Git **no** modifica el denominador de 45 cursos de lenguaje de Learn v1 ni el catálogo de seis expansiones ya acordadas.
+1. Git **no** modifica el catálogo canónico de **52 lenguajes**; se mantiene como curso transversal independiente.
 2. Los cursos de lenguaje no deben “anunciar que algún día habrá un curso de Git”; deben recomendar y enlazar directamente `../git/` cuando corresponda.
 3. No se duplica enseñanza sustancial de Git dentro de C#, Python, JavaScript, COBOL u otros cursos. Sólo se permiten comandos inevitables para obtener/ejecutar material o una referencia puntual al curso transversal.
 4. El curso de Git sigue la misma disciplina pedagógica y DoD general, adaptando “aplicación canónica” a un repositorio de práctica real y observable.
