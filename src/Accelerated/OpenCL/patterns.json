@@ -19,5 +19,18 @@
     "lazy_initialization",
     "object_pool"
   ],
-  "implemented": []
+  "implemented": [
+    "abstract_factory",
+    "adapter",
+    "bridge",
+    "builder",
+    "command",
+    "facade",
+    "flyweight",
+    "proxy",
+    "strategy",
+    "active_object",
+    "lazy_initialization",
+    "object_pool"
+  ]
 }

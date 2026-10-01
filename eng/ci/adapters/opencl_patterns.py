@@ -37,10 +37,12 @@ def main() -> int:
     implemented = list(state["implemented"])
     actual_tests = sorted(p.stem.removeprefix("test_") for p in (OPENCL_ROOT / "tests").glob("test_*.c"))
     dc.require(actual_tests == sorted(contracted), f"OpenCL test census mismatch: {actual_tests}")
-    actual_sources = sorted(p.stem for p in (OPENCL_ROOT / "patterns").glob("*.c")) if (OPENCL_ROOT / "patterns").is_dir() else []
+    actual_sources = sorted(p.stem for p in (OPENCL_ROOT / "patterns").glob("*.c"))
     dc.require(actual_sources == sorted(implemented), f"OpenCL implementation census mismatch: {actual_sources}")
     dc.run(["clinfo", "--list"])
 
+    harness = OPENCL_ROOT / "opencl_harness.c"
+    dc.require(harness.is_file(), "OpenCL shared harness is missing")
     failures: list[str] = []
     with tempfile.TemporaryDirectory(prefix="genkidama-opencl-") as temp:
         work = Path(temp)
@@ -58,7 +60,7 @@ def main() -> int:
             argv = [
                 "cc", "-std=c17", "-Wall", "-Wextra", "-Werror",
                 "-I", str(OPENCL_ROOT / "include"),
-                str(source), str(test), "-lOpenCL", "-o", str(binary),
+                str(harness), str(source), str(test), "-lOpenCL", "-o", str(binary),
             ]
             print("$ " + " ".join(argv), flush=True)
             completed = subprocess.run(argv, cwd=ROOT, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False)
