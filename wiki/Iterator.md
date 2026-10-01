@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** proporcionar una forma de recorrer secuencialmente los elementos de un agregado sin exponer su representación interna.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `49/49`  
+> **Implementaciones de lenguaje:** `50/50`  
 > **Cobertura de pruebas:** N/A — ejemplos standalone políglotas; se usa compile/analyze/runtime por ecosistema en lugar de un porcentaje agregado sintético.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -153,7 +153,7 @@ Si el cliente debe conocer offsets, enlaces o estructura física para avanzar, l
 
 ## Implementaciones por lenguaje
 
-Universo actual: **51 targets**: **49 Applicable** y **2 N/A**. HTML y CSS pueden expresar orden o selección declarativa, pero por sí solos no ofrecen al autor un estado programable de recorrido con avance/current controlable. La ausencia de clases no excluye a ningún target.
+Universo actual: **52 targets**: **50 Applicable** y **2 N/A**. HTML y CSS pueden expresar orden o selección declarativa, pero por sí solos no ofrecen al autor un estado programable de recorrido con avance/current controlable. La ausencia de clases no excluye a ningún target.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo canónico | Validación |
 |---|---|---|---|
@@ -208,6 +208,7 @@ Universo actual: **51 targets**: **49 Applicable** y **2 N/A**. HTML y CSS puede
 | MATLAB | Applicable | [`iterator.m`](../src/DataScience/MATLAB/iterator.m) | MATLAB Actions ✅ |
 | HTML | N/A | — | markup declarativo sin cursor/estado de recorrido programable por el autor |
 | CSS | N/A | — | selector matching sin protocolo programable de current/next o estado de recorrido |
+| Mojo | Applicable | [`iterator.mojo`](../src/Systems/Mojo/patterns/iterator.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_iterator.mojo), Mojo 1.1.0; gate 52/52 green |
 
 ## Comprueba que lo entendiste
 

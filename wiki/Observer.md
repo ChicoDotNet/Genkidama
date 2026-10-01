@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Notificar a múltiples dependientes cuando cambia un subject sin acoplarlo a las implementaciones concretas de esos dependientes.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `49/49`  
+> **Implementaciones de lenguaje:** `50/50`  
 > **Cobertura de pruebas:** N/A — la matriz standalone usa compile/analyze/runtime/source contracts por ecosistema; no existe un porcentaje agregado significativo.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -203,8 +203,9 @@ La tabla es autoritativa para la completitud final. Un sweep o función embebida
 | CSS | N/A | — | — | CSS reacciona al estado de árbol/rendering, pero no ofrece por sí solo un mecanismo general de suscripción/despacho entre participantes del dominio; usar DOM/JS cambia de target. |
 | MicroPython | Applicable | [`observer.py`](../src/Other/MicroPython/observer.py) | MicroPython 1.29.0 + runtime sentinel | Callbacks/listas de funciones con lifecycle explícito. |
 | Rockstar | Applicable | [`observer.rock`](../src/Other/Rockstar/observer.rock) | Rockstar 2.0.31 + runtime sentinel | Funciones y estado explícito modelan publisher/subscribers. |
+| Mojo | Applicable | [`observer.mojo`](../src/Systems/Mojo/patterns/observer.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_observer.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
 
-**Conteo factual:** 49/49 targets Applicable tienen canónico direccionable y evidencia verificada. HTML y CSS son los únicos N/A, con justificación técnica. El head que cerró el último Applicable (`852374c4...`) pasó Quality, Product CI y Polyglot CI; la página final reconcilia esa evidencia bajo KB-006.
+**Conteo factual:** 50/50 targets Applicable tienen canónico direccionable y evidencia verificada. HTML y CSS son los únicos N/A, con justificación técnica. El head que cerró el último Applicable (`852374c4...`) pasó Quality, Product CI y Polyglot CI; la página final reconcilia esa evidencia bajo KB-006.
 
 ## Comprueba que lo entendiste
 

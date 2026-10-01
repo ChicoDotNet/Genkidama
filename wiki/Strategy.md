@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Encapsular algoritmos o políticas intercambiables detrás de un mismo contrato para poder elegirlos sin cambiar al consumidor.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `49/49` Applicable con canónico individual direccionable y verificado.  
+> **Implementaciones de lenguaje:** `50/50` Applicable con canónico individual direccionable y verificado.  
 > **Cobertura de pruebas:** `N/A` agregada — la matriz polyglot usa compile/analyze/runtime/source-contract según ecosistema; el piso de 44% aplica donde exista coverage significativo.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -155,7 +155,7 @@ Con ese exact-head VERIFY, las 49 celdas Applicable tienen canónico individual 
 
 ## Implementaciones por lenguaje
 
-La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 45 lenguajes v1 y 6 adicionales. Clasificación: **49 Applicable + 2 N/A**.
+La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 45 lenguajes v1, 6 adicionales previos y Mojo. Clasificación: **50 Applicable + 2 N/A**.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -210,6 +210,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | CSS | N/A | — | — | CSS selecciona reglas de estilo, no invoca algoritmos intercambiables como responsabilidad ejecutable autónoma. |
 | MicroPython | Applicable | [`strategy.py`](../src/Other/MicroPython/strategy.py) | MicroPython runtime; Polyglot verde | Callable/función intercambiable. |
 | Rockstar | Applicable | [`strategy.rock`](../src/Other/Rockstar/strategy.rock) | Rockstar runtime; Polyglot verde | Referencia de función intercambiable pasada al mismo contexto. |
+| Mojo | Applicable | [`strategy.mojo`](../src/Systems/Mojo/patterns/strategy.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_strategy.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
 
 ## Comprueba que lo entendiste
 

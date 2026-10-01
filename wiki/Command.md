@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** encapsular una solicitud o acción como un valor autónomo para desacoplar quién la solicita de quién la ejecuta y permitir tratarla como dato cuando se necesita encolar, registrar, parametrizar o deshacer.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `49/49`  
+> **Implementaciones de lenguaje:** `50/50`  
 > **Cobertura de pruebas:** N/A — los ejemplos son artefactos standalone políglotas; compile/analyze/runtime por ecosistema aporta una señal más fuerte que un porcentaje agregado sintético.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -167,7 +167,7 @@ Un retiro en memoria puede revertirse exactamente. Un correo enviado o un pago e
 
 ## Implementaciones por lenguaje
 
-Universo actual: **51 targets**. Command clasifica **49 Applicable** y **2 N/A**. HTML y CSS no poseen por sí mismos un modelo de ejecución capaz de encapsular una solicitud como valor y despacharla hacia un receptor. SQL declarativo permanece Applicable porque una solicitud puede reificarse como datos relacionales y ser interpretada por un mecanismo de despacho sin depender de clases.
+Universo actual: **52 targets**. Command clasifica **50 Applicable** y **2 N/A**. HTML y CSS no poseen por sí mismos un modelo de ejecución capaz de encapsular una solicitud como valor y despacharla hacia un receptor. SQL declarativo permanece Applicable porque una solicitud puede reificarse como datos relacionales y ser interpretada por un mecanismo de despacho sin depender de clases.
 
 Los 49 targets Applicable tienen un artefacto canónico individual y evidencia ejecutada proporcional al ecosistema. Los workflows/ledgers de sweep sólo orquestan o documentan esas fuentes; no las sustituyen.
 
@@ -224,6 +224,7 @@ Los 49 targets Applicable tienen un artefacto canónico individual y evidencia e
 | MATLAB | Applicable | [`command.m`](../src/DataScience/MATLAB/command.m) | native MATLAB Actions gate ✅ | structs + function handles + cola + undo |
 | HTML | N/A | — | — | markup declarativo sin modelo de ejecución para encapsular o despachar acciones |
 | CSS | N/A | — | — | reglas declarativas de estilo sin solicitudes ejecutables ni invocador/receiver |
+| Mojo | Applicable | [`command.mojo`](../src/Systems/Mojo/patterns/command.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_command.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
 
 ## Comprueba que lo entendiste
 

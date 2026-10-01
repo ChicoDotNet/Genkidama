@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Capturar el estado restorable de un originador sin exponer ni trasladar arbitrariamente su responsabilidad de mutación.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `49/49`  
+> **Implementaciones de lenguaje:** `50/50`  
 > **Cobertura de pruebas:** `N/A` como porcentaje agregado; los ejemplos standalone usan compile/analyze/runtime según el target.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -138,7 +138,7 @@ Serializar es sólo un mecanismo. Es Memento únicamente cuando representa estad
 
 ## Implementaciones por lenguaje
 
-La tabla clasifica los 51 targets actuales: **49 Applicable y 2 N/A**. Sólo se cuenta como implementado un canónico individual auditado con evidencia repository-native ejecutada. El cohort integrado por PR #97 aporta evidencia histórica explícita de **546/546** celdas verdes para sus 14 targets; los ledgers de sweeps siguen aportando trazabilidad histórica, y las celdas cerradas horizontalmente por este PR se acreditan sólo después de observar sus gates verdes. El head `a402f916` cerró Quality, Product CI y Polyglot CI en verde, incluido Platform para VBA, Delphi, SQL declarativo, MicroPython y Rockstar.
+La tabla clasifica los 52 targets actuales: **50 Applicable y 2 N/A**. Sólo se cuenta como implementado un canónico individual auditado con evidencia repository-native ejecutada. El cohort integrado por PR #97 aporta evidencia histórica explícita de **546/546** celdas verdes para sus 14 targets; los ledgers de sweeps siguen aportando trazabilidad histórica, y las celdas cerradas horizontalmente por este PR se acreditan sólo después de observar sus gates verdes. El head `a402f916` cerró Quality, Product CI y Polyglot CI en verde, incluido Platform para VBA, Delphi, SQL declarativo, MicroPython y Rockstar.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -193,6 +193,7 @@ La tabla clasifica los 51 targets actuales: **49 Applicable y 2 N/A**. Sólo se 
 | CSS | N/A | — | — | Puede representar/selectar estados visuales, pero no captura, conserva y restaura estado arbitrario por sí misma. |
 | MicroPython | Applicable | [`memento.py`](../src/Other/MicroPython/memento.py) | MicroPython v1.28.0 runtime + invariantes; Platform ✅ en `a402f916` | Tuple snapshot + copia de tags; restore y anti-aliasing verificados. |
 | Rockstar | Applicable | [`memento.rock`](../src/Other/Rockstar/memento.rock) | Rockstar v2.0.31 runtime + exact-output; Platform ✅ en `a402f916` | Funciones/variables preservan snapshot y restauración sin forzar OOP. |
+| Mojo | Applicable | [`memento.mojo`](../src/Systems/Mojo/patterns/memento.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_memento.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
 
 ## Comprueba que lo entendiste
 
