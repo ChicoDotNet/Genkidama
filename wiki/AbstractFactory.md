@@ -192,7 +192,7 @@ Esto es evidencia de ejecución o, donde el runtime propietario no está razonab
 
 ## Implementaciones por lenguaje
 
-La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 45 lenguajes v1, 6 adicionales previos y Mojo como target #52. `Applicable` significa que el patrón puede expresarse de forma razonablemente idiomática. `N/A` exige una razón técnica.
+La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 52 targets actuales. `Applicable` significa que el patrón puede expresarse de forma razonablemente idiomática. `N/A` exige una razón técnica.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -249,7 +249,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | Rockstar | Applicable | [`example1.rock`](../src/Other/Rockstar/example1.rock) | Rockstar v2.0.31 official runtime + exact output ✅ | Dos funciones-fábrica devuelven hashes de productos relacionados; una familia se selecciona una sola vez. |
 | Mojo | Applicable | [`abstract_factory.mojo`](../src/Systems/Mojo/patterns/abstract_factory.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_abstract_factory.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
 
-**Cobertura actual verificada: 48 / 48 lenguajes Applicable (100% de completitud de lenguaje; no confundir con test coverage).**
+**Cobertura actual verificada: 49/49 lenguajes Applicable (100% de completitud de lenguaje; no confundir con test coverage).**
 
 La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe conservar la intención, resolver su enlace y tener evidencia proporcional.
 
