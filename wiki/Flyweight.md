@@ -3,7 +3,7 @@
 > **Familia:** Structural  
 > **Intención:** compartir estado intrínseco reutilizable entre muchas representaciones ligeras y mantener fuera del objeto compartido el estado que cambia por contexto.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `49/49`  
+> **Implementaciones de lenguaje:** `50/50`  
 > **Cobertura de pruebas:** N/A — ejemplos standalone multi-ecosistema; se usa compilación, runtime, análisis o contrato por lenguaje en lugar de inventar un porcentaje agregado.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -135,7 +135,7 @@ Si dos contextos reciben el mismo Flyweight y uno puede mutarlo, el ahorro de me
 
 ## Implementaciones por lenguaje
 
-Universo actual: **52 targets**. Flyweight clasifica **49 Applicable** y **3 N/A**. La ausencia de clases no convierte un lenguaje ejecutable en N/A.
+Universo actual: **53 targets**. Flyweight clasifica **50 Applicable** y **3 N/A**. La ausencia de clases no convierte un lenguaje ejecutable en N/A.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -191,6 +191,8 @@ Universo actual: **52 targets**. Flyweight clasifica **49 Applicable** y **3 N/A
 | CSS | N/A | — | — | comparte reglas declarativas, pero no implementa por sí solo una fábrica/pool runtime de Flyweights |
 | SQL declarativo | N/A | — | — | puede deduplicar datos, pero necesita una capa procedural/runtime adicional para expresar este ejemplo de objeto/contexto |
 | Mojo | Applicable | [`flyweight.mojo`](../src/Systems/Mojo/patterns/flyweight.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_flyweight.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
+| Chapel | Applicable | [`flyweight.chpl`](../src/Systems/Chapel/patterns/flyweight.chpl) | [Test](../src/Systems/Chapel/tests/test_flyweight.chpl), Chapel 2.10.0 compile/runtime target gate | Canónico del lenguaje target #53. |
+**Accelerated/Heterogeneous:** este patrón participa también en el piloto OpenCL ejecutable sobre CPU/PoCL; esa evidencia vive en [el ledger OpenCL](../docs/pattern-sweeps/opencl.md) y no altera el denominador de lenguajes.
 
 ## Comprueba que lo entendiste
 

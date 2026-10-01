@@ -3,7 +3,7 @@
 > **Familia:** Structural  
 > **Intención:** proporcionar un sustituto con el mismo contrato que otro sujeto para controlar, diferir o mediar el acceso a éste.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `50/50`  
+> **Implementaciones de lenguaje:** `51/51`  
 > **Cobertura de pruebas:** N/A — ejemplos standalone multi-ecosistema; se usa compilación, runtime, análisis o contrato por lenguaje en lugar de inventar un porcentaje agregado.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -151,7 +151,7 @@ Cachear es una posibilidad, no una obligación del patrón. Si los datos cambian
 
 ## Implementaciones por lenguaje
 
-Universo actual: **52 targets**. Proxy clasifica **50 Applicable** y **2 N/A**. Todos los Applicable tienen ejemplo real enlazado y evidencia verde observada en el head del PR. SQL declarativo es Applicable porque una vista puede actuar como surrogate/protection proxy con una interfaz relacional equivalente.
+Universo actual: **53 targets**. Proxy clasifica **51 Applicable** y **2 N/A**. Todos los Applicable tienen ejemplo real enlazado y evidencia verde observada en el head del PR. SQL declarativo es Applicable porque una vista puede actuar como surrogate/protection proxy con una interfaz relacional equivalente.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -207,6 +207,8 @@ Universo actual: **52 targets**. Proxy clasifica **50 Applicable** y **2 N/A**. 
 | HTML | N/A | — | — | markup declarativo sin una operación ejecutable que pueda implementar el contrato y controlar acceso a un sujeto |
 | CSS | N/A | — | — | reglas de estilo declarativas sin sujeto/intermediario ejecutable ni política de acceso al mismo contrato |
 | Mojo | Applicable | [`proxy.mojo`](../src/Systems/Mojo/patterns/proxy.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_proxy.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
+| Chapel | Applicable | [`proxy.chpl`](../src/Systems/Chapel/patterns/proxy.chpl) | [Test](../src/Systems/Chapel/tests/test_proxy.chpl), Chapel 2.10.0 compile/runtime target gate | Canónico del lenguaje target #53. |
+**Accelerated/Heterogeneous:** este patrón participa también en el piloto OpenCL ejecutable sobre CPU/PoCL; esa evidencia vive en [el ledger OpenCL](../docs/pattern-sweeps/opencl.md) y no altera el denominador de lenguajes.
 
 ## Comprueba que lo entendiste
 

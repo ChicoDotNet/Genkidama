@@ -24,7 +24,7 @@ Cada lenguaje tiene una sola aplicación canónica principal que crece durante e
 
 Es infraestructura pedagógica compartida: los cursos de lenguaje lo recomiendan en vez de duplicar una mini-lección de Git dentro de cada ruta.
 
-Git se sigue y valida aparte; **no altera el catálogo de 52 lenguajes**.
+Git se sigue y valida aparte; **no altera el catálogo de 53 lenguajes**.
 
 ## Idioma
 
@@ -76,9 +76,9 @@ La memoria operativa vive en:
 
 ## Alcance v1
 
-Genkidama Learn v1 termina cuando los 45 lenguajes actuales tienen un curso completo en español, aplicación canónica funcional y validación razonable.
+Genkidama Learn v1 termina cuando los 45 lenguajes de la cohorte v1 original tienen un curso completo en español, aplicación canónica funcional y validación razonable.
 
-El curso transversal de Git mejora la preparación compartida pero no aumenta ni reduce ese denominador. Delphi, GNU Octave, SQL, CSS, MicroPython y Rockstar están registrados como expansión posterior. Rockstar se presenta como contenido pedagógico/esotérico, no como una ruta con demanda laboral significativa.
+El curso transversal de Git mejora la preparación compartida pero no aumenta ni reduce esa cohorte. El catálogo canónico contiene 53 lenguajes; Delphi, GNU Octave, SQL, CSS, MicroPython, Rockstar, Mojo y Chapel permanecen fuera de la cohorte v1 original mientras estén marcados como backlog. Rockstar se presenta como contenido pedagógico/esotérico, no como una ruta con demanda laboral significativa.
 
 ## Licencia
 

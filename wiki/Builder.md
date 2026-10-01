@@ -3,7 +3,7 @@
 > **Familia:** Creational  
 > **Intención:** construir un objeto complejo paso a paso, permitiendo reutilizar el mismo proceso para obtener representaciones diferentes.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `49/49`  
+> **Implementaciones de lenguaje:** `50/50`  
 > **Cobertura de pruebas:** N/A — los ejemplos heterogéneos se validan por compilación/ejecución o evidencia proporcional; no existe un porcentaje homogéneo de line coverage.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -148,7 +148,7 @@ Builder no sustituye invariantes de dominio. Si el producto admite demasiadas co
 
 ## Implementaciones por lenguaje
 
-La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): **52 targets actuales**, de los cuales Builder clasifica **49 Applicable** y **3 N/A**. Todas las filas Applicable tienen un ejemplo real enlazado y evidencia verde observada en el head de cierre.
+La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): **53 targets actuales**, de los cuales Builder clasifica **50 Applicable** y **3 N/A**. Todas las filas Applicable tienen un ejemplo real enlazado y evidencia verde observada en el head de cierre.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -204,6 +204,8 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | MicroPython | Applicable | [`builder.py`](../src/Other/MicroPython/builder.py) | MicroPython 1.28.0 Unix port run ✅ | Clases simples + receta compartida. |
 | Rockstar | Applicable | [`builder.rock`](../src/Other/Rockstar/builder.rock) | runtime oficial v2.0.31 ✅ | Binario oficial con SHA-256 fijado; salida observable. |
 | Mojo | Applicable | [`builder.mojo`](../src/Systems/Mojo/patterns/builder.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_builder.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
+| Chapel | Applicable | [`builder.chpl`](../src/Systems/Chapel/patterns/builder.chpl) | [Test](../src/Systems/Chapel/tests/test_builder.chpl), Chapel 2.10.0 compile/runtime target gate | Canónico del lenguaje target #53. |
+**Accelerated/Heterogeneous:** este patrón participa también en el piloto OpenCL ejecutable sobre CPU/PoCL; esa evidencia vive en [el ledger OpenCL](../docs/pattern-sweeps/opencl.md) y no altera el denominador de lenguajes.
 
 ### Evidencia automatizada
 
@@ -230,7 +232,7 @@ No se inventa line coverage transversal. La política >=44% aplica cuando un eco
 - El patrón gana flexibilidad a cambio de protocolo, estado y tipos/funciones adicionales.
 - Abstract Factory selecciona familias; Factory Method decide creación individual; Builder enfatiza construcción progresiva.
 - La intención se puede expresar idiomáticamente sin clases mediante records, closures, módulos, predicados, structs o mensajes.
-- Cardinalidad validada: **51 targets = 48 Applicable + 3 N/A; 48/48 Applicable con ejemplo real y evidencia verde observada**.
+- Cardinalidad validada: **51 targets = 50 Applicable + 3 N/A; 50/50 Applicable con ejemplo real y evidencia verde observada**.
 
 ## Referencias
 

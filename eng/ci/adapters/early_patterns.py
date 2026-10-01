@@ -453,7 +453,11 @@ def validate_platform(census: dict[str, int]) -> None:
 
 def validate_chapel(census: dict[str, int]) -> None:
     files = discover("src/Systems/Chapel/patterns", (".chpl",))
-    record(census, "chapel", files)
+    dc.require(files, "chapel has no discoverable pre-CoR pattern contracts")
+    keys = [key for key, _ in files]
+    dc.require(len(keys) == len(set(keys)), f"chapel has duplicate pre-CoR pattern keys: {keys}")
+    census["chapel"] = len(files)
+    print(f"EARLY_CELLS runtime=chapel cells={len(files)} patterns={','.join(keys)}", flush=True)
     expected = set(PATTERN_MARKERS)
     actual = {key for key, _ in files}
     dc.require(
@@ -468,7 +472,11 @@ def validate_chapel(census: dict[str, int]) -> None:
 
 def validate_accelerated(census: dict[str, int]) -> None:
     files = discover("src/Accelerated/OpenCL/patterns", (".c",))
-    record(census, "opencl", files)
+    dc.require(files, "opencl has no discoverable pre-CoR pilot contracts")
+    keys = [key for key, _ in files]
+    dc.require(len(keys) == len(set(keys)), f"opencl has duplicate pre-CoR pattern keys: {keys}")
+    census["opencl"] = len(files)
+    print(f"EARLY_CELLS runtime=opencl cells={len(files)} patterns={','.join(keys)}", flush=True)
     root = ROOT / "src/Accelerated/OpenCL"
     for key, _ in files:
         dc.require((root / "tests" / f"test_{key}.c").is_file(), f"OpenCL pilot validation missing test_{key}.c")

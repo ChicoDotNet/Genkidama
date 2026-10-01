@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Permitir que un objeto cambie su comportamiento cuando cambia su estado interno, haciendo explícitas las transiciones y evitando condicionales dispersos dependientes del estado.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `50/50` Applicable con canónico individual direccionable y verificado.  
+> **Implementaciones de lenguaje:** `51/51` Applicable con canónico individual direccionable y verificado.  
 > **Cobertura de pruebas:** `N/A` agregada — la matriz polyglot usa la validación más fuerte razonablemente disponible por ecosistema; no se inventa un porcentaje transversal.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -162,7 +162,7 @@ La evidencia es proporcional al ecosistema: compilación/análisis/runtime cuand
 
 ## Implementaciones por lenguaje
 
-La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 52 targets actuales. La clasificación final es **50 Applicable + 2 N/A**.
+La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 53 targets actuales. La clasificación final es **51 Applicable + 2 N/A**.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -218,7 +218,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | MicroPython | Applicable | [`state.py`](../src/Other/MicroPython/state.py) | MicroPython runtime | Constantes + función. |
 | Rockstar | Applicable | [`state.rock`](../src/Other/Rockstar/state.rock) | Rockstar runtime | Variables + función. |
 | Mojo | Applicable | [`state.mojo`](../src/Systems/Mojo/patterns/state.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_state.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
-
+| Chapel | Applicable | [`state.chpl`](../src/Systems/Chapel/patterns/state.chpl) | [Test](../src/Systems/Chapel/tests/test_state.chpl), Chapel 2.10.0 compile/runtime target gate | Canónico del lenguaje target #53. |
 ## Comprueba que lo entendiste
 
 1. ¿Qué diferencia a State de un simple enum o bandera cuando ambos almacenan un valor de estado?

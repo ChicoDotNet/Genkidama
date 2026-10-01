@@ -343,3 +343,26 @@ Correctness is non-compensable. A materially wrong definition or a non-idiomatic
 3. An active owner-approved language-major experiment may traverse the matrix by target runtime or coherent runtime cohort to amortize CI.
 4. The active experiment order and review point live in `docs/roadmap.md`.
 5. Coordinate with the Learn lane through the unified roadmap: each lane spends roughly 80% of effort on its own delivery and 20% checking compatibility with the other lane.
+
+
+## Orthogonal execution-model targets
+
+The canonical **language target** matrix and execution-platform/model targets solve different questions and MUST NOT share a denominator merely because both contain executable examples.
+
+A language target:
+
+- is registered in `learn/_meta/catalog.yml`;
+- participates in the full pattern applicability classification;
+- increments the canonical language-target denominator;
+- follows the normal Applicable/N/A and canonical-source rules for every catalog pattern.
+
+An **orthogonal execution-model target** (for example an accelerator API or heterogeneous-computing platform):
+
+- does **not** increment the language-target denominator;
+- owns an explicit scoped applicability/pilot ledger;
+- MUST keep every contracted cell individually addressable;
+- MUST execute the real model/runtime when reasonably available rather than replacing it with source-only simulation;
+- MUST document the host/device or platform boundary that makes the example materially different from the underlying host language;
+- MUST NOT duplicate every language-pattern cell merely to create matrix volume.
+
+OpenCL is the first target governed by this rule. Its initial pilot validates the Accelerated/Heterogeneous dimension without treating OpenCL C plus its host API as an additional general-purpose language row. Future CUDA, SYCL or similar targets should reuse this dimension unless an explicit architectural decision establishes a different model.

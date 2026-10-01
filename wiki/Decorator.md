@@ -3,7 +3,7 @@
 > **Familia:** Structural  
 > **Intención:** añadir responsabilidades a un objeto de forma componible, envolviéndolo con objetos que conservan el mismo contrato observable.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `49/49`  
+> **Implementaciones de lenguaje:** `50/50`  
 > **Cobertura de pruebas:** N/A — la completitud de lenguajes se valida por comportamiento/toolchain; no existe una métrica homogénea entre 48 ecosistemas standalone.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -173,7 +173,7 @@ Si no existe presión real de combinación dinámica, una función o composició
 
 ## Matriz de implementaciones
 
-El universo canónico mantiene **52 targets**. Decorator clasifica **48 como Applicable** y **HTML, CSS y SQL declarativo como N/A**. Los **49/49 Applicable tienen ejemplo real, enlazado y verificado**. La falta de clases no excluye ningún lenguaje: closures, higher-order functions, records, modules, predicates, tables, callbacks y otros mecanismos son válidos si preservan contrato, delegación y composición.
+El universo canónico mantiene **53 targets**. Decorator clasifica **48 como Applicable** y **HTML, CSS y SQL declarativo como N/A**. Los **50/50 Applicable tienen ejemplo real, enlazado y verificado**. La falta de clases no excluye ningún lenguaje: closures, higher-order functions, records, modules, predicates, tables, callbacks y otros mecanismos son válidos si preservan contrato, delegación y composición.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo | Estado |
 |---|---|---|---|
@@ -229,7 +229,7 @@ El universo canónico mantiene **52 targets**. Decorator clasifica **48 como App
 | CSS | N/A | — | Declarativo: reglas de presentación no proporcionan por sí mismas un runtime de wrappers componibles que preserve el contrato de un componente. |
 | SQL | N/A | — | SQL declarativo puede transformar datos, pero no expresa por sí mismo el contrato runtime que un Decorator preserva y envuelve. |
 | Mojo | Applicable | [`decorator.mojo`](../src/Systems/Mojo/patterns/decorator.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_decorator.mojo), Mojo 1.1.0; gate 52/52 green |
-
+| Chapel | Applicable | [`decorator.chpl`](../src/Systems/Chapel/patterns/decorator.chpl) | [Test](../src/Systems/Chapel/tests/test_decorator.chpl), Chapel 2.10.0 compile/runtime target gate |
 ## Evidencia de validación
 
 La validación se divide por familias para mantener feedback rápido y toolchains razonables. La certificación final ejecutada sobre el patrón demostró la última tranche con toolchains reales o contratos de fuente donde el runtime propietario no está disponible. En particular, el gate final comprobó Ada, Solidity, Fortran, Zig, Nim, Dart, Crystal, COBOL y Assembly de forma secuencial, además de jobs independientes para Objective-C, GDScript, MATLAB, MicroPython, Rockstar y contratos VBA/Delphi.
@@ -249,7 +249,7 @@ La reparación final de Assembly evitó usar `out` como etiqueta, ya que NASM lo
 - **Trade-off:** flexibilidad composicional a cambio de más capas e importancia del orden.
 - **Distinción clave:** Decorator preserva contrato para añadir responsabilidad; Adapter cambia contrato y Proxy controla acceso.
 - **Portabilidad:** no requiere OOP; cualquier mecanismo que preserve contrato, delegación y composición puede expresar la intención.
-- **Estado:** `validated`, con `48/48` targets Applicable verificados.
+- **Estado:** `validated`, con `50/50` targets Applicable verificados.
 
 ## Referencias
 

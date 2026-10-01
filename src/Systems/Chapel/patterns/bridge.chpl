@@ -3,6 +3,6 @@ module PatternBridge {
     const device = "tv";
     const action = "muted";
     assert(device == "tv" && action == "muted");
-    return device + ":" + action;
+    return device + "=" + action;
   }
 }

@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Encapsular algoritmos o políticas intercambiables detrás de un mismo contrato para poder elegirlos sin cambiar al consumidor.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `50/50` Applicable con canónico individual direccionable y verificado.  
+> **Implementaciones de lenguaje:** `51/51` Applicable con canónico individual direccionable y verificado.  
 > **Cobertura de pruebas:** `N/A` agregada — la matriz polyglot usa compile/analyze/runtime/source-contract según ecosistema; el piso de 44% aplica donde exista coverage significativo.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -155,7 +155,7 @@ Con ese exact-head VERIFY, las 49 celdas Applicable tienen canónico individual 
 
 ## Implementaciones por lenguaje
 
-La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 52 targets actuales. Clasificación: **50 Applicable + 2 N/A**.
+La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 53 targets actuales. Clasificación: **51 Applicable + 2 N/A**.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -211,6 +211,8 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | MicroPython | Applicable | [`strategy.py`](../src/Other/MicroPython/strategy.py) | MicroPython runtime; Polyglot verde | Callable/función intercambiable. |
 | Rockstar | Applicable | [`strategy.rock`](../src/Other/Rockstar/strategy.rock) | Rockstar runtime; Polyglot verde | Referencia de función intercambiable pasada al mismo contexto. |
 | Mojo | Applicable | [`strategy.mojo`](../src/Systems/Mojo/patterns/strategy.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_strategy.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
+| Chapel | Applicable | [`strategy.chpl`](../src/Systems/Chapel/patterns/strategy.chpl) | [Test](../src/Systems/Chapel/tests/test_strategy.chpl), Chapel 2.10.0 compile/runtime target gate | Canónico del lenguaje target #53. |
+**Accelerated/Heterogeneous:** este patrón participa también en el piloto OpenCL ejecutable sobre CPU/PoCL; esa evidencia vive en [el ledger OpenCL](../docs/pattern-sweeps/opencl.md) y no altera el denominador de lenguajes.
 
 ## Comprueba que lo entendiste
 
@@ -224,7 +226,7 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 - La sustituibilidad del contrato importa más que la forma OO.
 - Funciones, closures, traits, punteros, módulos y predicados pueden ser implementaciones idiomáticas.
 - State es el vecino más fácil de confundir: cambia por estado interno, no por elección de política.
-- La matriz está completa: 49/49 Applicable tienen canónico individual direccionable y verificado; HTML y CSS son los únicos N/A con justificación técnica.
+- La matriz está completa: 51/51 Applicable tienen canónico individual direccionable y verificado; HTML y CSS son los únicos N/A con justificación técnica.
 
 ## Referencias
 
