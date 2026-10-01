@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** Centralizar la coordinación entre colegas para que colaboren sin conocerse ni llamarse directamente entre sí.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `49/49` — los 51 targets están reconciliados: 48 Applicable con canónico verificado y 3 N/A técnicamente justificados (HTML, CSS y SQL declarativo).  
+> **Implementaciones de lenguaje:** `49/49` — los 52 targets están reconciliados: 49 Applicable con canónico verificado y 3 N/A técnicamente justificados (HTML, CSS y SQL declarativo).  
 > **Cobertura de pruebas:** `N/A` — los ejemplos son standalone y heterogéneos; se usa compile/analyze/runtime y failure modes cuando es la evidencia más fuerte razonable.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
