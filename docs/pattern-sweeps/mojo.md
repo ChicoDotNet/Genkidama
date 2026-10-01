@@ -98,4 +98,4 @@ The other 31 pages were empty before the Mojo work. This slice does not fabricat
 
 No synthetic line-coverage percentage is assigned to these standalone teaching artifacts. Native Mojo compilation plus executable behavioral assertions is the stronger evidence. Failure-path checks are used where they materially teach the contract.
 
-`stable for promotion: pending repository-wide reviewed-head reconciliation`.
+`stable for promotion: yes` — subject to the owner-controlled merge/promotion boundary.
