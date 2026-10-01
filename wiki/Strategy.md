@@ -155,7 +155,7 @@ Con ese exact-head VERIFY, las 49 celdas Applicable tienen canónico individual 
 
 ## Implementaciones por lenguaje
 
-La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 45 lenguajes v1, 6 adicionales previos y Mojo. Clasificación: **50 Applicable + 2 N/A**.
+La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 52 targets actuales. Clasificación: **50 Applicable + 2 N/A**.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
