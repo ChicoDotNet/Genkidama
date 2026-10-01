@@ -148,7 +148,7 @@ Si sólo existe una implementación estable y no hay evidencia de otra dimensió
 
 ## Implementaciones por lenguaje
 
-La tabla es autoritativa para la completitud de lenguaje. El universo canónico mantiene **52 targets**: **49 Applicable** y **3 N/A**. Los **49/50 ejemplos están materializados y verificados** con la validación más fuerte y ligera razonablemente disponible para cada ecosistema.
+La tabla es autoritativa para la completitud de lenguaje. El universo canónico mantiene **52 targets**: **49 Applicable** y **3 N/A**. Los **49/49 ejemplos están materializados y verificados** con la validación más fuerte y ligera razonablemente disponible para cada ecosistema.
 
 | Lenguaje | Aplicabilidad | Ejemplo | Validación | Nota |
 |---|---|---|---|---|
