@@ -50,12 +50,12 @@ def validate_foundation(errors: list[str]) -> None:
             fail(errors, f"missing required foundation file: {path.relative_to(ROOT)}")
 
 
-def validate_catalog(errors: list[str]) -> tuple[dict, set[str]]:
+def validate_catalog(errors: list[str]) -> tuple[dict, set[str], set[str]]:
     catalog = load_yaml(META / "catalog.yml")
     courses = catalog.get("courses")
     if not isinstance(courses, list):
         fail(errors, "catalog.yml: courses must be a list")
-        return catalog, set()
+        return catalog, set(), set()
 
     slugs = [course.get("slug") for course in courses if isinstance(course, dict)]
     unique_slugs = {slug for slug in slugs if isinstance(slug, str)}
@@ -64,6 +64,13 @@ def validate_catalog(errors: list[str]) -> tuple[dict, set[str]]:
 
     if len(courses) != 52:
         fail(errors, f"catalog.yml: expected 52 language targets, found {len(courses)}")
+    v1_required_slugs = {
+        c.get("slug")
+        for c in courses
+        if isinstance(c, dict)
+        and c.get("v1_required") is True
+        and isinstance(c.get("slug"), str)
+    }
     counts = catalog.get("counts")
     if not isinstance(counts, dict) or counts.get("language_targets") != 52:
         fail(errors, "catalog.yml: counts.language_targets must be 52")
@@ -92,10 +99,14 @@ def validate_catalog(errors: list[str]) -> tuple[dict, set[str]]:
             if not course.get(field):
                 fail(errors, f"catalog.yml: course entry missing {field}: {course!r}")
 
-    return catalog, unique_slugs
+    return catalog, unique_slugs, v1_required_slugs
 
 
-def validate_progress(errors: list[str], catalog_slugs: set[str]) -> None:
+def validate_progress(
+    errors: list[str],
+    catalog_slugs: set[str],
+    v1_required_slugs: set[str],
+) -> None:
     progress = load_yaml(META / "progress.yml")
     courses = progress.get("courses")
     if not isinstance(courses, dict):
@@ -106,8 +117,14 @@ def validate_progress(errors: list[str], catalog_slugs: set[str]) -> None:
     if unknown:
         fail(errors, f"progress.yml: unknown course slugs: {sorted(unknown)}")
 
-    if len(courses) != 45:
-        fail(errors, f"progress.yml: expected progress for 45 v1 courses, found {len(courses)}")
+    tracked = set(courses)
+    if tracked != v1_required_slugs:
+        missing = sorted(v1_required_slugs - tracked)
+        extra = sorted(tracked - v1_required_slugs)
+        fail(
+            errors,
+            f"progress.yml: v1_required tracking mismatch; missing={missing} extra={extra}",
+        )
 
     for index, slug in enumerate(EXPECTED_PILOTS, start=1):
         item = courses.get(slug, {})
@@ -241,8 +258,8 @@ def main() -> int:
     errors: list[str] = []
     try:
         validate_foundation(errors)
-        _, catalog_slugs = validate_catalog(errors)
-        validate_progress(errors, catalog_slugs)
+        _, catalog_slugs, v1_required_slugs = validate_catalog(errors)
+        validate_progress(errors, catalog_slugs, v1_required_slugs)
         validate_course_directories(errors, catalog_slugs)
         validate_lesson_navigation(errors)
         validate_markdown_links(errors)
