@@ -332,3 +332,9 @@ courses:
   status: backlog
   canonical_app: Aplicación CLI educativa suficientemente completa, con valor pedagógico y sin afirmar demanda profesional
   market_note: Valor pedagógico y transferible; no presentar como ruta con demanda profesional significativa.
+- slug: mojo
+  name: Mojo
+  v1_required: false
+  linguist_detected: false
+  status: backlog
+  canonical_app: Laboratorio de cómputo de alto rendimiento y patrones de diseño con tipos de valor, funciones y concurrencia
