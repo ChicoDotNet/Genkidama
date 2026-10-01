@@ -11,8 +11,7 @@ translation_order:
 - ru
 - de
 counts:
-  v1_current: 45
-  planned_additional: 6
+  language_targets: 52
 pilots:
 - csharp
 - python
