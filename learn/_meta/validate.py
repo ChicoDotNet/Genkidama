@@ -62,13 +62,11 @@ def validate_catalog(errors: list[str]) -> tuple[dict, set[str]]:
     if len(slugs) != len(unique_slugs):
         fail(errors, "catalog.yml: course slugs must be unique")
 
-    current = [c for c in courses if isinstance(c, dict) and c.get("v1_required") is True]
-    additional = [c for c in courses if isinstance(c, dict) and c.get("v1_required") is False]
-
-    if len(current) != 45:
-        fail(errors, f"catalog.yml: expected 45 v1 courses, found {len(current)}")
-    if len(additional) != 7:
-        fail(errors, f"catalog.yml: expected 7 planned additional courses, found {len(additional)}")
+    if len(courses) != 52:
+        fail(errors, f"catalog.yml: expected 52 language targets, found {len(courses)}")
+    counts = catalog.get("counts")
+    if not isinstance(counts, dict) or counts.get("language_targets") != 52:
+        fail(errors, "catalog.yml: counts.language_targets must be 52")
 
     if catalog.get("source_locale") != "es":
         fail(errors, "catalog.yml: source_locale must be es")
@@ -258,7 +256,7 @@ def main() -> int:
         return 1
 
     print("Genkidama Learn validation passed.")
-    print("Validated 45 v1 language courses, 7 planned additions, transversal Git, metadata, lesson navigation and Markdown links.")
+    print("Validated 52 cataloged language targets, transversal Git, metadata, lesson navigation and Markdown links.")
     return 0
 
 
