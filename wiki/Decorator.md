@@ -173,7 +173,7 @@ Si no existe presión real de combinación dinámica, una función o composició
 
 ## Matriz de implementaciones
 
-El universo canónico mantiene **52 targets**. Decorator clasifica **48 como Applicable** y **HTML, CSS y SQL declarativo como N/A**. Los **48/49 Applicable tienen ejemplo real, enlazado y verificado**. La falta de clases no excluye ningún lenguaje: closures, higher-order functions, records, modules, predicates, tables, callbacks y otros mecanismos son válidos si preservan contrato, delegación y composición.
+El universo canónico mantiene **52 targets**. Decorator clasifica **48 como Applicable** y **HTML, CSS y SQL declarativo como N/A**. Los **49/49 Applicable tienen ejemplo real, enlazado y verificado**. La falta de clases no excluye ningún lenguaje: closures, higher-order functions, records, modules, predicates, tables, callbacks y otros mecanismos son válidos si preservan contrato, delegación y composición.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo | Estado |
 |---|---|---|---|
