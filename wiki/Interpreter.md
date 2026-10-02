@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** representar una gramática pequeña y su semántica de evaluación para construir, combinar e interpretar expresiones de forma uniforme.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `50/50`  
+> **Implementaciones de lenguaje:** `51/51`  
 > **Cobertura de pruebas:** N/A — artefactos standalone políglotas; se usa compile/analyze/runtime por ecosistema en lugar de un porcentaje agregado sintético.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -146,7 +146,7 @@ Si los nodos son sólo DTOs y un consumidor gigante decide todo su significado, 
 
 ## Implementaciones por lenguaje
 
-Universo actual: **52 targets**: **50 Applicable** y **2 N/A**. HTML y CSS pueden describir estructura o reglas, pero por sí mismos no permiten al autor definir y ejecutar la semántica programable de otra gramática. La ausencia de clases no excluye a ningún target.
+Universo actual: **53 targets**: **51 Applicable** y **2 N/A**. HTML y CSS pueden describir estructura o reglas, pero por sí mismos no permiten al autor definir y ejecutar la semántica programable de otra gramática. La ausencia de clases no excluye a ningún target.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo canónico | Validación |
 |---|---|---|---|
@@ -202,7 +202,7 @@ Universo actual: **52 targets**: **50 Applicable** y **2 N/A**. HTML y CSS puede
 | HTML | N/A | — | markup declarativo sin evaluador programable de otra gramática |
 | CSS | N/A | — | reglas de estilo sin mecanismo general para construir/ejecutar un intérprete |
 | Mojo | Applicable | [`interpreter.mojo`](../src/Systems/Mojo/patterns/interpreter.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_interpreter.mojo), Mojo 1.1.0; gate 52/52 green |
-
+| Chapel | Applicable | [`interpreter.chpl`](../src/Systems/Chapel/patterns/interpreter.chpl) | [Test](../src/Systems/Chapel/tests/test_interpreter.chpl), Chapel 2.10.0 compile/runtime target gate |
 ## Comprueba que lo entendiste
 
 1. Si un parser ya produce un AST, ¿qué responsabilidad adicional debe existir para demostrar Interpreter?

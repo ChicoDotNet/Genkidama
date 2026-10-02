@@ -3,7 +3,7 @@
 > **Familia:** Creational  
 > **Intención:** Proporcionar una abstracción para crear familias de productos relacionados o dependientes sin acoplar al cliente a sus tipos concretos.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `49/49`  
+> **Implementaciones de lenguaje:** `50/50`  
 > **Cobertura de pruebas:** `N/A` — este catálogo valida ejemplos por compilación/ejecución cuando es práctico; no existe una métrica homogénea de line coverage entre 48 ecosistemas.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -192,7 +192,7 @@ Esto es evidencia de ejecución o, donde el runtime propietario no está razonab
 
 ## Implementaciones por lenguaje
 
-La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 52 targets actuales. `Applicable` significa que el patrón puede expresarse de forma razonablemente idiomática. `N/A` exige una razón técnica.
+La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml): 53 targets actuales. `Applicable` significa que el patrón puede expresarse de forma razonablemente idiomática. `N/A` exige una razón técnica.
 
 | Lenguaje | Aplicabilidad | Ejemplo verificado | Validación | Nota |
 |---|---|---|---|---|
@@ -248,8 +248,10 @@ La fuente de targets es [`learn/_meta/catalog.yml`](../learn/_meta/catalog.yml):
 | MicroPython | Applicable | [`example1.py`](../src/Other/MicroPython/example1.py) | MicroPython 1.28.0 Unix port build/run ✅ | Una factory dinámica conserva la familia completa en el runtime real. |
 | Rockstar | Applicable | [`example1.rock`](../src/Other/Rockstar/example1.rock) | Rockstar v2.0.31 official runtime + exact output ✅ | Dos funciones-fábrica devuelven hashes de productos relacionados; una familia se selecciona una sola vez. |
 | Mojo | Applicable | [`abstract_factory.mojo`](../src/Systems/Mojo/patterns/abstract_factory.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_abstract_factory.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
+| Chapel | Applicable | [`abstract_factory.chpl`](../src/Systems/Chapel/patterns/abstract_factory.chpl) | [Test](../src/Systems/Chapel/tests/test_abstract_factory.chpl), Chapel 2.10.0 compile/runtime target gate | Canónico del lenguaje target #53. |
+**Accelerated/Heterogeneous:** este patrón participa también en el piloto OpenCL ejecutable sobre CPU/PoCL; esa evidencia vive en [el ledger OpenCL](../docs/pattern-sweeps/opencl.md) y no altera el denominador de lenguajes.
 
-**Cobertura actual verificada: 49/49 lenguajes Applicable (100% de completitud de lenguaje; no confundir con test coverage).**
+**Cobertura actual verificada: 50/50 lenguajes Applicable (100% de completitud de lenguaje; no confundir con test coverage).**
 
 La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe conservar la intención, resolver su enlace y tener evidencia proporcional.
 
@@ -265,7 +267,7 @@ La cobertura no se infiere por la existencia de `example1.*`: cada ejemplo debe 
 - El movimiento de diseño es seleccionar una fábrica/familia una vez y pedirle productos relacionados.
 - El principal trade-off es facilitar nuevas familias a costa de encarecer nuevos tipos de producto.
 - Factory Method puede colaborar con Abstract Factory, pero no define su intención.
-- La evidencia cubre 48/48 lenguajes Applicable; Abstract Factory queda `validated` bajo KB-006.
+- La evidencia cubre 50/50 lenguajes Applicable; Abstract Factory queda `validated` bajo KB-006.
 
 ## Referencias
 

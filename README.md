@@ -89,7 +89,7 @@ The educational catalog may include examples in:
 
 - Functional languages: Erlang, Elixir, Clojure, Scala, F#, Lisp, OCaml, Haskell.
 - Scripting languages: Perl, Python, Ruby, Lua, PHP, Groovy.
-- Systems languages: C, C++, Rust, Zig, Go, Swift, Objective-C.
+- Systems languages: C, C++, Rust, Zig, Go, Swift, Objective-C, Mojo, Chapel.
 - Enterprise languages: Java, C#, Kotlin, Delphi, Visual Basic.
 - Data science languages: R, Julia, GNU Octave.
 - Web languages: HTML/CSS, JavaScript, TypeScript, Dart.
@@ -99,12 +99,13 @@ The educational catalog may include examples in:
 - Niche languages: Solidity, Prolog, Nim, Crystal, GDScript.
 - Low-level languages: Assembly.
 - Other languages: MicroPython, Rockstar.
+- Accelerated/heterogeneous targets (orthogonal to the language catalog): OpenCL.
 
 ## Genkidama Learn
 
 [Genkidama Learn](learn/README.md) extends the educational side of the repository with practical, application-centered courses designed to take a learner from zero knowledge of a language to a reasonable Junior Developer / Entry Level foundation.
 
-The canonical source is initially Spanish, with **52 language targets in the catalog** and five pilots used to stabilize the format before scaling.
+The canonical source is initially Spanish, with **53 language targets in the catalog** and five pilots used to stabilize the format before scaling.
 
 ## Documentation
 

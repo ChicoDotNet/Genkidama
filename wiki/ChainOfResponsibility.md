@@ -3,7 +3,7 @@
 > **Familia:** Behavioral  
 > **Intención:** permitir que una solicitud recorra una secuencia de posibles manejadores hasta que uno asuma la responsabilidad, sin acoplar al emisor con un receptor concreto.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `50/50`  
+> **Implementaciones de lenguaje:** `51/51`  
 > **Cobertura de pruebas:** N/A — ejemplos standalone multi-ecosistema; se usa compilación, runtime, análisis o contrato por lenguaje en lugar de inventar un porcentaje agregado.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -150,7 +150,7 @@ Una cadena sin fallback o error explícito puede terminar sin respuesta. El ejem
 
 ## Implementaciones por lenguaje
 
-Universo actual: **52 targets**. Chain of Responsibility clasifica **50 Applicable** y **2 N/A**. SQL declarativo permanece Applicable porque una secuencia ordenada de reglas/CTEs puede representar receptores que se evalúan hasta que uno acepta; no requiere clases para preservar la intención.
+Universo actual: **53 targets**. Chain of Responsibility clasifica **51 Applicable** y **2 N/A**. SQL declarativo permanece Applicable porque una secuencia ordenada de reglas/CTEs puede representar receptores que se evalúan hasta que uno acepta; no requiere clases para preservar la intención.
 
 Actualmente hay **50 ejemplos materializados y 49 verificados** en este PR. La tabla siguiente es la fuente autoritativa de completitud de lenguajes para este patrón.
 
@@ -208,7 +208,7 @@ Actualmente hay **50 ejemplos materializados y 49 verificados** en este PR. La t
 | HTML | N/A | — | — | markup declarativo sin ejecución ni transferencia de una solicitud entre receptores |
 | CSS | N/A | — | — | reglas declarativas de estilo sin flujo ejecutable de responsabilidad entre handlers |
 | Mojo | Applicable | [`chain_of_responsibility.mojo`](../src/Systems/Mojo/patterns/chain_of_responsibility.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_chain_of_responsibility.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
-
+| Chapel | Applicable | [`chain_of_responsibility.chpl`](../src/Systems/Chapel/patterns/chain_of_responsibility.chpl) | [Test](../src/Systems/Chapel/tests/test_chain_of_responsibility.chpl), Chapel 2.10.0 compile/runtime target gate | Canónico del lenguaje target #53. |
 ## Comprueba que lo entendiste
 
 1. Si todas las etapas de una secuencia deben ejecutarse siempre, ¿por qué un pipeline puede ser una descripción más precisa que Chain of Responsibility?

@@ -1,0 +1,9 @@
+#include "proxy.h"
+
+#include <assert.h>
+
+int main(int argc, char **argv) {
+    assert(argc == 2);
+    assert(run_proxy(argv[1]) == 1);
+    return 0;
+}

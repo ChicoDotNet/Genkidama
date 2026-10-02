@@ -23,7 +23,9 @@ jobs:
     name: Detect changes
     runs-on: ubuntu-24.04
     outputs:
+      accelerated: ${{ steps.classify.outputs.accelerated }}
       beam: ${{ steps.classify.outputs.beam }}
+      chapel: ${{ steps.classify.outputs.chapel }}
       data_shell: ${{ steps.classify.outputs.data_shell }}
       dart: ${{ steps.classify.outputs.dart }}
       dotnet: ${{ steps.classify.outputs.dotnet }}
@@ -60,7 +62,7 @@ jobs:
             result="$(eng/ci/detect-changes "$BASE_SHA" "$HEAD_SHA")"
           fi
           echo "$result"
-          for family in beam data-shell dart dotnet functional git gnu jvm longtail mojo native platform scripting swift web; do
+          for family in accelerated beam chapel data-shell dart dotnet functional git gnu jvm longtail mojo native platform scripting swift web; do
             value="$(python -c 'import json,sys; d=json.loads(sys.argv[1]); print("true" if sys.argv[2] in d["polyglot"] else "false")' "$result" "$family")"
             key="${family//-/_}"
             echo "$key=$value" >> "$GITHUB_OUTPUT"
@@ -501,6 +503,50 @@ jobs:
       - name: Run long-tail Pattern contracts
         run: python eng/ci/run-family longtail --patterns --telemetry-file artifacts/ci/longtail.jsonl
 
+
+  chapel:
+    name: Chapel / 2.10.0
+    needs: detect
+    if: needs.detect.outputs.chapel == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - name: Install Chapel 2.10.0
+        shell: bash
+        run: |
+          set -euo pipefail
+          pkg="$RUNNER_TEMP/chapel-2.10.0-1.ubuntu24.amd64.deb"
+          curl -fsSL https://github.com/chapel-lang/chapel/releases/download/2.10.0/chapel-2.10.0-1.ubuntu24.amd64.deb -o "$pkg"
+          echo "8e2c0179f553bbb86eb3b5a064ca16253ea00f939e1371cb5502e35861aba30f  $pkg" | sha256sum -c -
+          sudo apt-get update
+          sudo apt-get install -y "$pkg"
+          chpl --version
+      - name: Run Chapel Pattern contracts
+        run: python eng/ci/run-family chapel --patterns --telemetry-file artifacts/ci/chapel.jsonl
+
+  accelerated-opencl:
+    name: Accelerated / OpenCL CPU
+    needs: detect
+    if: needs.detect.outputs.accelerated == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.7'
+      - name: Install OpenCL CPU toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y build-essential ocl-icd-opencl-dev pocl-opencl-icd clinfo
+          clinfo --list
+      - name: Run OpenCL accelerated pattern contracts
+        run: python eng/ci/run-family accelerated --patterns --telemetry-file artifacts/ci/opencl.jsonl
+
   mojo:
     name: Mojo / 1.1.0
     needs: detect
@@ -572,6 +618,8 @@ jobs:
     if: always()
     needs:
       - detect
+      - accelerated-opencl
+      - chapel
       - dotnet-linux
       - dotnet-windows
       - jvm-java25
@@ -601,6 +649,10 @@ jobs:
         shell: bash
         env:
           DETECT_RESULT: ${{ needs.detect.result }}
+          ACCELERATED_SELECTED: ${{ needs.detect.outputs.accelerated }}
+          ACCELERATED_RESULTS: ${{ needs.accelerated-opencl.result }}
+          CHAPEL_SELECTED: ${{ needs.detect.outputs.chapel }}
+          CHAPEL_RESULTS: ${{ needs.chapel.result }}
           BEAM_SELECTED: ${{ needs.detect.outputs.beam }}
           BEAM_RESULTS: ${{ needs.beam.result }}
           DATA_SHELL_SELECTED: ${{ needs.detect.outputs.data_shell }}
@@ -650,7 +702,9 @@ jobs:
               fi
             done
           }
+          check_family Accelerated "$ACCELERATED_SELECTED" "$ACCELERATED_RESULTS"
           check_family BEAM "$BEAM_SELECTED" "$BEAM_RESULTS"
+          check_family Chapel "$CHAPEL_SELECTED" "$CHAPEL_RESULTS"
           check_family Data/Shell "$DATA_SHELL_SELECTED" "$DATA_SHELL_RESULTS"
           check_family Dart "$DART_SELECTED" "$DART_RESULTS"
           check_family .NET "$DOTNET_SELECTED" "$DOTNET_RESULTS"

@@ -450,7 +450,42 @@ def validate_platform(census: dict[str, int]) -> None:
     for key, source in rock: assert_output("Rockstar", key, dc.run([rockstar, str(source)], capture=True))
 
 
+
+def validate_chapel(census: dict[str, int]) -> None:
+    files = discover("src/Systems/Chapel/patterns", (".chpl",))
+    dc.require(files, "chapel has no discoverable pre-CoR pattern contracts")
+    keys = [key for key, _ in files]
+    dc.require(len(keys) == len(set(keys)), f"chapel has duplicate pre-CoR pattern keys: {keys}")
+    census["chapel"] = len(files)
+    print(f"EARLY_CELLS runtime=chapel cells={len(files)} patterns={','.join(keys)}", flush=True)
+    expected = set(PATTERN_MARKERS)
+    actual = {key for key, _ in files}
+    dc.require(
+        actual == expected,
+        f"Chapel pre-CoR census changed: expected={sorted(expected)} actual={sorted(actual)}",
+    )
+    root = ROOT / "src/Systems/Chapel"
+    for key, _ in files:
+        dc.require((root / "tests" / f"test_{key}.chpl").is_file(), f"Chapel pre-CoR validation missing test_{key}.chpl")
+    print("EARLY_CHAPEL delegated=patterns-chapel behavioral-evidence=52-cell-gate", flush=True)
+
+
+def validate_accelerated(census: dict[str, int]) -> None:
+    files = discover("src/Accelerated/OpenCL/patterns", (".c",))
+    dc.require(files, "opencl has no discoverable pre-CoR pilot contracts")
+    keys = [key for key, _ in files]
+    dc.require(len(keys) == len(set(keys)), f"opencl has duplicate pre-CoR pattern keys: {keys}")
+    census["opencl"] = len(files)
+    print(f"EARLY_CELLS runtime=opencl cells={len(files)} patterns={','.join(keys)}", flush=True)
+    root = ROOT / "src/Accelerated/OpenCL"
+    for key, _ in files:
+        dc.require((root / "tests" / f"test_{key}.c").is_file(), f"OpenCL pilot validation missing test_{key}.c")
+    print("EARLY_OPENCL delegated=patterns-opencl behavioral-evidence=accelerated-pilot", flush=True)
+
+
 VALIDATORS = {
+    "accelerated": validate_accelerated,
+    "chapel": validate_chapel,
     "dotnet": validate_dotnet,
     "jvm": validate_jvm,
     "native": validate_native,

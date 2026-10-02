@@ -3,7 +3,7 @@
 > **Familia:** Structural  
 > **Intención:** separar una abstracción de su implementación para que ambas dimensiones puedan variar y evolucionar de forma independiente.  
 > **Estado:** `validated`  
-> **Implementaciones de lenguaje:** `49/49`  
+> **Implementaciones de lenguaje:** `50/50`  
 > **Cobertura de pruebas:** N/A — los ejemplos standalone se validan con compile/run/análisis proporcional; no existe una métrica homogénea defendible entre ecosistemas.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -148,7 +148,7 @@ Si sólo existe una implementación estable y no hay evidencia de otra dimensió
 
 ## Implementaciones por lenguaje
 
-La tabla es autoritativa para la completitud de lenguaje. El universo canónico mantiene **52 targets**: **49 Applicable** y **3 N/A**. Los **49/49 ejemplos están materializados y verificados** con la validación más fuerte y ligera razonablemente disponible para cada ecosistema.
+La tabla es autoritativa para la completitud de lenguaje. El universo canónico mantiene **53 targets**: **50 Applicable** y **3 N/A**. Los **50/50 ejemplos están materializados y verificados** con la validación más fuerte y ligera razonablemente disponible para cada ecosistema.
 
 | Lenguaje | Aplicabilidad | Ejemplo | Validación | Nota |
 |---|---|---|---|---|
@@ -204,6 +204,8 @@ La tabla es autoritativa para la completitud de lenguaje. El universo canónico 
 | CSS | N/A | — | — | reglas declarativas de presentación sin abstracciones/runtime calls que desacoplar. |
 | SQL | N/A | — | — | SQL declarativo transforma/consulta datos, pero no expresa por sí solo dos dimensiones runtime de abstracción e implementación. |
 | Mojo | Applicable | [`bridge.mojo`](../src/Systems/Mojo/patterns/bridge.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_bridge.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
+| Chapel | Applicable | [`bridge.chpl`](../src/Systems/Chapel/patterns/bridge.chpl) | [Test](../src/Systems/Chapel/tests/test_bridge.chpl), Chapel 2.10.0 compile/runtime target gate | Canónico del lenguaje target #53. |
+**Accelerated/Heterogeneous:** este patrón participa también en el piloto OpenCL ejecutable sobre CPU/PoCL; esa evidencia vive en [el ledger OpenCL](../docs/pattern-sweeps/opencl.md) y no altera el denominador de lenguajes.
 
 ## Comprueba que lo entendiste
 

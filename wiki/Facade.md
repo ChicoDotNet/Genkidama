@@ -3,8 +3,8 @@
 > **Familia:** Structural  
 > **Intención:** ofrecer una interfaz deliberadamente simple y estable para coordinar un subsistema más amplio sin ocultar que sus componentes siguen existiendo.  
 > **Estado:** `validated`  
-> **Implementaciones verificadas:** `49/49`  
-> **Implementaciones materializadas:** `49/49`  
+> **Implementaciones verificadas:** `50/50`  
+> **Implementaciones materializadas:** `50/50`  
 > **Cobertura de pruebas:** N/A — la completitud se valida por comportamiento/toolchain en múltiples ecosistemas standalone; no existe una métrica homogénea agregable.  
 > **Mapa:** [Volver al catálogo y mapa de relaciones](README.md)
 
@@ -149,7 +149,7 @@ Facade no implica necesariamente encapsulación absoluta. Clientes especializado
 
 ## Implementaciones por lenguaje
 
-El universo canónico mantiene **52 targets**. Para Facade, **48 son Applicable** y **HTML, CSS y SQL declarativo son N/A**. Los **49/49 Applicable están materializados, enlazados y verificados** mediante los gates Facade Mainstream, Middle, Portable y Final.
+El universo canónico mantiene **53 targets**. Para Facade, **48 son Applicable** y **HTML, CSS y SQL declarativo son N/A**. Los **50/50 Applicable están materializados, enlazados y verificados** mediante los gates Facade Mainstream, Middle, Portable y Final.
 
 | Lenguaje / target | Aplicabilidad | Ejemplo | Validación | Nota |
 |---|---|---|---|---|
@@ -205,6 +205,8 @@ El universo canónico mantiene **52 targets**. Para Facade, **48 son Applicable*
 | CSS | N/A | — | — | lenguaje de estilos declarativo sin frontera ejecutable que coordine subsistemas. |
 | SQL declarativo | N/A | — | — | una consulta declarativa describe datos; sin procedimientos/runtime adicional no ofrece una API de aplicación que coordine subsistemas. |
 | Mojo | Applicable | [`facade.mojo`](../src/Systems/Mojo/patterns/facade.mojo) | [TestSuite](../src/Systems/Mojo/tests/test_facade.mojo), Mojo 1.1.0; gate 52/52 green | Implementación canónica del target #52 con mecanismos nativos de Mojo. |
+| Chapel | Applicable | [`facade.chpl`](../src/Systems/Chapel/patterns/facade.chpl) | [Test](../src/Systems/Chapel/tests/test_facade.chpl), Chapel 2.10.0 compile/runtime target gate | Canónico del lenguaje target #53. |
+**Accelerated/Heterogeneous:** este patrón participa también en el piloto OpenCL ejecutable sobre CPU/PoCL; esa evidencia vive en [el ledger OpenCL](../docs/pattern-sweeps/opencl.md) y no altera el denominador de lenguajes.
 
 ## Comprueba que lo entendiste
 

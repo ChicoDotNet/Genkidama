@@ -163,6 +163,17 @@ Documentation reconciliation is intentionally honest: the 21 already-authored ca
 
 This expansion does not rewrite historical measurements below: the earlier language-major experiment genuinely began with 51 targets.
 
+### Chapel #53 and Accelerated/Heterogeneous pilot
+
+The owner approved a joint contract-first slice after Mojo target #52 was integrated.
+
+- **Chapel** enters the canonical language catalog as target **#53** and therefore contracts all 52 Design Pattern cells under the normal language completeness rules.
+- **OpenCL** inaugurates an orthogonal **Accelerated/Heterogeneous** dimension. It is not language target #54 and does not alter any language-pattern denominator.
+- The OpenCL calibration pilot contracts 12 patterns where host/device execution adds useful evidence: Abstract Factory, Adapter, Bridge, Builder, Command, Facade, Flyweight, Proxy, Strategy, Active Object, Lazy Initialization and Object Pool.
+- Both targets follow the same delivery sequence: RED contracts first, GREEN implementation second, documentation/reconciliation last.
+- The first GREEN attempt observed **51/52 Chapel** cells and **12/12 OpenCL** pilot cells. Chapel Bridge exposed a one-character output mismatch; OpenCL then exposed an unrelated legacy pre-CoR source-marker check after its 12/12 target gate had already passed. Both defects are scoped to the current reconciliation head.
+- OpenCL CI uses a CPU OpenCL implementation so the kernel/device path is executed rather than compile-only. Future CUDA/SYCL work, if approved, joins this orthogonal dimension instead of inflating the language catalog.
+
 ### Owner-approved matrix scheduling experiment — language-major, expensive targets first
 
 The owner first approved the matrix experiment after Chain of Responsibility was integrated into `dev`, then clarified its intended granularity on 2026-08-27: **a slow/high-overhead language should cover all remaining patterns in one coherent implementation/CI slice whenever practical**.

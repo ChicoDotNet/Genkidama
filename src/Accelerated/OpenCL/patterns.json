@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "dimension": "Accelerated/Heterogeneous",
+  "target": "OpenCL",
+  "specification": "OpenCL 3.1.2",
+  "runtime_profile": "PoCL CPU",
+  "pilot_universe": 12,
+  "contracted": [
+    "abstract_factory",
+    "adapter",
+    "bridge",
+    "builder",
+    "command",
+    "facade",
+    "flyweight",
+    "proxy",
+    "strategy",
+    "active_object",
+    "lazy_initialization",
+    "object_pool"
+  ],
+  "implemented": [
+    "abstract_factory",
+    "adapter",
+    "bridge",
+    "builder",
+    "command",
+    "facade",
+    "flyweight",
+    "proxy",
+    "strategy",
+    "active_object",
+    "lazy_initialization",
+    "object_pool"
+  ]
+}
