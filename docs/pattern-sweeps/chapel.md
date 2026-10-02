@@ -13,7 +13,7 @@ The RED head installed Chapel 2.10.0 successfully and failed all 52 cells for th
 
 The first implementation head compiled and executed **51/52** cells successfully. Bridge was the only behavioral mismatch: its implementation emitted `tv:muted` while the already-fixed test contract required `tv=muted`. The reconciliation head changes only that behavior and delegates historical pre-CoR checks to this full target gate rather than re-imposing legacy textual markers.
 
-The authoritative final result is the exact-head `Chapel / 2.10.0` Polyglot job. This ledger intentionally does not hard-code a future workflow run number.
+The exact-head aggregate gate compiles the 52 Chapel modules once through `pattern_sweep.chpl`, keeps the 52 `test_*.chpl` files as individually addressable behavioral contracts, and compares every runtime result against the expectation extracted from its corresponding test. On head `596e58cd`, `Chapel / 2.10.0` passed 52/52 in **7.559 s** total (`7.327 s` validation), down from **260.257 s** on the previous per-cell compilation gate. OpenCL remained green at **10.058 s** for its 12/12 accelerated pilot.
 
 ## Full 52-cell ledger
 
