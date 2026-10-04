@@ -219,7 +219,7 @@ class I10LegacyEntrypointTests(unittest.TestCase):
     def test_polyglot_mojo_workflow_pins_runtime(self) -> None:
         text = (ROOT / ".github/workflows/polyglot.yml").read_text(encoding="utf-8")
         self.assertIn("name: Mojo / 1.1.0", text)
-        self.assertIn("prefix-dev/setup-pixi@v0.10.0", text)
+        self.assertIn("prefix-dev/setup-pixi@v0.10.2", text)
         self.assertIn("pixi-version: v0.81.0", text)
         self.assertIn("run-family mojo --patterns", text)
 
