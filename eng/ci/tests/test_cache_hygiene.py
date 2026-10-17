@@ -4,6 +4,7 @@ import sys
 import unittest
 from datetime import timedelta
 from pathlib import Path
+from unittest.mock import patch
 
 CI_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(CI_DIR))
@@ -192,6 +193,39 @@ class CachePolicyTests(unittest.TestCase):
         self.assertIsNone(
             cache_hygiene.pull_number_from_ref("refs/heads/pull/42/merge")
         )
+
+
+class GitHubInstallationTokenCompatibilityTests(unittest.TestCase):
+    def test_cache_client_preserves_opaque_legacy_and_stateless_tokens(self) -> None:
+        # Synthetic tokens only: never inspect actual Actions secrets or JWT fields.
+        legacy = "ghs_" + "a" * 36
+        stateless = "ghs_123456_" + "a" * 180 + "." + "b" * 180 + "." + "c" * 180
+        self.assertEqual(len(legacy), 40)
+        self.assertGreaterEqual(len(stateless), 520)
+
+        for token in (legacy, stateless):
+            with self.subTest(token_length=len(token)):
+                with patch.object(cache_hygiene.urllib.request, "urlopen") as request:
+                    response = request.return_value.__enter__.return_value
+                    response.status = 200
+                    response.read.return_value = b'{"actions_caches":[]}'
+
+                    client = cache_hygiene.GitHubCacheClient(
+                        repository="ChicoDotNet/Genkidama",
+                        token=token,
+                        api_url="https://api.github.com",
+                    )
+                    status, payload = client._request(
+                        "/repos/ChicoDotNet/Genkidama/actions/caches"
+                    )
+
+                    self.assertEqual(status, 200)
+                    self.assertEqual(payload, b'{"actions_caches":[]}')
+                    sent_request = request.call_args.args[0]
+                    self.assertEqual(
+                        sent_request.get_header("Authorization"),
+                        f"Bearer {token}",
+                    )
 
 
 class WorkflowContractTests(unittest.TestCase):
